@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--HOME BUTTONS -->
+    <color name="tanach">#005060</color>
+    <color name="mishnah">#5090b0</color>
+    <color name="talmud">#c0b080</color>
+    <color name="midrash">#709070</color>
+    <color name="halkhah">#c06060</color>
+    <color name="kabbalah">#b0b0e0</color>
+    <color name="liturgy">#403060</color>
+    <color name="philosophy">#90c0d0</color>
+    <color name="more">#102040</color>
+    <color name="tosefta">#508080</color>
+    <color name="parshanut">#004060</color>
+    <color name="chasidut">#804060</color>
+    <color name="musar">#c08050</color>
+    <color name="responsa">#803030</color>
+    <color name="apocrypha">#90b0a0</color>
+    <color name="other">#102040</color>
+
+    <color name="menu_background">#F9F9F7</color>
+    <color name="menu_foreground">#dddddd</color>
+    <color name="subtitle">#9B9B9B</color>
+    <color name="tab_inactive">#9B9B9B</color>
+    <color name="tab_active">#000000</color>
+
+</resources>

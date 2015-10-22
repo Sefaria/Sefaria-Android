@@ -1,0 +1,42 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="org.sefaria.sefaria.TextActivity">
+
+    <LinearLayout
+        android:id="@+id/actionbarRoot"
+        android:orientation="horizontal"
+        android:layout_alignParentTop="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"></LinearLayout>
+
+    <!--funny story actually...I was on a reallly long flight from Israel and wanted to align the top of s/t to the bottom
+    of s/t else...this is what I came up with -->
+    <View
+        android:id="@+id/useless"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignBottom="@id/actionbarRoot"></View>
+    <LinearLayout
+        android:id="@+id/textMenuRoot"
+        android:orientation="horizontal"
+        android:layout_alignTop="@id/useless"
+        android:layout_width="match_parent"
+        android:translationZ="100dp"
+        android:background="@color/menu_background"
+        android:layout_height="wrap_content"></LinearLayout>
+    <LinearLayout
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/useless">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="YOOOOOO!!!"/>
+    </LinearLayout>
+
+
+</RelativeLayout>

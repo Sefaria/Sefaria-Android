@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Lang bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp">
+
+        <TextView
+            android:id="@+id/en_btn"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="En"
+            android:gravity="center"
+            android:background="@color/tanach"
+            android:padding="20dp"/>
+
+        <TextView
+            android:id="@+id/bi_btn"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Bi"
+            android:gravity="center"
+            android:background="@color/mishnah"
+            android:padding="20dp"/>
+
+        <TextView
+            android:id="@+id/he_btn"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="He"
+            android:gravity="center"
+            android:background="@color/talmud"
+            android:padding="20dp"/>
+
+
+    </LinearLayout>
+
+    <!-- formatting bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp">
+
+        <TextView
+            android:id="@+id/cts_btn"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Cts"
+            android:gravity="center"
+            android:background="@color/midrash"
+            android:padding="20dp"/>
+
+        <TextView
+            android:id="@+id/sep_btn"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Sep"
+            android:gravity="center"
+            android:background="@color/halkhah"
+            android:padding="20dp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/menu_foreground"/>
+    </LinearLayout>
+
+
+    <!-- color bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp">
+
+        <TextView
+            android:id="@+id/white_btn"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="white"
+            android:gravity="center"
+            android:background="@color/kabbalah"
+            android:padding="20dp"/>
+
+        <TextView
+            android:id="@+id/grey_btn"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="grey"
+            android:gravity="center"
+            android:background="@color/liturgy"
+            android:padding="20dp"/>
+
+        <TextView
+            android:id="@+id/black_btn"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="black"
+            android:gravity="center"
+            android:background="@color/philosophy"
+            android:padding="20dp"/>
+
+    </LinearLayout>
+
+    <!-- font size bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp">
+
+        <TextView
+            android:id="@+id/small_btn"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="smlr"
+            android:gravity="center"
+            android:background="@color/chasidut"
+            android:padding="20dp"/>
+        <TextView
+            android:id="@+id/big_btn"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="bgr"
+            android:gravity="center"
+            android:background="@color/musar"
+            android:padding="20dp"/>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/menu_foreground"/>
+
+</LinearLayout>

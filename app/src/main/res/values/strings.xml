@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Sefaria</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_menu">MenuActivity</string>
+    <string name="home_more_button">More ></string>
+    <string name="title_activity_text">TextActivity</string>
+</resources>
