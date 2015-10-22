@@ -29,7 +29,7 @@ public class MenuState implements Parcelable {
 
     private static final String[] TAB_GRID_PAGE_LIST = {"Talmud"};
     private static final String[] PAGE_EXCEPTIONS = {"Mishneh Torah", "Shulchan Arukh", "Midrash Rabbah", "Maharal"};
-    private static final String jsonIndexFileName = "index.json";
+    public static final String jsonIndexFileName = "index.json";
 
     private static MenuNode rootNode;
     private MenuNode currNode;
