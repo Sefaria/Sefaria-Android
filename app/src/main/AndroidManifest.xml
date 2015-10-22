@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.sefaria.sefaria" >
+    package="org.sefaria.sefaria"
+    >
+
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
 
     <application
         android:name=".MyApp"
@@ -25,6 +34,17 @@
             android:name=".TextActivity"
             android:label="@string/title_activity_text" >
         </activity>
+
+        <receiver android:name=".database.UpdateReceiver"
+            android:enabled="true">
+        </receiver>
+
+        <service
+            android:name=".database.UpdateService"
+            android:enabled="true" >
+            <action android:name="com.torahsummary.betamidrash.UpdateService" />
+        </service>
+
     </application>
 
 </manifest>
