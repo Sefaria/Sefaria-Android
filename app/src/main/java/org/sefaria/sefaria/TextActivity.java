@@ -6,9 +6,14 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import org.sefaria.sefaria.database.Book;
+import org.sefaria.sefaria.database.Text;
 import org.sefaria.sefaria.menu.MenuState;
 import org.sefaria.sefaria.menu.MenuTabController;
+
+import java.util.List;
 
 public class TextActivity extends AppCompatActivity {
 
@@ -39,6 +44,15 @@ public class TextActivity extends AppCompatActivity {
         CustomActionbar cab = new CustomActionbar(this, menuState.getCurrNode(),Util.EN,searchClick,null,null,menuClick);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(cab);
+
+        TextView content = (TextView) findViewById(R.id.content);
+
+        String title = menuState.getCurrNode().getTitle(Util.EN);
+        Book book = new Book(title);
+        int[] levels = {1,0};
+        List<Text> textsList = Text.get(book,levels);
+
+        content.setText(textsList.toString());
     }
 
     @Override

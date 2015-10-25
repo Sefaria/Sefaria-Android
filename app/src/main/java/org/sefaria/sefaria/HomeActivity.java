@@ -72,9 +72,6 @@ public class HomeActivity extends AppCompatActivity {
         List<Book> bookList = Book.getAll();
         for(int i = 0; i < bookList.size(); i++)
             bookList.get(i).log();
-
-
-
     }
 
     //this is a click event listener
