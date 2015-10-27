@@ -27,17 +27,20 @@
         android:translationZ="100dp"
         android:background="@color/menu_background"
         android:layout_height="wrap_content"></LinearLayout>
-    <LinearLayout
+    <ScrollView
 
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@id/useless">
-        <TextView
+        android:layout_height="match_parent"
+        android:layout_alignTop="@id/useless"
+        android:padding="15dp">
+        <org.sefaria.sefaria.JustifyTextView
             android:id="@+id/content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:clickable="true"
+            android:textSize="30sp"
             android:text="YOOOOOO!!!"/>
-    </LinearLayout>
+    </ScrollView>
 
 
 </RelativeLayout>

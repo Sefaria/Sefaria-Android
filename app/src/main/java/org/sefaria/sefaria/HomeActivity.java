@@ -69,9 +69,9 @@ public class HomeActivity extends AppCompatActivity {
 
         // Toast.makeText(this,"starting download", Toast.LENGTH_SHORT).show();
         //updateLibrary();
-        List<Book> bookList = Book.getAll();
+        /*List<Book> bookList = Book.getAll();
         for(int i = 0; i < bookList.size(); i++)
-            bookList.get(i).log();
+            bookList.get(i).log();*/
     }
 
     //this is a click event listener
