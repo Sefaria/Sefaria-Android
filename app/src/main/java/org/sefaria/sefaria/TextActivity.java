@@ -1,8 +1,12 @@
 package org.sefaria.sefaria;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -11,7 +15,6 @@ import android.widget.TextView;
 import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Text;
 import org.sefaria.sefaria.menu.MenuState;
-import org.sefaria.sefaria.menu.MenuTabController;
 
 import java.util.List;
 
@@ -45,14 +48,24 @@ public class TextActivity extends AppCompatActivity {
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(cab);
 
-        TextView content = (TextView) findViewById(R.id.content);
+        JustifyTextView content = (JustifyTextView) findViewById(R.id.content);
 
         String title = menuState.getCurrNode().getTitle(Util.EN);
         Book book = new Book(title);
-        int[] levels = {1,0};
-        List<Text> textsList = Text.get(book,levels);
+        int[] levels = {0,1};
 
-        content.setText(textsList.toString());
+
+        SpannableStringBuilder ssb = new SpannableStringBuilder();
+        List<Text> textsList = Text.get(book,levels);
+        for (Text text : textsList) {
+            SpannableString ss = new SpannableString(text.enText);
+            ss.setSpan(new VerseSpannable(text.enText, Color.parseColor("#FFFFFF"),getResources().getColor(R.color.tanach)) ,0,ss.length(), 0);
+            ssb.append(ss);
+        }
+        content.setText(ssb,TextView.BufferType.SPANNABLE);
+        content.setMovementMethod(LinkMovementMethod.getInstance());
+
+
     }
 
     @Override
