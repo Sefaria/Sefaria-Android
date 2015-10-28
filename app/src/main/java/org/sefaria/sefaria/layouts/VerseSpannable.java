@@ -1,12 +1,11 @@
-package org.sefaria.sefaria;
+package org.sefaria.sefaria.layouts;
 
 import android.text.TextPaint;
 import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
-class VerseSpannable extends ClickableSpan{// extend ClickableSpan
+public class VerseSpannable extends ClickableSpan{// extend ClickableSpan
 
     private String clicked;
     private int color;

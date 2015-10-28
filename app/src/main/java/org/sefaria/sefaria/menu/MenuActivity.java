@@ -4,8 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import org.sefaria.sefaria.CustomActionbar;
-import org.sefaria.sefaria.HomeActivity;
+import org.sefaria.sefaria.layouts.CustomActionbar;
 import org.sefaria.sefaria.Util;
 
 import android.util.Log;
