@@ -1,10 +1,9 @@
-package org.sefaria.sefaria;
+package org.sefaria.sefaria.layouts;
 
 
 import android.content.Context;
 import android.graphics.Canvas;
 import android.text.Layout;
-import android.text.Spannable;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.util.AttributeSet;
@@ -17,6 +16,10 @@ public class JustifyTextView extends TextView {
 
     private int mLineY;
     private int mViewWidth;
+
+    public JustifyTextView(Context context) {
+        super(context);
+    }
 
     public JustifyTextView(Context context, AttributeSet attrs) {
         super(context, attrs);

@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="org.sefaria.sefaria.TextActivity">
+    tools:context="org.sefaria.sefaria.activities.TextActivity">
 
     <LinearLayout
         android:id="@+id/actionbarRoot"
@@ -27,20 +27,20 @@
         android:translationZ="100dp"
         android:background="@color/menu_background"
         android:layout_height="wrap_content"></LinearLayout>
-    <ScrollView
-
+    <org.sefaria.sefaria.layouts.ScrollViewExt
+        android:id="@+id/textScrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignTop="@id/useless"
         android:padding="15dp">
-        <org.sefaria.sefaria.JustifyTextView
-            android:id="@+id/content"
+        <LinearLayout
+            android:id="@+id/textRoot"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:textSize="30sp"
-            android:text="YOOOOOO!!!"/>
-    </ScrollView>
+            android:orientation="vertical"
+            android:layout_height="wrap_content">
+
+        </LinearLayout>
+    </org.sefaria.sefaria.layouts.ScrollViewExt>
 
 
 </RelativeLayout>
