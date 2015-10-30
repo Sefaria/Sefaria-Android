@@ -56,7 +56,11 @@ public class JustifyTextView extends TextView {
         }
     }
 
-    private void drawScaledText(Canvas canvas, int lineStart, String line, float lineWidth) {
+    protected void oldOnDraw(Canvas canvas) {
+        super.onDraw(canvas);
+    }
+
+    protected void drawScaledText(Canvas canvas, int lineStart, String line, float lineWidth) {
         float x = 0;
 
         float d = (mViewWidth - lineWidth) / line.length() - 1;
@@ -68,7 +72,7 @@ public class JustifyTextView extends TextView {
         }
     }
 
-    private boolean needScale(String line) {
+    protected boolean needScale(String line) {
         if (line.length() == 0) {
             return false;
         } else {

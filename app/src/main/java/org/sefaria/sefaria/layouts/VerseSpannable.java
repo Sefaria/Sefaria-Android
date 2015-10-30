@@ -8,13 +8,9 @@ import android.view.View;
 public class VerseSpannable extends ClickableSpan{// extend ClickableSpan
 
     private String clicked;
-    private int color;
-    private int background;
-    public VerseSpannable(String string,int color, int background) {
+    public VerseSpannable(String string) {
         super();
         clicked = string;
-        this.color = color;
-        this.background = background;
     }
 
     public void onClick(View tv) {
@@ -22,8 +18,8 @@ public class VerseSpannable extends ClickableSpan{// extend ClickableSpan
     }
 
     public void updateDrawState(TextPaint ds) {// override updateDrawState
-        ds.setColor(color);
-        ds.bgColor = background;
+        //ds.setColor(color);
+        //ds.bgColor = background;
         ds.setUnderlineText(false); // set to false to remove underline
     }
 }

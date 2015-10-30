@@ -10,21 +10,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="75afad5c-80ef-4fe6-9e2d-e63bc14c54e1" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/layouts/ScrollViewExt.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/layouts/ScrollViewListener.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/CustomActionbar.java" afterPath="$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/layouts/CustomActionbar.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/DashboardLayout.java" afterPath="$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/layouts/DashboardLayout.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/HomeActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/activities/HomeActivity.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/JustifyTextView.java" afterPath="$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/layouts/JustifyTextView.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/TextActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/activities/TextActivity.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/TextMenuBar.java" afterPath="$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/layouts/TextMenuBar.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/VerseSpannable.java" afterPath="$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/layouts/VerseSpannable.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/menu/MenuActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/menu/MenuActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/menu/MenuGrid.java" afterPath="$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/menu/MenuGrid.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/database/UpdateService.java" afterPath="$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/database/UpdateService.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_text.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_text.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/menu/menu_text.xml" afterPath="$PROJECT_DIR$/app/src/main/res/menu/menu_text.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/layouts/PerekTextView.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/layouts/JustifyTextView.java" afterPath="$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/layouts/JustifyTextView.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/activities/TextActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/activities/TextActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/Util.java" afterPath="$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/Util.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/layouts/VerseSpannable.java" afterPath="$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/layouts/VerseSpannable.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="Sefaria-Android2.iws" />
@@ -59,28 +49,62 @@
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
               <caret line="58" column="57" selection-start-line="58" selection-start-column="57" selection-end-line="58" selection-end-column="57" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="TextActivity.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/activities/TextActivity.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="1.5525607">
-              <caret line="98" column="41" selection-start-line="98" selection-start-column="27" selection-end-line="98" selection-end-column="41" />
               <folding>
-                <element signature="imports" expanded="true" />
+                <element signature="imports" expanded="false" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="JustifyTextView.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/layouts/JustifyTextView.java">
+      <file leaf-file-name="TextActivity.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/activities/TextActivity.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="17" column="27" selection-start-line="17" selection-start-column="27" selection-end-line="17" selection-end-column="27" />
+              <caret line="148" column="45" selection-start-line="148" selection-start-column="45" selection-end-line="148" selection-end-column="45" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#3866#4176#0" expanded="true" />
+                <element signature="e#4175#4176#0" expanded="true" />
+                <element signature="e#4216#4617#0" expanded="true" />
+                <element signature="e#4616#4617#0" expanded="true" />
+                <element signature="e#4664#6378#0" expanded="true" />
+                <element signature="e#6377#6378#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PerekTextView.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/layouts/PerekTextView.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.24324325">
+              <caret line="65" column="43" selection-start-line="65" selection-start-column="43" selection-end-line="65" selection-end-column="43" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#1198#1199#0" expanded="true" />
+                <element signature="e#1235#1236#0" expanded="true" />
+                <element signature="e#3074#3075#0" expanded="true" />
+                <element signature="e#3123#3124#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Util.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/Util.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="147" column="11" selection-start-line="147" selection-start-column="11" selection-end-line="147" selection-end-column="11" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="VerseSpannable.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/layouts/VerseSpannable.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="21" column="10" selection-start-line="21" selection-start-column="10" selection-end-line="21" selection-end-column="10" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -104,7 +128,16 @@
             <state vertical-scroll-proportion="0.0">
               <caret line="136" column="88" selection-start-line="136" selection-start-column="88" selection-end-line="136" selection-end-column="88" />
               <folding>
-                <element signature="imports" expanded="true" />
+                <element signature="e#608#609#0" expanded="false" />
+                <element signature="e#645#646#0" expanded="false" />
+                <element signature="e#26400#26401#0" expanded="false" />
+                <element signature="e#26429#26430#0" expanded="false" />
+                <element signature="e#26674#26675#0" expanded="false" />
+                <element signature="e#26717#26718#0" expanded="false" />
+                <element signature="e#26761#26762#0" expanded="false" />
+                <element signature="e#26806#26807#0" expanded="false" />
+                <element signature="e#26864#26865#0" expanded="false" />
+                <element signature="e#26888#26889#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -1559,7 +1592,6 @@
         <option value="$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/general/MyApp.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/general/Util.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/database/Book.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/Util.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/values/strings.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/menu/MenuState.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/DialogManager.java" />
@@ -1579,8 +1611,11 @@
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_text.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/JustifyTextView.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/TextActivity.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/activities/TextActivity.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/layouts/JustifyTextView.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/layouts/VerseSpannable.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/activities/TextActivity.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/Util.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/layouts/PerekTextView.java" />
       </list>
     </option>
   </component>
@@ -1899,17 +1934,17 @@
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3979764" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="true" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3288364" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="true" content_ui="tabs" />
       <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32715008" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
-      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32715008" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32715008" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.21696801" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21486267" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.21486267" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32715008" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Android Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.40055633" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
@@ -1922,6 +1957,37 @@
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
     </layout>
+    <layout-to-restore>
+      <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Android Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.40055633" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
+      <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
+      <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="true" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.21696801" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.21486267" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32715008" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="combo" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
+      <window_info id="Android Model" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="true" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32985073" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3979764" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="true" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32715008" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
+      <window_info id="Android" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32715008" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+    </layout-to-restore>
   </component>
   <component name="Vcs.Log.UiProperties">
     <option name="RECENTLY_FILTERED_USER_GROUPS">
@@ -1945,7 +2011,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="62" column="57" selection-start-line="62" selection-start-column="57" selection-end-line="62" selection-end-column="57" />
-          <folding />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1955,6 +2023,12 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#3866#4176#0" expanded="true" />
+            <element signature="e#4175#4176#0" expanded="true" />
+            <element signature="e#4216#4617#0" expanded="true" />
+            <element signature="e#4616#4617#0" expanded="true" />
+            <element signature="e#4664#6378#0" expanded="true" />
+            <element signature="e#6377#6378#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1975,8 +2049,8 @@
           <caret line="20" column="34" selection-start-line="20" selection-start-column="34" selection-end-line="20" selection-end-column="34" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#534#535#0" expanded="true" />
-            <element signature="e#584#585#0" expanded="true" />
+            <element signature="e#391#392#0" expanded="true" />
+            <element signature="e#441#442#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1986,7 +2060,16 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="136" column="88" selection-start-line="136" selection-start-column="88" selection-end-line="136" selection-end-column="88" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="e#608#609#0" expanded="false" />
+            <element signature="e#645#646#0" expanded="false" />
+            <element signature="e#26400#26401#0" expanded="false" />
+            <element signature="e#26429#26430#0" expanded="false" />
+            <element signature="e#26674#26675#0" expanded="false" />
+            <element signature="e#26717#26718#0" expanded="false" />
+            <element signature="e#26761#26762#0" expanded="false" />
+            <element signature="e#26806#26807#0" expanded="false" />
+            <element signature="e#26864#26865#0" expanded="false" />
+            <element signature="e#26888#26889#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1995,7 +2078,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="71" column="10" selection-start-line="71" selection-start-column="10" selection-end-line="71" selection-end-column="10" />
-          <folding />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -2005,6 +2090,12 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#3866#4176#0" expanded="true" />
+            <element signature="e#4175#4176#0" expanded="true" />
+            <element signature="e#4216#4617#0" expanded="true" />
+            <element signature="e#4616#4617#0" expanded="true" />
+            <element signature="e#4664#6378#0" expanded="true" />
+            <element signature="e#6377#6378#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -2026,8 +2117,8 @@
           <caret line="20" column="34" selection-start-line="20" selection-start-column="34" selection-end-line="20" selection-end-column="34" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#534#535#0" expanded="true" />
-            <element signature="e#584#585#0" expanded="true" />
+            <element signature="e#391#392#0" expanded="true" />
+            <element signature="e#441#442#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -2037,7 +2128,16 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="136" column="88" selection-start-line="136" selection-start-column="88" selection-end-line="136" selection-end-column="88" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="e#608#609#0" expanded="false" />
+            <element signature="e#645#646#0" expanded="false" />
+            <element signature="e#26400#26401#0" expanded="false" />
+            <element signature="e#26429#26430#0" expanded="false" />
+            <element signature="e#26674#26675#0" expanded="false" />
+            <element signature="e#26717#26718#0" expanded="false" />
+            <element signature="e#26761#26762#0" expanded="false" />
+            <element signature="e#26806#26807#0" expanded="false" />
+            <element signature="e#26864#26865#0" expanded="false" />
+            <element signature="e#26888#26889#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -2077,6 +2177,12 @@
           <caret line="12" column="13" selection-start-line="12" selection-start-column="13" selection-end-line="12" selection-end-column="13" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#3866#4176#0" expanded="true" />
+            <element signature="e#4175#4176#0" expanded="true" />
+            <element signature="e#4216#4617#0" expanded="true" />
+            <element signature="e#4616#4617#0" expanded="true" />
+            <element signature="e#4664#6378#0" expanded="true" />
+            <element signature="e#6377#6378#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -2093,7 +2199,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="67" column="28" selection-start-line="67" selection-start-column="28" selection-end-line="67" selection-end-column="28" />
-          <folding />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -2101,6 +2209,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -2115,13 +2226,12 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="295" column="34" selection-start-line="294" selection-start-column="8" selection-end-line="295" selection-end-column="34" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/Util.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="138" column="52" selection-start-line="138" selection-start-column="52" selection-end-line="138" selection-end-column="52" />
+          <folding>
+            <element signature="imports" expanded="false" />
+            <element signature="e#10308#10314#0" expanded="false" />
+            <element signature="e#11359#11367#0" expanded="false" />
+            <element signature="e#12045#12062#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -2150,6 +2260,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="79" column="59" selection-start-line="79" selection-start-column="40" selection-end-line="79" selection-end-column="59" />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -2215,6 +2328,12 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="295" column="34" selection-start-line="294" selection-start-column="8" selection-end-line="295" selection-end-column="34" />
+          <folding>
+            <element signature="imports" expanded="false" />
+            <element signature="e#10308#10314#0" expanded="false" />
+            <element signature="e#11359#11367#0" expanded="false" />
+            <element signature="e#12045#12062#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -2222,6 +2341,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="137" column="10" selection-start-line="137" selection-start-column="10" selection-end-line="137" selection-end-column="10" />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -2250,7 +2372,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="58" column="57" selection-start-line="58" selection-start-column="57" selection-end-line="58" selection-end-column="57" />
-          <folding />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -2259,7 +2383,16 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="136" column="88" selection-start-line="136" selection-start-column="88" selection-end-line="136" selection-end-column="88" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="e#608#609#0" expanded="false" />
+            <element signature="e#645#646#0" expanded="false" />
+            <element signature="e#26400#26401#0" expanded="false" />
+            <element signature="e#26429#26430#0" expanded="false" />
+            <element signature="e#26674#26675#0" expanded="false" />
+            <element signature="e#26717#26718#0" expanded="false" />
+            <element signature="e#26761#26762#0" expanded="false" />
+            <element signature="e#26806#26807#0" expanded="false" />
+            <element signature="e#26864#26865#0" expanded="false" />
+            <element signature="e#26888#26889#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -2318,22 +2451,33 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/layouts/VerseSpannable.java">
+    <entry file="file://$USER_HOME$/Library/Android/sdk/sources/android-23/android/widget/TextView.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.28301886">
-          <caret line="7" column="7" selection-start-line="7" selection-start-column="7" selection-end-line="7" selection-end-column="7" />
+        <state vertical-scroll-proportion="0.69541776">
+          <caret line="2842" column="17" selection-start-line="2842" selection-start-column="17" selection-end-line="2842" selection-end-column="17" />
           <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#534#535#0" expanded="true" />
-            <element signature="e#584#585#0" expanded="true" />
+            <element signature="e#109075#109076#0" expanded="true" />
+            <element signature="e#109122#109123#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/layouts/JustifyTextView.java">
       <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.9703504">
+          <caret line="72" column="5" selection-start-line="72" selection-start-column="5" selection-end-line="72" selection-end-column="5" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1760#1761#0" expanded="true" />
+            <element signature="e#1796#1797#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/layouts/VerseSpannable.java">
+      <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="17" column="27" selection-start-line="17" selection-start-column="27" selection-end-line="17" selection-end-column="27" />
+          <caret line="21" column="10" selection-start-line="21" selection-start-column="10" selection-end-line="21" selection-end-column="10" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -2342,10 +2486,38 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/activities/TextActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="1.5525607">
-          <caret line="98" column="41" selection-start-line="98" selection-start-column="27" selection-end-line="98" selection-end-column="41" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="148" column="45" selection-start-line="148" selection-start-column="45" selection-end-line="148" selection-end-column="45" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#3866#4176#0" expanded="true" />
+            <element signature="e#4175#4176#0" expanded="true" />
+            <element signature="e#4216#4617#0" expanded="true" />
+            <element signature="e#4616#4617#0" expanded="true" />
+            <element signature="e#4664#6378#0" expanded="true" />
+            <element signature="e#6377#6378#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/Util.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="147" column="11" selection-start-line="147" selection-start-column="11" selection-end-line="147" selection-end-column="11" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/org/sefaria/sefaria/layouts/PerekTextView.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.24324325">
+          <caret line="65" column="43" selection-start-line="65" selection-start-column="43" selection-end-line="65" selection-end-column="43" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1198#1199#0" expanded="true" />
+            <element signature="e#1235#1236#0" expanded="true" />
+            <element signature="e#3074#3075#0" expanded="true" />
+            <element signature="e#3123#3124#0" expanded="true" />
           </folding>
         </state>
       </provider>

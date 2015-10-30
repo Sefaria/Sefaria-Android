@@ -15,6 +15,7 @@ import android.widget.TextView;
 import org.sefaria.sefaria.layouts.CustomActionbar;
 import org.sefaria.sefaria.layouts.JustifyTextView;
 import org.sefaria.sefaria.R;
+import org.sefaria.sefaria.layouts.PerekTextView;
 import org.sefaria.sefaria.layouts.ScrollViewExt;
 import org.sefaria.sefaria.layouts.ScrollViewListener;
 import org.sefaria.sefaria.layouts.TextMenuBar;
@@ -24,6 +25,7 @@ import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Text;
 import org.sefaria.sefaria.menu.MenuState;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TextActivity extends AppCompatActivity {
@@ -35,6 +37,7 @@ public class TextActivity extends AppCompatActivity {
     private ScrollViewExt textScrollView;
     private Book book;
     private int currLoadedChapter;
+    private List<PerekTextView> perekTextViews;
 
     @Override
     protected void onCreate(Bundle in) {
@@ -50,6 +53,7 @@ public class TextActivity extends AppCompatActivity {
     }
 
     private void init() {
+        perekTextViews = new ArrayList<>();
         currLoadedChapter = 0;
         isTextMenuVisible = false;
         textMenuRoot = (LinearLayout) findViewById(R.id.textMenuRoot);
@@ -87,20 +91,15 @@ public class TextActivity extends AppCompatActivity {
 
     private void loadSection() {
         currLoadedChapter++;
-
-        JustifyTextView content = new JustifyTextView(this);
         int[] levels = {0,currLoadedChapter};
-
-
-        SpannableStringBuilder ssb = new SpannableStringBuilder();
         List<Text> textsList = Text.get(book, levels);
-        for (Text text : textsList) {
-            SpannableString ss = new SpannableString(text.enText);
-            ss.setSpan(new VerseSpannable(text.enText, Color.parseColor("#FFFFFF"),getResources().getColor(R.color.tanach)) ,0,ss.length(), 0);
-            ssb.append(ss);
-        }
-        content.setText(ssb,TextView.BufferType.SPANNABLE);
-        content.setMovementMethod(LinkMovementMethod.getInstance());
+        PerekTextView content = new PerekTextView(this,textsList);
+        perekTextViews.add(content);
+        content.setTextSize(30);
+
+
+        //content.setIsCts(true);
+        //content.invalidate();
 
         textRoot.addView(content);
     }
@@ -140,18 +139,30 @@ public class TextActivity extends AppCompatActivity {
             switch (v.getId()) {
                 case R.id.en_btn:
                     Log.d("text","EN");
+                    for (PerekTextView ptv: perekTextViews) {
+                        ptv.setLang(Util.EN);
+                    }
                     return;
                 case R.id.he_btn:
                     Log.d("text","HE");
+                    for (PerekTextView ptv: perekTextViews) {
+                        ptv.setLang(Util.HE);
+                    }
                     return;
                 case R.id.bi_btn:
                     Log.d("text","BI");
                     return;
                 case R.id.cts_btn:
                     Log.d("text","CTS");
+                    for (PerekTextView ptv : perekTextViews) {
+                        ptv.setIsCts(true);
+                    }
                     return;
                 case R.id.sep_btn:
                     Log.d("text","SEP");
+                    for (PerekTextView ptv : perekTextViews) {
+                        ptv.setIsCts(false);
+                    }
                     return;
                 case R.id.white_btn:
                     Log.d("text","WHITE");
