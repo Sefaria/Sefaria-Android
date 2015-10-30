@@ -145,7 +145,7 @@ public class Util {
         return c;
     }
 
-    static String int2heb(int num) {
+    public static String int2heb(int num) {
         int origNum = num;
         String heb = "";
         int place = 0;
