@@ -130,7 +130,8 @@ public class Util {
 
     public static String getRemovedNikudString(String nikStr) {
         //final Pattern r = Pattern.compile("[\u0591-\u05C7]");
-        final Pattern r = Pattern.compile("[\u0591-\u05BD\u05BF\u05C7]");
+        //final Pattern r = Pattern.compile("[\u0591-\u05BD\u05BF\u05C7]");
+        final Pattern r = Pattern.compile("[\u0591-\u05BD\u05BF\u05C1\u05C2\u05C4\u05C5\u05C7]");
         final Pattern r2 = Pattern.compile("\u05be");
         return r.matcher( r2.matcher(nikStr).replaceAll(" ")).replaceAll("");
         //return r.matcher(nikStr).replaceAll("");
@@ -145,7 +146,7 @@ public class Util {
         return c;
     }
 
-    static String int2heb(int num) {
+    public static String int2heb(int num) {
         int origNum = num;
         String heb = "";
         int place = 0;

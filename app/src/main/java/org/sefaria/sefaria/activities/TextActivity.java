@@ -1,20 +1,43 @@
-package org.sefaria.sefaria;
+package org.sefaria.sefaria.activities;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import org.sefaria.sefaria.layouts.CustomActionbar;
+import org.sefaria.sefaria.layouts.JustifyTextView;
+import org.sefaria.sefaria.R;
+import org.sefaria.sefaria.layouts.PerekTextView;
+import org.sefaria.sefaria.layouts.ScrollViewExt;
+import org.sefaria.sefaria.layouts.ScrollViewListener;
+import org.sefaria.sefaria.layouts.TextMenuBar;
+import org.sefaria.sefaria.Util;
+import org.sefaria.sefaria.layouts.VerseSpannable;
+import org.sefaria.sefaria.database.Book;
+import org.sefaria.sefaria.database.Text;
 import org.sefaria.sefaria.menu.MenuState;
-import org.sefaria.sefaria.menu.MenuTabController;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class TextActivity extends AppCompatActivity {
 
     private MenuState menuState;
     private boolean isTextMenuVisible;
     private LinearLayout textMenuRoot;
+    private LinearLayout textRoot;
+    private ScrollViewExt textScrollView;
+    private Book book;
+    private int currLoadedChapter;
+    private List<PerekTextView> perekTextViews;
 
     @Override
     protected void onCreate(Bundle in) {
@@ -30,15 +53,55 @@ public class TextActivity extends AppCompatActivity {
     }
 
     private void init() {
+        perekTextViews = new ArrayList<>();
+        currLoadedChapter = 0;
         isTextMenuVisible = false;
         textMenuRoot = (LinearLayout) findViewById(R.id.textMenuRoot);
+        textRoot = (LinearLayout) findViewById(R.id.textRoot);
+        textScrollView = (ScrollViewExt) findViewById(R.id.textScrollView);
+        textScrollView.setScrollViewListener(new ScrollViewListener() {
+             @Override
+             public void onScrollChanged(ScrollViewExt scrollView, int x, int y, int oldx, int oldy) {
+                 // We take the last son in the scrollview
+                 View view = (View) scrollView.getChildAt(scrollView.getChildCount() - 1);
+                 int diff = (view.getBottom() - (scrollView.getHeight() + scrollView.getScrollY()));
 
-        setTitle(menuState.getCurrNode().getTitle(menuState.getLang()));
+                 // if diff is zero, then the bottom has been reached
+                 if (diff <= 0) {
+                     loadSection();
+                 }
+             }
+         });
+
+                setTitle(menuState.getCurrNode().getTitle(menuState.getLang()));
 
         //this specifically comes before menugrid, b/c in tabs it menugrid does funny stuff to currnode
-        CustomActionbar cab = new CustomActionbar(this, menuState.getCurrNode(),Util.EN,searchClick,null,null,menuClick);
+        CustomActionbar cab = new CustomActionbar(this, menuState.getCurrNode(), Util.EN,searchClick,null,null,menuClick);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(cab);
+
+
+
+        String title = menuState.getCurrNode().getTitle(Util.EN);
+        book = new Book(title);
+
+
+        loadSection();
+    }
+
+    private void loadSection() {
+        currLoadedChapter++;
+        int[] levels = {0,currLoadedChapter};
+        List<Text> textsList = Text.get(book, levels);
+        PerekTextView content = new PerekTextView(this,textsList);
+        perekTextViews.add(content);
+        content.setTextSize(20);
+
+
+        //content.setIsCts(true);
+        //content.invalidate();
+
+        textRoot.addView(content);
     }
 
     @Override
@@ -76,18 +139,33 @@ public class TextActivity extends AppCompatActivity {
             switch (v.getId()) {
                 case R.id.en_btn:
                     Log.d("text","EN");
+                    for (PerekTextView ptv: perekTextViews) {
+                        ptv.setLang(Util.EN);
+                    }
                     return;
                 case R.id.he_btn:
                     Log.d("text","HE");
+                    for (PerekTextView ptv: perekTextViews) {
+                        ptv.setLang(Util.HE);
+                    }
                     return;
                 case R.id.bi_btn:
                     Log.d("text","BI");
+                    for (PerekTextView ptv: perekTextViews) {
+                        ptv.setLang(Util.BI);
+                    }
                     return;
                 case R.id.cts_btn:
                     Log.d("text","CTS");
+                    for (PerekTextView ptv : perekTextViews) {
+                        ptv.setIsCts(true);
+                    }
                     return;
                 case R.id.sep_btn:
                     Log.d("text","SEP");
+                    for (PerekTextView ptv : perekTextViews) {
+                        ptv.setIsCts(false);
+                    }
                     return;
                 case R.id.white_btn:
                     Log.d("text","WHITE");

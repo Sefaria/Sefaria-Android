@@ -1,10 +1,14 @@
-package org.sefaria.sefaria;
+package org.sefaria.sefaria.activities;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import org.sefaria.sefaria.database.Book;
+import org.sefaria.sefaria.layouts.CustomActionbar;
+import org.sefaria.sefaria.DialogManager;
+import org.sefaria.sefaria.MyApp;
+import org.sefaria.sefaria.R;
+import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.UpdateReceiver;
 import org.sefaria.sefaria.database.UpdateService;
 import org.sefaria.sefaria.menu.MenuGrid;
@@ -15,9 +19,6 @@ import org.sefaria.sefaria.menu.MenuTabController;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.Toast;
-
-import java.util.List;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -69,12 +70,9 @@ public class HomeActivity extends AppCompatActivity {
 
         // Toast.makeText(this,"starting download", Toast.LENGTH_SHORT).show();
         //updateLibrary();
-        List<Book> bookList = Book.getAll();
+        /*List<Book> bookList = Book.getAll();
         for(int i = 0; i < bookList.size(); i++)
-            bookList.get(i).log();
-
-
-
+            bookList.get(i).log();*/
     }
 
     //this is a click event listener
