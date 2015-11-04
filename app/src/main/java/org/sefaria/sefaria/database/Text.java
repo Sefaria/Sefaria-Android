@@ -134,7 +134,7 @@ public class Text implements Parcelable {
     public static List<Text> get(Book book, int[] levels) {
 
         if(book.textDepth != levels.length){
-            Log.e("Error_sql", "wrong size of levels. Text Depth = " + book.textDepth + ". Levels.length = " + levels.length);
+            Log.e("Error_sql", "wrong size of levels." + book.toString() + " Text Depth = " + book.textDepth + ". Levels.length = " + levels.length);
             //return new ArrayList<Text>();
         }
         //else

@@ -70,7 +70,7 @@ public class MenuButton extends MenuElement {
     public boolean isBook() { return node.getNumChildren() == 0; }
 
     public void setLang(int lang) {
-        tv.setText(node.getTitle(lang));
+        tv.setText(node.getPrettyTitle(lang));
         if (lang == Util.HE) {
             tv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
             tv.setTextSize((getResources().getDimension(R.dimen.button_menu_font_size) * Util.EN_HE_RATIO));

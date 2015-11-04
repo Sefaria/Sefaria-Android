@@ -31,6 +31,8 @@ public class MenuNode implements Parcelable {
 
     private String enTitle;
     private String heTitle;
+    private String enPrettyTitle;
+    private String hePrettyTitle;
     private List<MenuNode> children;
     private MenuNode parent;
     private int depth;
@@ -43,14 +45,17 @@ public class MenuNode implements Parcelable {
     }
 
     public MenuNode(String enTitle, String heTitle, MenuNode parent, List<String> categories) {
-        this.enTitle = enTitle;
-        this.heTitle = heTitle;
+
         this.children = new ArrayList<>();
         if (parent != null) {
             this.parent = parent;
             parent.addChild(this);
             this.depth = parent.depth + 1;
         }
+        this.enTitle = enTitle;
+        this.heTitle = heTitle;
+        this.enPrettyTitle = makePrettyTitle(Util.EN);
+        this.hePrettyTitle = makePrettyTitle(Util.HE);
 
         //set color
         int colorInd = Arrays.asList(HOME_BUTTON_NAMES).indexOf(enTitle);
@@ -80,6 +85,15 @@ public class MenuNode implements Parcelable {
         if (lang == Util.EN) currTitle = enTitle;
         else currTitle = heTitle;
 
+        return currTitle;
+    }
+
+    private String makePrettyTitle(int lang) {
+        MenuNode tempNode = this;
+        boolean foundTitleMatch = false;
+        String currTitle;
+        if (lang == Util.EN) currTitle = enTitle;
+        else currTitle = heTitle;
         while (tempNode.parent != null && !foundTitleMatch) {
             String tempTitle;
             if (lang == Util.EN) tempTitle = tempNode.parent.enTitle;
@@ -99,6 +113,11 @@ public class MenuNode implements Parcelable {
         }
 
         return currTitle;
+    }
+
+    public String getPrettyTitle(int lang) {
+        if (lang == Util.EN) return enPrettyTitle;
+        else return hePrettyTitle;
     }
 
     //I'm assuming here the enTitle is always the same as the book title...

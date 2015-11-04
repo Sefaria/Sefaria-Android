@@ -95,7 +95,7 @@ public class TextActivity extends AppCompatActivity {
         List<Text> textsList = Text.get(book, levels);
         PerekTextView content = new PerekTextView(this,textsList);
         perekTextViews.add(content);
-        content.setTextSize(30);
+        content.setTextSize(20);
 
 
         //content.setIsCts(true);
@@ -151,6 +151,9 @@ public class TextActivity extends AppCompatActivity {
                     return;
                 case R.id.bi_btn:
                     Log.d("text","BI");
+                    for (PerekTextView ptv: perekTextViews) {
+                        ptv.setLang(Util.BI);
+                    }
                     return;
                 case R.id.cts_btn:
                     Log.d("text","CTS");
