@@ -25,3 +25,8 @@ proguard/
 
 # Log Files
 *.log
+
+#sudio stuff
+.idea/libraries
+.idea/modules.xml
+.idea/workspace.xml
