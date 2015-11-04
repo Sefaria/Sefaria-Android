@@ -1,8 +1,10 @@
-package org.sefaria.sefaria;
+package org.sefaria.sefaria.layouts;
 
 import android.content.Context;
 import android.view.View;
 import android.widget.LinearLayout;
+
+import org.sefaria.sefaria.R;
 
 /**
  * Created by nss on 10/7/15.
@@ -13,7 +15,7 @@ public class TextMenuBar extends LinearLayout {
 
     public TextMenuBar(Context context, OnClickListener btnListener) {
         super(context);
-        inflate(context,R.layout.text_menu_bar,this);
+        inflate(context, R.layout.text_menu_bar,this);
 
         enBtn = findViewById(R.id.en_btn);
         heBtn = findViewById(R.id.he_btn);

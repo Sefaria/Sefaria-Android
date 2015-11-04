@@ -10,7 +10,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import org.sefaria.sefaria.R;
-import org.sefaria.sefaria.TextActivity;
+import org.sefaria.sefaria.activities.TextActivity;
 import org.sefaria.sefaria.Util;
 
 import java.util.ArrayList;

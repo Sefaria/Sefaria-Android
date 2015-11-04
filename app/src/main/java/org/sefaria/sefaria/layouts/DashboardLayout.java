@@ -1,4 +1,4 @@
-package org.sefaria.sefaria;
+package org.sefaria.sefaria.layouts;
 
 import android.content.Context;
 import android.util.AttributeSet;
