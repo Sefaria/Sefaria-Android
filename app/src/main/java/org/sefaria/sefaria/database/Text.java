@@ -1,21 +1,27 @@
 package org.sefaria.sefaria.database;
+import org.sefaria.sefaria.MyApp;
+
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.Util;
 
 
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteStatement;
+import android.os.Handler;
+import android.os.Message;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
+import android.widget.Toast;
 
 public class Text implements Parcelable {
 
@@ -27,17 +33,39 @@ public class Text implements Parcelable {
         getFromCursor(cursor);
     }
 
-    public Text(int tid) {
-        Database2 dbHandler = Database2.getInstance(MyApp.getContext());
-        SQLiteDatabase db = dbHandler.getReadableDatabase();
-        Cursor cursor = db.query(TABLE_TEXTS, null, "_id" + "=?",
-                new String[] { String.valueOf(tid) }, null, null, null, null);
+    //ADDED NEW CONSTRUCTOR FOR API:
+    public Text(String enText, String heText) {
+        this.enText = enText;
+        this.heText = heText;
+        this.tid = 0;
+        this.bid = 0;
+        levels = new int [] {0,0,0,0,0,0};
+        this.displayNum = true;//unless we know otherwise, we'll default to display the verse Number
+    }
 
-        if (cursor != null && cursor.moveToFirst()){
-            getFromCursor(cursor);
+    public Text(int tid) {
+        Database2 dbHandler = Database2.getInstance();
+        SQLiteDatabase db = dbHandler.getReadableDatabase();
+
+        try{
+            Cursor cursor = db.query(TABLE_TEXTS, null, "_id" + "=?",
+                    new String[] { String.valueOf(tid) }, null, null, null, null);
+
+            if (cursor != null && cursor.moveToFirst()){
+                getFromCursor(cursor);
+            }
+            else{
+                this.tid = 0;
+                this.levels = new int [] {0,0,0,0,0,0};
+            }
+        }catch(SQLiteException e){
+            if(!e.toString().contains(API.NO_TEXT_MESSAGE)){
+                throw e; //don't know what the problem is so throw it back out
+            }
+            //This probably means that it's the API database
+            this.tid = 0;
+            this.levels = new int [] {0,0,0,0,0,0};
         }
-        else
-            tid = 0;
     }
 
     public static final int MAX_LEVELS = 6;
@@ -68,30 +96,21 @@ public class Text implements Parcelable {
     public int bid;
     public String enText;
     public String heText;
-    public int level1;
-    public int level2;
-    public int level3;
-    public int level4;
-    public int level5;
-    public int level6;
     public int [] levels;
     //public int hid;
     public boolean displayNum;
 
     public static final String TABLE_TEXTS = "Texts";
 
-
     public void getFromCursor(Cursor cursor){
         tid = cursor.getInt(0);
         bid = cursor.getInt(1);
         enText = cursor.getString(2);
         heText = cursor.getString(3);
-        level1 = cursor.getInt(4);
-        level2 = cursor.getInt(5);
-        level3 = cursor.getInt(6);
-        level4 = cursor.getInt(7);
-        level5 = cursor.getInt(8);
-        level6 = cursor.getInt(9);
+        levels = new int []{0,0,0,0,0,0};
+        for(int i=0;i<6;i++){
+            levels[i] = cursor.getInt(i+4);
+        }
         displayNum = (cursor.getInt(10) != 0);
 
 
@@ -100,18 +119,16 @@ public class Text implements Parcelable {
         if(heText == null)
             heText = "";
 
-        levels = new int [] {level1, level2, level3,level4, level5, level6};
-
 
     }
 
 
 
-    public static List<Text> getAll() {
-        Database2 dbHandler = Database2.getInstance(MyApp.getContext());
+    static List<Text> getAll() {
+        Database2 dbHandler = Database2.getInstance();
         List<Text> textList = new ArrayList<Text>();
         // Select All Query
-        String selectQuery = "SELECT  * FROM " + TABLE_TEXTS;
+        String selectQuery = "SELECT * FROM " + TABLE_TEXTS;
 
         SQLiteDatabase db = dbHandler.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -131,10 +148,10 @@ public class Text implements Parcelable {
         return textList;
     }
 
-    public static List<Text> get(Book book, int[] levels) {
+    public static List<Text> get(Book book, int[] levels) throws API.APIException {
 
         if(book.textDepth != levels.length){
-            Log.e("Error_sql", "wrong size of levels." + book.toString() + " Text Depth = " + book.textDepth + ". Levels.length = " + levels.length);
+            Log.e("Error_sql", "wrong size of levels.");
             //return new ArrayList<Text>();
         }
         //else
@@ -142,7 +159,7 @@ public class Text implements Parcelable {
     }
 
     //TODO remove this function...
-    public static List<Text> getAllTextsFromDB2() {
+    private static List<Text> getAllTextsFromDB2() {
         Database2 dbHandler = new Database2(MyApp.getContext());
         List<Text> textList = new ArrayList<Text>();
         // Select All Query
@@ -167,9 +184,9 @@ public class Text implements Parcelable {
     }
 
 
-    public static int max(int bid, int[] levels) {
+    private static int max(int bid, int[] levels) {
 
-        Database2 dbHandler = Database2.getInstance(MyApp.getContext());
+        Database2 dbHandler = Database2.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
         int nonZeroLevel;
         for(nonZeroLevel = 0; nonZeroLevel < levels.length; nonZeroLevel++){
@@ -200,37 +217,68 @@ public class Text implements Parcelable {
 	}
 	 */
 
-    public static List<Text> get(int bid, int[] levels) {
 
-		/*//EXAMPLE:
-		int[] levels = new {0, 12};
-		Text.get(1, levels); //get book bid 1 everything in chap 12.
-		 */
-        Database2 dbHandler = Database2.getInstance(MyApp.getContext());
-        SQLiteDatabase db = dbHandler.getReadableDatabase();
-
+    private static List<Text> getFromDB(int bid, int[] levels) {
         List<Text> textList = new ArrayList<Text>();
+        Database2 dbHandler = Database2.getInstance();
+        SQLiteDatabase db = dbHandler.getReadableDatabase();
 
         Cursor cursor = db.rawQuery("SELECT DISTINCT * FROM "+ TABLE_TEXTS +" " + fullWhere(bid, levels) + " ORDER BY " + orderBy(bid, levels), null);
 
-        //Cursor cursor1 = db.query(TABLE_TEXTS, null, whereStatement, whereArgs, null, null, orderBy);
-
-        // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
                 // Adding  to list
                 textList.add(new Text(cursor));
             } while (cursor.moveToNext());
         }
+        return textList;
+
+    }
+
+    /**
+     *
+     * @param bid
+     * @param levels
+     * EXAMPLE:
+     * 	int[] levels = new {0, 12};
+     * 	Text.get(1, levels); //get book bid 1 everything in chap 12.
+     * @return
+     * @throws API.APIException
+     */
+    public static List<Text> get(int bid, int[] levels) throws API.APIException {
+
+        List<Text> textList = new ArrayList<Text>();
+        try {
+            textList = getFromDB(bid,levels);
+        }catch(SQLiteException e){
+            if(!e.toString().contains(API.NO_TEXT_MESSAGE)){
+                throw e; //don't know what the problem is so throw it back out
+            }
+            textList = API.getTextsFromAPI(Book.getTitle(bid), levels);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        return textList;
+
+        //Cursor cursor1 = db.query(TABLE_TEXTS, null, whereStatement, whereArgs, null, null, orderBy);
+
+        // looping through all rows and adding to list
+		/*if (cursor.moveToFirst()) {
+			do {
+				// Adding  to list
+				textList.add(new Text(cursor));
+			} while (cursor.moveToNext());
+		}**/
 
 		/*	//LOGING:
 		for(int i = 0; i < textList.size(); i++)
 			textList.get(i).log();
 		 */
         //findWordsInList(textList, "the");
-        //findWordsInList(textList,"ש");
+        //findWordsInList(textList,"׳©");
 
-        return textList;
+
     }
 
 
@@ -246,18 +294,10 @@ public class Text implements Parcelable {
         Text dummyChapText = deepCopy(text);
         //dummyChapText.log();
 
-        if(wherePage > 1) //I really should have used arrays (that was dumb).
-            dummyChapText.level1 = -1;
-        if(wherePage > 2)
-            dummyChapText.level2 = -1;
-        if(wherePage > 3)
-            dummyChapText.level3 = -1;
-        if(wherePage > 4)
-            dummyChapText.level4 = -1;
-        if(wherePage > 5)
-            dummyChapText.level5 = -1;
-        if(wherePage > 6)
-            dummyChapText.level6 = -1;
+        for(int i=0;i<6;i++){
+            if(wherePage > i+1)
+                dummyChapText.levels[i] = -1;
+        }
 
         //TODO check that it's correct to use ">" for all types of where pages.
         Log.d("sql_dummytext", "wherePage: " + wherePage);
@@ -271,18 +311,10 @@ public class Text implements Parcelable {
         Text dummyChapText = deepCopy(text);
         //dummyChapText.log();
 
-        if(wherePage > 1) //I really should have used arrays (that was dumb).
-            dummyChapText.level1 = 0;
-        if(wherePage > 2)
-            dummyChapText.level2 = 0;
-        if(wherePage > 3)
-            dummyChapText.level3 = 0;
-        if(wherePage > 4)
-            dummyChapText.level4 = 0;
-        if(wherePage > 5)
-            dummyChapText.level5 = 0;
-        if(wherePage > 6)
-            dummyChapText.level6 = 0;
+        for(int i=0;i<6;i++){
+            if(wherePage > i+1)
+                dummyChapText.levels[i] = 0;
+        }
 
         //TODO check that it's correct to use ">" for all types of where pages.
         Log.d("sql_dummytext", "wherePage: " + wherePage);
@@ -298,7 +330,7 @@ public class Text implements Parcelable {
             public void run() {
                 try {
                     int chunkSize = 5000;
-                    Database2 dbHandler = Database2.getInstance(MyApp.getContext());
+                    Database2 dbHandler = Database2.getInstance();
                     SQLiteDatabase db = dbHandler.getReadableDatabase();
 
                     List<Text> textList = new ArrayList<Text>();
@@ -360,32 +392,42 @@ public class Text implements Parcelable {
         Log.d("sql_removed_lang", title + " removed " + lang);
     }
 
-    public static ArrayList<Integer> getChaps(int bid, int[] levels) {
-
-        Database2 dbHandler = Database2.getInstance(MyApp.getContext());
-        SQLiteDatabase db = dbHandler.getReadableDatabase();
-
-        ArrayList<Integer> chapList = new ArrayList<Integer>();
-
+    public static int getNonZeroLevel(int[] levels) {
         int nonZeroLevel;
         for(nonZeroLevel = 0; nonZeroLevel < levels.length; nonZeroLevel++){
             if(levels[nonZeroLevel] != 0)
                 break;
         }
-        String sql = "SELECT DISTINCT level" + nonZeroLevel + " FROM "+ TABLE_TEXTS +" " + fullWhere(bid, levels) + " ORDER BY "  + "level" + nonZeroLevel;
-        Cursor cursor = db.rawQuery(sql, null);
+        return nonZeroLevel;
+    }
 
-        // looping through all rows and adding to list
-        if (cursor.moveToFirst()) {
-            do {
-                // Adding  to list
-                chapList.add(Integer.valueOf((cursor.getInt(0))));
-            } while (cursor.moveToNext());
+    public static ArrayList<Integer> getChaps(int bid, int[] levels) throws API.APIException {
+        Database2 dbHandler = Database2.getInstance();
+        SQLiteDatabase db = dbHandler.getReadableDatabase();
+
+        ArrayList<Integer> chapList = new ArrayList<Integer>();
+
+        int nonZeroLevel = getNonZeroLevel(levels);
+        String sql = "SELECT DISTINCT level" + nonZeroLevel + " FROM "+ TABLE_TEXTS +" " + fullWhere(bid, levels) + " ORDER BY "  + "level" + nonZeroLevel;
+
+        try{
+            Cursor cursor = db.rawQuery(sql, null);
+
+            // looping through all rows and adding to list
+            if (cursor.moveToFirst()) {
+                do {
+                    // Adding  to list
+                    chapList.add(Integer.valueOf((cursor.getInt(0))));
+                } while (cursor.moveToNext());
+            }
+        }catch(Exception e){
+            chapList = API.getChaps(Book.getTitle(bid),levels);
+
         }
 
 		/*//LOGING:
-		for(int i = 0; i < chapList.size(); i++)
-			Log.d("sql_chapList" , chapList.get(i).toString());
+	        for(int i = 0; i < chapList.size(); i++)
+	            Log.d("sql_chapList" , chapList.get(i).toString());
 		 */
         return chapList;
     }
@@ -430,10 +472,9 @@ public class Text implements Parcelable {
         return orderBy;
     }
 
+
     public void log() {
-        Log.d("sql-TEXTS", /*Ktid + ": " + tid + */" " + Kbid + ": " + bid + " " + "level: "  + level6 + "." + level5 + "." +level4 + "." + level3 + "."+ level2 + "." + level1 + " "+ KenText + ": " + enText + " " + KheText + ": " + heText);
-
-
+        Log.d("text", toString());
     }
 
     private static String convertLangToLangText(String lang){
@@ -661,12 +702,6 @@ public class Text implements Parcelable {
         newText.bid = text.bid;
         newText.enText = text.enText;
         newText.heText = text.heText;
-        newText.level1 = text.level1;
-        newText.level2 = text.level2;
-        newText.level3 = text.level3;
-        newText.level4 = text.level4;
-        newText.level5 = text.level5;
-        newText.level6 = text.level6;
         newText.levels = text.levels.clone();
         newText.tid    = text.tid;
         newText.displayNum = text.displayNum;
@@ -675,8 +710,13 @@ public class Text implements Parcelable {
 
     @Override
     public String toString() {
-        return enText;
+        String string =  tid + "-" + bid ;
+        for(int i=0;i<levels.length;i++)
+            string+= "." + levels[i];
+        string += " " + enText + " " + heText;
+        return string;
     }
+
 
     //PARCELABLE------------------------------------------------------------------------
 
@@ -702,12 +742,6 @@ public class Text implements Parcelable {
         dest.writeInt(bid);
         dest.writeString(enText);
         dest.writeString(heText);
-        dest.writeInt(level1);
-        dest.writeInt(level2);
-        dest.writeInt(level3);
-        dest.writeInt(level4);
-        dest.writeInt(level5);
-        dest.writeInt(level6);
         dest.writeIntArray(levels);
         dest.writeInt(displayNum ? 1 : 0);
     }
@@ -717,14 +751,7 @@ public class Text implements Parcelable {
         bid = in.readInt();
         enText = in.readString();
         heText = in.readString();
-        level1 = in.readInt();
-        level2 = in.readInt();
-        level3 = in.readInt();
-        level4 = in.readInt();
-        level5 = in.readInt();
-        level6 = in.readInt();
         levels = in.createIntArray();
         displayNum = in.readInt() != 0;
     }
 }
-

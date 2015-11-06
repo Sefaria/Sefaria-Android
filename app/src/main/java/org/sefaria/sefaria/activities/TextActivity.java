@@ -11,7 +11,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.layouts.CustomActionbar;
 import org.sefaria.sefaria.layouts.JustifyTextView;
 import org.sefaria.sefaria.R;
@@ -92,7 +94,14 @@ public class TextActivity extends AppCompatActivity {
     private void loadSection() {
         currLoadedChapter++;
         int[] levels = {0,currLoadedChapter};
-        List<Text> textsList = Text.get(book, levels);
+        List<Text> textsList;
+        try {
+             textsList = Text.get(book, levels);
+        }catch (API.APIException e){
+            textsList = new ArrayList<>();
+            Toast.makeText(this, "Problem getting from internet", Toast.LENGTH_SHORT).show();
+            //TODO move string to R.string and maybe handle differently
+        }
         PerekTextView content = new PerekTextView(this,textsList);
         perekTextViews.add(content);
         content.setTextSize(20);
