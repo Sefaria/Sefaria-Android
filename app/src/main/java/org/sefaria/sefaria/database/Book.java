@@ -1,12 +1,14 @@
 package org.sefaria.sefaria.database;
+import org.sefaria.sefaria.MyApp;
+import org.sefaria.sefaria.Util;
+
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.sefaria.sefaria.MyApp;
-import org.sefaria.sefaria.Util;
+
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -59,9 +61,15 @@ public class Book implements Parcelable {
     public String heTitle;
     public int languages;
 
+
+    @Override
+    public String toString() {
+        return "bid: " + bid  + " commentsOn: " + commentsOn + " sectionNames: " + sectionNames + " categories: "+ categories +
+                "textDepth: " + textDepth + "wherePage: " + wherePage +" title: "  + title + "heTitle: " + heTitle + Klanguages + languages;
+    }
+
     public void log(){
-        Log.d("sql_dis","bid: " + bid  + " commentsOn: " + commentsOn + " sectionNames: " + sectionNames + " categories: "+ categories +
-                "textDepth: " + textDepth + "wherePage: " + wherePage +" title: "  + title + "heTitle: " + heTitle + Klanguages + languages);
+        Log.d("sql_dis",toString());
     }
 
     public static final String TABLE_BOOKS = "Books";
@@ -181,7 +189,7 @@ public class Book implements Parcelable {
 
     public void get(String title, SQLiteDatabase db){
         if(db == null){
-            Database2 dbHandler = Database2.getInstance(MyApp.getContext());
+            Database2 dbHandler = Database2.getInstance();
             db = dbHandler.getReadableDatabase();
         }
         Cursor cursor = db.query(TABLE_BOOKS, null, Ktitle + "=?",
@@ -197,7 +205,7 @@ public class Book implements Parcelable {
     }
 
     public void get(int bid){
-        Database2 dbHandler = Database2.getInstance(MyApp.getContext());
+        Database2 dbHandler = Database2.getInstance();
         SQLiteDatabase	db = dbHandler.getReadableDatabase();
         Cursor cursor = db.query(TABLE_BOOKS, null, "_id" + "=?",
                 new String[] { String.valueOf(bid) }, null, null, null, null);
@@ -213,7 +221,7 @@ public class Book implements Parcelable {
     }
 
     public static int getBid(String title){
-        Database2 dbHandler = Database2.getInstance(MyApp.getContext());
+        Database2 dbHandler = Database2.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
         return getBid(title, db);
     }
@@ -236,7 +244,7 @@ public class Book implements Parcelable {
     }
 
     public static String getTitle(int bid){
-        Database2 dbHandler = Database2.getInstance(MyApp.getContext());
+        Database2 dbHandler = Database2.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
         Cursor cursor = db.query(TABLE_BOOKS, new String [] {"title"},  "_id=?",
                 new String[] { String.valueOf(bid) }, null, null, null, null);
@@ -256,7 +264,7 @@ public class Book implements Parcelable {
 
     //I'm not sure if this function is ever used.
     private static int getNum(String title, String type){
-        Database2 dbHandler = Database2.getInstance(MyApp.getContext());
+        Database2 dbHandler = Database2.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_BOOKS, new String [] {type}, Ktitle + "=?",
@@ -276,7 +284,7 @@ public class Book implements Parcelable {
     }
 
     public static List<Book> getAll() {
-        Database2 dbHandler = Database2.getInstance(MyApp.getContext());
+        Database2 dbHandler = Database2.getInstance();
         List<Book> bookList = new ArrayList<Book>();
         // Select All Query
         String selectQuery = "SELECT  * FROM " + TABLE_BOOKS;
@@ -299,7 +307,7 @@ public class Book implements Parcelable {
     }
 
     public static ArrayList<String> getAllBookNames(boolean isHebrew) {
-        Database2 dbHandler = Database2.getInstance(MyApp.getContext());
+        Database2 dbHandler = Database2.getInstance();
         // Select All Query
         String selectQuery = "SELECT  * FROM " + TABLE_BOOKS;
 
@@ -394,4 +402,29 @@ public class Book implements Parcelable {
     }
 
 }
+
+
+
+
+
+/*	public void add() {
+		DatabaseHandler dbHandler = DatabaseHandler.getInstance(MyApp.context);
+
+	SQLiteDatabase db = dbHandler.getWritableDatabase();
+
+	ContentValues values = new ContentValues();
+	values.put(KcommentsOn, commentsOn); 
+	values.put(KsectionNames, sectionNames);
+	values.put(Kcategories, categories); 
+	values.put(KtextDepth, textDepth); 
+	values.put(KwherePage, wherePage);
+	values.put(Klengths, lengths); 
+	values.put(Ktitle, title); 
+	values.put(KheTitle, heTitle); 
+
+	// Inserting Row
+	db.insert(TABLE_BOOKS, null, values);
+	db.close(); // Closing database connection
+}
+ */
 

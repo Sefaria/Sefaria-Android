@@ -1,5 +1,5 @@
 package org.sefaria.sefaria.database;
-
+import org.sefaria.sefaria.MyApp;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,7 +17,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import org.sefaria.sefaria.MyApp;
+
 
 public class Database2 extends SQLiteOpenHelper{
 
@@ -76,10 +76,8 @@ public class Database2 extends SQLiteOpenHelper{
         }
     }
 
-
-
-    public static Database2 getInstance(Context context) {
-
+    public static Database2 getInstance() {
+        Context context = MyApp.getContext();
         // Use the application context, which will ensure that you
         // don't accidentally leak an Activity's context.
         // See this article for more information: http://bit.ly/6LRzfx
@@ -89,14 +87,13 @@ public class Database2 extends SQLiteOpenHelper{
         return sInstance;
     }
 
-    private boolean checkDataBase(){
+    public static boolean checkDataBase(){
 
         SQLiteDatabase checkDB = null;
 
         try{
             String myPath = DB_PATH + DB_NAME + ".db";
             checkDB = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
-
         }catch(Exception e){
             MyApp.sendException(e, "database does't exist");
             //database does't exist yet.
@@ -104,9 +101,7 @@ public class Database2 extends SQLiteOpenHelper{
         }
 
         if(checkDB != null){
-
             checkDB.close();
-
         }
 
         return checkDB != null ? true : false;
@@ -155,13 +150,27 @@ public class Database2 extends SQLiteOpenHelper{
 
     }
 
-    public void unzipDatabase(String oldPath, String newPath) throws IOException
+    public static void createAPIdb(){
+        Database2 myDbHelper = new Database2(MyApp.currActivityContext);
+        Log.d("api", "trying to create db");
+        myDbHelper.getReadableDatabase();
+        try {
+            myDbHelper.unzipDatabase("UpdateForSefariaMobileDatabase.zip.jar", Database2.DB_PATH,true);
+        } catch (IOException e) {
+            Log.e("api",e.toString());
+        }
+    }
+
+    public  void unzipDatabase(String oldPath, String newPath, boolean fromAssets) throws IOException
     {
         Log.d("zip","let's unzip this bad boy...");
         InputStream is;
         ZipInputStream zis;
         String filename;
-        is =  new FileInputStream(new File(oldPath));  //myContext.getAssets().open(name);
+        if(fromAssets)
+            is = myContext.getAssets().open(oldPath);
+        else
+            is =  new FileInputStream(new File(oldPath));
         zis = new ZipInputStream(is);
         ZipEntry ze;
         byte[] buffer = new byte[1024];
@@ -200,7 +209,7 @@ public class Database2 extends SQLiteOpenHelper{
     public static int getVersion(){
         int versionNum = -1;
         try{
-            Database2 dbHandler = Database2.getInstance(MyApp.getContext());
+            Database2 dbHandler = Database2.getInstance();
             SQLiteDatabase db = dbHandler.getReadableDatabase();
             Cursor cursor = db.query("Settings", null, "_id" + "=?",
                     new String[] { "version" }, null, null, null, null);
