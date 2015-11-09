@@ -2,6 +2,7 @@ package org.sefaria.sefaria;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.view.View;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -256,5 +257,13 @@ public class Util {
     public static float pixelsToSp(Context context, float px) {
         float scaledDensity = context.getResources().getDisplayMetrics().scaledDensity;
         return px/scaledDensity;
+    }
+
+    public static int getRelativeTop(View myView) {
+        if (myView.getParent()== null) return 0;
+        if (myView.getParent() == myView.getRootView())
+            return myView.getTop();
+        else
+            return myView.getTop() + getRelativeTop((View) myView.getParent());
     }
 }
