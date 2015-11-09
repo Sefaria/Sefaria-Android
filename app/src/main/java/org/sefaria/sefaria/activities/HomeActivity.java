@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import org.sefaria.sefaria.database.API;
+import org.sefaria.sefaria.database.Node;
 import org.sefaria.sefaria.layouts.CustomActionbar;
 import org.sefaria.sefaria.DialogManager;
 import org.sefaria.sefaria.MyApp;
@@ -19,6 +21,7 @@ import org.sefaria.sefaria.menu.MenuTabController;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.Toast;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -68,8 +71,10 @@ public class HomeActivity extends AppCompatActivity {
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(cab);
 
-        // Toast.makeText(this,"starting download", Toast.LENGTH_SHORT).show();
-        //updateLibrary();
+        if(API.useAPI()) {
+            Toast.makeText(this, "starting download", Toast.LENGTH_SHORT).show();
+            updateLibrary();
+        }
         /*List<Book> bookList = Book.getAll();
         for(int i = 0; i < bookList.size(); i++)
             bookList.get(i).log();*/
