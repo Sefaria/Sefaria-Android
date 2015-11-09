@@ -26,5 +26,24 @@ proguard/
 # Log Files
 *.log
 
-.idea/*
-.idea
+#sudio stuff
+.idea/libraries
+.idea/modules.xml
+.idea/workspace.xml
+.idea/gradle.xml
+
+
+#more sudio
+.idea/.name
+.idea/compiler.xml
+.idea/copyright/profiles_settings.xml
+.idea/encodings.xml
+.idea/libraries/libs.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/scopes/scope_settings.xml
+.idea/vcs.xml
+.idea/workspace.xml
+
+
+.DS_Store
