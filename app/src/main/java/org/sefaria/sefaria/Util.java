@@ -129,6 +129,14 @@ public class Util {
         return dir.delete();
     }
 
+    public static String array2str(String [] array){
+        String str = "[";
+        for(int i=0; i<array.length;i++)
+            str += array[i] +",";
+        str += "]";
+        return str;
+    }
+
     public static String getRemovedNikudString(String nikStr) {
         //final Pattern r = Pattern.compile("[\u0591-\u05C7]");
         //final Pattern r = Pattern.compile("[\u0591-\u05BD\u05BF\u05C7]");

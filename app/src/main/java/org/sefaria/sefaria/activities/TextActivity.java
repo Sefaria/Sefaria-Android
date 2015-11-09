@@ -1,8 +1,8 @@
 package org.sefaria.sefaria.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
@@ -11,7 +11,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.layouts.CustomActionbar;
 import org.sefaria.sefaria.layouts.JustifyTextView;
 import org.sefaria.sefaria.R;
@@ -30,7 +32,7 @@ import org.sefaria.sefaria.menu.MenuState;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TextActivity extends AppCompatActivity {
+public class TextActivity extends Activity {
 
     public enum TextEnums {
         NEXT_SECTION, PREV_SECTION
@@ -193,7 +195,15 @@ public class TextActivity extends AppCompatActivity {
         }
         //int[] levels = {0,currLoadedChapter};
         //Text.getNextChap(book,levels,next);
-        List<Text> textsList = Text.get(book, levels);
+
+        List<Text> textsList;
+        try {
+            textsList = Text.get(book, levels);
+        } catch (API.APIException e) {
+            textsList = new ArrayList<>();
+            Toast.makeText(this,"API Exception!!!",Toast.LENGTH_SHORT).show();
+            return;
+        }
         PerekTextView content = new PerekTextView(this,textsList,isCts,lang,textSize,textScrollView.getScrollY());
 
         perekTextViews.add(content);
