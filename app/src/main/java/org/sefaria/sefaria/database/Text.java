@@ -408,9 +408,9 @@ public class Text implements Parcelable {
         ArrayList<Integer> chapList = new ArrayList<Integer>();
 
         int nonZeroLevel = getNonZeroLevel(levels);
-        String sql = "SELECT DISTINCT level" + nonZeroLevel + " FROM "+ TABLE_TEXTS +" " + fullWhere(bid, levels) + " ORDER BY "  + "level" + nonZeroLevel;
+        String sql = "SELECT DISTINCT level" + nonZeroLevel + " FROM " + TABLE_TEXTS + " " + fullWhere(bid, levels) + " ORDER BY " + "level" + nonZeroLevel;
 
-        try{
+        try {
             Cursor cursor = db.rawQuery(sql, null);
 
             // looping through all rows and adding to list
@@ -420,8 +420,8 @@ public class Text implements Parcelable {
                     chapList.add(Integer.valueOf((cursor.getInt(0))));
                 } while (cursor.moveToNext());
             }
-        }catch(Exception e){
-            chapList = API.getChaps(Book.getTitle(bid),levels);
+        } catch (Exception e) {
+            chapList = API.getChaps(Book.getTitle(bid), levels);
 
         }
 
@@ -431,6 +431,7 @@ public class Text implements Parcelable {
 		 */
         return chapList;
     }
+
 
     private static String[] whereArgs(int bid, int[] levels){
         String [] whereArgs = new String [levels.length + 1];
@@ -454,8 +455,14 @@ public class Text implements Parcelable {
         return whereStatement;
     }
 
+    /**
+     *
+     * @param bid
+     * @param levels
+     * @return
+     */
     private static String fullWhere(int bid, int[] levels){
-        String fullWhere =  " WHERE " + Kbid + "= " + String.valueOf(bid);
+        String fullWhere = " WHERE " + Kbid + "= " + String.valueOf(bid);
         for(int i = 0; i < levels.length; i++){
             if(!(levels[i] == 0)){
                 fullWhere +=  " AND level" + String.valueOf(i + 1) + "= " + String.valueOf(levels[i]);
