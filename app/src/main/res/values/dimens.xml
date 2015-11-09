@@ -8,4 +8,9 @@
     <dimen name="subtitle_menu_font_size">8sp</dimen>
     <dimen name="button_menu_font_size">6sp</dimen>
     <dimen name="custom_actionbar_font_size">8sp</dimen>
+    <dimen name="default_text_font_size">10sp</dimen>
+    <dimen name="min_text_font_size">3sp</dimen>
+    <dimen name="max_text_font_size">30sp</dimen>
+    <dimen name="text_font_size_increment">1sp</dimen>
+    <dimen name="text_chapter_font_size">10sp</dimen>
 </resources>

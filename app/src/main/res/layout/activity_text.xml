@@ -32,7 +32,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignTop="@id/useless"
-        android:padding="15dp">
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp">
         <LinearLayout
             android:id="@+id/textRoot"
             android:layout_width="match_parent"

@@ -1,7 +1,7 @@
 package org.sefaria.sefaria.activities;
 
+import android.app.Activity;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import org.sefaria.sefaria.database.API;
@@ -23,7 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends Activity {
 
     private final int NUM_COLUMNS = 3;
     private final boolean LIMIT_GRID_SIZE = true;
