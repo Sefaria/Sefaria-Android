@@ -3,6 +3,7 @@ package org.sefaria.sefaria.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
@@ -98,11 +99,14 @@ public class TextActivity extends Activity {
                  // if diff is zero, then the bottom has been reached
                  if (bottomDiff <= 0) {
                      //Log.d("text","NEXT");
-                     loadSection(TextEnums.NEXT_SECTION);
+                     AsyncLoadSection als = new AsyncLoadSection(TextEnums.NEXT_SECTION);
+                     als.execute();
                  }
                  if (topDiff >= 0) {
                      //Log.d("text","PREV");
-                     loadSection(TextEnums.PREV_SECTION);
+                     AsyncLoadSection als = new AsyncLoadSection(TextEnums.PREV_SECTION);
+                     als.execute();
+
                      //if you add prev, you need to update all tops of all chaps
                      for (PerekTextView ptv: perekTextViews) {
                          ptv.setRelativeTop(Util.getRelativeTop(ptv));
@@ -114,8 +118,8 @@ public class TextActivity extends Activity {
                      if (scrollY > ptv.getTop()-3*scrollH && scrollY < ptv.getBottom()+3*scrollH) {
                          inVisiblePTVRange = true;
                          try {
-                             int newFirst = ptv.getNewFirstDrawnLine(scrollY)-5;
-                             int newLast = ptv.getNewLastDrawnLine(scrollY)+5;
+                             int newFirst = ptv.getNewFirstDrawnLine(scrollY)-PerekTextView.EXTRA_LOAD_LINES;
+                             int newLast = ptv.getNewLastDrawnLine(scrollY)+PerekTextView.EXTRA_LOAD_LINES;
                              int currFirst = ptv.getFirstDrawnLine();
                              int currLast = ptv.getLastDrawnLine();
                              //Log.d("text","First " + newFirst + " < " + currFirst + " LAST " + newLast + " > " + currLast);
@@ -150,70 +154,10 @@ public class TextActivity extends Activity {
         String title = menuState.getCurrNode().getTitle(Util.EN);
         book = new Book(title);
 
-
-        loadSection(TextEnums.NEXT_SECTION);
+        AsyncLoadSection als = new AsyncLoadSection(TextEnums.NEXT_SECTION);
+        als.execute();
     }
-    private void loadSection(TextEnums dir) {
-        int tempChap = 0;
-        if (dir == TextEnums.NEXT_SECTION) {
-            lastLoadedChapter++;
-            tempChap = lastLoadedChapter;
-            if (firstLoadedChap == 0) firstLoadedChap = 1; //initialize if first load TODO make this dynamic depending on where they first go
-        }
 
-        else if (dir == TextEnums.PREV_SECTION) {
-            firstLoadedChap--;
-            tempChap = firstLoadedChap;
-        }
-
-        //TODO need to add end and start detection. Special case is 1-level, b/c you load it all at once so you're done right then
-        if (firstLoadedChap < 1) { //you went too far, reset and return
-            firstLoadedChap = 1;
-            return;
-        }
-
-        int[] levels= new int[book.textDepth];
-        for (int i = 0; i < levels.length; i++) {
-            levels[i] = 0;
-        }
-        if (levels.length > WHERE_PAGE-1) {
-            if (levels.length > WHERE_PAGE)
-                levels[WHERE_PAGE] = 1; //TODO make this dynamic!
-            levels[WHERE_PAGE - 1] = tempChap;
-        }
-        loadSection(levels, dir);
-    }
-    private void loadSection(int[] levels, TextEnums dir) {
-        if (levels.length > WHERE_PAGE-1) {
-            //MenuNode tempNode = new MenuNode(book.sectionNamesL2B[wherePage-1] + " " + currLoadedChapter,
-            //        book.heSectionNamesL2B[wherePage-1] + " " + Util.int2heb(currLoadedChapter),null,null);
-            MenuNode tempNode = new MenuNode(""+levels[WHERE_PAGE-1],""+Util.int2heb(levels[WHERE_PAGE-1]),null,null);
-
-            TextChapterHeader tch = new TextChapterHeader(this,tempNode,lang,textSize);
-            textChapterHeaders.add(tch);
-            textRoot.addView(tch);
-        }
-        //int[] levels = {0,currLoadedChapter};
-        //Text.getNextChap(book,levels,next);
-
-        List<Text> textsList;
-        try {
-            textsList = Text.get(book, levels);
-        } catch (API.APIException e) {
-            textsList = new ArrayList<>();
-            Toast.makeText(this,"API Exception!!!",Toast.LENGTH_SHORT).show();
-            return;
-        }
-        PerekTextView content = new PerekTextView(this,textsList,isCts,lang,textSize,textScrollView.getScrollY());
-
-        perekTextViews.add(content);
-
-        if (dir == null || dir == TextEnums.NEXT_SECTION)
-            textRoot.addView(content); //add to end by default
-        else if (dir == TextEnums.PREV_SECTION)
-            textRoot.addView(content,0); //add to before
-
-    }
 
     @Override
     public void onSaveInstanceState(Bundle out) {
@@ -303,5 +247,96 @@ public class TextActivity extends Activity {
             }
         }
     };
+
+    public class AsyncLoadSection extends AsyncTask<Void,Void,List<Text>> {
+
+        private TextEnums dir;
+        private int levels[];
+
+        public AsyncLoadSection (TextEnums dir) {
+            this.dir = dir;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected List<Text> doInBackground(Void... params) {
+            return loadSection();
+        }
+
+        @Override
+        protected void onPostExecute(List<Text> textsList) {
+            if (textsList.size() == 0) return;
+
+            if (levels.length > WHERE_PAGE-1) {
+                //MenuNode tempNode = new MenuNode(book.sectionNamesL2B[wherePage-1] + " " + currLoadedChapter,
+                //        book.heSectionNamesL2B[wherePage-1] + " " + Util.int2heb(currLoadedChapter),null,null);
+                MenuNode tempNode = new MenuNode(""+levels[WHERE_PAGE-1],""+Util.int2heb(levels[WHERE_PAGE-1]),null,null);
+
+                TextChapterHeader tch = new TextChapterHeader(TextActivity.this,tempNode,lang,textSize);
+                textChapterHeaders.add(tch);
+                textRoot.addView(tch);
+            }
+
+            PerekTextView content = new PerekTextView(TextActivity.this,textsList,isCts,lang,textSize,textScrollView.getScrollY());
+
+            perekTextViews.add(content);
+
+            if (dir == null || dir == TextEnums.NEXT_SECTION)
+                textRoot.addView(content); //add to end by default
+            else if (dir == TextEnums.PREV_SECTION)
+                textRoot.addView(content,0); //add to before
+        }
+
+        private List<Text> loadSection() {
+            int tempChap = 0;
+            if (dir == TextEnums.NEXT_SECTION) {
+                lastLoadedChapter++;
+                tempChap = lastLoadedChapter;
+                if (firstLoadedChap == 0) firstLoadedChap = 1; //initialize if first load TODO make this dynamic depending on where they first go
+            }
+
+            else if (dir == TextEnums.PREV_SECTION) {
+                firstLoadedChap--;
+                tempChap = firstLoadedChap;
+            }
+
+            //TODO need to add end and start detection. Special case is 1-level, b/c you load it all at once so you're done right then
+            if (firstLoadedChap < 1) { //you went too far, reset and return
+                firstLoadedChap = 1;
+                return new ArrayList<>();
+            }
+
+            levels= new int[book.textDepth];
+            for (int i = 0; i < levels.length; i++) {
+                levels[i] = 0;
+            }
+            if (levels.length > WHERE_PAGE-1) {
+                if (levels.length > WHERE_PAGE)
+                    levels[WHERE_PAGE] = 1; //TODO make this dynamic!
+                levels[WHERE_PAGE - 1] = tempChap;
+            }
+
+
+            //int[] levels = {0,currLoadedChapter};
+            //Text.getNextChap(book,levels,next);
+
+            List<Text> textsList;
+            try {
+                textsList = Text.get(book, levels);
+                return textsList;
+            } catch (API.APIException e) {
+                textsList = new ArrayList<>();
+                Toast.makeText(TextActivity.this,"API Exception!!!",Toast.LENGTH_SHORT).show();
+                return new ArrayList<>();
+            }
+
+
+        }
+
+    }
 
 }

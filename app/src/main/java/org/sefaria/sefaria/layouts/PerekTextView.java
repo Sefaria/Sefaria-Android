@@ -36,6 +36,8 @@ import java.util.regex.Pattern;
  */
 public class PerekTextView extends JustifyTextView {
 
+    public static final int EXTRA_LOAD_LINES = 30;
+
     private boolean isCts; //is text continuous or seperated by passuk
     private int lang;
     private int mLineY;
@@ -73,7 +75,7 @@ public class PerekTextView extends JustifyTextView {
         vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                updateLayoutParams("");
+                updateLayoutParams();
                 if (!inited) {
 
                     updateScroll(0, 1000);
@@ -142,7 +144,7 @@ public class PerekTextView extends JustifyTextView {
     @Override
     public void setTextSize(float size) {
         super.setTextSize(size);
-        updateLayoutParams("");
+        updateLayoutParams();
     }
 
     public int getFirstDrawnLine() {
@@ -186,9 +188,9 @@ public class PerekTextView extends JustifyTextView {
             int min = this.scrollY - relativeTop;
             if (min < 0) min = 0;
             else if (min > getHeight() - scrollH) min = getHeight() - scrollH;
-            this.firstDrawnLine = layout.getLineForVertical(min) - 5;
+            this.firstDrawnLine = layout.getLineForVertical(min) - EXTRA_LOAD_LINES;
             if (firstDrawnLine < 0) firstDrawnLine = 0;
-            this.lastDrawnLine = layout.getLineForVertical(min + scrollH) + 5;
+            this.lastDrawnLine = layout.getLineForVertical(min + scrollH) + EXTRA_LOAD_LINES;
             if (lastDrawnLine > lineCount - 1) lastDrawnLine = lineCount - 1;
         } catch (NullPointerException e) {
             return;
@@ -197,7 +199,6 @@ public class PerekTextView extends JustifyTextView {
 
     public void update() {
         SpannableStringBuilder ssb = new SpannableStringBuilder();
-        String fullText = "";
         boolean isFirst = true;
         for (Text text : textList) {
             String words;
@@ -207,23 +208,23 @@ public class PerekTextView extends JustifyTextView {
                 words = "(" + Util.int2heb(text.levels[0]) + ") " + text.heText
                 + "\n\n(" + text.levels[0] + ") " + text.enText;
             }
-            words = isCts || isFirst ? " " + words : "\n\n" + words;
+            if (!isFirst)
+                words = isCts ? " " + words : "\n\n" + words;
+
             SpannableString ss = new SpannableString(words);
-            ss.setSpan(new VerseSpannable(words) ,0,ss.length(), 0);
+            ss.setSpan(new VerseSpannable(words), 0, ss.length(), 0);
             ssb.append(ss);
             isFirst = false;
-
-            fullText += words;
         }
         setText(ssb, TextView.BufferType.SPANNABLE);
         setMovementMethod(LinkMovementMethod.getInstance());
 
         //text props
-        updateLayoutParams(fullText);
+        updateLayoutParams();
         noahDraw();
     }
 
-    private void updateLayoutParams(String fullText) {
+    private void updateLayoutParams() {
         try {
             layout = getLayout();
             relativeTop = Util.getRelativeTop(PerekTextView.this);
@@ -231,11 +232,6 @@ public class PerekTextView extends JustifyTextView {
             paint.setColor(getCurrentTextColor());
             paint.drawableState = getDrawableState();
             text = (String) getText();
-            if (fullText != "" && !text.equals(fullText)) {
-                Log.d("text","text = " + text.substring(0,10) + " fullText = " + fullText.substring(0,10));
-            } else if (text.equals(fullText)) {
-                Log.d("text","EQUALLL");
-            }
 
             mViewWidth = getMeasuredWidth();
             this.textSize = getTextSize();
@@ -271,7 +267,7 @@ public class PerekTextView extends JustifyTextView {
             String drawText = "";
             for (int i = 0; i < lineCount; i++) {
                 if (i >= firstDrawnLine && i < lastDrawnLine) {
-                    if (isCts) {
+                    if (isCts && false) {  //TODO make this work
                         int lineStart = layout.getLineStart(i);
                         int lineEnd = layout.getLineEnd(i);
                         String line = text.substring(lineStart, lineEnd);
@@ -285,7 +281,7 @@ public class PerekTextView extends JustifyTextView {
                         }
                     } else { //seperated
 
-                            int textStart = layout.getLineStart(i);
+                        int textStart = layout.getLineStart(i);
                             int textEnd = layout.getLineEnd(lastDrawnLine);
                             drawText = text.substring(textStart, textEnd);
                             startY = mLineY;
