@@ -297,9 +297,9 @@ public class TextActivity extends Activity {
                 ptv.setLang(lang);
                 ptv.setIsCts(isCts);
                 if (updatedTextSize)
-                ptv.setTextSize(textSize);
+                    ptv.setTextSize(textSize);
                 else
-                ptv.update();
+                    ptv.update();
             }
         }
     };
