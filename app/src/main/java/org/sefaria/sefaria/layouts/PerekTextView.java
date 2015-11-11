@@ -61,19 +61,29 @@ public class PerekTextView extends JustifyTextView {
     private String drawText;
     private int startY;
 
+    private boolean inited;
+
     public PerekTextView (Context context, List<Text> textList,boolean isCts,int lang, float textSize, int scrollY) {
         super(context);
         this.textList = textList;
         this.scrollY = scrollY;
+        this.inited = false;
 
         ViewTreeObserver vto = getViewTreeObserver();
         vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                updateLayoutParams();
+                updateLayoutParams("");
+                if (!inited) {
+
+                    updateScroll(0, 1000);
+                    inited = true;
+                } else {
+                    noahDraw();
+                }
             }
         });
-
+        setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
         setIsCts(isCts);
         setLang(lang);
         setTextSize(textSize);
@@ -86,7 +96,7 @@ public class PerekTextView extends JustifyTextView {
     @Override
     protected void onDraw(Canvas canvas) {
         //oldOnDraw(canvas);
-        if (drawText != null) {
+        if (drawText != null && drawText != "") {
             //canvas.drawText(drawText, 0, 100, paint);
 
             //https://stackoverflow.com/questions/6756975/draw-multi-line-text-to-canvas
@@ -114,16 +124,16 @@ public class PerekTextView extends JustifyTextView {
 
     public void setLang(int lang) {
         this.lang = lang;
-
         if (lang == Util.HE) {
-            setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
+            //setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
             //setTextSize((getResources().getDimension(R.dimen.button_menu_font_size) * Util.EN_HE_RATIO));
             //setTextSize(getResources().getDimension(R.dimen.button_menu_font_size));
         }
         else if (lang == Util.EN){
-            setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT)); //actually, currently there's no nafka mina
+            //setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT)); //actually, currently there's no nafka mina
             //setTextSize(getResources().getDimension(R.dimen.button_menu_font_size));
         } else { //bilingual
+            //setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
             setIsCts(false);
         }
 
@@ -132,6 +142,7 @@ public class PerekTextView extends JustifyTextView {
     @Override
     public void setTextSize(float size) {
         super.setTextSize(size);
+        updateLayoutParams("");
     }
 
     public int getFirstDrawnLine() {
@@ -166,44 +177,53 @@ public class PerekTextView extends JustifyTextView {
     public void updateScroll(int scrollY,int scrollH) {
         this.scrollY = scrollY;
         this.scrollH = scrollH;
-        int min = this.scrollY - relativeTop;
-        if (min < 0) min = 0;
-        else if (min > getHeight()-scrollH) min = getHeight()-scrollH;
-        this.firstDrawnLine = layout.getLineForVertical(min)-5;
-        if (firstDrawnLine < 0) firstDrawnLine = 0;
-        this.lastDrawnLine  = layout.getLineForVertical(min + scrollH)+5;
-        if (lastDrawnLine > lineCount-1) lastDrawnLine = lineCount-1;
-        invalidate();
+        updateVisibleLines();
         noahDraw();
     }
+
+    private void updateVisibleLines() {
+        try {
+            int min = this.scrollY - relativeTop;
+            if (min < 0) min = 0;
+            else if (min > getHeight() - scrollH) min = getHeight() - scrollH;
+            this.firstDrawnLine = layout.getLineForVertical(min) - 5;
+            if (firstDrawnLine < 0) firstDrawnLine = 0;
+            this.lastDrawnLine = layout.getLineForVertical(min + scrollH) + 5;
+            if (lastDrawnLine > lineCount - 1) lastDrawnLine = lineCount - 1;
+        } catch (NullPointerException e) {
+            return;
+        }
+    }
+
     public void update() {
         SpannableStringBuilder ssb = new SpannableStringBuilder();
-
+        String fullText = "";
         boolean isFirst = true;
         for (Text text : textList) {
             String words;
             if (lang == Util.EN) words = "(" + text.levels[0] + ") " + text.enText;
             else if (lang == Util.HE) words = "(" + Util.int2heb(text.levels[0]) + ") " + text.heText;
             else { //bilingual
-                words = "\n\n(" + Util.int2heb(text.levels[0]) + ") " + text.heText
+                words = "(" + Util.int2heb(text.levels[0]) + ") " + text.heText
                 + "\n\n(" + text.levels[0] + ") " + text.enText;
             }
-            words = isCts && !isFirst ? " " + words : "\n" + words;
+            words = isCts || isFirst ? " " + words : "\n\n" + words;
             SpannableString ss = new SpannableString(words);
             ss.setSpan(new VerseSpannable(words) ,0,ss.length(), 0);
             ssb.append(ss);
             isFirst = false;
+
+            fullText += words;
         }
         setText(ssb, TextView.BufferType.SPANNABLE);
         setMovementMethod(LinkMovementMethod.getInstance());
 
         //text props
-        updateLayoutParams();
-        invalidate();
+        updateLayoutParams(fullText);
         noahDraw();
     }
 
-    private void updateLayoutParams() {
+    private void updateLayoutParams(String fullText) {
         try {
             layout = getLayout();
             relativeTop = Util.getRelativeTop(PerekTextView.this);
@@ -211,6 +231,12 @@ public class PerekTextView extends JustifyTextView {
             paint.setColor(getCurrentTextColor());
             paint.drawableState = getDrawableState();
             text = (String) getText();
+            if (fullText != "" && !text.equals(fullText)) {
+                Log.d("text","text = " + text.substring(0,10) + " fullText = " + fullText.substring(0,10));
+            } else if (text.equals(fullText)) {
+                Log.d("text","EQUALLL");
+            }
+
             mViewWidth = getMeasuredWidth();
             this.textSize = getTextSize();
             lineCount = layout.getLineCount();
@@ -236,6 +262,7 @@ public class PerekTextView extends JustifyTextView {
             // Runs on UI thread
             //drawText = "";
             //updateLayoutParams();
+            updateVisibleLines();
         }
 
         @Override
@@ -278,6 +305,7 @@ public class PerekTextView extends JustifyTextView {
 
         @Override
         protected void onPostExecute(String drawText) {
+            invalidate();
             PerekTextView ptv = ptvRef.get();
             ptv.drawText = drawText;
             ptv.startY = startY;
