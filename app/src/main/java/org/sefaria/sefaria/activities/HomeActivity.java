@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import org.sefaria.sefaria.database.API;
-import org.sefaria.sefaria.database.Node;
 import org.sefaria.sefaria.layouts.CustomActionbar;
 import org.sefaria.sefaria.DialogManager;
 import org.sefaria.sefaria.MyApp;
@@ -16,7 +15,6 @@ import org.sefaria.sefaria.database.UpdateService;
 import org.sefaria.sefaria.menu.MenuGrid;
 import org.sefaria.sefaria.menu.MenuNode;
 import org.sefaria.sefaria.menu.MenuState;
-import org.sefaria.sefaria.menu.MenuTabController;
 
 import android.view.View;
 import android.widget.LinearLayout;
@@ -44,7 +42,6 @@ public class HomeActivity extends Activity {
 
         if (in != null) {
             menuState = in.getParcelable("menuState");
-            MenuTabController.restoreState(in);
         }
 
         init();
@@ -58,7 +55,7 @@ public class HomeActivity extends Activity {
             menuState = new MenuState();
         }
 
-        menuGrid = new MenuGrid(this,NUM_COLUMNS, menuState,LIMIT_GRID_SIZE);
+        menuGrid = new MenuGrid(this,NUM_COLUMNS, menuState,LIMIT_GRID_SIZE,Util.Lang.HE);
         ScrollView gridRoot = (ScrollView) findViewById(R.id.gridRoot);
         gridRoot.addView(menuGrid);
 
@@ -66,8 +63,8 @@ public class HomeActivity extends Activity {
         View.OnClickListener tempCloseClick = null;
         if (isPopup) tempCloseClick = closeClick;
 
-        CustomActionbar cab = new CustomActionbar(this,new MenuNode("Sefaria","ספאריה",null,null),
-                Util.EN,null,tempCloseClick,null,null);
+        CustomActionbar cab = new CustomActionbar(this,new MenuNode("Sefaria","ספאריה",null),
+                Util.Lang.EN,null,tempCloseClick,null,null);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(cab);
 
@@ -101,7 +98,6 @@ public class HomeActivity extends Activity {
         super.onSaveInstanceState(out);
 
         out.putParcelable("menuState", menuState);
-        MenuTabController.saveState(out);
     }
 
     View.OnClickListener closeClick = new View.OnClickListener() {

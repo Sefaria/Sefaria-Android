@@ -25,9 +25,9 @@ import java.util.regex.Pattern;
  */
 public class Util {
 
-    public static final int EN = 0;
-    public static final int HE = 1;
-    public static final int BI = 2;
+    public enum Lang {
+        HE,BI,EN
+    }
 
     public static final float EN_HE_RATIO = 40f/35f; //universal constant
 

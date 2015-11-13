@@ -15,11 +15,11 @@ import org.sefaria.sefaria.menu.MenuNode;
  */
 public class TextChapterHeader extends LinearLayout {
 
-    private int lang;
+    private Util.Lang lang;
     private TextView tv;
     public MenuNode node;
 
-    public TextChapterHeader(Context context, MenuNode node, int lang, float textSize) {
+    public TextChapterHeader(Context context, MenuNode node, Util.Lang lang, float textSize) {
         super(context);
         inflate(context, R.layout.text_chapter_header, this);
         this.node = node;
@@ -31,9 +31,9 @@ public class TextChapterHeader extends LinearLayout {
 
     }
 
-    public void setLang(int lang) {
+    public void setLang(Util.Lang lang) {
         tv.setText(node.getPrettyTitle(lang));
-        if (lang == Util.HE) {
+        if (lang == Util.Lang.HE) {
             tv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
             //tv.setTextSize((getResources().getDimension(R.dimen.button_menu_font_size) * Util.EN_HE_RATIO));
         }

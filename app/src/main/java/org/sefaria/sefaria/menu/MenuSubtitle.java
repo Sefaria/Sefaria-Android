@@ -16,7 +16,7 @@ public class MenuSubtitle extends MenuElement {
     private TextView tv;
     private MenuNode node;
 
-    public MenuSubtitle(Context context, MenuNode node, int lang) {
+    public MenuSubtitle(Context context, MenuNode node, Util.Lang lang) {
         super(context);
         inflate(context, R.layout.subtitle_menu, this);
         this.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, 1f));
@@ -27,13 +27,13 @@ public class MenuSubtitle extends MenuElement {
 
     public MenuNode getNode() { return node; }
 
-    public void setLang(int lang) {
+    public void setLang(Util.Lang lang) {
         tv.setText(node.getPrettyTitle(lang));
-        if (lang == Util.HE) {
+        if (lang == Util.Lang.HE) {
             tv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
             tv.setTextSize((getResources().getDimension(R.dimen.subtitle_menu_font_size) * Util.EN_HE_RATIO));
         }
-        else if (lang == Util.EN) {
+        else if (lang == Util.Lang.EN) {
             tv.setTypeface(MyApp.getFont(MyApp.MONTSERRAT_FONT));
             tv.setTextSize(getResources().getDimension(R.dimen.subtitle_menu_font_size));
         }
