@@ -668,8 +668,8 @@ public class Text implements Parcelable {
         return 0;
     }
     //could be -1 in order to actually getMaxLang
-    public static int getMaxLang(List<Text> texts, int usersLang) {
-        int minLang = 0;
+    public static Util.Lang getMaxLang(List<Text> texts, Util.Lang usersLang) {
+        Util.Lang minLang;
         int numBi = 0; //num bilingual texts
         int numEn = 0;
         int numHe = 0;
@@ -682,26 +682,28 @@ public class Text implements Parcelable {
                 numEn++;
             }
         }
-        if (numBi/((double)texts.size()) > BILINGUAL_THRESHOLD) minLang = Util.BI;
+        if (numBi/((double)texts.size()) > BILINGUAL_THRESHOLD) minLang = Util.Lang.BI;
         else {
-            if (numEn > numHe) minLang = Util.EN;
-            else minLang = Util.HE;
+            if (numEn > numHe) minLang = Util.Lang.EN;
+            else minLang = Util.Lang.HE;
         }
-        //default to users lang
-        if (usersLang != -1) {
-            if (minLang == Util.BI || minLang == usersLang) {
-                //bc bilingual contains both langs
-                return usersLang;
-            }
+
+
+        //default to users lang if possible
+        if (minLang == Util.Lang.BI || minLang == usersLang) {
+            //bc bilingual contains both langs
+            return usersLang;
         }
+
+        //otherwise, return the most prevalent lang in text
         return minLang;
     }
 
-    public static int getMaxLang(Text text) {
-        if (text.enText != "" && text.heText != "") return Util.BI;
-        else if (text.enText != "") return Util.EN;
-        else if (text.heText != "") return Util.HE;
-        else return 0;
+    public static Util.Lang getMaxLang(Text text) {
+        if (text.enText != "" && text.heText != "") return Util.Lang.BI;
+        else if (text.enText != "") return Util.Lang.EN;
+        else if (text.heText != "") return Util.Lang.HE;
+        else return Util.Lang.HE; //default to HE when no text
     }
 
     public static Text deepCopy(Text text) {

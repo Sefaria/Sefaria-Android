@@ -35,7 +35,7 @@ public class MenuButton extends MenuElement {
         this.setVisibility(View.INVISIBLE);
     }
 
-    public MenuButton(Context context, MenuNode node, MenuNode sectionNode,int lang) {
+    public MenuButton(Context context, MenuNode node, MenuNode sectionNode,Util.Lang lang) {
         super(context);
         inflate(context, R.layout.button_menu, this);
         this.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, 1f));
@@ -69,9 +69,9 @@ public class MenuButton extends MenuElement {
 
     public boolean isBook() { return node.getNumChildren() == 0; }
 
-    public void setLang(int lang) {
+    public void setLang(Util.Lang lang) {
         tv.setText(node.getPrettyTitle(lang));
-        if (lang == Util.HE) {
+        if (lang == Util.Lang.HE) {
             tv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
             tv.setTextSize((getResources().getDimension(R.dimen.button_menu_font_size) * Util.EN_HE_RATIO));
         }

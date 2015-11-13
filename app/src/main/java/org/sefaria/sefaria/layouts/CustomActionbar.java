@@ -25,7 +25,7 @@ public class CustomActionbar extends MenuElement {
     private MenuNode node;
 
 
-    public CustomActionbar(Context context, MenuNode node, int lang, OnClickListener searchClick, OnClickListener closeClick, OnClickListener titleClick, OnClickListener menuClick) {
+    public CustomActionbar(Context context, MenuNode node, Util.Lang lang, OnClickListener searchClick, OnClickListener closeClick, OnClickListener titleClick, OnClickListener menuClick) {
         super(context);
         inflate(context, R.layout.custom_actionbar, this);
 
@@ -58,13 +58,13 @@ public class CustomActionbar extends MenuElement {
         titleTV.setText(title);
     }
 
-    public void setLang(int lang) {
+    public void setLang(Util.Lang lang) {
         setTitle(node.getTitle(lang));
-        if (lang == Util.HE) {
+        if (lang == Util.Lang.HE) {
             titleTV.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
             titleTV.setTextSize((getResources().getDimension(R.dimen.custom_actionbar_font_size) * Util.EN_HE_RATIO));
         }
-        else if (lang == Util.EN) {
+        else if (lang == Util.Lang.EN) {
             titleTV.setTypeface(MyApp.getFont(MyApp.MONTSERRAT_FONT));
             titleTV.setTextSize(getResources().getDimension(R.dimen.custom_actionbar_font_size));
         }

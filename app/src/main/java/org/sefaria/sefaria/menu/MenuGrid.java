@@ -42,7 +42,7 @@ public class MenuGrid extends LinearLayout {
 
     private boolean flippedForHe; //are the views flipped for hebrew
 
-    public MenuGrid(Context context,int numColumns,MenuState menuState, boolean limitGridSize) {
+    public MenuGrid(Context context,int numColumns,MenuState menuState, boolean limitGridSize, Util.Lang lang) {
         super(context);
         this.menuState = menuState;
         this.context = context;
@@ -50,6 +50,7 @@ public class MenuGrid extends LinearLayout {
         this.limitGridSize = limitGridSize;
 
         init();
+        setLang(lang);
     }
 
     private void init() {
@@ -123,7 +124,7 @@ public class MenuGrid extends LinearLayout {
         for (MenuNode node : nodeList) {
             //although generally this isn't necessary b/c the nodes come from menuState.getSections
             //this is used when rebuilding after memory dump and nodes come from setHasTabs()
-            if (node.getTitle(Util.EN).equals("Commentary")) {
+            if (node.getTitle(Util.Lang.EN).equals("Commentary")) {
                 count++;
                 continue;
             }
@@ -158,7 +159,7 @@ public class MenuGrid extends LinearLayout {
 
     //adds the 'Other' button for home page
     private MenuButton addMoreButton(LinearLayout ll) {
-        MenuNode moreNode = new MenuNode("More >","עוד >",null,null);
+        MenuNode moreNode = new MenuNode("More >","עוד >",null);
         MenuButton mb = new MenuButton(context,moreNode,null, menuState.getLang());
         mb.setOnClickListener(moreButtonClick);
         ll.addView(mb);
@@ -196,19 +197,19 @@ public class MenuGrid extends LinearLayout {
             addSubsection(sections.get(i),subsections.get(i),false);
         }
 
-        if (getLang() == Util.HE) {
+        if (getLang() == Util.Lang.HE) {
             flippedForHe = true;
             flipViews(true);
         }
 
     }
 
-    public void setLang(int lang) {
+    public void setLang(Util.Lang lang) {
         menuState.setLang(lang);
-        if ((lang == Util.HE && !flippedForHe) ||
-                (lang == Util.EN && flippedForHe)) {
+        if ((lang == Util.Lang.HE && !flippedForHe) ||
+                (lang == Util.Lang.EN && flippedForHe)) {
 
-            flippedForHe = lang == Util.HE;
+            flippedForHe = lang == Util.Lang.HE;
             flipViews(true);
         }
 
@@ -249,7 +250,7 @@ public class MenuGrid extends LinearLayout {
         }
     }
 
-    public int getLang() { return menuState.getLang(); }
+    public Util.Lang getLang() { return menuState.getLang(); }
 
     public boolean getHasTabs() { return hasTabs; }
 

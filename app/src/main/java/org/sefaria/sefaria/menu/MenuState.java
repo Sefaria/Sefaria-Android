@@ -34,7 +34,7 @@ public class MenuState implements Parcelable {
     private static MenuNode rootNode;
     private MenuNode currNode;
     private List<MenuNode> currPath;
-    private int currLang;
+    private Util.Lang currLang;
 
     public MenuState() {
         if (!isMenuInited()) initMenu();
@@ -80,27 +80,21 @@ public class MenuState implements Parcelable {
             if (tempChildNode.isMissingNode()) { //this is a book
                 enTitle = tempNode.findPath("title").textValue();
                 heTitle = tempNode.findPath("heTitle").textValue();
-                List<String> categories = new ArrayList<>();
-                //cant find a better way to extract arrays using jackson...
-                JsonNode catNode = tempNode.findPath("categories");
-                for (int j = 0; j < catNode.size(); j++) {
-                    categories.add(catNode.get(j).textValue());
-                }
-                new MenuNode(enTitle, heTitle, parent,categories);
+                new MenuNode(enTitle, heTitle, parent);
 
             } else {
                 //recurse
                 enTitle = tempNode.findPath("category").textValue();
                 heTitle = tempNode.findPath("heCategory").textValue();
-                tempMenuNode = new MenuNode(enTitle, heTitle, parent,null);
+                tempMenuNode = new MenuNode(enTitle, heTitle, parent);
                 createChildrenNodes(tempChildNode, tempMenuNode,false);
             }
 
         }
 
         if (isRoot) {
-            MenuNode tosefta = rootNode.getChildren().remove(rootNode.getChildIndex("Tosefta",Util.EN));
-            rootNode.getChildren().add(rootNode.getChildIndex("Philosophy",Util.EN)+1,tosefta);
+            MenuNode tosefta = rootNode.getChildren().remove(rootNode.getChildIndex("Tosefta",Util.Lang.EN));
+            rootNode.getChildren().add(rootNode.getChildIndex("Philosophy",Util.Lang.EN)+1,tosefta);
         }
     }
 
@@ -165,7 +159,7 @@ public class MenuState implements Parcelable {
     //is that this can tell if the currNode has tabs. Later on, however, when you goForward into the tab,
     //it will be impossible to tell, so that state is save in the property 'hasTabs'
     public boolean hasTabs() {
-        return Arrays.asList(TAB_GRID_PAGE_LIST).contains(currNode.getTitle(Util.EN));
+        return Arrays.asList(TAB_GRID_PAGE_LIST).contains(currNode.getTitle(Util.Lang.EN));
     }
 
     private boolean isBrokenGrid() {
@@ -191,7 +185,7 @@ public class MenuState implements Parcelable {
         for (int i = 0; i < currNode.getNumChildren(); i++) {
             MenuNode tempChild = currNode.getChild(i);
             //commentary is not shown in the menu
-            if (tempChild.getTitle(Util.EN).equals("Commentary")) continue;
+            if (tempChild.getTitle(Util.Lang.EN).equals("Commentary")) continue;
 
             int minDepth = tempChild.getMinDepthToLeaf();
             if (minDepth >= 1 && minDepth != 2 && !isHome) {
@@ -204,11 +198,11 @@ public class MenuState implements Parcelable {
 
     }
 
-    public int getLang() {
+    public Util.Lang getLang() {
         return currLang;
     }
 
-    public void setLang(int lang) {
+    public void setLang(Util.Lang lang) {
         currLang = lang;
     }
 
