@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+<org.sefaria.sefaria.layouts.AutoResizeTextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/tv"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="50dp"
     android:text="yoyoy"
-    android:textSize="@dimen/tab_menu_font_size"
+    android:textSize="20sp"
     android:gravity="center"
-    android:padding="20dp"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp"
     android:textAllCaps="true">
 
-</TextView>
+</org.sefaria.sefaria.layouts.AutoResizeTextView>

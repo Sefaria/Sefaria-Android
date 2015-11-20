@@ -43,9 +43,10 @@ public class MenuState implements Parcelable {
         currPath.add(rootNode);
     }
 
-    public MenuState(List<MenuNode> currPath) {
+    public MenuState(List<MenuNode> currPath, Util.Lang lang) {
         this.currNode = currPath.get(currPath.size()-1);
         this.currPath = currPath;
+        this.currLang = lang;
         Log.d("menu","CURRNODECHLIDREN = " + currNode.getNumChildren());
     }
 
@@ -121,7 +122,7 @@ public class MenuState implements Parcelable {
         tempCurrPath.add(realNode);
 
 
-        MenuState tempMenuState = new MenuState(tempCurrPath);
+        MenuState tempMenuState = new MenuState(tempCurrPath,currLang);
 
 
         if (sectionNode != null) return tempMenuState.goForward(node,null);
@@ -134,7 +135,7 @@ public class MenuState implements Parcelable {
         List<MenuNode> tempCurrPath = new ArrayList<>(currPath);
         tempCurrPath.remove(tempCurrPath.size() - 1);
 
-        MenuState tempMenuState = new MenuState(tempCurrPath);
+        MenuState tempMenuState = new MenuState(tempCurrPath,currLang);
 
         if (hasSectionBack) return tempMenuState.goBack(false, false); //go back twice to account for clicking on subsection
         if (hasTabBack) return tempMenuState.goBack(false, false); //potentially go back thrice if tabs
