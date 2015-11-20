@@ -62,11 +62,11 @@ public class CustomActionbar extends MenuElement {
         setTitle(node.getTitle(lang));
         if (lang == Util.Lang.HE) {
             titleTV.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
-            titleTV.setTextSize((getResources().getDimension(R.dimen.custom_actionbar_font_size) * Util.EN_HE_RATIO));
+            //titleTV.setTextSize((getResources().getDimension(R.dimen.custom_actionbar_font_size) * Util.EN_HE_RATIO));
         }
         else if (lang == Util.Lang.EN) {
             titleTV.setTypeface(MyApp.getFont(MyApp.MONTSERRAT_FONT));
-            titleTV.setTextSize(getResources().getDimension(R.dimen.custom_actionbar_font_size));
+            //titleTV.setTextSize(getResources().getDimension(R.dimen.custom_actionbar_font_size));
         }
     }
 

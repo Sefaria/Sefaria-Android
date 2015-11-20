@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="60dp">
+    android:layout_height="65dp">
 
     <!-- thin bar which changes color based on top-level section -->
     <View
@@ -41,14 +41,15 @@
             android:layout_centerVertical="true"
             android:background="@color/halkhah"></View>
 
-        <TextView
+        <org.sefaria.sefaria.layouts.AutoResizeTextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="32dp"
             android:text="Tanach"
-            android:textSize="20sp"
+            android:textSize="30sp"
             android:textAllCaps="true"
             android:layout_centerHorizontal="true"
+            android:padding="5dp"
             android:layout_centerVertical="true"
             />
 
@@ -60,13 +61,14 @@
             android:background="@color/menu_foreground"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@id/title"></View>
+
     </RelativeLayout>
 
-    <!-- small grey bar at the bottom of actionbar -->
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_gravity="bottom"
+        android:layout_height="3dp"
         android:background="@color/menu_foreground"></View>
+
+    <!-- small grey bar at the bottom of actionbar -->
 
 </LinearLayout>

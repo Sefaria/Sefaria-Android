@@ -320,6 +320,7 @@ public class MenuGrid extends LinearLayout {
             menuState = menuState.goBack(false, false);
             menuState = menuState.goForward(mbt.getNode(), null);
 
+            menuElementList = new ArrayList<>();
             List<MenuNode> sections = new ArrayList<>();
             List<List<MenuNode>> subsections = new ArrayList<>();
             List<MenuNode> nonSections = new ArrayList<>();

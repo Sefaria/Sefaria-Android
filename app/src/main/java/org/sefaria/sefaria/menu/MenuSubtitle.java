@@ -1,6 +1,7 @@
 package org.sefaria.sefaria.menu;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -31,11 +32,11 @@ public class MenuSubtitle extends MenuElement {
         tv.setText(node.getPrettyTitle(lang));
         if (lang == Util.Lang.HE) {
             tv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
-            tv.setTextSize((getResources().getDimension(R.dimen.subtitle_menu_font_size) * Util.EN_HE_RATIO));
+            //tv.setTextSize((getResources().getDimension(R.dimen.subtitle_menu_font_size) * Util.EN_HE_RATIO));
         }
         else if (lang == Util.Lang.EN) {
             tv.setTypeface(MyApp.getFont(MyApp.MONTSERRAT_FONT));
-            tv.setTextSize(getResources().getDimension(R.dimen.subtitle_menu_font_size));
+            //tv.setTextSize(getResources().getDimension(R.dimen.subtitle_menu_font_size));
         }
     }
 }

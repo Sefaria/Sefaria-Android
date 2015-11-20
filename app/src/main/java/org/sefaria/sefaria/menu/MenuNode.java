@@ -37,6 +37,7 @@ public class MenuNode implements Parcelable {
     private MenuNode parent;
     private int depth;
     private int color;
+    private boolean isHomeButton;
 
     //default constructor for root
     public MenuNode() {
@@ -59,6 +60,8 @@ public class MenuNode implements Parcelable {
 
         //set color
         int homeInd = Arrays.asList(HOME_BUTTON_NAMES).indexOf(enTitle);
+        isHomeButton = homeInd != -1;
+
         if (homeInd != -1) this.color = HOME_BUTTON_COLORS[homeInd];
         else this.color = -1;
     }
@@ -133,6 +136,10 @@ public class MenuNode implements Parcelable {
 
     public List<MenuNode> getChildren() {
         return children;
+    }
+
+    public boolean isHomeButton() {
+        return isHomeButton;
     }
 
     public int getColor() { return color; }
