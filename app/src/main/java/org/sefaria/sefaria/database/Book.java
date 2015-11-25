@@ -19,7 +19,7 @@ import android.util.Log;
 
 public class Book implements Parcelable {
 
-
+    private List<Node> TOCroots = null;
 
     private static final int DEFAULT_WHERE_PAGE = 2;
     public Book(){
@@ -33,24 +33,24 @@ public class Book implements Parcelable {
     }
 
     public Book(String title){
-        Log.d("book", title);
+        Log.d("book", "here..." + title);
         //Node root = Node.getTOC(116);
-        //getTOC();
         wherePage = DEFAULT_WHERE_PAGE;
         get(title);
-    }
-
-    public Book(String title, SQLiteDatabase db){
-        wherePage = DEFAULT_WHERE_PAGE;
-        get(title, db);
+        getTOC();
     }
 
     public Book(int bid) {
+        Log.d("book", "here 2..." + title);
         wherePage = DEFAULT_WHERE_PAGE;
         get(bid);
     }
 
     public List<Node> getTOC(){
+        Log.d("Book", "get toc");
+        if(TOCroots != null)
+            return TOCroots;
+
         if(roots == null){
             List<Node> nodes;
             try {
@@ -207,16 +207,9 @@ public class Book implements Parcelable {
 
     }
 
-
     public void get(String title){
-        get(title, null);
-    }
-
-    public void get(String title, SQLiteDatabase db){
-        if(db == null){
-            Database2 dbHandler = Database2.getInstance();
-            db = dbHandler.getReadableDatabase();
-        }
+        Database2 dbHandler = Database2.getInstance();
+        SQLiteDatabase db = dbHandler.getReadableDatabase();
         Cursor cursor = db.query(TABLE_BOOKS, null, Ktitle + "=?",
                 new String[] { title }, null, null, null, null);
 
