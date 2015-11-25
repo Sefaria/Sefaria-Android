@@ -363,6 +363,7 @@ public class Node{ //TODO implements  Parcelable
             root = new Node(book);
             root.nid = NID_NON_COMPLEX;
             root.getAllChaps(false);
+            nodes.add(root);
         }
         else
             root = convertToTree(nodes);
