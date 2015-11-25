@@ -71,20 +71,16 @@ public class Text implements Parcelable {
     public static final int MAX_LEVELS = 6;
     public static final double BILINGUAL_THRESHOLD = 0.05; //percentage of text that is bilingual for us to default to bilingual
 
-    public static int textsUpdatedCount = 0;
 
-    public static SQLiteStatement stmt;
-    //public static SQLiteDatabase DB;
-
-    public static final String Kbid = "bid";
-    public static final String KenText = "enText";
-    public static final String KheText = "heText";
-    public static final String Klevel1 = "level1";
-    public static final String Klevel2 = "level2";
-    public static final String Klevel3 = "level3";
-    public static final String Klevel4 = "level4";
-    public static final String Klevel5 = "level5";
-    public static final String Klevel6 = "level6";
+    private static final String Kbid = "bid";
+    private static final String KenText = "enText";
+    private static final String KheText = "heText";
+    private static final String Klevel1 = "level1";
+    private static final String Klevel2 = "level2";
+    private static final String Klevel3 = "level3";
+    private static final String Klevel4 = "level4";
+    private static final String Klevel5 = "level5";
+    private static final String Klevel6 = "level6";
     //public static final String Khid = Header.Khid;
 
 
@@ -96,13 +92,17 @@ public class Text implements Parcelable {
     public int bid;
     public String enText;
     public String heText;
+    /**
+     * Little sections (like verse) to Big (like chap) and the rest zeros
+     * For ex. chapter 3, verse 8 would be {8,3,0,0,0,0}
+     */
     public int [] levels;
     //public int hid;
     public boolean displayNum;
 
     public static final String TABLE_TEXTS = "Texts";
 
-    public void getFromCursor(Cursor cursor){
+    private void getFromCursor(Cursor cursor){
         tid = cursor.getInt(0);
         bid = cursor.getInt(1);
         enText = cursor.getString(2);
@@ -218,6 +218,7 @@ public class Text implements Parcelable {
 	 */
 
 
+
     private static List<Text> getFromDB(int bid, int[] levels) {
         List<Text> textList = new ArrayList<Text>();
         Database2 dbHandler = Database2.getInstance();
@@ -234,6 +235,20 @@ public class Text implements Parcelable {
         return textList;
 
     }
+
+
+    public static List<Text> get(Node node) throws API.APIException{
+        //if(!node.isComplex()) {
+            return  get(node.getBid(),node.getLevels());
+        //}
+
+
+        //List<Text> textList = new ArrayList<>();
+        //return textList;
+
+    }
+
+
 
     /**
      *
@@ -493,9 +508,13 @@ public class Text implements Parcelable {
         return "";
     }
 
+
+    /*
     public static int add(SQLiteDatabase db1, JSONObject json) throws JSONException {
         return add(db1,json,false);
     }
+    //public static int textsUpdatedCount = 0;
+
 
     public static int add(SQLiteDatabase db1, JSONObject json, boolean shouldUpdate) throws JSONException {
         //DatabaseHandler dbHandler = DatabaseHandler.getInstance(MyApp.context);
@@ -703,7 +722,7 @@ public class Text implements Parcelable {
         else if (text.heText != "") return Util.HE;
         else return 0;
     }
-
+    */
     public static Text deepCopy(Text text) {
         Text newText = new Text();
         newText.bid = text.bid;

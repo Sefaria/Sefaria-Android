@@ -3,6 +3,7 @@ package org.sefaria.sefaria.database;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
@@ -10,18 +11,36 @@ import android.util.Log;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.Util;
 
+import java.sql.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Node{ //TODO implements  Parcelable
     public Node(){
         children = new ArrayList<>();
-        nid = -1;
+        chaps = new ArrayList<>();
+        nid = NID_NO_INFO;
+    }
+
+    public Node(Book book){
+        children = new ArrayList<>();
+        chaps = new ArrayList<>();
+        nid = NID_NO_INFO;
+
+        bid = book.bid;
+        sectionNames = book.sectionNamesL2B;
+        heSectionNames = book.heSectionNamesL2B;
+        textDepth = book.textDepth;
+        enTitle = book.title;
+        heTitle = book.heTitle;
+
     }
 
     public  Node (Cursor cursor){
         children = new ArrayList<>();
-        nid = -1;
+        nid = NID_NO_INFO;
+        chaps = new ArrayList<>();
         getFromCursor(cursor);
         addSectionNames();
     }
@@ -29,6 +48,11 @@ public class Node{ //TODO implements  Parcelable
     public final static int NODE_TYPE_BRANCH = 1;
     public final static int NODE_TYPE_TEXTS = 2;
     public final static int NODE_TYPE_REFS = 3;
+
+    public final static int NID_NON_COMPLEX = -3;
+    public  final static int NID_NO_INFO = -1;
+
+
 
 
     private int nid;
@@ -48,6 +72,7 @@ public class Node{ //TODO implements  Parcelable
 
     private List<Node> children;
     private List<Integer> chaps;
+    private List<Text> textList;
     //private Node parent;
 
 
@@ -69,6 +94,16 @@ public class Node{ //TODO implements  Parcelable
             return "";
         }
     }
+
+    public List<Node> getChildren(){
+        return children;
+    }
+
+    public  List<Integer> getChaps(){
+        return chaps;
+    }
+
+
 
     private void addSectionNames(){
         //TODO move to create SQL
@@ -116,6 +151,7 @@ public class Node{ //TODO implements  Parcelable
         if(node.siblingNum != this.children.size() -1) {
             //TODO make sure the order is correct
             Log.e("Node", "wrong sibling num");
+            this.children.add(node);
         }
     }
 
@@ -128,7 +164,7 @@ public class Node{ //TODO implements  Parcelable
         if(node.children.size() == 0)
             return;
         else{
-            Log.d("Node","node " + node.nid + " children: ");
+            Log.d("Node", "node " + node.nid + " children: ");
             for(int i=0;i<node.children.size();i++) {
                 node.children.get(i).log();
             }
@@ -172,7 +208,7 @@ public class Node{ //TODO implements  Parcelable
 
                 // add chap count (if it's a leaf with 2 or more levels):
                 if(node.textDepth >= 2 && node.nodeType == NODE_TYPE_TEXTS) {
-                    node.getAllChaps(node.nid,node.textDepth,true);
+                    node.getAllChaps(true);
                 }
             }
 
@@ -182,7 +218,7 @@ public class Node{ //TODO implements  Parcelable
     }
 
 
-    private void getAllChaps(int id, int textDepth, boolean useNID) throws API.APIException {
+    private void getAllChaps(boolean useNID) throws API.APIException {
         Database2 dbHandler = Database2.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
 
@@ -194,17 +230,16 @@ public class Node{ //TODO implements  Parcelable
         }
 
         String sql = "SELECT DISTINCT " + levels + " FROM "+ Text.TABLE_TEXTS;
-        if(useNID)  sql += " WHERE parentNode = " + id;
-        else        sql += " WHERE bid = " + id ;
+
+        if(useNID)  sql += " WHERE parentNode = " + this.nid;
+        else        sql += " WHERE bid = " + this.bid;
+
         sql += " ORDER BY  " + levels;
 
         Log.d("Node", sql);
-        Node tempNode;
+        Node tempNode = null;
         int lastLevel3 = 0;
-        if(textDepth > 2) {
-            tempNode = new Node();
-
-        }
+        int originalNodeType = this.nodeType;
 
         if(API.useAPI()){
             ;
@@ -219,11 +254,24 @@ public class Node{ //TODO implements  Parcelable
                     if(textDepth == 2)
                         chaps.add(cursor.getInt(0));
                     else if(textDepth == 3){
+                        this.nodeType = NODE_TYPE_BRANCH;//TODO see if this needs a different nodeType number
                         int level3 = cursor.getInt(0);
-                        if(level3 != lastLevel3){
-                            //node pushing
+                        if(level3 != lastLevel3 || tempNode == null){
+                            lastLevel3 = level3;
+                            tempNode = new Node();
+                            tempNode.enTitle = this.sectionNames[2] + " " + level3;
+                            tempNode.heTitle = this.heSectionNames[2] + " " + Util.int2heb(level3);
+                            tempNode.sectionNames = Arrays.copyOfRange(this.sectionNames,0,2);
+                            tempNode.heSectionNames = Arrays.copyOfRange(this.heSectionNames,0,2);
+                            tempNode.textDepth = this.textDepth -1;
+                            tempNode.nodeType = originalNodeType;
+                            this.children.add(tempNode);
                         }
-
+                        tempNode.chaps.add(cursor.getInt(1));
+                        //TODO extend to more than 3 levels
+                    }
+                    else{
+                        Log.e("Node", "add 4 or more levels");//TODO
                     }
                 } while (cursor.moveToNext());
             }
@@ -235,12 +283,47 @@ public class Node{ //TODO implements  Parcelable
     }
 
 
-    public static List<Node> getRoots(int bid) throws API.APIException{
+    public List<Text> getTexts() throws API.APIException{
+        if(textList != null)
+            return  textList;
+        return Text.get(this);
+    }
+
+    public List<Text> getTexts(int chapNum){
+        List<Text> texts = new ArrayList<>();
+        return texts;
+    }
+
+    private boolean isComplex(){
+        return !(this.nid == NID_NON_COMPLEX);
+    }
+
+    public int getBid(){
+        return bid;
+    }
+
+    /**
+     * create an array describing the levels:
+     * ex. chap 4 and verse 7 would be {7,3}
+     * return levels
+     */
+    public int [] getLevels(){
+        int levels [] = new int [] {1,2};//TODO based on logic
+        return levels;
+    }
+
+
+
+    public static List<Node> getRoots(Book book) throws API.APIException {
+        return getRoots(book,true);
+    }
+
+    private static List<Node> getRoots(Book book, boolean addMoreh) throws API.APIException{
         Database2 dbHandler = Database2.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
         Cursor cursor = db.query(NODE_TABLE, null, "bid" + "=?",
-                new String[]{String.valueOf(bid)}, null, null, "_id", null); //structNum, parentNode, siblingNum
-
+                new String[]{String.valueOf(book.bid)}, null, null, "_id", null); //structNum, parentNode, siblingNum
+        Node root;
 
         List<Node> nodes = new ArrayList<>();
         if (cursor != null && cursor.moveToFirst()){
@@ -251,8 +334,18 @@ public class Node{ //TODO implements  Parcelable
             } while (cursor.moveToNext());
         }
 
-        Node root = convertToTree(nodes);
+        if(nodes.size() == 0){//TODO need to add way if the main text is regular but has alt... make it always try to add it.
+            root = new Node(book);
+            root.nid = NID_NON_COMPLEX;
+            root.getAllChaps(false);
+        }
+        else
+            root = convertToTree(nodes);
         showTree(root);
+
+        if(addMoreh){//TODO remove only for testing alt structures
+            nodes.add(getRoots(new Book(1175),false).get(0));
+        }
 
 
         return nodes;

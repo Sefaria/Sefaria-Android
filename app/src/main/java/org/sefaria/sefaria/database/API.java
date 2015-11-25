@@ -63,7 +63,6 @@ public class API {
             conn.connect();
             InputStream stream = conn.getInputStream();
             data = convertStreamToString(stream);
-
             //TODO handle timeouts ... messages, or maybe increase timeout time, etc.
         } catch (MalformedURLException e) {
             e.printStackTrace();
