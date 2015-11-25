@@ -95,12 +95,24 @@ public class Node{ //TODO implements  Parcelable
         }
     }
 
+    /**
+     * if (children.size() == 0)
+     *      this is a leaf and you need to check
+     *
+     * @return children
+     */
     public List<Node> getChildren(){
         if(children == null)
             children = new ArrayList<>();
         return children;
     }
 
+    /**
+     * chaps.size() == 0 when there's no chaps within it. If there's no children, this means that this Node contains Texts
+     *
+     *
+     * @return chaps
+     */
     public  List<Integer> getChaps(){
         if(chaps == null)
             chaps = new ArrayList<>();
