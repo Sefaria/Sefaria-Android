@@ -12,8 +12,11 @@ import android.widget.LinearLayout;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.Book;
+import org.sefaria.sefaria.database.Node;
 import org.sefaria.sefaria.layouts.CustomActionbar;
 import org.sefaria.sefaria.menu.MenuNode;
+
+import java.util.List;
 
 public class TOCActivity extends AppCompatActivity {
 
@@ -26,7 +29,9 @@ public class TOCActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         book = intent.getParcelableExtra("currBook");
-        Log.d("toc", "BoOOOK " + book);
+        List<Node> tocRoots = book.getTOC();
+        Log.d("toc","ROOT SIZE " + tocRoots.size());
+        Log.d("toc","TOC " + tocRoots.get(1).getChildren());
 
         init();
     }

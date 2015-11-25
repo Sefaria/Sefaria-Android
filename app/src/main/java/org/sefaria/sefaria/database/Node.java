@@ -354,7 +354,7 @@ public class Node{ //TODO implements  Parcelable
         }
         else
             root = convertToTree(nodes);
-        showTree(root);
+        //showTree(root);
 
         if(addMoreh){//TODO remove only for testing alt structures
             nodes.add(getRoots(new Book(1175),false).get(0));
