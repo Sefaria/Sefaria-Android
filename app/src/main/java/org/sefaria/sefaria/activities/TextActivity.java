@@ -5,9 +5,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.SpannableString;
-import android.text.SpannableStringBuilder;
-import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -31,6 +28,7 @@ import org.sefaria.sefaria.menu.MenuNode;
 import org.sefaria.sefaria.menu.MenuState;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class TextActivity extends Activity {
@@ -53,9 +51,10 @@ public class TextActivity extends Activity {
     private List<TextChapterHeader> textChapterHeaders;
 
     //text formatting props
-    private int lang;
+    private Util.Lang lang;
     private boolean isCts;
     private float textSize;
+    private boolean isLoadingSection; //to make sure multiple sections don't get loaded at once
 
     @Override
     protected void onCreate(Bundle in) {
@@ -73,7 +72,7 @@ public class TextActivity extends Activity {
     private void init() {
         //defaults
         isCts = false;
-        lang = Util.EN;
+        lang = Util.Lang.BI;
         textSize = getResources().getDimension(R.dimen.default_text_font_size);
         //end defaults
 
@@ -97,19 +96,22 @@ public class TextActivity extends Activity {
                  int bottomDiff = (view.getBottom() - (scrollView.getHeight() + scrollY));
 
                  // if diff is zero, then the bottom has been reached
-                 if (bottomDiff <= 0) {
-                     //Log.d("text","NEXT");
-                     AsyncLoadSection als = new AsyncLoadSection(TextEnums.NEXT_SECTION);
-                     als.execute();
-                 }
-                 if (topDiff >= 0) {
-                     //Log.d("text","PREV");
-                     AsyncLoadSection als = new AsyncLoadSection(TextEnums.PREV_SECTION);
-                     als.execute();
 
-                     //if you add prev, you need to update all tops of all chaps
-                     for (PerekTextView ptv: perekTextViews) {
-                         ptv.setRelativeTop(Util.getRelativeTop(ptv));
+                 if (!isLoadingSection) {
+                     if (bottomDiff <= 0) {
+                         //Log.d("text","NEXT");
+                         AsyncLoadSection als = new AsyncLoadSection(TextEnums.NEXT_SECTION);
+                         als.execute();
+                     }
+                     if (topDiff >= 0) {
+                         //Log.d("text","PREV");
+                         AsyncLoadSection als = new AsyncLoadSection(TextEnums.PREV_SECTION);
+                         als.execute();
+
+                         //if you add prev, you need to update all tops of all chaps
+                         for (PerekTextView ptv : perekTextViews) {
+                             ptv.setRelativeTop(Util.getRelativeTop(ptv));
+                         }
                      }
                  }
 
@@ -145,17 +147,19 @@ public class TextActivity extends Activity {
                 setTitle(menuState.getCurrNode().getTitle(menuState.getLang()));
 
         //this specifically comes before menugrid, b/c in tabs it menugrid does funny stuff to currnode
-        CustomActionbar cab = new CustomActionbar(this, menuState.getCurrNode(), Util.EN,searchClick,null,null,menuClick);
+        CustomActionbar cab = new CustomActionbar(this, menuState.getCurrNode(), Util.Lang.EN,searchClick,null,null,menuClick);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(cab);
 
 
 
-        String title = menuState.getCurrNode().getTitle(Util.EN);
+        String title = menuState.getCurrNode().getTitle(Util.Lang.EN);
         book = new Book(title);
 
-        AsyncLoadSection als = new AsyncLoadSection(TextEnums.NEXT_SECTION);
-        als.execute();
+        if (!isLoadingSection) {
+            AsyncLoadSection als = new AsyncLoadSection(TextEnums.NEXT_SECTION);
+            als.execute();
+        }
     }
 
 
@@ -163,6 +167,16 @@ public class TextActivity extends Activity {
     public void onSaveInstanceState(Bundle out) {
         super.onSaveInstanceState(out);
         out.putParcelable("menuState", menuState);
+    }
+
+    private void toggleTextMenu() {
+        if (isTextMenuVisible) {
+            textMenuRoot.removeAllViews();
+        } else {
+            TextMenuBar tmb = new TextMenuBar(TextActivity.this,textMenuBtnClick);
+            textMenuRoot.addView(tmb);
+        }
+        isTextMenuVisible = !isTextMenuVisible;
     }
 
     View.OnClickListener searchClick = new View.OnClickListener() {
@@ -178,13 +192,7 @@ public class TextActivity extends Activity {
     View.OnClickListener menuClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (isTextMenuVisible) {
-                textMenuRoot.removeAllViews();
-            } else {
-                TextMenuBar tmb = new TextMenuBar(TextActivity.this,textMenuBtnClick);
-                textMenuRoot.addView(tmb);
-            }
-            isTextMenuVisible = !isTextMenuVisible;
+            toggleTextMenu();
         }
     };
 
@@ -195,13 +203,13 @@ public class TextActivity extends Activity {
             boolean updatedTextSize = false;
             switch (v.getId()) {
                 case R.id.en_btn:
-                    lang = Util.EN;
+                    lang = Util.Lang.EN;
                     break;
                 case R.id.he_btn:
-                    lang = Util.HE;
+                    lang = Util.Lang.HE;
                     break;
                 case R.id.bi_btn:
-                    lang = Util.BI;
+                    lang = Util.Lang.BI;
                     break;
                 case R.id.cts_btn:
                     isCts = true;
@@ -245,6 +253,8 @@ public class TextActivity extends Activity {
                 else
                     ptv.update();
             }
+
+            if (!updatedTextSize) toggleTextMenu();
         }
     };
 
@@ -260,6 +270,7 @@ public class TextActivity extends Activity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            isLoadingSection = true;
         }
 
         @Override
@@ -274,7 +285,7 @@ public class TextActivity extends Activity {
             if (levels.length > WHERE_PAGE-1) {
                 //MenuNode tempNode = new MenuNode(book.sectionNamesL2B[wherePage-1] + " " + currLoadedChapter,
                 //        book.heSectionNamesL2B[wherePage-1] + " " + Util.int2heb(currLoadedChapter),null,null);
-                MenuNode tempNode = new MenuNode(""+levels[WHERE_PAGE-1],""+Util.int2heb(levels[WHERE_PAGE-1]),null,null);
+                MenuNode tempNode = new MenuNode(""+levels[WHERE_PAGE-1],""+Util.int2heb(levels[WHERE_PAGE-1]),null);
 
                 TextChapterHeader tch = new TextChapterHeader(TextActivity.this,tempNode,lang,textSize);
                 textChapterHeaders.add(tch);
@@ -284,6 +295,8 @@ public class TextActivity extends Activity {
             PerekTextView content = new PerekTextView(TextActivity.this,textsList,isCts,lang,textSize,textScrollView.getScrollY());
 
             perekTextViews.add(content);
+
+            isLoadingSection = false;
 
             if (dir == null || dir == TextEnums.NEXT_SECTION)
                 textRoot.addView(content); //add to end by default
@@ -323,13 +336,11 @@ public class TextActivity extends Activity {
 
             //int[] levels = {0,currLoadedChapter};
             //Text.getNextChap(book,levels,next);
-
             List<Text> textsList;
             try {
                 textsList = Text.get(book, levels);
                 return textsList;
             } catch (API.APIException e) {
-                textsList = new ArrayList<>();
                 Toast.makeText(TextActivity.this,"API Exception!!!",Toast.LENGTH_SHORT).show();
                 return new ArrayList<>();
             }

@@ -82,12 +82,12 @@ public class Node{ //TODO implements  Parcelable
      * use lang from Util.HE or EN (maybe or BI)
      * @param lang
      */
-    public String getTitle(int lang){
-        if(Util.EN == lang)
+    public String getTitle(Util.Lang lang){
+        if(Util.Lang.EN == lang)
             return enTitle;
-        else if(Util.HE == lang)
+        else if(Util.Lang.HE == lang)
             return heTitle;
-        else if(Util.BI == lang)
+        else if(Util.Lang.BI == lang)
             return enTitle + " " + heTitle;
         else{
             Log.e("Node", "wrong lang num");

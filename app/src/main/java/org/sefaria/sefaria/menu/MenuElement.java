@@ -6,17 +6,23 @@ import android.os.Parcelable;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import org.sefaria.sefaria.Util;
+
 /**
  * Created by nss on 9/26/15.
+ * Super class for a few similar MenuElements, like MenuButton, MenuButtonTab and MenuSubtitle
  */
 public abstract class MenuElement extends LinearLayout {
-
 
     public MenuElement(Context context) {
         super(context);
     }
 
-    public abstract void setLang(int lang);
+    /**
+     *
+     * @param lang
+     */
+    public abstract void setLang(Util.Lang lang);
 
     public abstract MenuNode getNode();
 
