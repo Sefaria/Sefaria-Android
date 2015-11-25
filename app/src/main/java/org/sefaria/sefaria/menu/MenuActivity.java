@@ -1,7 +1,7 @@
 package org.sefaria.sefaria.menu;
 
+import android.app.Activity;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import org.sefaria.sefaria.layouts.CustomActionbar;
@@ -14,7 +14,7 @@ import android.widget.ScrollView;
 
 import org.sefaria.sefaria.R;
 
-public class MenuActivity extends AppCompatActivity {
+public class MenuActivity extends Activity {
 
     private final int NUM_COLUMNS = 2;
     private final boolean LIMIT_GRID_SIZE = false;
@@ -47,11 +47,11 @@ public class MenuActivity extends AppCompatActivity {
         setTitle(menuState.getCurrNode().getTitle(menuState.getLang()));
 
         //this specifically comes before menugrid, b/c in tabs it menugrid does funny stuff to currnode
-        CustomActionbar cab = new CustomActionbar(this, menuState.getCurrNode(),Util.EN,searchClick,null,null,null);
+        CustomActionbar cab = new CustomActionbar(this, menuState.getCurrNode(),Util.Lang.EN,searchClick,null,null,null);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(cab);
 
-        menuGrid = new MenuGrid(this,NUM_COLUMNS, menuState,LIMIT_GRID_SIZE);
+        menuGrid = new MenuGrid(this,NUM_COLUMNS, menuState,LIMIT_GRID_SIZE,Util.Lang.HE);
         ScrollView root = (ScrollView) findViewById(R.id.gridRoot);
         root.addView(menuGrid);
 

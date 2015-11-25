@@ -10,6 +10,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -35,9 +36,15 @@ public class MenuButton extends MenuElement {
         this.setVisibility(View.INVISIBLE);
     }
 
-    public MenuButton(Context context, MenuNode node, MenuNode sectionNode,int lang) {
+    public MenuButton(Context context, MenuNode node, MenuNode sectionNode,Util.Lang lang) {
         super(context);
-        inflate(context, R.layout.button_menu, this);
+        //home and menu buttons are slightly different.
+        //annoyingly, it's difficult to set margin dynamically, instead I'll just switch views
+        if (node.isHomeButton())
+            inflate(context, R.layout.button_home, this);
+        else //menu
+            inflate(context,R.layout.button_menu,this);
+
         this.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, 1f));
 
         this.tv = (TextView) this.findViewById(R.id.tv);
@@ -69,15 +76,15 @@ public class MenuButton extends MenuElement {
 
     public boolean isBook() { return node.getNumChildren() == 0; }
 
-    public void setLang(int lang) {
+    public void setLang(Util.Lang lang) {
         tv.setText(node.getPrettyTitle(lang));
-        if (lang == Util.HE) {
+        if (lang == Util.Lang.HE) {
             tv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
-            tv.setTextSize((getResources().getDimension(R.dimen.button_menu_font_size) * Util.EN_HE_RATIO));
+            //tv.setTextSize((getResources().getDimension(R.dimen.button_menu_font_size) * Util.EN_HE_RATIO));
         }
         else {
             tv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT)); //actually, currently there's no nafka mina
-            tv.setTextSize(getResources().getDimension(R.dimen.button_menu_font_size));
+            //tv.setTextSize(getResources().getDimension(R.dimen.button_menu_font_size));
         }
     }
 

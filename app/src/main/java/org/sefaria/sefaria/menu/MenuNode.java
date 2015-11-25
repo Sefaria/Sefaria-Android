@@ -37,14 +37,15 @@ public class MenuNode implements Parcelable {
     private MenuNode parent;
     private int depth;
     private int color;
+    private boolean isHomeButton;
 
     //default constructor for root
     public MenuNode() {
-        this("","",null,null);
+        this("","",null);
         this.depth = 0;
     }
 
-    public MenuNode(String enTitle, String heTitle, MenuNode parent, List<String> categories) {
+    public MenuNode(String enTitle, String heTitle, MenuNode parent) {
 
         this.children = new ArrayList<>();
         if (parent != null) {
@@ -54,12 +55,14 @@ public class MenuNode implements Parcelable {
         }
         this.enTitle = enTitle;
         this.heTitle = heTitle;
-        this.enPrettyTitle = makePrettyTitle(Util.EN);
-        this.hePrettyTitle = makePrettyTitle(Util.HE);
+        this.enPrettyTitle = makePrettyTitle(Util.Lang.EN);
+        this.hePrettyTitle = makePrettyTitle(Util.Lang.HE);
 
         //set color
-        int colorInd = Arrays.asList(HOME_BUTTON_NAMES).indexOf(enTitle);
-        if (colorInd != -1) this.color = HOME_BUTTON_COLORS[colorInd];
+        int homeInd = Arrays.asList(HOME_BUTTON_NAMES).indexOf(enTitle);
+        isHomeButton = homeInd != -1;
+
+        if (homeInd != -1) this.color = HOME_BUTTON_COLORS[homeInd];
         else this.color = -1;
     }
 
@@ -78,25 +81,25 @@ public class MenuNode implements Parcelable {
         children.add(child);
     }
 
-    public String getTitle(int lang) {
+    public String getTitle(Util.Lang lang) {
         MenuNode tempNode = this;
         boolean foundTitleMatch = false;
         String currTitle;
-        if (lang == Util.EN) currTitle = enTitle;
+        if (lang == Util.Lang.EN) currTitle = enTitle;
         else currTitle = heTitle;
 
         return currTitle;
     }
 
-    private String makePrettyTitle(int lang) {
+    private String makePrettyTitle(Util.Lang lang) {
         MenuNode tempNode = this;
         boolean foundTitleMatch = false;
         String currTitle;
-        if (lang == Util.EN) currTitle = enTitle;
+        if (lang == Util.Lang.EN) currTitle = enTitle;
         else currTitle = heTitle;
         while (tempNode.parent != null && !foundTitleMatch) {
             String tempTitle;
-            if (lang == Util.EN) tempTitle = tempNode.parent.enTitle;
+            if (lang == Util.Lang.EN) tempTitle = tempNode.parent.enTitle;
             else tempTitle = tempNode.parent.heTitle;
 
             if (currTitle.contains(tempTitle)) {
@@ -115,8 +118,8 @@ public class MenuNode implements Parcelable {
         return currTitle;
     }
 
-    public String getPrettyTitle(int lang) {
-        if (lang == Util.EN) return enPrettyTitle;
+    public String getPrettyTitle(Util.Lang lang) {
+        if (lang == Util.Lang.EN) return enPrettyTitle;
         else return hePrettyTitle;
     }
 
@@ -135,11 +138,15 @@ public class MenuNode implements Parcelable {
         return children;
     }
 
+    public boolean isHomeButton() {
+        return isHomeButton;
+    }
+
     public int getColor() { return color; }
 
     public int getTopLevelColor() {
         MenuNode topNode = getTopLevelNode();
-        int colorInd = Arrays.asList(HOME_BUTTON_NAMES).indexOf(topNode.getTitle(Util.EN));
+        int colorInd = Arrays.asList(HOME_BUTTON_NAMES).indexOf(topNode.getTitle(Util.Lang.EN));
         if (colorInd == -1) return -1;
         else return HOME_BUTTON_COLORS[colorInd];
     }
@@ -193,7 +200,7 @@ public class MenuNode implements Parcelable {
         return currDepth;
     }
 
-    public int getChildIndex(String title, int lang) {
+    public int getChildIndex(String title, Util.Lang lang) {
         for (int i = 0; i < children.size(); i++) {
             MenuNode node = children.get(i);
             if (node.getTitle(lang).equals(title)) return i;
@@ -201,7 +208,7 @@ public class MenuNode implements Parcelable {
         return -1;
     }
 
-    public String[] getChildrenTitles(int lang) {
+    public String[] getChildrenTitles(Util.Lang lang) {
         String[] childrenTitles = new String[getNumChildren()];
         int count = 0;
         for (MenuNode child : children) {

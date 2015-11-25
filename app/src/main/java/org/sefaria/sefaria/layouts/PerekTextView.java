@@ -39,7 +39,7 @@ public class PerekTextView extends JustifyTextView {
     public static final int EXTRA_LOAD_LINES = 30;
 
     private boolean isCts; //is text continuous or seperated by passuk
-    private int lang;
+    private Util.Lang lang;
     private int mLineY;
     private int mViewWidth;
     private List<Text> textList;
@@ -65,7 +65,7 @@ public class PerekTextView extends JustifyTextView {
 
     private boolean inited;
 
-    public PerekTextView (Context context, List<Text> textList,boolean isCts,int lang, float textSize, int scrollY) {
+    public PerekTextView (Context context, List<Text> textList,boolean isCts,Util.Lang lang, float textSize, int scrollY) {
         super(context);
         this.textList = textList;
         this.scrollY = scrollY;
@@ -102,7 +102,7 @@ public class PerekTextView extends JustifyTextView {
             //canvas.drawText(drawText, 0, 100, paint);
 
             //https://stackoverflow.com/questions/6756975/draw-multi-line-text-to-canvas
-            StaticLayout mTextLayout = new StaticLayout(drawText, paint, canvas.getWidth(), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
+            StaticLayout mTextLayout = new StaticLayout(Html.fromHtml(drawText), paint, canvas.getWidth(), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
 
             canvas.save();
             canvas.translate(0, startY);
@@ -124,14 +124,14 @@ public class PerekTextView extends JustifyTextView {
         this.isCts = isCts;
     }
 
-    public void setLang(int lang) {
+    public void setLang(Util.Lang lang) {
         this.lang = lang;
-        if (lang == Util.HE) {
+        if (lang == Util.Lang.HE) {
             //setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
             //setTextSize((getResources().getDimension(R.dimen.button_menu_font_size) * Util.EN_HE_RATIO));
             //setTextSize(getResources().getDimension(R.dimen.button_menu_font_size));
         }
-        else if (lang == Util.EN){
+        else if (lang == Util.Lang.EN){
             //setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT)); //actually, currently there's no nafka mina
             //setTextSize(getResources().getDimension(R.dimen.button_menu_font_size));
         } else { //bilingual
@@ -202,14 +202,14 @@ public class PerekTextView extends JustifyTextView {
         boolean isFirst = true;
         for (Text text : textList) {
             String words;
-            if (lang == Util.EN) words = "(" + text.levels[0] + ") " + text.enText;
-            else if (lang == Util.HE) words = "(" + Util.int2heb(text.levels[0]) + ") " + text.heText;
+            if (lang == Util.Lang.EN) words = "(" + text.levels[0] + ") " + text.enText;
+            else if (lang == Util.Lang.HE) words = "(" + Util.int2heb(text.levels[0]) + ") " + text.heText;
             else { //bilingual
                 words = "(" + Util.int2heb(text.levels[0]) + ") " + text.heText
-                + "\n\n(" + text.levels[0] + ") " + text.enText;
+                + "<br><br>(" + text.levels[0] + ") " + text.enText;
             }
             if (!isFirst)
-                words = isCts ? " " + words : "\n\n" + words;
+                words = isCts ? " " + words : "<br><br>" + words;
 
             SpannableString ss = new SpannableString(words);
             ss.setSpan(new VerseSpannable(words), 0, ss.length(), 0);
@@ -276,17 +276,17 @@ public class PerekTextView extends JustifyTextView {
 
                             //drawScaledText(canvas, line, width, lang == Util.HE);
                         } else {
-                            float startX = lang == Util.HE ? mViewWidth-width : 0;
+                            float startX = lang == Util.Lang.HE ? mViewWidth-width : 0;
                             //canvas.drawText(line,startX,mLineY,paint);
                         }
-                    } else { //seperated
+                    } else { //not justified
 
                         int textStart = layout.getLineStart(i);
-                            int textEnd = layout.getLineEnd(lastDrawnLine);
-                            drawText = text.substring(textStart, textEnd);
-                            startY = mLineY;
+                        int textEnd = layout.getLineEnd(lastDrawnLine);
+                        drawText = text.substring(textStart, textEnd);
+                        startY = mLineY;
 
-                            break; //you've gotten the text. get out
+                        break; //you've gotten the text. get out
                     }
                 } else {
                     //canvas.drawText("EMPTY", 0, mLineY, paint);
@@ -294,6 +294,7 @@ public class PerekTextView extends JustifyTextView {
 
                 //TODO figure out less random number
                 mLineY += (int)Math.round(lineHeight - lineHeight/13);
+                //mLineY += lineHeight;
             }
             if (drawText == null) drawText = "";
             return drawText;

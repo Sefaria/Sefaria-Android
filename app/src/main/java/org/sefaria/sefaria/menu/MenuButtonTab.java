@@ -17,7 +17,7 @@ public class MenuButtonTab extends MenuElement {
     private MenuNode node;
     private TextView tv;
 
-    public MenuButtonTab(Context context, MenuNode node, int lang) {
+    public MenuButtonTab(Context context, MenuNode node, Util.Lang lang) {
         super(context);
         inflate(context, R.layout.tab_menu, this);
         this.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT));
@@ -31,14 +31,14 @@ public class MenuButtonTab extends MenuElement {
 
     public MenuNode getNode() { return node; }
 
-    public void setLang(int lang) {
+    public void setLang(Util.Lang lang) {
         tv.setText(node.getPrettyTitle(lang));
-        if (lang == Util.HE) {
+        if (lang == Util.Lang.HE) {
             tv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
-            tv.setTextSize(Math.round(getResources().getDimension(R.dimen.tab_menu_font_size) * Util.EN_HE_RATIO));
+            //tv.setTextSize(Math.round(getResources().getDimension(R.dimen.tab_menu_font_size) * Util.EN_HE_RATIO));
         } else {
             tv.setTypeface(MyApp.getFont(MyApp.MONTSERRAT_FONT));
-            tv.setTextSize(getResources().getDimension(R.dimen.tab_menu_font_size));
+            //tv.setTextSize(getResources().getDimension(R.dimen.tab_menu_font_size));
         }
 
 
