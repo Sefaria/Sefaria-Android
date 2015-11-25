@@ -54,7 +54,7 @@ public class Book implements Parcelable {
         if(roots == null){
             List<Node> nodes;
             try {
-                nodes = Node.getRoots(1175);
+                nodes = Node.getRoots(this);
             }catch (API.APIException e){
                 nodes = new ArrayList<>();
                 Log.e("api", "api exception getting node TOC");
@@ -65,10 +65,17 @@ public class Book implements Parcelable {
         return roots;
     }
 
+
     public int bid;
     public int commentsOn;
-    public String  [] sectionNames;
+    private String  [] sectionNames;
+    /**
+     * Little sections (like verse) to Big (like chap) just like Text.levels works
+     */
     public String  [] sectionNamesL2B;
+    /**
+     * Little sections (like verse) to Big (like chap) just like Text.levels works
+     */
     public String  [] heSectionNamesL2B;
     public String [] categories;
     public int textDepth;
@@ -76,6 +83,7 @@ public class Book implements Parcelable {
     public String title;
     public String heTitle;
     public int languages;
+
 
     private List<Node> roots = null;
 
@@ -89,21 +97,21 @@ public class Book implements Parcelable {
         Log.d("sql_dis",toString());
     }
 
-    public static final String TABLE_BOOKS = "Books";
-    public static final String KcommentsOn = "commentsOn";
-    public static final String KsectionNames = "sectionNames";
-    public static final String Kcategories = "categories";
-    public static final String KtextDepth = "textDepth";
-    public static final String KwherePage = "wherePage";
-    public static final String Klengths = "lengths";
-    public static final String Ktitle = "title";
-    public static final String KheTitle = "heTitle";
+    private static final String TABLE_BOOKS = "Books";
+    private static final String KcommentsOn = "commentsOn";
+    private static final String KsectionNames = "sectionNames";
+    private static final String Kcategories = "categories";
+    private static final String KtextDepth = "textDepth";
+    private static final String KwherePage = "wherePage";
+    private static final String Klengths = "lengths";
+    private static final String Ktitle = "title";
+    private static final String KheTitle = "heTitle";
 
-    public static final String KdataVersion = "dataVersion";
-    public static final String KversionTitle = "versionTitle";
-    public static final String Kversions = "versions";
-    public static final String Klanguages = "languages"; // en is 1, he is 2, both is 3.
-    public static final String KheSectionNames = "heSectionNames"; // en is 1, he is 2, both is 3.
+    private static final String KdataVersion = "dataVersion";
+    private static final String KversionTitle = "versionTitle";
+    private static final String Kversions = "versions";
+    private static final String Klanguages = "languages"; // en is 1, he is 2, both is 3.
+    private static final String KheSectionNames = "heSectionNames"; // en is 1, he is 2, both is 3.
 
 
     public static void add(SQLiteDatabase db1, JSONObject json) throws JSONException {
