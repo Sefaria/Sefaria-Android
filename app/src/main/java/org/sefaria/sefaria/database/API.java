@@ -47,6 +47,7 @@ public class API {
     final static int READ_TIMEOUT = 3000;
     final static int CONNECT_TIMEOUT = 3000;
     //TODO determine good times
+    private static int useAPI = -1;
 
 
 
@@ -245,6 +246,8 @@ public class API {
      * @return false if there's a Text table in the db. true if not (and should be using API)
      */
     public static boolean useAPI(){
+        if(useAPI == 1) return true;
+        if(useAPI == 0) return false;
         Database2 dbHandler = Database2.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
         //TODO maybe check the settings table instead (api should be 1)
@@ -252,8 +255,10 @@ public class API {
             Cursor cursor = db.query(Text.TABLE_TEXTS, null, "_id" + "=?",
                     new String[] { String.valueOf(1) }, null, null, null, null);
             Log.d("api", "got here without problems" + cursor);
+            useAPI = 0;
             return false;
         }catch(SQLiteException e){
+            useAPI = 1;
             return true;
         }
     }
