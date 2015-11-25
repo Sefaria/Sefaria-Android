@@ -102,7 +102,7 @@ public class PerekTextView extends JustifyTextView {
             //canvas.drawText(drawText, 0, 100, paint);
 
             //https://stackoverflow.com/questions/6756975/draw-multi-line-text-to-canvas
-            StaticLayout mTextLayout = new StaticLayout(drawText, paint, canvas.getWidth(), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
+            StaticLayout mTextLayout = new StaticLayout(Html.fromHtml(drawText), paint, canvas.getWidth(), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
 
             canvas.save();
             canvas.translate(0, startY);
@@ -206,10 +206,10 @@ public class PerekTextView extends JustifyTextView {
             else if (lang == Util.Lang.HE) words = "(" + Util.int2heb(text.levels[0]) + ") " + text.heText;
             else { //bilingual
                 words = "(" + Util.int2heb(text.levels[0]) + ") " + text.heText
-                + "\n\n(" + text.levels[0] + ") " + text.enText;
+                + "<br><br>(" + text.levels[0] + ") " + text.enText;
             }
             if (!isFirst)
-                words = isCts ? " " + words : "\n\n" + words;
+                words = isCts ? " " + words : "<br><br>" + words;
 
             SpannableString ss = new SpannableString(words);
             ss.setSpan(new VerseSpannable(words), 0, ss.length(), 0);
@@ -279,14 +279,14 @@ public class PerekTextView extends JustifyTextView {
                             float startX = lang == Util.Lang.HE ? mViewWidth-width : 0;
                             //canvas.drawText(line,startX,mLineY,paint);
                         }
-                    } else { //seperated
+                    } else { //not justified
 
                         int textStart = layout.getLineStart(i);
-                            int textEnd = layout.getLineEnd(lastDrawnLine);
-                            drawText = text.substring(textStart, textEnd);
-                            startY = mLineY;
+                        int textEnd = layout.getLineEnd(lastDrawnLine);
+                        drawText = text.substring(textStart, textEnd);
+                        startY = mLineY;
 
-                            break; //you've gotten the text. get out
+                        break; //you've gotten the text. get out
                     }
                 } else {
                     //canvas.drawText("EMPTY", 0, mLineY, paint);
@@ -294,6 +294,7 @@ public class PerekTextView extends JustifyTextView {
 
                 //TODO figure out less random number
                 mLineY += (int)Math.round(lineHeight - lineHeight/13);
+                //mLineY += lineHeight;
             }
             if (drawText == null) drawText = "";
             return drawText;

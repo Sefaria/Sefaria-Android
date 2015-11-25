@@ -47,7 +47,7 @@ public class MenuState implements Parcelable {
         this.currNode = currPath.get(currPath.size()-1);
         this.currPath = currPath;
         this.currLang = lang;
-        Log.d("menu","CURRNODECHLIDREN = " + currNode.getNumChildren());
+        //Log.d("menu","CURRNODECHLIDREN = " + currNode.getNumChildren());
     }
 
     private static boolean isMenuInited() {return rootNode != null;}
@@ -59,7 +59,7 @@ public class MenuState implements Parcelable {
             JsonNode jsonRoot = om.readTree(is);
             createChildrenNodes(jsonRoot, null, true);
         } catch (IOException e) {
-            Log.d("IO", "JSON not loaded");
+            //Log.d("IO", "JSON not loaded");
         }
     }
 
@@ -248,7 +248,7 @@ public class MenuState implements Parcelable {
         MenuState tempMenuState = this;
         for (int i = 1; i < tempPath.size(); i++) {
             MenuNode daNode = tempPath.get(i);
-            Log.d("menu","REBUILT NODE: " + daNode);
+            //Log.d("menu","REBUILT NODE: " + daNode);
             tempMenuState = tempMenuState.goForward(daNode, null);
         }
         this.currPath = tempMenuState.currPath;
