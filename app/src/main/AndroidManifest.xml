@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.sefaria.sefaria"
-    >
-
+    package="org.sefaria.sefaria" >
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -10,11 +8,10 @@
     <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
-
     <application
         android:name=".MyApp"
-        android:hardwareAccelerated="true"
         android:allowBackup="true"
+        android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
@@ -36,8 +33,9 @@
             android:label="@string/title_activity_text" >
         </activity>
 
-        <receiver android:name=".database.UpdateReceiver"
-            android:enabled="true">
+        <receiver
+            android:name=".database.UpdateReceiver"
+            android:enabled="true" >
         </receiver>
 
         <service
@@ -46,6 +44,10 @@
             <action android:name="com.torahsummary.betamidrash.UpdateService" />
         </service>
 
+        <activity
+            android:name=".activities.TOCActivity"
+            android:label="@string/title_activity_toc" >
+        </activity>
     </application>
 
 </manifest>

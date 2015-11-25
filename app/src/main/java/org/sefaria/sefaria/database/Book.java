@@ -417,6 +417,8 @@ public class Book implements Parcelable {
         title = in.readString();
         heTitle = in.readString();
         languages = in.readInt();
+        TOCroots =null;
+
     }
 
 }

@@ -119,6 +119,7 @@
     <string name="CHECKING_FOR_UPDATE_TITLE">Checking for update</string>
     <string name="finish">Finish</string>
     <string name="mainMenuSearchHint">Search Texts or Book Titles</string>
+    <string name="title_activity_toc">TOCActivity</string>
 
 
 

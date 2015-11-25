@@ -236,7 +236,8 @@ public class PerekTextView extends JustifyTextView {
             mViewWidth = getMeasuredWidth();
             this.textSize = getTextSize();
             lineCount = layout.getLineCount();
-            lineHeight = getLineHeight();
+            lineHeight = getLineHeight(); //(int)Math.round(getLineHeight() - getLineHeight()/12);
+            Log.d("text","LINE HEIGHT " + lineHeight);
         } catch (NullPointerException e) {
             return; //layout was probably null. :(
         }
@@ -293,8 +294,8 @@ public class PerekTextView extends JustifyTextView {
                 }
 
                 //TODO figure out less random number
-                mLineY += (int)Math.round(lineHeight - lineHeight/13);
-                //mLineY += lineHeight;
+                //mLineY += (int)Math.round(lineHeight - lineHeight/13);
+                mLineY += lineHeight;
             }
             if (drawText == null) drawText = "";
             return drawText;
