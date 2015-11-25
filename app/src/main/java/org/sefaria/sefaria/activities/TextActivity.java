@@ -147,7 +147,7 @@ public class TextActivity extends Activity {
                 setTitle(menuState.getCurrNode().getTitle(menuState.getLang()));
 
         //this specifically comes before menugrid, b/c in tabs it menugrid does funny stuff to currnode
-        CustomActionbar cab = new CustomActionbar(this, menuState.getCurrNode(), Util.Lang.EN,searchClick,null,null,menuClick);
+        CustomActionbar cab = new CustomActionbar(this, menuState.getCurrNode(), Util.Lang.EN,searchClick,null,titleClick,menuClick);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(cab);
 
@@ -185,6 +185,16 @@ public class TextActivity extends Activity {
             Intent intent = new Intent(TextActivity.this, HomeActivity.class);
             intent.putExtra("searchClicked",true);
             intent.putExtra("isPopup",true);
+            startActivity(intent);
+        }
+    };
+
+
+    View.OnClickListener titleClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(TextActivity.this, TOCActivity.class);
+            intent.putExtra("currBook",book);
             startActivity(intent);
         }
     };
