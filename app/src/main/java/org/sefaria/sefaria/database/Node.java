@@ -17,6 +17,37 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Node{ //TODO implements  Parcelable
+
+    public final static int NODE_TYPE_BRANCH = 1;
+    public final static int NODE_TYPE_TEXTS = 2;
+    public final static int NODE_TYPE_REFS = 3;
+
+    public final static int NID_NON_COMPLEX = -3;
+    public  final static int NID_NO_INFO = -1;
+
+    private int nid;
+    private int bid;
+    private int parentNode;
+    private int nodeType;
+    private int siblingNum;
+    private String enTitle;
+    private String heTitle;
+    private String [] sectionNames;
+    private String [] heSectionNames;
+    private int structNum;
+    private int textDepth;
+    private int startTid;
+    private int endTid;
+    private String extraTids;
+
+    private List<Node> children;
+    private List<Integer> chaps;
+    private List<Text> textList;
+    //private Node parent;
+
+    private static String NODE_TABLE = "Nodes";
+
+
     public Node(){
         children = new ArrayList<>();
         chaps = new ArrayList<>();
@@ -45,38 +76,7 @@ public class Node{ //TODO implements  Parcelable
         addSectionNames();
     }
 
-    public final static int NODE_TYPE_BRANCH = 1;
-    public final static int NODE_TYPE_TEXTS = 2;
-    public final static int NODE_TYPE_REFS = 3;
 
-    public final static int NID_NON_COMPLEX = -3;
-    public  final static int NID_NO_INFO = -1;
-
-
-
-
-    private int nid;
-    private int bid;
-    private int parentNode;
-    private int nodeType;
-    private int siblingNum;
-    private String enTitle;
-    private String heTitle;
-    private String [] sectionNames;
-    private String [] heSectionNames;
-    private int structNum;
-    private int textDepth;
-    private int startTid;
-    private int endTid;
-    private String extraTids;
-
-    private List<Node> children;
-    private List<Integer> chaps;
-    private List<Text> textList;
-    //private Node parent;
-
-
-    private static String NODE_TABLE = "Nodes";
 
     /**
      * use lang from Util.HE or EN (maybe or BI)
@@ -96,10 +96,14 @@ public class Node{ //TODO implements  Parcelable
     }
 
     public List<Node> getChildren(){
+        if(children == null)
+            children = new ArrayList<>();
         return children;
     }
 
     public  List<Integer> getChaps(){
+        if(chaps == null)
+            chaps = new ArrayList<>();
         return chaps;
     }
 
@@ -110,7 +114,7 @@ public class Node{ //TODO implements  Parcelable
         String sectionStr = "[";
         for(int i=0;i<textDepth;i++) {
             sectionStr += "Section" + i;
-            if(i != textDepth)
+            if(i < textDepth-1)
                 sectionStr += ",";
         }
         sectionStr += "]";
@@ -161,8 +165,10 @@ public class Node{ //TODO implements  Parcelable
      */
     private static void showTree(Node node){
         node.log();
-        if(node.children.size() == 0)
+        if(node.children.size() == 0) {
+            Log.d("Node showtree", "chaps: "+ node.chaps);
             return;
+        }
         else{
             Log.d("Node", "node " + node.nid + " children: ");
             for(int i=0;i<node.children.size();i++) {
@@ -219,24 +225,32 @@ public class Node{ //TODO implements  Parcelable
 
 
     private void getAllChaps(boolean useNID) throws API.APIException {
+        //if(true) return;
+        if(textDepth < 2){
+            Log.e("Node", "called getAllChaps with too low texdepth" + this.toString());
+            return;
+        }
+
         Database2 dbHandler = Database2.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
+
 
         String levels = "";
         for(int i=textDepth;i>1;i--){
             levels += "level" + i;
-            if(i != 1)
+            if(i > 2)
                 levels += ",";
         }
+        Log.d("Node", "node:" + this.toString());
 
         String sql = "SELECT DISTINCT " + levels + " FROM "+ Text.TABLE_TEXTS;
 
-        if(useNID)  sql += " WHERE parentNode = " + this.nid;
+        if(useNID)  sql += " WHERE bid = " + this.bid + " AND  parentNode = " + this.nid;
         else        sql += " WHERE bid = " + this.bid;
 
         sql += " ORDER BY  " + levels;
 
-        Log.d("Node", sql);
+        Log.d("Node", "sql: " + sql);
         Node tempNode = null;
         int lastLevel3 = 0;
         int originalNodeType = this.nodeType;
@@ -251,9 +265,9 @@ public class Node{ //TODO implements  Parcelable
             Cursor cursor = db.rawQuery(sql, null);
             if (cursor.moveToFirst()) {
                 do {
-                    if(textDepth == 2)
+                    if(textDepth == 2) {
                         chaps.add(cursor.getInt(0));
-                    else if(textDepth == 3){
+                    }else if(textDepth == 3){
                         this.nodeType = NODE_TYPE_BRANCH;//TODO see if this needs a different nodeType number
                         int level3 = cursor.getInt(0);
                         if(level3 != lastLevel3 || tempNode == null){
@@ -311,7 +325,6 @@ public class Node{ //TODO implements  Parcelable
         int levels [] = new int [] {1,2};//TODO based on logic
         return levels;
     }
-
 
 
     public static List<Node> getRoots(Book book) throws API.APIException {
