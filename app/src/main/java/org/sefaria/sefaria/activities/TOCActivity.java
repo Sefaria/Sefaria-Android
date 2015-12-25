@@ -16,11 +16,13 @@ import org.sefaria.sefaria.database.Node;
 import org.sefaria.sefaria.layouts.CustomActionbar;
 import org.sefaria.sefaria.menu.MenuNode;
 
+import java.net.URI;
 import java.util.List;
 
 public class TOCActivity extends AppCompatActivity {
 
     private Book book;
+    private Util.Lang lang;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,14 +31,14 @@ public class TOCActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         book = intent.getParcelableExtra("currBook");
-
+        lang = Util.Lang.EN;
 
         init();
     }
 
     private void init() {
         MenuNode titleNode = new MenuNode("Table of Contents","תוכן העניינים",null);
-        CustomActionbar cab = new CustomActionbar(this, titleNode, Util.Lang.EN,null,closeClick,null,null);
+        CustomActionbar cab = new CustomActionbar(this, titleNode, lang,null,closeClick,null,null);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(cab);
 
@@ -46,8 +48,10 @@ public class TOCActivity extends AppCompatActivity {
         Log.d("toc","ROOT SIZE " + tocRoots.size());
         Log.d("toc", "TOC " + tocRoots.get(1).getChildren());
 
-        TOCGrid tocGrid = new TOCGrid(this,tocRoots, 4,false,Util.Lang.HE);
+        int numColumns = 6;
+
         ScrollView tocRoot = (ScrollView) findViewById(R.id.toc_root);
+        TOCGrid tocGrid = new TOCGrid(this,tocRoots, numColumns,false,lang);
         tocRoot.addView(tocGrid);
 
 
