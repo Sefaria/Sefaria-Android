@@ -10,8 +10,10 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import org.sefaria.sefaria.R;
+import org.sefaria.sefaria.activities.TOCActivity;
 import org.sefaria.sefaria.activities.TextActivity;
 import org.sefaria.sefaria.Util;
+import org.sefaria.sefaria.database.Book;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +62,8 @@ public class MenuGrid extends LinearLayout {
 
         this.gridRoot = new LinearLayout(context);
         gridRoot.setOrientation(LinearLayout.VERTICAL);
-        gridRoot.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+        gridRoot.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+        gridRoot.setGravity(Gravity.CENTER);
         this.addView(gridRoot);
 
 
@@ -79,6 +82,8 @@ public class MenuGrid extends LinearLayout {
         LinearLayout ll = new LinearLayout(context);
         ll.setOrientation(LinearLayout.HORIZONTAL);
         ll.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+        //ll.setGravity(Gravity.CENTER);
+        ll.setHorizontalGravity(Gravity.CENTER_HORIZONTAL);
         for (int i = 0; i < numColumns; i++) {
             ll.addView(new MenuButton(context));
         }
@@ -277,11 +282,20 @@ public class MenuGrid extends LinearLayout {
             MenuState newMenuState = menuState.goForward(mb.getNode(), mb.getSectionNode());
             Intent intent;
             if (mb.isBook()) {
-                intent = new Intent(context, TextActivity.class);
-                //trick to destroy all activities beforehand
-                //ComponentName cn = intent.getComponent();
-                //Intent mainIntent = IntentCompat.makeRestartActivityTask(cn);
-                intent.putExtra("menuState", newMenuState);
+                boolean goToTOC = true;
+                if(goToTOC){
+                    intent = new Intent(context, TOCActivity.class);
+                    Book book = new Book(newMenuState.getCurrNode().getTitle(Util.Lang.EN));
+                    intent.putExtra("currBook", book);
+
+                }else {
+                    intent = new Intent(context, TextActivity.class);
+                    //trick to destroy all activities beforehand
+                    //ComponentName cn = intent.getComponent();
+                    //Intent mainIntent = IntentCompat.makeRestartActivityTask(cn);
+                    intent.putExtra("menuState", newMenuState);
+
+                }
                 context.startActivity(intent);
 
             }else {
