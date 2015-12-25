@@ -105,7 +105,8 @@ public class PerekTextView extends JustifyTextView {
             StaticLayout mTextLayout = new StaticLayout(Html.fromHtml(drawText), paint, canvas.getWidth(), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
 
             canvas.save();
-            canvas.translate(0, startY);
+            //offset = currScreenTop % lineHeight
+            canvas.translate(0, startY);//-offset);
             mTextLayout.draw(canvas);
             canvas.restore();
         }
@@ -268,7 +269,7 @@ public class PerekTextView extends JustifyTextView {
             String drawText = "";
             for (int i = 0; i < lineCount; i++) {
                 if (i >= firstDrawnLine && i < lastDrawnLine) {
-                    if (isCts && false) {  //TODO make this work
+                    if (isCts && false) {//justified  //TODO make this work
                         int lineStart = layout.getLineStart(i);
                         int lineEnd = layout.getLineEnd(i);
                         String line = text.substring(lineStart, lineEnd);
