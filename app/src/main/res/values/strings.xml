@@ -120,6 +120,7 @@
     <string name="finish">Finish</string>
     <string name="mainMenuSearchHint">Search Texts or Book Titles</string>
     <string name="title_activity_toc">TOCActivity</string>
+    <string name="title_activity_search">Search</string>
 
 
 
