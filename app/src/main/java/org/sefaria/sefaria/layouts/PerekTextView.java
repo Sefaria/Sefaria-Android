@@ -8,8 +8,10 @@ import android.graphics.Paint;
 import android.os.AsyncTask;
 import android.text.Html;
 import android.text.Layout;
+import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
@@ -75,7 +77,7 @@ public class PerekTextView extends JustifyTextView {
         vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                updateLayoutParams();
+                updateLayoutParams(true);
                 if (!inited) {
 
                     updateScroll(0, 1000);
@@ -85,6 +87,7 @@ public class PerekTextView extends JustifyTextView {
                 }
             }
         });
+        setTextColor(Color.parseColor("#000000"));
         setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
         setIsCts(isCts);
         setLang(lang);
@@ -98,22 +101,39 @@ public class PerekTextView extends JustifyTextView {
     @Override
     protected void onDraw(Canvas canvas) {
         //oldOnDraw(canvas);
-        if (drawText != null && drawText != "") {
-            //canvas.drawText(drawText, 0, 100, paint);
+        if (/*drawText != null && drawText != ""*/ true ) {
+            //Log.d("text","DRAW");
+            for (int i = firstDrawnLine; i < lastDrawnLine; i++) {
+                int textStart = layout.getLineStart(i);
+                int textEnd = layout.getLineEnd(i);
+                String tempLine = text.substring(textStart, textEnd);
+                boolean hasHeb = Util.hasHebrew(tempLine);
+                //if (hasHeb) Log.d("text","HAS HEBREW");
+
+                float offset = mViewWidth - StaticLayout.getDesiredWidth(tempLine + " ", paint); //TODO less random number
+                float startX = hasHeb ? offset : 0f;
+                canvas.drawText(tempLine, startX, layout.getLineBottom(i), paint);
+
+
+            }
 
             //https://stackoverflow.com/questions/6756975/draw-multi-line-text-to-canvas
-            StaticLayout mTextLayout = new StaticLayout(Html.fromHtml(drawText), paint, canvas.getWidth(), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
+            /*StaticLayout mTextLayout = new StaticLayout(Html.fromHtml(drawText), paint, canvas.getWidth(), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
+            float offset = scrollY % lineHeight;
 
             canvas.save();
             canvas.translate(0, startY);
             mTextLayout.draw(canvas);
-            canvas.restore();
+            canvas.restore();*/
         }
     }
 
     private void noahDraw() {
-        AsyncDraw asyncDraw = new AsyncDraw(this);
-        asyncDraw.execute();
+        updateVisibleLines();
+        invalidate();
+        draw(new Canvas());
+        //AsyncDraw asyncDraw = new AsyncDraw(this);
+        //asyncDraw.execute();
     }
 
     @Override
@@ -144,7 +164,7 @@ public class PerekTextView extends JustifyTextView {
     @Override
     public void setTextSize(float size) {
         super.setTextSize(size);
-        updateLayoutParams();
+        updateLayoutParams(false);
     }
 
     public int getFirstDrawnLine() {
@@ -198,6 +218,7 @@ public class PerekTextView extends JustifyTextView {
     }
 
     public void update() {
+        //Log.d("text","UPDATE");
         SpannableStringBuilder ssb = new SpannableStringBuilder();
         boolean isFirst = true;
         for (Text text : textList) {
@@ -211,7 +232,8 @@ public class PerekTextView extends JustifyTextView {
             if (!isFirst)
                 words = isCts ? " " + words : "<br><br>" + words;
 
-            SpannableString ss = new SpannableString(words);
+
+            SpannableString ss = new SpannableString(Html.fromHtml(words));
             ss.setSpan(new VerseSpannable(words), 0, ss.length(), 0);
             ssb.append(ss);
             isFirst = false;
@@ -220,29 +242,37 @@ public class PerekTextView extends JustifyTextView {
         setMovementMethod(LinkMovementMethod.getInstance());
 
         //text props
-        updateLayoutParams();
+        updateLayoutParams(true);
         noahDraw();
     }
 
-    private void updateLayoutParams() {
+    private void updateLayoutParams(boolean updateText) {
         try {
-            layout = getLayout();
-            relativeTop = Util.getRelativeTop(PerekTextView.this);
-            paint = getPaint();
-            paint.setColor(getCurrentTextColor());
-            paint.drawableState = getDrawableState();
-            text = (String) getText();
+
+
+
+            //this is expensive
+            if (updateText) {
+                layout = getLayout();
+                relativeTop = Util.getRelativeTop(PerekTextView.this);
+                paint = getPaint();
+                paint.setColor(getCurrentTextColor());
+                paint.drawableState = getDrawableState();
+                text = (String) getText();
+                lineCount = layout.getLineCount();
+            }
 
             mViewWidth = getMeasuredWidth();
             this.textSize = getTextSize();
-            lineCount = layout.getLineCount();
+
             lineHeight = getLineHeight(); //(int)Math.round(getLineHeight() - getLineHeight()/12);
-            Log.d("text","LINE HEIGHT " + lineHeight);
         } catch (NullPointerException e) {
             return; //layout was probably null. :(
         }
     }
 
+    /*
+    //this class draws justified text (kinda) and draws only the text on the screen (kinda)
     public class AsyncDraw extends AsyncTask<Void, Void, String> {
 
         //public String drawText;
@@ -252,6 +282,7 @@ public class PerekTextView extends JustifyTextView {
         public AsyncDraw(PerekTextView ptv) {
             super();
             this.ptvRef = new WeakReference<>(ptv);
+            //Log.d("text","NOAH DRAW");
         }
 
         @Override
@@ -278,14 +309,14 @@ public class PerekTextView extends JustifyTextView {
                             //drawScaledText(canvas, line, width, lang == Util.HE);
                         } else {
                             float startX = lang == Util.Lang.HE ? mViewWidth-width : 0;
-                            //canvas.drawText(line,startX,mLineY,paint);
+                            //canvas.drawText(line,o,mLineY,paint);
                         }
                     } else { //not justified
-
                         int textStart = layout.getLineStart(i);
                         int textEnd = layout.getLineEnd(lastDrawnLine);
                         drawText = text.substring(textStart, textEnd);
-                        startY = mLineY;
+                        startY = layout.getLineTop(i);
+
 
                         break; //you've gotten the text. get out
                     }
@@ -308,6 +339,7 @@ public class PerekTextView extends JustifyTextView {
             ptv.drawText = drawText;
             ptv.startY = startY;
             ptv.draw(new Canvas());
+
         }
         protected void drawScaledText(Canvas canvas, String line, float lineWidth,boolean isHeb) {
 
@@ -366,5 +398,5 @@ public class PerekTextView extends JustifyTextView {
             }
         }
 
-    }
+    }*/
 }

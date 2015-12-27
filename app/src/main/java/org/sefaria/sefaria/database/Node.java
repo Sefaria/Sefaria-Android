@@ -130,7 +130,7 @@ public class Node{ //TODO implements  Parcelable
                 sectionStr += ",";
         }
         sectionStr += "]";
-        Log.d("Node",sectionStr);
+        //Log.d("Node",sectionStr);
         sectionNames = Util.str2strArray(sectionStr);
         heSectionNames = sectionNames;
 
@@ -178,15 +178,15 @@ public class Node{ //TODO implements  Parcelable
     private static void showTree(Node node){
         node.log();
         if(node.children.size() == 0) {
-            Log.d("Node showtree", "chaps: "+ node.chaps);
+            //Log.d("Node showtree", "chaps: "+ node.chaps);
             return;
         }
         else{
-            Log.d("Node", "node " + node.nid + " children: ");
+            //Log.d("Node", "node " + node.nid + " children: ");
             for(int i=0;i<node.children.size();i++) {
                 node.children.get(i).log();
             }
-            Log.d("node", "... end of chilren list");
+            //Log.d("node", "... end of chilren list");
             for(int i=0;i<node.children.size();i++){
                 showTree(node.children.get(i));
             }
@@ -253,7 +253,7 @@ public class Node{ //TODO implements  Parcelable
             if(i > 2)
                 levels += ",";
         }
-        Log.d("Node", "node:" + this.toString());
+        //Log.d("Node", "node:" + this.toString());
 
         String sql = "SELECT DISTINCT " + levels + " FROM "+ Text.TABLE_TEXTS;
 
@@ -262,7 +262,7 @@ public class Node{ //TODO implements  Parcelable
 
         sql += " ORDER BY  " + levels;
 
-        Log.d("Node", "sql: " + sql);
+        //Log.d("Node", "sql: " + sql);
         Node tempNode = null;
         int lastLevel3 = 0;
         int originalNodeType = this.nodeType;

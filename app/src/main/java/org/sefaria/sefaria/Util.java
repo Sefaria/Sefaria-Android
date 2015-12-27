@@ -17,7 +17,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -50,6 +52,8 @@ public class Util {
             //'\u05e5',
             '\u05e6','\u05e7','\u05e8','\u05e9',
             '\u05ea'};
+
+    static final private String[] htmlTags = { "b","i","strong","em","small","big"}; //to be replaced with spans using the html2Span() fn
 
 
     public static boolean isSystemLangHe(){
@@ -208,6 +212,27 @@ public class Util {
         return heb;
     }
 
+    public static String html2Span(String html) {
+        //first find all indices of interesting tags
+        StringBuffer sb = new StringBuffer();
+        HashMap<Integer,Integer> htmlIndsMap = new HashMap<>(); //maps index in string to index in htmlTags array
+        for (String tag : htmlTags) {
+            Pattern p = Pattern.compile("(<" + tag + ">)(.*)(</" + tag + ">)");
+            Matcher m = p.matcher(html);
+
+            if (m.find())
+            {
+                m.appendReplacement(sb,m.group(2));
+            }
+        }
+        return sb.toString();
+    }
+
+    //returns true if text has any hebrew character in it
+    public static boolean hasHebrew(String text) {
+        Pattern patt = Pattern.compile("[\u05d0-\u05ea]");
+        return patt.matcher(text).find();
+    }
 
     public static void moveFile(String inputPath, String inputFile, String outputPath, String outputFile) {
 

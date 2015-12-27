@@ -31,7 +31,7 @@ public class TOCActivity extends AppCompatActivity {
         book = intent.getParcelableExtra("currBook");
         List<Node> tocRoots = book.getTOC();
         Log.d("toc","ROOT SIZE " + tocRoots.size());
-        Log.d("toc","TOC " + tocRoots.get(1).getChildren());
+        Log.d("toc","TOC " + tocRoots.get(0).getChaps() + tocRoots.get(0).getChildren());
 
         init();
     }
@@ -41,6 +41,8 @@ public class TOCActivity extends AppCompatActivity {
         CustomActionbar cab = new CustomActionbar(this, titleNode, Util.Lang.EN,null,closeClick,null,null);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(cab);
+
+
     }
 
     View.OnClickListener closeClick = new View.OnClickListener() {
