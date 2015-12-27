@@ -13,4 +13,8 @@
     <dimen name="max_text_font_size">30sp</dimen>
     <dimen name="text_font_size_increment">1sp</dimen>
     <dimen name="text_chapter_font_size">10sp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+
+    <dimen name="toc_numbox">40dp</dimen>
+
 </resources>

@@ -48,6 +48,11 @@
             android:name=".activities.TOCActivity"
             android:label="@string/title_activity_toc" >
         </activity>
+        <activity
+            android:name=".activities.SearchActivity"
+            android:label="@string/title_activity_search"
+            android:theme="@style/AppTheme" >
+        </activity>
     </application>
 
 </manifest>

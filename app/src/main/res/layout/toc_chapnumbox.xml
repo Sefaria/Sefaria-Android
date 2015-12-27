@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+
+
+
+    android:id="@+id/toc_boxitem"
+
+    android:text="234"
+
+
+    android:background="@color/menu_foreground"
+    android:layout_centerHorizontal="true"
+    android:layout_centerVertical="true"
+    android:textColor="@color/toc_front"
+
+    android:layout_width="@dimen/toc_numbox"
+    android:layout_height="@dimen/toc_numbox"
+    android:layout_weight="1"
+    android:layout_margin="1dp"
+    android:padding="1dp"
+    android:textSize="10sp"
+
+    android:gravity="center"
+
+
+
+
+    >
+
+</TextView>

@@ -21,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.sefaria.sefaria.database.API;
+import org.sefaria.sefaria.database.Node;
 import org.sefaria.sefaria.layouts.CustomActionbar;
 import org.sefaria.sefaria.layouts.JustifyTextView;
 import org.sefaria.sefaria.R;
@@ -51,6 +52,7 @@ public class TextActivity extends Activity {
     private static final int LOAD_PIXEL_THRESHOLD = 20; //num pixels before the bottom (or top) of a segment after (before) which the next (previous) segment will be loaded
 
     private MenuState menuState;
+    private Node node;
     private boolean isTextMenuVisible;
     private LinearLayout textMenuRoot;
     private LinearLayout textRoot;
@@ -78,6 +80,14 @@ public class TextActivity extends Activity {
         if (in != null) {
             menuState = in.getParcelable("menuState");
         }
+
+        /* jh adding...
+        if(menuState == null){
+            node = intent.getParcelableExtra("node");
+            if(in != null)
+                node = in.getParcelable("node");
+        }
+        */
         init();
     }
 
@@ -159,7 +169,7 @@ public class TextActivity extends Activity {
              }
          });
 
-                setTitle(menuState.getCurrNode().getTitle(menuState.getLang()));
+        setTitle(menuState.getCurrNode().getTitle(menuState.getLang()));
 
         //this specifically comes before menugrid, b/c in tabs it menugrid does funny stuff to currnode
         CustomActionbar cab = new CustomActionbar(this, menuState.getCurrNode(), Util.Lang.EN,searchClick,null,titleClick,menuClick);
