@@ -24,6 +24,9 @@
     <color name="tab_inactive">#9B9B9B</color>
     <color name="tab_active">#000000</color>
 
+
+    <color name="toc_front">#000000</color>
+
     <color name="text_white_background">#F8FCF8</color>
     <color name="text_black_background">#000000</color>
 
