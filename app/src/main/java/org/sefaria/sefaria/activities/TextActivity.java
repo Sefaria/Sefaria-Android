@@ -5,9 +5,18 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Html;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.util.Linkify;
 import android.util.Log;
 import android.view.View;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.AbsListView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,6 +27,8 @@ import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.layouts.PerekTextView;
 import org.sefaria.sefaria.layouts.ScrollViewExt;
 import org.sefaria.sefaria.layouts.ScrollViewListener;
+import org.sefaria.sefaria.layouts.SectionAdapter;
+import org.sefaria.sefaria.layouts.SectionView;
 import org.sefaria.sefaria.layouts.TextChapterHeader;
 import org.sefaria.sefaria.layouts.TextMenuBar;
 import org.sefaria.sefaria.Util;
@@ -37,6 +48,7 @@ public class TextActivity extends Activity {
         NEXT_SECTION, PREV_SECTION
     }
     private static final int WHERE_PAGE = 2;
+    private static final int LOAD_PIXEL_THRESHOLD = 20; //num pixels before the bottom (or top) of a segment after (before) which the next (previous) segment will be loaded
 
     private MenuState menuState;
     private boolean isTextMenuVisible;
@@ -70,6 +82,9 @@ public class TextActivity extends Activity {
     }
 
     private void init() {
+
+
+
         //defaults
         isCts = false;
         lang = Util.Lang.BI;
@@ -98,7 +113,7 @@ public class TextActivity extends Activity {
                  // if diff is zero, then the bottom has been reached
 
                  if (!isLoadingSection) {
-                     if (bottomDiff <= 0) {
+                     if (bottomDiff <= LOAD_PIXEL_THRESHOLD) {
                          //Log.d("text","NEXT");
                          AsyncLoadSection als = new AsyncLoadSection(TextEnums.NEXT_SECTION);
                          als.execute();
@@ -304,9 +319,16 @@ public class TextActivity extends Activity {
 
             PerekTextView content = new PerekTextView(TextActivity.this,textsList,isCts,lang,textSize,textScrollView.getScrollY());
 
+
+            /*ListView lv = new ListView(TextActivity.this);
+            lv.setLayoutParams(new ListView.LayoutParams(ListView.LayoutParams.MATCH_PARENT,ListView.LayoutParams.WRAP_CONTENT));
+            SectionAdapter sa = new SectionAdapter(TextActivity.this,R.layout.adapter_text_mono,textsList);
+            lv.setAdapter(sa);*/
             perekTextViews.add(content);
 
             isLoadingSection = false;
+
+            //SectionView sv = new SectionView(TextActivity.this,textsList,lang,isCts,textSize);
 
             if (dir == null || dir == TextEnums.NEXT_SECTION)
                 textRoot.addView(content); //add to end by default
