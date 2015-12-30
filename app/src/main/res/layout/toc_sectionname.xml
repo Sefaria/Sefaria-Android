@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+
+
+
+    android:id="@+id/toc_sectionroot"
+
+    android:text="Intro To Sample"
+
+    android:layout_centerHorizontal="true"
+    android:layout_centerVertical="true"
+    android:textColor="@color/toc_front"
+
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"
+    android:layout_margin="1dp"
+    android:textSize="18sp"
+
+    android:gravity="center"
+
+
+
+
+    >
+
+</TextView>

@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import org.sefaria.sefaria.R;
@@ -31,7 +32,6 @@ public class TOCGrid extends LinearLayout {
     private static final int HOME_MENU_OVERFLOW_NUM = 9;
 
     private Context context;
-    private int numColumns;
 
     private List<TOCNumBox> overflowButtonList;
 
@@ -48,15 +48,17 @@ public class TOCGrid extends LinearLayout {
 
     private List<Node> tocRoots;
 
-    private Util.Lang lang = Util.Lang.BI;
+    private Util.Lang lang;
     private boolean flippedForHe; //are the views flipped for hebrew
 
-    public TOCGrid(Context context,List<Node> tocRoots, int numColumns, boolean limitGridSize, Util.Lang lang) {
+    private int numColumns = 7;
+
+    public TOCGrid(Context context,List<Node> tocRoots, boolean limitGridSize, Util.Lang lang) {
         super(context);
         this.tocRoots = tocRoots;
         this.context = context;
-        this.numColumns = numColumns;
         this.limitGridSize = limitGridSize;
+        this.lang = lang;
 
         init();
         setLang(lang);
@@ -88,30 +90,29 @@ public class TOCGrid extends LinearLayout {
     }
 
 
-    private LinearLayout addRow() {
+    private LinearLayout addRow(LinearLayout linearLayoutRoot) {
         LinearLayout ll = new LinearLayout(context);
-        ll.setBackgroundResource(R.color.apocrypha);
         ll.setOrientation(LinearLayout.HORIZONTAL);
         ll.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+
 
         for (int i = 0; i < numColumns; i++) {
             ll.addView(new TOCNumBox(context));
         }
-        gridRoot.addView(ll);
+        linearLayoutRoot.addView(ll);
         return ll;
     }
 
-    public void addNumGrid(Node mainNode) {
+    public void addNumGrid(Node mainNode,LinearLayout linearLayoutRoot) {
         List<Integer> chaps = mainNode.getChaps();
         if (chaps.size() == 0) return;
 
         int currNodeIndex = 0;
 
         for (int i = 0; i <= Math.ceil(chaps.size()/numColumns) && currNodeIndex < chaps.size(); i++) {
-            LinearLayout linearLayout = addRow();
+            LinearLayout linearLayout = addRow(linearLayoutRoot);
 
             for (int j = 0; j < numColumns && currNodeIndex < chaps.size();  j++) {
-                //TOCNumBox mb = addElement(chaps.get(currNodeIndex),mainNode, linearLayout,j);
                 TOCNumBox tocNumBox = new TOCNumBox(context,chaps.get(currNodeIndex), mainNode, lang);
                 linearLayout.addView(tocNumBox);
                 currNodeIndex++;
@@ -126,23 +127,38 @@ public class TOCGrid extends LinearLayout {
         }
     }
 
-    private void activateTab(TOCTab tocTab){
-        for(TOCTab tempTocTab: TocTabList){
+    private void activateTab(TOCTab tocTab) {
+        for (TOCTab tempTocTab : TocTabList) {
             tempTocTab.setActive(false);
         }
 
         tocTab.setActive(true);
 
         freshGridRoot();
-        addNumGrid(tocTab.getNode());
+        Node root = tocTab.getNode();
+        displayTree(root, gridRoot, false);
 
     }
-
-
 
     private void activateTab(int num) {
         TOCTab tocTab = TocTabList.get(num);
         activateTab(tocTab);
+    }
+
+    private void displayTree(Node node, LinearLayout linearLayout){
+        displayTree(node, linearLayout, true);
+    }
+    private void displayTree(Node node, LinearLayout linearLayout, boolean displayLevel){
+        TOCSectionName tocSectionName = new TOCSectionName(context, node, lang,displayLevel);
+        linearLayout.addView(tocSectionName);
+        if(node.getChaps().size() >  0){//It's a regular text
+            //TODO check taht children size also makes sense
+            addNumGrid(node,tocSectionName);
+        }else {//it's complex text
+            for (int i = 0; i < node.getChildren().size(); i++) {
+                displayTree(node.getChildren().get(i),tocSectionName);
+            }
+        }
     }
 
     private void addTabsections(List<Node> nodeList) {
@@ -150,9 +166,11 @@ public class TOCGrid extends LinearLayout {
         tabRoot = new LinearLayout(context);
         tabRoot.setOrientation(LinearLayout.HORIZONTAL);
         tabRoot.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+
         tabRoot.setGravity(Gravity.CENTER);
         this.addView(tabRoot, 0); //make sure it's on top
 
+        Log.d("TOC", "nodeList.size(): " + nodeList.size());
         for (int i=0;i<nodeList.size();i++) {
             //ns comment from menu
             //although generally this isn't necessary b/c the nodes come from menuState.getSections
@@ -160,11 +178,12 @@ public class TOCGrid extends LinearLayout {
             //
 
             Node node = nodeList.get(i);
-            LayoutInflater inflater = (LayoutInflater)
-                    context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+            if(i > 0) { //skip adding the | (line) for the first item
+                LayoutInflater inflater = (LayoutInflater)
+                        context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
 
-            inflater.inflate(R.layout.tab_divider_menu, tabRoot);
-
+                inflater.inflate(R.layout.tab_divider_menu, tabRoot);
+            }
             TOCTab tocTab = new TOCTab(context,node,lang);
             tocTab.setOnClickListener(tabButtonClick);
             tabRoot.addView(tocTab);
