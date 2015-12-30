@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import org.sefaria.sefaria.MyApp;
@@ -14,7 +15,11 @@ import org.sefaria.sefaria.Util;
 import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class Node{ //TODO implements  Parcelable
 
@@ -44,6 +49,16 @@ public class Node{ //TODO implements  Parcelable
     private List<Integer> chaps;
     private List<Text> textList;
     //private Node parent;
+
+    private static Map<Integer,Node> allSavedNodes = new HashMap<Integer, Node>();
+
+    public static Node getSavedNode(int hash){
+        return allSavedNodes.get(hash);
+    }
+    public static void saveNode(Node node){
+        allSavedNodes.put(node.hashCode(),node);
+    }
+
 
     private static String NODE_TABLE = "Nodes";
 
@@ -410,7 +425,6 @@ public class Node{ //TODO implements  Parcelable
         if(addMoreh){//TODO remove only for testing alt structures
             nodes.add(getRoots(new Book(1175),false).get(0));
         }
-
 
 
         return nodes;

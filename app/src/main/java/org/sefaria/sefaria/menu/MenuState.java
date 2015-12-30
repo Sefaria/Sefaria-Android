@@ -207,7 +207,7 @@ public class MenuState implements Parcelable {
         currLang = lang;
     }
 
-        /*
+    /*
 
     PARCELABLE
 

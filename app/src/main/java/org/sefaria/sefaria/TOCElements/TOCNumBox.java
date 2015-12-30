@@ -66,6 +66,7 @@ public class TOCNumBox extends LinearLayout implements TOCElement {
         @Override
         public void onClick(View v) {
             //TODO go to intent of text page
+            Node.saveNode(node);
             try {
                 Log.d("toc", "go to:" + node + number);
                 Log.d("toc", "texts: " + node.getTexts(number));
