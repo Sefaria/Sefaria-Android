@@ -30,6 +30,7 @@ public class TOCTab extends LinearLayout implements TOCElement {
         this.node = node;
         this.tv = (TextView) findViewById(R.id.tv);
         tv.setText(node.getTitle(lang));
+        tv.setTextSize(6);//TODO dynamic sizes
         setLang(lang);
         setActive(false);
     }
