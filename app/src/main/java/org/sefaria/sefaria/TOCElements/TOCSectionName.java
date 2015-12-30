@@ -95,6 +95,11 @@ public class TOCSectionName extends LinearLayout implements TOCElement {
         public void onClick(View v) {
             //TODO go to intent of text page
             Log.d("toc", "sectionanem _ node:" + node);
+            try {
+                Log.d("toc", "texts:" + node.getTexts());
+            }catch (Exception e){
+                ;
+            }
             if(false && isContainer()){ //TODO maybe try to make this work at some point .. && get rid of false
                 for(int i=0;i<This.getChildCount();i++){
                     View child = This.getChildAt(i);

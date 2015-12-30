@@ -195,6 +195,12 @@ public class Node{ //TODO implements  Parcelable
         }
     }
 
+    /**
+     * converts complex nodes list into a complete tree
+     * @param nodes
+     * @return root
+     * @throws API.APIException
+     */
     private static Node convertToTree(List<Node> nodes) throws API.APIException{
         Node root = null;
         //TODO for each struct
@@ -263,6 +269,7 @@ public class Node{ //TODO implements  Parcelable
 
         sql += " ORDER BY  " + levels;
 
+        if(!useNID) nodeType = NODE_TYPE_TEXTS;
         //Log.d("Node", "sql: " + sql);
         Node tempNode = null;
         int lastLevel3 = 0;
@@ -310,14 +317,39 @@ public class Node{ //TODO implements  Parcelable
     }
 
 
+    /**
+     *  Get texts for complex texts
+     *
+     * @return textList
+     * @throws API.APIException
+     */
     public List<Text> getTexts() throws API.APIException{
-        if(textList != null)
-            return  textList;
-        return Text.get(this);
+        //TODO check for chapters (if it was supposed to pass a chapNum)
+
+        if(textList == null) {
+            textList = Text.get(this);
+        }
+        return textList;
     }
 
-    public List<Text> getTexts(int chapNum){
-        List<Text> texts = new ArrayList<>();
+    /**
+     * get Texts for non-complex texts. Given a chapter  number.
+     * @param chapNum
+     * @return textList
+     * @throws API.APIException
+     */
+    public List<Text> getTexts(int chapNum) throws API.APIException{
+        List<Text> texts;
+        Log.d("Node", "" + this);
+        if(this.nodeType == NODE_TYPE_TEXTS){
+            //TODO make work for more than 2 levels!!!!
+            //TODO error check bid and maybe levels
+            int [] levels = {0,chapNum};
+            texts =  Text.get(bid,levels);
+        }else{
+            Log.d("Node","NODE_TYPE:" + this.nodeType);
+            texts = new ArrayList<>();
+        }
         return texts;
     }
 
