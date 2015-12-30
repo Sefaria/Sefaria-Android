@@ -1,4 +1,4 @@
-package org.sefaria.sefaria.layouts;
+package org.sefaria.sefaria.TextElements;
 
 import android.content.Context;
 import android.view.View;

@@ -3,32 +3,24 @@ package org.sefaria.sefaria.layouts;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Path;
-import android.graphics.Paint;
 import android.os.AsyncTask;
 import android.text.Html;
 import android.text.Layout;
-import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
-import android.text.Spanned;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.View;
 import android.view.ViewTreeObserver;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import org.sefaria.sefaria.MyApp;
-import org.sefaria.sefaria.R;
+import org.sefaria.sefaria.TextElements.VerseSpannable;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.Text;
 
-import java.lang.ref.WeakReference;
-import java.text.Bidi;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -110,7 +102,7 @@ public class PerekTextView extends JustifyTextView {
                 boolean hasHeb = Util.hasHebrew(tempLine);
                 //if (hasHeb) Log.d("text","HAS HEBREW");
 
-                float offset = mViewWidth - StaticLayout.getDesiredWidth(tempLine + " ", paint); //TODO less random number
+                float offset = mViewWidth - StaticLayout.getDesiredWidth(tempLine, paint); //TODO less random number
                 float startX = hasHeb ? offset : 0f;
                 canvas.drawText(tempLine, startX, layout.getLineBottom(i), paint);
 
@@ -164,8 +156,11 @@ public class PerekTextView extends JustifyTextView {
 
     @Override
     public void setTextSize(float size) {
+        Log.d("textSize","START");
         super.setTextSize(size);
+        Log.d("textSize","UPDATED TEXT SIZE");
         updateLayoutParams(false);
+        Log.d("textSize","UPDATED LAYOUT PARAMS");
     }
 
     public int getFirstDrawnLine() {
@@ -219,57 +214,105 @@ public class PerekTextView extends JustifyTextView {
     }
 
     public void update() {
-        //Log.d("text","UPDATE");
-        SpannableStringBuilder ssb = new SpannableStringBuilder();
-        boolean isFirst = true;
-        for (Text text : textList) {
-            String words;
-            if (lang == Util.Lang.EN) words = "(" + text.levels[0] + ") " + text.enText;
-            else if (lang == Util.Lang.HE) words = "(" + Util.int2heb(text.levels[0]) + ") " + text.heText;
-            else { //bilingual
-                words = "(" + Util.int2heb(text.levels[0]) + ") " + text.heText
-                + "<br><br>(" + text.levels[0] + ") " + text.enText;
-            }
-            if (!isFirst)
-                words = isCts ? " " + words : "<br><br>" + words;
+        AsyncLoadText alt = new AsyncLoadText();
+        alt.execute();
 
 
-            SpannableString ss = new SpannableString(Html.fromHtml(words));
-            ss.setSpan(new VerseSpannable(words), 0, ss.length(), 0);
-            ssb.append(ss);
-            isFirst = false;
-        }
-        setText(ssb, TextView.BufferType.SPANNABLE);
-        setMovementMethod(LinkMovementMethod.getInstance());
-
-        //text props
-        updateLayoutParams(true);
-        noahDraw();
     }
 
     private void updateLayoutParams(boolean updateText) {
-        try {
+        layout = getLayout();
+        if (layout == null) return;
+
+        //this is expensive
+        if (updateText) {
+
+            relativeTop = Util.getRelativeTop(PerekTextView.this);
+            paint = getPaint();
+            paint.setColor(getCurrentTextColor());
+            paint.drawableState = getDrawableState();
+            text = (String) getText();
+            lineCount = layout.getLineCount();
+        }
+        Log.d("updateLayoutParams","START");
+        mViewWidth = getMeasuredWidth();
+        this.textSize = getTextSize();
+        Log.d("updateLayoutParams","GOT TEXT SIZE");
+        lineHeight = getLineHeight(); //(int)Math.round(getLineHeight() - getLineHeight()/12);
+    }
+
+    public class AsyncLoadText extends AsyncTask<Void, Void, String> {
+
+        private static final int TEXT_INCREMENT = 50;
+        private SpannableStringBuilder ssb;
+        private int currIndex;
+        private boolean isFirst;
+        private boolean isFirstUpdate;
+
+        public AsyncLoadText() {
+            super();
+            this.ssb = new SpannableStringBuilder();
+            this.currIndex = 0;
+            this.isFirst = true;
+            this.isFirstUpdate = true;
+            setMovementMethod(LinkMovementMethod.getInstance());
+        }
+
+        @Override
+        protected void onPreExecute() {
+            Log.d("async","STARTED");
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            while (currIndex < textList.size()) {
+                for (int i = currIndex; i < currIndex + TEXT_INCREMENT && i < textList.size(); i++) {
+                    Text text = textList.get(i);
+                    String words;
+                    if (lang == Util.Lang.EN) words = "(" + text.levels[0] + ") " + text.enText;
+                    else if (lang == Util.Lang.HE)
+                        words = "(" + Util.int2heb(text.levels[0]) + ") " + text.heText;
+                    else { //bilingual
+                        words = "(" + Util.int2heb(text.levels[0]) + ") " + text.heText
+                                + "<br><br>(" + text.levels[0] + ") " + text.enText;
+                    }
+                    if (!isFirst)
+                        words = isCts ? " " + words : "<br><br>" + words;
 
 
+                    SpannableString ss = new SpannableString(Html.fromHtml(words));
+                    ss.setSpan(new VerseSpannable(words), 0, ss.length(), 0);
+                    ssb.append(ss);
+                    isFirst = false;
+                }
 
-            //this is expensive
-            if (updateText) {
-                layout = getLayout();
-                relativeTop = Util.getRelativeTop(PerekTextView.this);
-                paint = getPaint();
-                paint.setColor(getCurrentTextColor());
-                paint.drawableState = getDrawableState();
-                text = (String) getText();
-                lineCount = layout.getLineCount();
+                currIndex += TEXT_INCREMENT;
+                publishProgress();
+            }
+            return "";
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+            if (isFirstUpdate) {
+                Log.d("async","FIRST");
+                setText(ssb, TextView.BufferType.SPANNABLE);
+                isFirstUpdate = false;
             }
 
-            mViewWidth = getMeasuredWidth();
-            this.textSize = getTextSize();
 
-            lineHeight = getLineHeight(); //(int)Math.round(getLineHeight() - getLineHeight()/12);
-        } catch (NullPointerException e) {
-            return; //layout was probably null. :(
         }
+
+        @Override
+        protected void onPostExecute(String s) {
+            Log.d("aysnc","DONE");
+            setText(ssb, TextView.BufferType.SPANNABLE);
+            updateLayoutParams(true);
+            noahDraw();
+            Log.d("async","REALLY DONE");
+
+        }
+
     }
 
     /*

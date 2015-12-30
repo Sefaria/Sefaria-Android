@@ -1,4 +1,4 @@
-package org.sefaria.sefaria.menu;
+package org.sefaria.sefaria.activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -13,6 +13,8 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
 import org.sefaria.sefaria.R;
+import org.sefaria.sefaria.menu.MenuGrid;
+import org.sefaria.sefaria.menu.MenuState;
 
 public class MenuActivity extends Activity {
 
