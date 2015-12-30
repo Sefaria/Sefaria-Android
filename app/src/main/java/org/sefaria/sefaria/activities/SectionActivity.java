@@ -31,7 +31,8 @@ public class SectionActivity extends Activity implements AbsListView.OnScrollLis
     }
     private static final int WHERE_PAGE = 2;
 
-    private MenuState menuState;
+    private MenuState menuState;//TODO remove menuState
+    private Util.Lang lang;
     private boolean isTextMenuVisible;
     private Book book;
     private int firstLoadedChap;
@@ -51,16 +52,19 @@ public class SectionActivity extends Activity implements AbsListView.OnScrollLis
         setContentView(R.layout.activity_section);
 
         Intent intent = getIntent();
-        menuState = intent.getParcelableExtra("menuState");
+         menuState = intent.getParcelableExtra("menuState");
         if (in != null) {
             menuState = in.getParcelable("menuState");
         }
+        String title = menuState.getCurrNode().getTitle(Util.Lang.EN);
+        book = new Book(title);
+        lang = menuState.getLang();
 
         init();
     }
 
     private void init() {
-        setTitle(menuState.getCurrNode().getTitle(menuState.getLang()));
+        setTitle(book.getTitle(lang));
         textMenuRoot = (LinearLayout) findViewById(R.id.textMenuRoot);
         listView = (ListView) findViewById(R.id.listview);
 
@@ -75,8 +79,7 @@ public class SectionActivity extends Activity implements AbsListView.OnScrollLis
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(cab);
 
-        String title = menuState.getCurrNode().getTitle(Util.Lang.EN);
-        book = new Book(title);
+
 
         if (!isLoadingSection) {
             AsyncLoadSection als = new AsyncLoadSection(TextEnums.NEXT_SECTION);

@@ -11,6 +11,7 @@ import android.widget.TextView;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
+import org.sefaria.sefaria.activities.SectionActivity;
 import org.sefaria.sefaria.activities.TextActivity;
 import org.sefaria.sefaria.database.Node;
 
@@ -114,9 +115,9 @@ public class TOCSectionName extends LinearLayout implements TOCElement {
 
             //TODO determine if it's a leaf and if so then display text
 
-            //Intent intent = new Intent(context, TextActivity.class);
-            //intent.putExtra("menuState", newMenuState);
-            //context.startActivity(intent);
+            Intent intent = new Intent(context, SectionActivity.class);
+            intent.putExtra("nodeHash", node.hashCode());
+            context.startActivity(intent);
 
 
         }
