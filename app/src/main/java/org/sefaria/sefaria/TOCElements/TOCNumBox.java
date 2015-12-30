@@ -13,6 +13,7 @@ import android.widget.Toast;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.activities.TextActivity;
+import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.database.Node;
 import org.sefaria.sefaria.menu.MenuNode;
 import org.sefaria.sefaria.menu.MenuState;
@@ -56,7 +57,7 @@ public class TOCNumBox extends LinearLayout implements TOCElement {
         if(Util.Lang.HE == lang)
             box.setText(Util.int2heb(number));
         else
-            box.setText(""+ number);
+            box.setText("" + number);
     }
 
 
@@ -65,7 +66,12 @@ public class TOCNumBox extends LinearLayout implements TOCElement {
         @Override
         public void onClick(View v) {
             //TODO go to intent of text page
-            Log.d("toc", "go to:" +node +  number);
+            try {
+                Log.d("toc", "go to:" + node + number);
+                Log.d("toc", "texts: " + node.getTexts(number));
+            }catch(API.APIException e){//use API.Excet
+                ;
+            }
 
             Intent intent = new Intent(context, TextActivity.class);
             //intent.putExtra("menuState", newMenuState);
