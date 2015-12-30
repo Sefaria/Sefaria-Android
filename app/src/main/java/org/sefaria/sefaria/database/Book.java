@@ -65,6 +65,19 @@ public class Book implements Parcelable {
         return roots;
     }
 
+    public String getTitle(Util.Lang lang){
+        if(Util.Lang.EN == lang)
+            return title;
+        else if(Util.Lang.HE == lang)
+            return heTitle;
+        else if(Util.Lang.BI == lang) {
+            return title + " - " + heTitle;
+        }
+        else{
+            Log.e("Book", "wrong lang num");
+            return "title";
+        }
+    }
 
     public int bid;
     public int commentsOn;

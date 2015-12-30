@@ -87,8 +87,9 @@ public class Node{ //TODO implements  Parcelable
             return enTitle;
         else if(Util.Lang.HE == lang)
             return heTitle;
-        else if(Util.Lang.BI == lang)
-            return enTitle + " " + heTitle;
+        else if(Util.Lang.BI == lang) {
+            return enTitle + " - " + heTitle;
+        }
         else{
             Log.e("Node", "wrong lang num");
             return "";
@@ -365,13 +366,19 @@ public class Node{ //TODO implements  Parcelable
             root.getAllChaps(false);
             nodes.add(root);
         }
-        else
+        else {
+            //Complex text combining nodes into root
             root = convertToTree(nodes);
+        }
+        nodes = new ArrayList<>();
+        nodes.add(root);
         //showTree(root);
+
 
         if(addMoreh){//TODO remove only for testing alt structures
             nodes.add(getRoots(new Book(1175),false).get(0));
         }
+
 
 
         return nodes;

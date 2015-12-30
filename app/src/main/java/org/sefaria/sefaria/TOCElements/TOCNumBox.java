@@ -53,8 +53,10 @@ public class TOCNumBox extends LinearLayout implements TOCElement {
 
     @Override
     public void setLang(Util.Lang lang) {
-        box.setText(""+ number);
-        ;
+        if(Util.Lang.HE == lang)
+            box.setText(Util.int2heb(number));
+        else
+            box.setText(""+ number);
     }
 
 
