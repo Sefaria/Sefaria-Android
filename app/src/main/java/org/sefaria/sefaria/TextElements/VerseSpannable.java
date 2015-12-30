@@ -1,4 +1,4 @@
-package org.sefaria.sefaria.layouts;
+package org.sefaria.sefaria.TextElements;
 
 import android.text.TextPaint;
 import android.text.style.ClickableSpan;

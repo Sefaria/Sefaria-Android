@@ -57,6 +57,7 @@ public class MyApp extends Application {
         return null;
     }
 
+
     public static Context getContext() { return context; }
     public static String getAppPackageName() { return appPackageName; }
 

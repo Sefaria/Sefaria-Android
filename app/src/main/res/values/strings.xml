@@ -121,6 +121,7 @@
     <string name="mainMenuSearchHint">Search Texts or Book Titles</string>
     <string name="title_activity_toc">TOCActivity</string>
     <string name="title_activity_search">Search</string>
+    <string name="title_activity_section">SectionActivity</string>
 
 
 

@@ -10,8 +10,9 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import org.sefaria.sefaria.R;
+import org.sefaria.sefaria.activities.SectionActivity;
+import org.sefaria.sefaria.activities.MenuActivity;
 import org.sefaria.sefaria.activities.TOCActivity;
-import org.sefaria.sefaria.activities.TextActivity;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.Book;
 
@@ -282,14 +283,14 @@ public class MenuGrid extends LinearLayout {
             MenuState newMenuState = menuState.goForward(mb.getNode(), mb.getSectionNode());
             Intent intent;
             if (mb.isBook()) {
-                boolean goToTOC = true;
+                boolean goToTOC = false;
                 if(goToTOC){
                     intent = new Intent(context, TOCActivity.class);
                     Book book = new Book(newMenuState.getCurrNode().getTitle(Util.Lang.EN));
                     intent.putExtra("currBook", book);
 
                 }else {
-                    intent = new Intent(context, TextActivity.class);
+                    intent = new Intent(context, SectionActivity.class);
                     //trick to destroy all activities beforehand
                     //ComponentName cn = intent.getComponent();
                     //Intent mainIntent = IntentCompat.makeRestartActivityTask(cn);

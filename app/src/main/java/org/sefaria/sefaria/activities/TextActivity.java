@@ -2,45 +2,29 @@ package org.sefaria.sefaria.activities;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.Html;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.util.Linkify;
 import android.util.Log;
 import android.view.View;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
-import android.widget.AbsListView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.database.Node;
 import org.sefaria.sefaria.layouts.CustomActionbar;
-import org.sefaria.sefaria.layouts.JustifyTextView;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.layouts.PerekTextView;
 import org.sefaria.sefaria.layouts.ScrollViewExt;
 import org.sefaria.sefaria.layouts.ScrollViewListener;
-import org.sefaria.sefaria.layouts.SectionAdapter;
-import org.sefaria.sefaria.layouts.SectionView;
-import org.sefaria.sefaria.layouts.TextChapterHeader;
-import org.sefaria.sefaria.layouts.TextMenuBar;
+import org.sefaria.sefaria.TextElements.TextChapterHeader;
+import org.sefaria.sefaria.TextElements.TextMenuBar;
 import org.sefaria.sefaria.Util;
-import org.sefaria.sefaria.layouts.VerseSpannable;
 import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Text;
 import org.sefaria.sefaria.menu.MenuNode;
 import org.sefaria.sefaria.menu.MenuState;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class TextActivity extends Activity {
@@ -320,9 +304,8 @@ public class TextActivity extends Activity {
             if (levels.length > WHERE_PAGE-1) {
                 //MenuNode tempNode = new MenuNode(book.sectionNamesL2B[wherePage-1] + " " + currLoadedChapter,
                 //        book.heSectionNamesL2B[wherePage-1] + " " + Util.int2heb(currLoadedChapter),null,null);
-                MenuNode tempNode = new MenuNode(""+levels[WHERE_PAGE-1],""+Util.int2heb(levels[WHERE_PAGE-1]),null);
 
-                TextChapterHeader tch = new TextChapterHeader(TextActivity.this,tempNode,lang,textSize);
+                TextChapterHeader tch = new TextChapterHeader(TextActivity.this,levels[WHERE_PAGE-1],lang,textSize);
                 textChapterHeaders.add(tch);
                 textRoot.addView(tch);
             }

@@ -2,10 +2,19 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <org.sefaria.sefaria.layouts.PerekTextView
+    <TextView
+        android:padding="20dp"
         android:id="@+id/mono"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="hello "/>
+        android:text="yoyoyoyo"/>
+
+    <org.sefaria.sefaria.TextElements.TextChapterHeader
+        android:id="@+id/chapHeader"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </org.sefaria.sefaria.TextElements.TextChapterHeader>
 
 </LinearLayout>
