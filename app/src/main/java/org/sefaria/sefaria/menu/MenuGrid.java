@@ -118,6 +118,11 @@ public class MenuGrid extends LinearLayout {
         }
     }
 
+    /**
+     * add the section tabs for different text structures. For example in Genesis these can be:
+     *  Chapters | Parshas | Commentary
+     * @param nodeList
+     */
     private void addTabsection(List<MenuNode> nodeList) {
         tabRoot = new LinearLayout(context);
         tabRoot.setOrientation(LinearLayout.HORIZONTAL);

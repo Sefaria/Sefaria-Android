@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.TextView;
 
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.TOCElements.TOCGrid;
@@ -32,6 +33,7 @@ public class TOCActivity extends AppCompatActivity {
         Intent intent = getIntent();
         book = intent.getParcelableExtra("currBook");
         lang = Util.Lang.EN;
+        //TODO use real lang
 
         init();
     }
@@ -43,19 +45,20 @@ public class TOCActivity extends AppCompatActivity {
         abRoot.addView(cab);
 
 
-        //ChapNumBox chapNumBox = new ChapNumBox(this,i, Util.Lang.BI);
-        List<Node> tocRoots = book.getTOC();
-        Log.d("toc","ROOT SIZE " + tocRoots.size());
-        Log.d("toc", "TOC " + tocRoots.get(1).getChildren());
 
-        int numColumns = 6;
+
+
+        TextView bookTitleTV = (TextView) findViewById(R.id.book_name);
+        bookTitleTV.setText(book.getTitle(lang));
+
+        //Log.d("toc", "TOC " + tocRoots.get(0).getChildren());
+
+        List<Node> tocRoots = book.getTOC();
+        Log.d("toc", "ROOTs SIZE " + tocRoots.size());
 
         ScrollView tocRoot = (ScrollView) findViewById(R.id.toc_root);
-        TOCGrid tocGrid = new TOCGrid(this,tocRoots, numColumns,false,lang);
+        TOCGrid tocGrid = new TOCGrid(this,tocRoots,false,lang);
         tocRoot.addView(tocGrid);
-
-
-
 
     }
 

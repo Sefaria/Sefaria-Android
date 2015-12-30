@@ -15,6 +15,6 @@
     <dimen name="text_chapter_font_size">10sp</dimen>
     <dimen name="fab_margin">16dp</dimen>
 
-    <dimen name="toc_numbox">40dp</dimen>
+    <dimen name="toc_numbox">35dp</dimen>
 
 </resources>
