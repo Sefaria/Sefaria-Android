@@ -363,7 +363,7 @@ public class TextActivity extends Activity {
             //Text.getNextChap(book,levels,next);
             List<Text> textsList;
             try {
-                textsList = Text.get(book, levels);
+                textsList = Text.get(book.bid, levels,false);
                 return textsList;
             } catch (API.APIException e) {
                 Toast.makeText(TextActivity.this,"API Exception!!!",Toast.LENGTH_SHORT).show();

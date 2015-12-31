@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
+import org.sefaria.sefaria.activities.SectionActivity;
 import org.sefaria.sefaria.activities.TextActivity;
 import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.database.Node;
@@ -27,6 +28,7 @@ public class TOCNumBox extends LinearLayout implements TOCElement {
     private TextView box;
     private Context context;
     private Node node;
+    private Util.Lang lang;
 
     public  TOCNumBox(Context context){
         super(context);
@@ -41,6 +43,7 @@ public class TOCNumBox extends LinearLayout implements TOCElement {
         this.number = number;
         this.node = node;
         this.context = context;
+        this.lang = lang;
         init(lang);
 
     }
@@ -74,9 +77,16 @@ public class TOCNumBox extends LinearLayout implements TOCElement {
                 ;
             }
 
-            Intent intent = new Intent(context, TextActivity.class);
+            //Intent intent = new Intent(context, TextActivity.class);
             //intent.putExtra("menuState", newMenuState);
             //context.startActivity(intent);
+
+            Node.saveNode(node);
+            Intent intent = new Intent(context, SectionActivity.class);
+            intent.putExtra("nodeHash", node.hashCode());
+            intent.putExtra("lang", lang);
+            intent.putExtra("firstLoadedChap",number);
+            context.startActivity(intent);
 
 
         }
