@@ -111,6 +111,15 @@ public class Node{ //TODO implements  Parcelable
         }
     }
 
+    public static Node getFirstDescendant(Node node){
+        if(node.getChildren().size() > 0){
+            node = node.getChildren().get(0);
+            return getFirstDescendant(node);
+        }else{
+            return node;
+        }
+    }
+
     /**
      * if (children.size() == 0)
      *      this is a leaf and you need to check
@@ -342,7 +351,7 @@ public class Node{ //TODO implements  Parcelable
         //TODO check for chapters (if it was supposed to pass a chapNum)
 
         if(textList == null) {
-            textList = Text.get(this);
+            textList = Text.get(getBid(), getLevels(), false);//// TODO: 12/30/2015 nid
         }
         return textList;
     }
@@ -354,16 +363,22 @@ public class Node{ //TODO implements  Parcelable
      * @throws API.APIException
      */
     public List<Text> getTexts(int chapNum) throws API.APIException{
-        List<Text> texts;
+        //TODO check if it wasn't supposed to check for chapters
+        List<Text> texts = new ArrayList<>();
         Log.d("Node", "" + this);
-        if(this.nodeType == NODE_TYPE_TEXTS){
+        if(!this.isComplex()){
             //TODO make work for more than 2 levels!!!!
-            //TODO error check bid and maybe levels
             int [] levels = {0,chapNum};
-            texts =  Text.get(bid,levels);
+
+            texts =  Text.get(bid,levels,false);
+        }
+        else if(this.nodeType == NODE_TYPE_TEXTS){
+
+            //TODO error check bid and maybe levels
+
+            //TODO this has to figure out if we're talking about nid (complex text) or not.
         }else{
             Log.d("Node","NODE_TYPE:" + this.nodeType);
-            texts = new ArrayList<>();
         }
         return texts;
     }

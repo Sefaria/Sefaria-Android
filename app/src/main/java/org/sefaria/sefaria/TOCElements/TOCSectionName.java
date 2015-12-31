@@ -27,6 +27,7 @@ public class TOCSectionName extends LinearLayout implements TOCElement {
     private Node node;
     private boolean displayLevel;
     private LinearLayout This = this;
+    private Util.Lang lang;
 
     /*
     public  TOCSectionName(Context context){
@@ -37,13 +38,13 @@ public class TOCSectionName extends LinearLayout implements TOCElement {
         this.setOrientation(VERTICAL);
     }
     */
-    public TOCSectionName(Context context, Node node, Util.Lang lang,boolean displayLevel){
+    public TOCSectionName(Context context, Node node, Util.Lang lang, boolean displayLevel){
         super(context);
         inflate(context, R.layout.toc_sectionname, this);
         this.setOrientation(VERTICAL);
         this.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 
-
+        this.lang = lang;
         this.node = node;
         this.context = context;
         this.displayLevel = displayLevel;
@@ -78,9 +79,10 @@ public class TOCSectionName extends LinearLayout implements TOCElement {
         String text = ""+ node.getTitle(lang);
         if(isContainer()) {
             //text += " v";
-            text += " " + "\u2228";
-        }else
+            ;//text += " " + "\u2228";
+        }else {
             text += " >";
+        }
         sectionroot.setText(text);
 
     }
@@ -114,9 +116,12 @@ public class TOCSectionName extends LinearLayout implements TOCElement {
             }
 
             //TODO determine if it's a leaf and if so then display text
-
+            if(isContainer())
+                return;
+            Node.saveNode(node);
             Intent intent = new Intent(context, SectionActivity.class);
             intent.putExtra("nodeHash", node.hashCode());
+            intent.putExtra("lang", lang);
             context.startActivity(intent);
 
 
