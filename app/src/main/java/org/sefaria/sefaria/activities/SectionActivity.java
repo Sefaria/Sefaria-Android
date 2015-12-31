@@ -17,6 +17,7 @@ import org.sefaria.sefaria.TextElements.TextMenuBar;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.database.Book;
+import org.sefaria.sefaria.database.Node;
 import org.sefaria.sefaria.database.Text;
 import org.sefaria.sefaria.layouts.CustomActionbar;
 import org.sefaria.sefaria.menu.MenuNode;
@@ -31,14 +32,15 @@ public class SectionActivity extends Activity implements AbsListView.OnScrollLis
     }
     private static final int WHERE_PAGE = 2;
 
-    private MenuState menuState;
+    private Util.Lang lang;
     private boolean isTextMenuVisible;
     private Book book;
-    private int firstLoadedChap;
-    private int lastLoadedChapter;
+    private int firstLoadedChap = 0;
+    private int lastLoadedChapter = 0;
     private LinearLayout textMenuRoot;
     private ListView listView;
     private SectionAdapter sectionAdapter;
+    private Node node;
 
     private int preLast;
 
@@ -51,16 +53,37 @@ public class SectionActivity extends Activity implements AbsListView.OnScrollLis
         setContentView(R.layout.activity_section);
 
         Intent intent = getIntent();
+        MenuState menuState;
         menuState = intent.getParcelableExtra("menuState");
         if (in != null) {
             menuState = in.getParcelable("menuState");
         }
-
+        if(menuState != null){//menuState means it came in from the menu
+            String title = menuState.getCurrNode().getTitle(Util.Lang.EN);
+            book = new Book(title);
+            lang = menuState.getLang();
+            Node root = book.getTOCroots().get(0);
+            node = Node.getFirstDescendant(root);
+        }
+        else { // no menuState means it came in from TOC
+            lang = (Util.Lang) intent.getSerializableExtra("lang");
+            Integer nodeHash = intent.getIntExtra("nodeHash", -1);
+            firstLoadedChap = intent.getIntExtra("firstLoadedChap",0);
+            if(in != null){
+                lang = (Util.Lang) in.getSerializable("lang");
+                nodeHash = in.getInt("nodeHash",-1);
+                firstLoadedChap = in.getInt("firstLoadedChap", 0);
+            }
+            lastLoadedChapter = firstLoadedChap -1;
+            Log.d("Section","firstLoadedChap init:" + firstLoadedChap);
+            node = Node.getSavedNode(nodeHash);
+            book = new Book(node.getBid());
+        }
         init();
     }
 
     private void init() {
-        setTitle(menuState.getCurrNode().getTitle(menuState.getLang()));
+        setTitle(book.getTitle(lang));
         textMenuRoot = (LinearLayout) findViewById(R.id.textMenuRoot);
         listView = (ListView) findViewById(R.id.listview);
 
@@ -71,12 +94,12 @@ public class SectionActivity extends Activity implements AbsListView.OnScrollLis
         listView.setDivider(null);
 
         //this specifically comes before menugrid, b/c in tabs it menugrid does funny stuff to currnode
-        CustomActionbar cab = new CustomActionbar(this, menuState.getCurrNode(), Util.Lang.EN,searchClick,null,titleClick,menuClick);
+        MenuNode menuNode = new MenuNode(book.getTitle(Util.Lang.EN),book.getTitle(Util.Lang.HE),null);
+        CustomActionbar cab = new CustomActionbar(this, menuNode, Util.Lang.EN,searchClick,null,titleClick,menuClick);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(cab);
 
-        String title = menuState.getCurrNode().getTitle(Util.Lang.EN);
-        book = new Book(title);
+
 
         if (!isLoadingSection) {
             AsyncLoadSection als = new AsyncLoadSection(TextEnums.NEXT_SECTION);
@@ -264,6 +287,7 @@ public class SectionActivity extends Activity implements AbsListView.OnScrollLis
                 return new ArrayList<>();
             }
 
+            Log.d("Section","firstLoadedChap in loadSection" + firstLoadedChap);
             levels= new int[book.textDepth];
             for (int i = 0; i < levels.length; i++) {
                 levels[i] = 0;
@@ -277,9 +301,11 @@ public class SectionActivity extends Activity implements AbsListView.OnScrollLis
 
             //int[] levels = {0,currLoadedChapter};
             //Text.getNextChap(book,levels,next);
+            
             List<Text> textsList;
             try {
-                textsList = Text.get(book, levels);
+                textsList = node.getTexts(tempChap);
+                //textsList = Text.get(book, levels); //TODO remove this method as it shuold always be using nodes (so that it can handle complex stuff)
                 return textsList;
             } catch (API.APIException e) {
                 Toast.makeText(SectionActivity.this, "API Exception!!!", Toast.LENGTH_SHORT).show();

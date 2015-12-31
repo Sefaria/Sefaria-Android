@@ -11,6 +11,7 @@ import android.widget.TextView;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
+import org.sefaria.sefaria.activities.SectionActivity;
 import org.sefaria.sefaria.activities.TextActivity;
 import org.sefaria.sefaria.database.Node;
 
@@ -26,6 +27,7 @@ public class TOCSectionName extends LinearLayout implements TOCElement {
     private Node node;
     private boolean displayLevel;
     private LinearLayout This = this;
+    private Util.Lang lang;
 
     /*
     public  TOCSectionName(Context context){
@@ -36,13 +38,13 @@ public class TOCSectionName extends LinearLayout implements TOCElement {
         this.setOrientation(VERTICAL);
     }
     */
-    public TOCSectionName(Context context, Node node, Util.Lang lang,boolean displayLevel){
+    public TOCSectionName(Context context, Node node, Util.Lang lang, boolean displayLevel){
         super(context);
         inflate(context, R.layout.toc_sectionname, this);
         this.setOrientation(VERTICAL);
         this.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 
-
+        this.lang = lang;
         this.node = node;
         this.context = context;
         this.displayLevel = displayLevel;
@@ -77,9 +79,10 @@ public class TOCSectionName extends LinearLayout implements TOCElement {
         String text = ""+ node.getTitle(lang);
         if(isContainer()) {
             //text += " v";
-            text += " " + "\u2228";
-        }else
+            ;//text += " " + "\u2228";
+        }else {
             text += " >";
+        }
         sectionroot.setText(text);
 
     }
@@ -95,6 +98,11 @@ public class TOCSectionName extends LinearLayout implements TOCElement {
         public void onClick(View v) {
             //TODO go to intent of text page
             Log.d("toc", "sectionanem _ node:" + node);
+            try {
+                Log.d("toc", "texts:" + node.getTexts());
+            }catch (Exception e){
+                ;
+            }
             if(false && isContainer()){ //TODO maybe try to make this work at some point .. && get rid of false
                 for(int i=0;i<This.getChildCount();i++){
                     View child = This.getChildAt(i);
@@ -108,10 +116,13 @@ public class TOCSectionName extends LinearLayout implements TOCElement {
             }
 
             //TODO determine if it's a leaf and if so then display text
-
-            //Intent intent = new Intent(context, TextActivity.class);
-            //intent.putExtra("menuState", newMenuState);
-            //context.startActivity(intent);
+            if(isContainer())
+                return;
+            Node.saveNode(node);
+            Intent intent = new Intent(context, SectionActivity.class);
+            intent.putExtra("nodeHash", node.hashCode());
+            intent.putExtra("lang", lang);
+            context.startActivity(intent);
 
 
         }

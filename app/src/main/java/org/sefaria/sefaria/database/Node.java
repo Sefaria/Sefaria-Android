@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import org.sefaria.sefaria.MyApp;
@@ -14,7 +15,11 @@ import org.sefaria.sefaria.Util;
 import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class Node{ //TODO implements  Parcelable
 
@@ -44,6 +49,16 @@ public class Node{ //TODO implements  Parcelable
     private List<Integer> chaps;
     private List<Text> textList;
     //private Node parent;
+
+    private static Map<Integer,Node> allSavedNodes = new HashMap<Integer, Node>();
+
+    public static Node getSavedNode(int hash){
+        return allSavedNodes.get(hash);
+    }
+    public static void saveNode(Node node){
+        allSavedNodes.put(node.hashCode(),node);
+    }
+
 
     private static String NODE_TABLE = "Nodes";
 
@@ -93,6 +108,15 @@ public class Node{ //TODO implements  Parcelable
         else{
             Log.e("Node", "wrong lang num");
             return "";
+        }
+    }
+
+    public static Node getFirstDescendant(Node node){
+        if(node.getChildren().size() > 0){
+            node = node.getChildren().get(0);
+            return getFirstDescendant(node);
+        }else{
+            return node;
         }
     }
 
@@ -195,6 +219,12 @@ public class Node{ //TODO implements  Parcelable
         }
     }
 
+    /**
+     * converts complex nodes list into a complete tree
+     * @param nodes
+     * @return root
+     * @throws API.APIException
+     */
     private static Node convertToTree(List<Node> nodes) throws API.APIException{
         Node root = null;
         //TODO for each struct
@@ -263,6 +293,7 @@ public class Node{ //TODO implements  Parcelable
 
         sql += " ORDER BY  " + levels;
 
+        if(!useNID) nodeType = NODE_TYPE_TEXTS;
         //Log.d("Node", "sql: " + sql);
         Node tempNode = null;
         int lastLevel3 = 0;
@@ -310,14 +341,45 @@ public class Node{ //TODO implements  Parcelable
     }
 
 
+    /**
+     *  Get texts for complex texts
+     *
+     * @return textList
+     * @throws API.APIException
+     */
     public List<Text> getTexts() throws API.APIException{
-        if(textList != null)
-            return  textList;
-        return Text.get(this);
+        //TODO check for chapters (if it was supposed to pass a chapNum)
+
+        if(textList == null) {
+            textList = Text.get(getBid(), getLevels(), false);//// TODO: 12/30/2015 nid
+        }
+        return textList;
     }
 
-    public List<Text> getTexts(int chapNum){
+    /**
+     * get Texts for non-complex texts. Given a chapter  number.
+     * @param chapNum
+     * @return textList
+     * @throws API.APIException
+     */
+    public List<Text> getTexts(int chapNum) throws API.APIException{
+        //TODO check if it wasn't supposed to check for chapters
         List<Text> texts = new ArrayList<>();
+        Log.d("Node", "" + this);
+        if(!this.isComplex()){
+            //TODO make work for more than 2 levels!!!!
+            int [] levels = {0,chapNum};
+
+            texts =  Text.get(bid,levels,false);
+        }
+        else if(this.nodeType == NODE_TYPE_TEXTS){
+
+            //TODO error check bid and maybe levels
+
+            //TODO this has to figure out if we're talking about nid (complex text) or not.
+        }else{
+            Log.d("Node","NODE_TYPE:" + this.nodeType);
+        }
         return texts;
     }
 
@@ -378,7 +440,6 @@ public class Node{ //TODO implements  Parcelable
         if(addMoreh){//TODO remove only for testing alt structures
             nodes.add(getRoots(new Book(1175),false).get(0));
         }
-
 
 
         return nodes;

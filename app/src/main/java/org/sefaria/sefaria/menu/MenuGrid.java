@@ -288,11 +288,13 @@ public class MenuGrid extends LinearLayout {
             MenuState newMenuState = menuState.goForward(mb.getNode(), mb.getSectionNode());
             Intent intent;
             if (mb.isBook()) {
-                boolean goToTOC = false;
+                boolean goToTOC = true;
                 if(goToTOC){
                     intent = new Intent(context, TOCActivity.class);
                     Book book = new Book(newMenuState.getCurrNode().getTitle(Util.Lang.EN));
+                    intent.putExtra("menuState", newMenuState);
                     intent.putExtra("currBook", book);
+                    intent.putExtra("lang", newMenuState.getLang());
 
                 }else {
                     intent = new Intent(context, SectionActivity.class);
