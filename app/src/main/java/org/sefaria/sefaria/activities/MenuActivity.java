@@ -74,15 +74,15 @@ public class MenuActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        boolean searchClicked = data.getBooleanExtra("searchClicked",false);
+        if (data != null) {
+            boolean searchClicked = data.getBooleanExtra("searchClicked", false);
 
-        Log.d("menu","SERACH " + searchClicked);
-
-        if (searchClicked) {
-            Intent returnIntent = new Intent();
-            returnIntent.putExtra("searchClicked",true);
-            setResult(0,returnIntent);
-            finish();
+            if (searchClicked) {
+                Intent returnIntent = new Intent();
+                returnIntent.putExtra("searchClicked", true);
+                setResult(0, returnIntent);
+                finish();
+            }
         }
         menuGrid.setLang(menuGrid.getLang());
     }
