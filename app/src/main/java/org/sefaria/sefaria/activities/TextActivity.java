@@ -231,7 +231,9 @@ public class TextActivity extends Activity {
                     lang = Util.Lang.BI;
                     break;
                 case R.id.cts_btn:
-                    isCts = true;
+                    //can only be cts if not bilingual
+                    if (lang != Util.Lang.BI)
+                       isCts = true;
                     break;
                 case R.id.sep_btn:
                     isCts = false;

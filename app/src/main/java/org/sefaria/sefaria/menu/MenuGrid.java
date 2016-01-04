@@ -4,6 +4,7 @@ package org.sefaria.sefaria.menu;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,15 +15,19 @@ import org.sefaria.sefaria.activities.SectionActivity;
 import org.sefaria.sefaria.activities.MenuActivity;
 import org.sefaria.sefaria.activities.TOCActivity;
 import org.sefaria.sefaria.Util;
+import org.sefaria.sefaria.activities.TextActivity;
 import org.sefaria.sefaria.database.Book;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
  * Created by nss on 9/11/15.
  */
 public class MenuGrid extends LinearLayout {
+
+    private static final String[] CTS_TEXT_CATS = {"Tanach","Talmud"};
 
     private static final int HOME_MENU_OVERFLOW_NUM = 9;
 
@@ -288,7 +293,7 @@ public class MenuGrid extends LinearLayout {
             MenuState newMenuState = menuState.goForward(mb.getNode(), mb.getSectionNode());
             Intent intent;
             if (mb.isBook()) {
-                boolean goToTOC = true;
+                boolean goToTOC = false;
                 if(goToTOC){
                     intent = new Intent(context, TOCActivity.class);
                     Book book = new Book(newMenuState.getCurrNode().getTitle(Util.Lang.EN));
@@ -297,7 +302,19 @@ public class MenuGrid extends LinearLayout {
                     intent.putExtra("lang", newMenuState.getLang());
 
                 }else {
-                    intent = new Intent(context, SectionActivity.class);
+                    Book book = new Book(newMenuState.getCurrNode().getTitle(Util.Lang.EN));
+                    List<String> cats = Arrays.asList(book.categories);
+                    boolean isCtsText = false;
+                    for (String ctsText : CTS_TEXT_CATS) {
+                        isCtsText = cats.contains(ctsText);
+                        if (isCtsText) break;
+                    }
+
+                    if (isCtsText) {
+                        intent = new Intent(context, TextActivity.class);
+                    } else {
+                        intent = new Intent(context, SectionActivity.class);
+                    }
                     //trick to destroy all activities beforehand
                     //ComponentName cn = intent.getComponent();
                     //Intent mainIntent = IntentCompat.makeRestartActivityTask(cn);
