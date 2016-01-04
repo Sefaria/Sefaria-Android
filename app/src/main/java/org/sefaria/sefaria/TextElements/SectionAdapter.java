@@ -62,7 +62,7 @@ public class SectionAdapter extends ArrayAdapter<Text> {
             tch.setVisibility(View.VISIBLE);
             tv.setVisibility(View.GONE);
 
-            tch.setChapter(segment.chapNum);
+            tch.setSectionTitle(segment);
             tch.setTextSize(textSize);
 
         } else {
