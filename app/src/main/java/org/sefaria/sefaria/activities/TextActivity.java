@@ -305,7 +305,8 @@ public class TextActivity extends Activity {
                 //MenuNode tempNode = new MenuNode(book.sectionNamesL2B[wherePage-1] + " " + currLoadedChapter,
                 //        book.heSectionNamesL2B[wherePage-1] + " " + Util.int2heb(currLoadedChapter),null,null);
 
-                TextChapterHeader tch = new TextChapterHeader(TextActivity.this,levels[WHERE_PAGE-1],lang,textSize);
+                Text segment = new Text(true,""+ levels[WHERE_PAGE-1], Util.int2heb(levels[WHERE_PAGE-1]));
+                TextChapterHeader tch = new TextChapterHeader(TextActivity.this,segment,lang,textSize);
                 textChapterHeaders.add(tch);
                 textRoot.addView(tch);
             }
