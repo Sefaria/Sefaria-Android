@@ -8,6 +8,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridLayout;
 import android.widget.LinearLayout;
 
 import org.sefaria.sefaria.R;
@@ -99,21 +100,36 @@ public class TOCGrid extends LinearLayout {
         return ll;
     }
 
-    public void addNumGrid(Node mainNode,LinearLayout linearLayoutRoot) {
-        List<Integer> chaps = mainNode.getChaps();
+    public void addNumGrid(Node node,LinearLayout linearLayoutRoot) {
+        List<Integer> chaps = node.getChaps();
         if (chaps.size() == 0) return;
 
-        int currNodeIndex = 0;
 
-        for (int i = 0; i <= Math.ceil(chaps.size()/numColumns) && currNodeIndex < chaps.size(); i++) {
+        Log.d("grid","NUM ROWS " + ((int) Math.ceil(chaps.size()/numColumns)));
+
+        GridLayout gl = new GridLayout(context);
+        gl.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
+
+
+
+        gl.setRowCount((int) Math.ceil(chaps.size()/numColumns));
+        gl.setColumnCount(numColumns);
+        for (int j = 0; j <  chaps.size();  j++) {
+            TOCNumBox tocNumBox = new TOCNumBox(context,chaps.get(j), node, lang);
+            gl.addView(tocNumBox);
+        }
+
+        linearLayoutRoot.addView(gl);
+
+        /*for (int i = 0; i <= Math.ceil(chaps.size()/numColumns) && currNodeIndex < chaps.size(); i++) {
             LinearLayout linearLayout = addRow(linearLayoutRoot);
 
             for (int j = 0; j < numColumns && currNodeIndex < chaps.size();  j++) {
-                TOCNumBox tocNumBox = new TOCNumBox(context,chaps.get(currNodeIndex), mainNode, lang);
+                TOCNumBox tocNumBox = new TOCNumBox(context,chaps.get(currNodeIndex), node, lang);
                 linearLayout.addView(tocNumBox);
                 currNodeIndex++;
             }
-        }
+        }*/
     }
 
 

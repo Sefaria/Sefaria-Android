@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
  */
 public class PerekTextView extends JustifyTextView {
 
-    public static final int EXTRA_LOAD_LINES = 30;
+    public static final int EXTRA_LOAD_LINES = 5;
 
     private boolean isCts; //is text continuous or seperated by passuk
     private Util.Lang lang;
@@ -93,32 +93,45 @@ public class PerekTextView extends JustifyTextView {
     @Override
     protected void onDraw(Canvas canvas) {
         //oldOnDraw(canvas);
-        if (/*drawText != null && drawText != ""*/ true ) {
-            //Log.d("text","DRAW");
-            for (int i = firstDrawnLine; i < lastDrawnLine; i++) {
-                int textStart = layout.getLineStart(i);
-                int textEnd = layout.getLineEnd(i);
-                String tempLine = text.substring(textStart, textEnd);
-                boolean hasHeb = Util.hasHebrew(tempLine);
+        //Log.d("text","DRAW");
+        for (int i = firstDrawnLine; i < lastDrawnLine; i++) {
+            int lineStart = layout.getLineStart(i);
+            int lineEnd = layout.getLineEnd(i);
+            int startY = layout.getLineBottom(i);
+            String line = text.substring(lineStart, lineEnd);
+
+            if (isCts) {//justified  //TODO make this work
+
+                float width = StaticLayout.getDesiredWidth(line, paint);
+                if (needScale(line) && i != lineCount-1) {
+
+                    drawScaledText(canvas, line, startY,width, lang == Util.Lang.HE);
+                } else {
+                    //float startX = lang == Util.Lang.HE ? mViewWidth-width : 0;
+                    canvas.drawText(line,0,startY,paint);
+                }
+            } else {
+
+                boolean hasHeb = Util.hasHebrew(line);
                 //if (hasHeb) Log.d("text","HAS HEBREW");
 
-                float offset = mViewWidth - StaticLayout.getDesiredWidth(tempLine, paint); //TODO less random number
+                float offset = mViewWidth - StaticLayout.getDesiredWidth(line, paint); //TODO less random number
                 float startX = hasHeb ? offset : 0f;
-                canvas.drawText(tempLine, startX, layout.getLineBottom(i), paint);
-
-
+                canvas.drawText(line, startX, startY, paint);
             }
 
-            //https://stackoverflow.com/questions/6756975/draw-multi-line-text-to-canvas
-            /*StaticLayout mTextLayout = new StaticLayout(Html.fromHtml(drawText), paint, canvas.getWidth(), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
-            float offset = scrollY % lineHeight;
 
-            canvas.save();
-            //offset = currScreenTop % lineHeight
-            canvas.translate(0, startY);//-offset);
-            mTextLayout.draw(canvas);
-            canvas.restore();*/
         }
+
+        //https://stackoverflow.com/questions/6756975/draw-multi-line-text-to-canvas
+        /*StaticLayout mTextLayout = new StaticLayout(Html.fromHtml(drawText), paint, canvas.getWidth(), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
+        float offset = scrollY % lineHeight;
+
+        canvas.save();
+        //offset = currScreenTop % lineHeight
+        canvas.translate(0, startY);//-offset);
+        mTextLayout.draw(canvas);
+        canvas.restore();*/
     }
 
     private void noahDraw() {
@@ -214,8 +227,39 @@ public class PerekTextView extends JustifyTextView {
     }
 
     public void update() {
-        AsyncLoadText alt = new AsyncLoadText();
-        alt.execute();
+
+        boolean isFirst = true;
+        SpannableStringBuilder ssb = new SpannableStringBuilder();
+        setMovementMethod(LinkMovementMethod.getInstance());
+
+        for (int i = 0; i < textList.size(); i++) {
+            Text text = textList.get(i);
+            String words;
+            if (lang == Util.Lang.EN) words = "(" + text.levels[0] + ") " + text.enText;
+            else if (lang == Util.Lang.HE)
+                words = "(" + Util.int2heb(text.levels[0]) + ") " + text.heText;
+            else { //bilingual
+                words = "(" + Util.int2heb(text.levels[0]) + ") " + text.heText
+                        + "\n\n(" + text.levels[0] + ") " + text.enText;
+            }
+            if (!isFirst)
+                words = isCts ? " " + words : "\n\n" + words;
+
+
+            SpannableString ss = new SpannableString(words);
+            ss.setSpan(new VerseSpannable(words), 0, ss.length(), 0);
+            ssb.append(ss);
+            isFirst = false;
+        }
+
+        setText(ssb, TextView.BufferType.SPANNABLE);
+        updateLayoutParams(true);
+        noahDraw();
+
+
+
+        //AsyncLoadText alt = new AsyncLoadText();
+        //alt.execute();
 
 
     }
@@ -234,87 +278,67 @@ public class PerekTextView extends JustifyTextView {
             text = (String) getText();
             lineCount = layout.getLineCount();
         }
-        Log.d("updateLayoutParams","START");
         mViewWidth = getMeasuredWidth();
         this.textSize = getTextSize();
-        Log.d("updateLayoutParams","GOT TEXT SIZE");
         lineHeight = getLineHeight(); //(int)Math.round(getLineHeight() - getLineHeight()/12);
     }
 
-    public class AsyncLoadText extends AsyncTask<Void, Void, String> {
+    protected void drawScaledText(Canvas canvas, String line, float y, float lineWidth,boolean isHeb) {
 
-        private static final int TEXT_INCREMENT = 50;
-        private SpannableStringBuilder ssb;
-        private int currIndex;
-        private boolean isFirst;
-        private boolean isFirstUpdate;
 
-        public AsyncLoadText() {
-            super();
-            this.ssb = new SpannableStringBuilder();
-            this.currIndex = 0;
-            this.isFirst = true;
-            this.isFirstUpdate = true;
-            setMovementMethod(LinkMovementMethod.getInstance());
+        float x = isHeb ? mViewWidth : 0;
+        float d;
+        if (isHeb) {
+            m = r.matcher(line);
+            int matchCount = 0;
+            while(m.find())
+                matchCount++;
+
+            //TODO this needs to be checked
+            m.reset();
+
+
+            d = (mViewWidth - lineWidth) / matchCount;
+        } else {
+            d = (mViewWidth - lineWidth) / (line.length() - 1);
         }
 
-        @Override
-        protected void onPreExecute() {
-            Log.d("async","STARTED");
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            while (currIndex < textList.size()) {
-                for (int i = currIndex; i < currIndex + TEXT_INCREMENT && i < textList.size(); i++) {
-                    Text text = textList.get(i);
-                    String words;
-                    if (lang == Util.Lang.EN) words = "(" + text.levels[0] + ") " + text.enText;
-                    else if (lang == Util.Lang.HE)
-                        words = "(" + Util.int2heb(text.levels[0]) + ") " + text.heText;
-                    else { //bilingual
-                        words = "(" + Util.int2heb(text.levels[0]) + ") " + text.heText
-                                + "<br><br>(" + text.levels[0] + ") " + text.enText;
+        int i = 0;
+        float cw;
+        String c;
+        while (i < line.length() && (!isHeb || m.find())) {
+            if (isHeb) {
+                c = line.substring(m.start(), m.end());
+                boolean isparen = false;
+                int count = 0;
+                while (!isparen && count < parenString.length()) {
+                    if (c.equals(String.valueOf(parenString.charAt(count)))) {
+                        c = String.valueOf(flipParenString.charAt(count));
+                        isparen = true;
                     }
-                    if (!isFirst)
-                        words = isCts ? " " + words : "<br><br>" + words;
-
-
-                    SpannableString ss = new SpannableString(Html.fromHtml(words));
-                    ss.setSpan(new VerseSpannable(words), 0, ss.length(), 0);
-                    ssb.append(ss);
-                    isFirst = false;
+                    count++;
                 }
-
-                currIndex += TEXT_INCREMENT;
-                publishProgress();
+                cw = 15f; //StaticLayout.getDesiredWidth(c, paint);
+                canvas.drawText(c, x-cw, y, paint);
+                x -= (cw + d);
+            } else {
+                c = String.valueOf(line.charAt(i));
+                cw = 15f; //StaticLayout.getDesiredWidth(c, paint);
+                //Log.d("yo","C " + cw);
+                canvas.drawText(c, x, y, paint);
+                x += cw + d;
+                i++;
             }
-            return "";
-        }
-
-        @Override
-        protected void onProgressUpdate(Void... values) {
-            if (isFirstUpdate) {
-                Log.d("async","FIRST");
-                setText(ssb, TextView.BufferType.SPANNABLE);
-                isFirstUpdate = false;
-            }
-
-
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            Log.d("aysnc","DONE");
-            setText(ssb, TextView.BufferType.SPANNABLE);
-            updateLayoutParams(true);
-            noahDraw();
-            Log.d("async","REALLY DONE");
-
         }
 
     }
-
+    protected boolean needScale(String line) {
+        if (line.length() == 0) {
+            return false;
+        } else {
+            return line.charAt(line.length() - 1) != '\n';
+        }
+    }
     /*
     //this class draws justified text (kinda) and draws only the text on the screen (kinda)
     public class AsyncDraw extends AsyncTask<Void, Void, String> {
@@ -385,62 +409,7 @@ public class PerekTextView extends JustifyTextView {
             ptv.draw(new Canvas());
 
         }
-        protected void drawScaledText(Canvas canvas, String line, float lineWidth,boolean isHeb) {
 
-            //line = "(4) [3] {%} " + line;
-
-            float x = isHeb ? mViewWidth : 0;
-            float d;
-            if (isHeb) {
-                m = r.matcher(line);
-                int matchCount = 0;
-                while(m.find())
-                    matchCount++;
-
-                //TODO this needs to be checked
-                m.reset();
-
-
-                d = (mViewWidth - lineWidth) / matchCount;
-            } else {
-                d = (mViewWidth - lineWidth) / (line.length() - 1);
-            }
-
-            int i = 0;
-            float cw;
-            String c;
-            while (i < line.length() && (!isHeb || m.find())) {
-                if (isHeb) {
-                    c = line.substring(m.start(), m.end());
-                    boolean isparen = false;
-                    int count = 0;
-                    while (!isparen && count < parenString.length()) {
-                        if (c.equals(String.valueOf(parenString.charAt(count)))) {
-                            c = String.valueOf(flipParenString.charAt(count));
-                            isparen = true;
-                        }
-                        count++;
-                    }
-                    cw = StaticLayout.getDesiredWidth(c, paint);
-                    //canvas.drawText(c, x-cw, mLineY, paint);
-                    x -= (cw + d);
-                } else {
-                    c = String.valueOf(line.charAt(i));
-                    cw = StaticLayout.getDesiredWidth(c, paint);
-                    //canvas.drawText(c, x, mLineY, paint);
-                    x += cw + d;
-                    i++;
-                }
-            }
-
-        }
-        protected boolean needScale(String line) {
-            if (line.length() == 0) {
-                return false;
-            } else {
-                return line.charAt(line.length() - 1) != '\n';
-            }
-        }
 
     }*/
 }

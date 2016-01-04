@@ -2,10 +2,12 @@ package org.sefaria.sefaria.TOCElements;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,10 +24,9 @@ import org.sefaria.sefaria.menu.MenuState;
 /**
  *
  */
-public class TOCNumBox extends LinearLayout implements TOCElement {
+public class TOCNumBox extends TextView implements TOCElement {
 
     private int number;
-    private TextView box;
     private Context context;
     private Node node;
     private Util.Lang lang;
@@ -38,7 +39,26 @@ public class TOCNumBox extends LinearLayout implements TOCElement {
 
     public TOCNumBox(Context context, int number, Node node, Util.Lang lang){
         super(context);
-        inflate(context, R.layout.toc_chapnumbox, this);
+
+        //FORMATTING
+        Resources r = getResources();
+
+        setBackgroundColor(r.getColor(R.color.menu_foreground));
+        setTextColor(r.getColor(R.color.toc_front));
+
+
+        //TODO why doesn't margins work!??
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams((int) r.getDimension(R.dimen.toc_numbox),(int) r.getDimension(R.dimen.toc_numbox));
+        lp.setMargins(10,10,10,10);
+
+        setLayoutParams(lp);
+
+        //setWidth((int) r.getDimension(R.dimen.toc_numbox));
+        //setHeight((int) r.getDimension(R.dimen.toc_numbox));
+
+        setPadding(1,1,1,1);
+        setTextSize(10);
+        setGravity(Gravity.CENTER);
 
         this.number = number;
         this.node = node;
@@ -49,7 +69,6 @@ public class TOCNumBox extends LinearLayout implements TOCElement {
     }
 
     private void init(Util.Lang lang){
-        box = (TextView) findViewById(R.id.toc_boxitem);
         setLang(lang);
 
         this.setOnClickListener(clickListener);
@@ -58,9 +77,9 @@ public class TOCNumBox extends LinearLayout implements TOCElement {
     @Override
     public void setLang(Util.Lang lang) {
         if(Util.Lang.HE == lang)
-            box.setText(Util.int2heb(number));
+            setText(Util.int2heb(number));
         else
-            box.setText("" + number);
+            setText("" + number);
     }
 
 
