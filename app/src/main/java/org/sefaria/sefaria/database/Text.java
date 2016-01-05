@@ -25,13 +25,50 @@ import android.widget.Toast;
 
 public class Text implements Parcelable {
 
+    public static final int MAX_LEVELS = 6;
+    public static final double BILINGUAL_THRESHOLD = 0.05; //percentage of text that is bilingual for us to default to bilingual
+
+
+    private static final String Kbid = "bid";
+    private static final String KenText = "enText";
+    private static final String KheText = "heText";
+    private static final String Klevel1 = "level1";
+    private static final String Klevel2 = "level2";
+    private static final String Klevel3 = "level3";
+    private static final String Klevel4 = "level4";
+    private static final String Klevel5 = "level5";
+    private static final String Klevel6 = "level6";
+    //public static final String Khid = Header.Khid;
+
+
+    public static final String ORDER_BY_LEVELS = Klevel6 + ", " + Klevel5 + ", " + Klevel4 + ", " + Klevel3 + ", " + Klevel2 + ", " + Klevel1;
+
+    public int tid;
+    public int bid;
+    public String enText;
+    public String heText;
+    public boolean isChapter; //for SectionAdapter. indicates that this obj is actually a placeholder for a perek title
+
+    /**
+     * Little sections (like verse) to Big (like chap) and the rest zeros
+     * For ex. chapter 3, verse 8 would be {8,3,0,0,0,0}
+     */
+    public int [] levels;
+    //public int hid;
+    public boolean displayNum;
+
+    public static final String TABLE_TEXTS = "Texts";
+
+
+
     public Text(){
         //empty
     }
 
-    public Text(boolean isChapter, int chapNum) {
+    public Text(boolean isChapter, String enText, String heText) {
         this.isChapter = isChapter;
-        this.chapNum = chapNum;
+        this.enText = enText;
+        this.heText = heText;
     }
 
     public Text(Cursor cursor ){
@@ -73,42 +110,6 @@ public class Text implements Parcelable {
         }
     }
 
-    public static final int MAX_LEVELS = 6;
-    public static final double BILINGUAL_THRESHOLD = 0.05; //percentage of text that is bilingual for us to default to bilingual
-
-
-    private static final String Kbid = "bid";
-    private static final String KenText = "enText";
-    private static final String KheText = "heText";
-    private static final String Klevel1 = "level1";
-    private static final String Klevel2 = "level2";
-    private static final String Klevel3 = "level3";
-    private static final String Klevel4 = "level4";
-    private static final String Klevel5 = "level5";
-    private static final String Klevel6 = "level6";
-    //public static final String Khid = Header.Khid;
-
-
-    public static final String ORDER_BY_LEVELS = Klevel6 + ", " + Klevel5 + ", " + Klevel4 + ", " + Klevel3 + ", " + Klevel2 + ", " + Klevel1;
-
-
-
-    public int tid;
-    public int bid;
-    public String enText;
-    public String heText;
-    public boolean isChapter; //for SectionAdapter. indicates that this obj is actually a placeholder for a perek title
-    public int chapNum;
-
-    /**
-     * Little sections (like verse) to Big (like chap) and the rest zeros
-     * For ex. chapter 3, verse 8 would be {8,3,0,0,0,0}
-     */
-    public int [] levels;
-    //public int hid;
-    public boolean displayNum;
-
-    public static final String TABLE_TEXTS = "Texts";
 
     private void getFromCursor(Cursor cursor){
         tid = cursor.getInt(0);
