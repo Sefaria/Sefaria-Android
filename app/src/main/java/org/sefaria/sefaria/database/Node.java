@@ -27,6 +27,7 @@ public class Node{ //TODO implements  Parcelable
 
     public final static int NID_NON_COMPLEX = -3;
     public  final static int NID_NO_INFO = -1;
+    public final static int NID_CHAP_NO_NID = -4;
 
     private int nid;
     private int bid;
@@ -44,7 +45,7 @@ public class Node{ //TODO implements  Parcelable
     private String extraTids;
 
     private List<Node> children;
-    private List<Integer> chaps;
+    //private List<Integer> chaps;
     private List<Text> textList;
     private Node parent = null;
 
@@ -56,7 +57,9 @@ public class Node{ //TODO implements  Parcelable
     private boolean isComplex = false;
     private boolean isRef = false;
 
-    private int [] levelsOfNode = new int [] {};
+    //private int [] levelsOfNode = new int [] {};
+    int gridNum = -1;
+    public int getGridNum(){ return gridNum;}
 
     private static Map<Integer,Node> allSavedNodes = new HashMap<Integer, Node>();
 
@@ -73,14 +76,16 @@ public class Node{ //TODO implements  Parcelable
 
     public Node(){
         children = new ArrayList<>();
-        chaps = new ArrayList<>();
+        //chaps = new ArrayList<>();
         nid = NID_NO_INFO;
+        parentNodeID = NID_NO_INFO;
     }
 
     public Node(Book book){
         children = new ArrayList<>();
-        chaps = new ArrayList<>();
+        //chaps = new ArrayList<>();
         nid = NID_NO_INFO;
+        parentNodeID = NID_NO_INFO;
 
         bid = book.bid;
         sectionNames = book.sectionNamesL2B;
@@ -94,7 +99,8 @@ public class Node{ //TODO implements  Parcelable
     public  Node (Cursor cursor){
         children = new ArrayList<>();
         nid = NID_NO_INFO;
-        chaps = new ArrayList<>();
+        parentNodeID = NID_NO_INFO;
+        //chaps = new ArrayList<>();
         getFromCursor(cursor);
 
     }
@@ -152,14 +158,14 @@ public class Node{ //TODO implements  Parcelable
     /**
      * chaps.size() == 0 when there's no chaps within it. If there's no children, this means that this Node contains Texts
      *
-     *
+     public  List<Integer> getChaps(){
+     if(chaps == null)
+     chaps = new ArrayList<>();
+     return chaps;
+     }
      * @return chaps
      */
-    public  List<Integer> getChaps(){
-        if(chaps == null)
-            chaps = new ArrayList<>();
-        return chaps;
-    }
+
 
 
 
@@ -191,7 +197,22 @@ public class Node{ //TODO implements  Parcelable
         isTextSection = (nodeType & IS_TEXT_SECTION) != 0;
         isGridItem = (nodeType & IS_GRID_ITEM) != 0;
         isRef = (nodeType & IS_REF) != 0;
+        if(isComplex){
+            gridNum = siblingNum + 1;
+            //TODO this needs to be more complex for when there's: Intro,1,2,3,conclusion
+        }
     }
+
+    public boolean isComplex(){
+        if(this.nid == NID_NON_COMPLEX || true) //TODO remmove || true
+            return false;
+        else
+            return isComplex;
+    }
+
+    public boolean isTextSection(){ return isTextSection; }
+    public boolean isGridItem() { return isGridItem; }
+    public boolean isRef(){ return isRef;}
 
     private void getFromCursor(Cursor cursor){
         try{
@@ -221,13 +242,36 @@ public class Node{ //TODO implements  Parcelable
         }
     }
 
+    private void addChapChild(int chapNum){
+        Node node = new Node();
+        node.nodeType = 0;
+        node.bid = bid;
+        node.isGridItem = true;
+        node.isTextSection = true;
+        node.isRef = false;
+        node.isComplex = isComplex;
+        node.nodeType = 0;
+        node.gridNum = chapNum;
+        node.siblingNum = -1;
+        node.enTitle = node.heTitle =  "";
+        node.heSectionNames = node.sectionNames = sectionNames;
+        node.parentNodeID = nid;
+        node.textDepth = 2;
+        node.structNum = structNum;
+        node.nid = NID_CHAP_NO_NID;
+        addChild(node);
+    }
+
     private void addChild(Node node){
         this.children.add(node);
         node.parent = this;
-        if(node.siblingNum != this.children.size() -1) {
+        if(node.parentNodeID == NID_NO_INFO)
+            node.parentNodeID = this.nid;
+        if(node.siblingNum == -1){
+            node.siblingNum = this.children.size() -1;
+        }else if(node.siblingNum != this.children.size() -1) {
             //TODO make sure the order is correct
             Log.e("Node", "wrong sibling num");
-            this.children.add(node);
         }
     }
 
@@ -292,7 +336,7 @@ public class Node{ //TODO implements  Parcelable
 
                 // add chap count (if it's a leaf with 2 or more levels):
                 if(node.textDepth >= 2 && node.nodeType == NODE_TYPE_TEXTS) {
-                    node.getAllChaps(true);
+                    node.setAllChaps(true);
                 }
             }
 
@@ -302,12 +346,11 @@ public class Node{ //TODO implements  Parcelable
     }
 
 
-    private List<Node> chapChildren = new ArrayList<>();
-    private void getAllChaps(boolean useNID) throws API.APIException {
+    private void setAllChaps(boolean useNID) throws API.APIException {
         //if(true) return;
-        Log.d("Node","starting getAllChap()");
+        Log.d("Node","starting setAllChap()");
         if(textDepth < 2){
-            Log.e("Node", "called getAllChaps with too low texdepth" + this.toString());
+            Log.e("Node", "called setAllChaps with too low texdepth" + this.toString());
             return;
         }
 
@@ -347,8 +390,8 @@ public class Node{ //TODO implements  Parcelable
             if (cursor.moveToFirst()) {
                 do {
                     if(textDepth == 2) {
-                        chaps.add(cursor.getInt(0));
-                        //chapChildren.add(new Node(cursor));//TODO maybe use children instead of chaps
+                        //chaps.add(cursor.getInt(0));
+                        addChapChild(cursor.getInt(0));
                     }else if(textDepth == 3){
                         this.nodeType = NODE_TYPE_BRANCH;//TODO see if this needs a different nodeType number
                         int level3 = cursor.getInt(0);
@@ -361,9 +404,13 @@ public class Node{ //TODO implements  Parcelable
                             tempNode.heSectionNames = Arrays.copyOfRange(this.heSectionNames,0,2);
                             tempNode.textDepth = this.textDepth -1;
                             tempNode.nodeType = originalNodeType;
-                            this.children.add(tempNode);
+                            tempNode.isComplex = isComplex();
+                            tempNode.isRef = false;
+                            tempNode.isGridItem = false;
+                            tempNode.isTextSection = false;
+                            this.addChild(tempNode);
                         }
-                        tempNode.chaps.add(cursor.getInt(1));
+                        tempNode.addChapChild(cursor.getInt(1));
                         //TODO extend to more than 3 levels
                     }
                     else{
@@ -423,9 +470,6 @@ public class Node{ //TODO implements  Parcelable
         return texts;
     }
 
-    private boolean isComplex(){
-        return !(this.nid == NID_NON_COMPLEX);
-    }
 
     public int getBid(){
         return bid;
@@ -470,11 +514,15 @@ public class Node{ //TODO implements  Parcelable
         }
         List<Node> allRoots = new ArrayList<>();
         //TODO need to add way if the main text is regular but has alt... make it always try to add it.
+        /**
+         * this is for the rigid structure
+         */
         root = new Node(book);
         root.nid = NID_NON_COMPLEX;
-        root.getAllChaps(false);
-        if(root.children.size()>0 || root.chaps.size()>0)
+        root.setAllChaps(false);
+        if(root.getChildren().size()>0) {
             allRoots.add(root);
+        }
 
         for(int i=0;i<allNodeStructs.size();i++) {
             List<Node> nodes = allNodeStructs.get(i);
@@ -483,13 +531,13 @@ public class Node{ //TODO implements  Parcelable
                 root = convertToTree(nodes);
             }
             allRoots.add(root);
-            //showTree(root);
+            showTree(root);
         }
 
 
         if(addMoreh){//TODO remove only for testing alt structures
-            allRoots.add(getRoots(new Book("Orot"),false).get(0));
-            allRoots.add(getRoots(new Book(1175),false).get(0));
+            allRoots.add(getRoots(new Book("Orot"),false).get(0)); //has complex texts
+            allRoots.add(getRoots(new Book("Sefer Tomer Devorah"),false).get(0));//has textDepth == 3
 
         }
 

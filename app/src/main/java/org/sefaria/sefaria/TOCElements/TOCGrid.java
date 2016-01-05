@@ -100,22 +100,26 @@ public class TOCGrid extends LinearLayout {
         return ll;
     }
 
-    public void addNumGrid(Node node,LinearLayout linearLayoutRoot) {
-        List<Integer> chaps = node.getChaps();
-        if (chaps.size() == 0) return;
+    public void addNumGrid(List<Node> gridNodes,LinearLayout linearLayoutRoot) {
+
+        //List<Integer> chaps = node.getChaps();
+        if (gridNodes.size() == 0){
+            Log.e("Node","Node.addNumGrid() never should have been called with 0 items");
+            return;
+        }
 
 
-        Log.d("grid","NUM ROWS " + ((int) Math.ceil(chaps.size()/numColumns)));
+        Log.d("grid","NUM ROWS " + ((int) Math.ceil(gridNodes.size()/numColumns)));
 
         GridLayout gl = new GridLayout(context);
         gl.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
 
 
 
-        gl.setRowCount((int) Math.ceil(chaps.size()/numColumns));
+        gl.setRowCount((int) Math.ceil(gridNodes.size()/numColumns));
         gl.setColumnCount(numColumns);
-        for (int j = 0; j <  chaps.size();  j++) {
-            TOCNumBox tocNumBox = new TOCNumBox(context,chaps.get(j), node, lang);
+        for (int j = 0; j <  gridNodes.size();  j++) {
+            TOCNumBox tocNumBox = new TOCNumBox(context,gridNodes.get(j), lang);
             gl.addView(tocNumBox);
         }
 
@@ -163,13 +167,23 @@ public class TOCGrid extends LinearLayout {
     private void displayTree(Node node, LinearLayout linearLayout, boolean displayLevel){
         TOCSectionName tocSectionName = new TOCSectionName(context, node, lang,displayLevel);
         linearLayout.addView(tocSectionName);
-        if(node.getChaps().size() >  0){//It's a regular text
-            //TODO check taht children size also makes sense
-            addNumGrid(node,tocSectionName);
-        }else {//it's complex text
-            for (int i = 0; i < node.getChildren().size(); i++) {
-                displayTree(node.getChildren().get(i),tocSectionName);
+        List<Node> gridNodes = new ArrayList<>();
+        for (int i = 0; i < node.getChildren().size(); i++) {
+            Node child = node.getChildren().get(i);
+            if(!child.isGridItem()) {
+                if (gridNodes.size() > 0) {
+                    //There's some gridsNodes that haven't been displayed yet
+                    addNumGrid(gridNodes, tocSectionName);
+                    gridNodes = new ArrayList<>();
+                }
+                displayTree(child, tocSectionName);
+            }else{
+                gridNodes.add(child);
             }
+        }
+        if (gridNodes.size() > 0) {
+            //There's some gridsNodes that haven't been displayed yet
+            addNumGrid(gridNodes, tocSectionName);
         }
     }
 
