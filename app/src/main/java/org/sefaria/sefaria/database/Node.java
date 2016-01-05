@@ -32,7 +32,7 @@ public class Node{ //TODO implements  Parcelable
     private int nid;
     private int bid;
     private int parentNodeID;
-    private int nodeType;
+    private Node parent = null;
     private int siblingNum;
     private String enTitle;
     private String heTitle;
@@ -45,12 +45,12 @@ public class Node{ //TODO implements  Parcelable
     private String extraTids;
 
     private List<Node> children;
-    //private List<Integer> chaps;
     private List<Text> textList;
-    private Node parent = null;
+
 
     /**
-     * These booleans are set in setFlagsFromNodeType()
+     * These booleans are set in setFlagsFromNodeType(nodeType) and other places
+     *
      */
     private boolean isTextSection = false;
     private boolean isGridItem = false;
@@ -144,10 +144,9 @@ public class Node{ //TODO implements  Parcelable
     }
 
     /**
-     * if (children.size() == 0)
-     *      this is a leaf and you need to check
-     *
-     * @return childrenl
+     * Return the List<Node> of all the children (in order) of this node.
+     * If this node is a leaf, it will return a list of 0 elements.
+     * @return children
      */
     public List<Node> getChildren(){
         if(children == null)
@@ -155,21 +154,8 @@ public class Node{ //TODO implements  Parcelable
         return children;
     }
 
-    /**
-     * chaps.size() == 0 when there's no chaps within it. If there's no children, this means that this Node contains Texts
-     *
-     public  List<Integer> getChaps(){
-     if(chaps == null)
-     chaps = new ArrayList<>();
-     return chaps;
-     }
-     * @return chaps
-     */
-
-
-
-
-    private void addSectionNames(){
+    /*
+    private void addSectionNames1(){
         //TODO move to create SQL
         if(sectionNames.length > 0)
             return;
@@ -185,12 +171,13 @@ public class Node{ //TODO implements  Parcelable
         heSectionNames = sectionNames;
 
     }
+    */
 
-    private static final int IS_COMPLEX = 2;
-    private static final int IS_TEXT_SECTION = 4;
-    private static final int IS_GRID_ITEM = 8;
-    private static final int IS_REF = 16;
-    private void setFlagsFromNodeType(){
+    private void setFlagsFromNodeType(int nodeType){
+        final int IS_COMPLEX = 2;
+        final int IS_TEXT_SECTION = 4;
+        final int IS_GRID_ITEM = 8;
+        final int IS_REF = 16;
         if(nodeType == 0)
             Log.e("Node", "Node.setFlagsFromNodeType: nodeType == 0. I don't know anything");
         isComplex = (nodeType & IS_COMPLEX) != 0;
@@ -203,13 +190,7 @@ public class Node{ //TODO implements  Parcelable
         }
     }
 
-    public boolean isComplex(){
-        if(this.nid == NID_NON_COMPLEX || true) //TODO remmove || true
-            return false;
-        else
-            return isComplex;
-    }
-
+    public boolean isComplex(){ return isComplex;}
     public boolean isTextSection(){ return isTextSection; }
     public boolean isGridItem() { return isGridItem; }
     public boolean isRef(){ return isRef;}
@@ -219,7 +200,7 @@ public class Node{ //TODO implements  Parcelable
             nid = cursor.getInt(0);
             bid = cursor.getInt(1);
             parentNodeID = cursor.getInt(2);
-            nodeType = cursor.getInt(3);
+            int nodeType = cursor.getInt(3);
             siblingNum = cursor.getInt(4);
             enTitle = cursor.getString(5);
             heTitle = cursor.getString(6);
@@ -231,8 +212,7 @@ public class Node{ //TODO implements  Parcelable
             endTid = cursor.getInt(12);
             extraTids = cursor.getString(13);
 
-            setFlagsFromNodeType();
-            addSectionNames();
+            setFlagsFromNodeType(nodeType);
         }
         catch(Exception e){
             MyApp.sendException(e);
@@ -244,13 +224,11 @@ public class Node{ //TODO implements  Parcelable
 
     private void addChapChild(int chapNum){
         Node node = new Node();
-        node.nodeType = 0;
         node.bid = bid;
         node.isGridItem = true;
         node.isTextSection = true;
         node.isRef = false;
         node.isComplex = isComplex;
-        node.nodeType = 0;
         node.gridNum = chapNum;
         node.siblingNum = -1;
         node.enTitle = node.heTitle =  "";
@@ -271,30 +249,23 @@ public class Node{ //TODO implements  Parcelable
             node.siblingNum = this.children.size() -1;
         }else if(node.siblingNum != this.children.size() -1) {
             //TODO make sure the order is correct
-            Log.e("Node", "wrong sibling num");
+            Log.e("Node", "wrong sibling num. siblingNum:" + node.siblingNum + " children.size():" + children.size());
         }
     }
 
     /**
-     * just for debugging
+     * Shows the TOC Node tree. This is only used for debugging.
      * @param node
      */
     private static void showTree(Node node){
         node.log();
-        if(node.children.size() == 0) {
-            //Log.d("Node showtree", "chaps: "+ node.chaps);
+        if(node.getChildren().size() == 0) {
             return;
         }
         else{
-            //Log.d("Node", "node " + node.nid + " children: ");
-            for(int i=0;i<node.children.size();i++) {
-                node.children.get(i).log();
+            for(int i=0;i<node.getChildren().size();i++){
+                showTree(node.getChildren().get(i));
             }
-            //Log.d("node", "... end of chilren list");
-            for(int i=0;i<node.children.size();i++){
-                showTree(node.children.get(i));
-            }
-
         }
     }
 
@@ -335,7 +306,7 @@ public class Node{ //TODO implements  Parcelable
                 }
 
                 // add chap count (if it's a leaf with 2 or more levels):
-                if(node.textDepth >= 2 && node.nodeType == NODE_TYPE_TEXTS) {
+                if(node.textDepth >= 2 && node.isTextSection()) {
                     node.setAllChaps(true);
                 }
             }
@@ -373,11 +344,9 @@ public class Node{ //TODO implements  Parcelable
 
         sql += " ORDER BY  " + levels;
 
-        if(!useNID) nodeType = NODE_TYPE_TEXTS;
         //Log.d("Node", "sql: " + sql);
         Node tempNode = null;
         int lastLevel3 = 0;
-        int originalNodeType = this.nodeType;
 
         if(API.useAPI()){
             ;
@@ -389,12 +358,15 @@ public class Node{ //TODO implements  Parcelable
             Cursor cursor = db.rawQuery(sql, null);
             if (cursor.moveToFirst()) {
                 do {
+                    int sectionNum = cursor.getInt(0);
                     if(textDepth == 2) {
                         //chaps.add(cursor.getInt(0));
-                        addChapChild(cursor.getInt(0));
+                        addChapChild(sectionNum);
                     }else if(textDepth == 3){
-                        this.nodeType = NODE_TYPE_BRANCH;//TODO see if this needs a different nodeType number
-                        int level3 = cursor.getInt(0);
+                        this.isTextSection = false;
+                        this.isGridItem = false;
+                        this.isRef = false;
+                        int level3 = sectionNum;
                         if(level3 != lastLevel3 || tempNode == null){
                             lastLevel3 = level3;
                             tempNode = new Node();
@@ -403,7 +375,6 @@ public class Node{ //TODO implements  Parcelable
                             tempNode.sectionNames = Arrays.copyOfRange(this.sectionNames,0,2);
                             tempNode.heSectionNames = Arrays.copyOfRange(this.heSectionNames,0,2);
                             tempNode.textDepth = this.textDepth -1;
-                            tempNode.nodeType = originalNodeType;
                             tempNode.isComplex = isComplex();
                             tempNode.isRef = false;
                             tempNode.isGridItem = false;
@@ -453,19 +424,19 @@ public class Node{ //TODO implements  Parcelable
         //TODO check if it wasn't supposed to check for chapters
         List<Text> texts = new ArrayList<>();
         Log.d("Node", "" + this);
-        if(!this.isComplex()){
+        if(!isComplex()){
             //TODO make work for more than 2 levels!!!!
             int [] levels = {0,chapNum};
 
             texts =  Text.get(bid,levels,false);
         }
-        else if(this.nodeType == NODE_TYPE_TEXTS){
+        else if(isTextSection()){
 
             //TODO error check bid and maybe levels
 
             //TODO this has to figure out if we're talking about nid (complex text) or not.
         }else{
-            Log.d("Node","NODE_TYPE:" + this.nodeType);
+            Log.d("Node","NODE_TYPE:" + this);
         }
         return texts;
     }
@@ -522,6 +493,7 @@ public class Node{ //TODO implements  Parcelable
         root.setAllChaps(false);
         if(root.getChildren().size()>0) {
             allRoots.add(root);
+            showTree(root);
         }
 
         for(int i=0;i<allNodeStructs.size();i++) {
@@ -547,7 +519,18 @@ public class Node{ //TODO implements  Parcelable
 
     @Override
     public String toString() {
-        return nid + "," + bid + "," + enTitle + " " + heTitle + "," + Util.array2str(sectionNames) + "," + Util.array2str(heSectionNames) + "," + structNum + "," + textDepth + "," + startTid + "," + endTid + "," + extraTids;
+        String str = "{"+  nid + ",bid:" + bid + ",titles:" + enTitle + " " + heTitle + ",sections:" + Util.array2str(sectionNames) + "," + Util.array2str(heSectionNames) + ",structN:" + structNum + ",textD:" + textDepth + ",tids:" + startTid + "-" + endTid + ",ref:" + extraTids;
+        str += ",gridN:" + getGridNum();
+        if(isComplex())
+            str += " IS_COMPLX";
+        if(isGridItem)
+            str += " IS_GRID";
+        if(isTextSection())
+            str += " IS_TEXT";
+        if(isRef())
+            str += " IS_REF";
+        str += "}";
+        return str;
     }
 
     public void log(){

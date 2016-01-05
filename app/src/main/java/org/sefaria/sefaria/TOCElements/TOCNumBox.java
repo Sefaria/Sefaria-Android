@@ -56,7 +56,7 @@ public class TOCNumBox extends TextView implements TOCElement {
         //setWidth((int) r.getDimension(R.dimen.toc_numbox));
         //setHeight((int) r.getDimension(R.dimen.toc_numbox));
 
-        setPadding(1,1,1,1);
+        setPadding(1, 1, 1, 1);
         setTextSize(10);
         setGravity(Gravity.CENTER);
 
@@ -86,7 +86,10 @@ public class TOCNumBox extends TextView implements TOCElement {
     OnClickListener clickListener = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            //TODO go to intent of text page
+            if(!node.isTextSection()) {
+                Log.e("TOCNumBox","TOCNumBox.clickListener isn't a textSection");
+                return;
+            }
             Node.saveNode(node);
             /*
             try {
@@ -96,17 +99,19 @@ public class TOCNumBox extends TextView implements TOCElement {
                 ;
             }*/
 
-            //Intent intent = new Intent(context, TextActivity.class);
-            //intent.putExtra("menuState", newMenuState);
-            //context.startActivity(intent);
+
+
 
             Node.saveNode(node);
             Intent intent = new Intent(context, SectionActivity.class);
             intent.putExtra("nodeHash", node.hashCode());
             intent.putExtra("lang", lang);
+            //TODO determine if SectionActivity was already open... Make sure to be careful of multi-tab stuff
+            //context.startActivity(intent);
+
             Activity act = (Activity) context; //stupid casting
             act.setResult(Activity.RESULT_OK,intent);
-            act.finish();
+            act.finish();//close the TOC
 
 
         }

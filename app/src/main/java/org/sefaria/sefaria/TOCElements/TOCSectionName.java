@@ -76,22 +76,15 @@ public class TOCSectionName extends LinearLayout implements TOCElement {
             this.setPadding(0, padding, sidePadding, padding);
             this.setGravity(Gravity.RIGHT);
         }
-        String text = ""+ node.getTitle(lang);
-        if(isContainer()) {
-            //text += " v";
-            ;//text += " " + "\u2228";
-        }else {
+        String text = node.getTitle(lang);
+        if(node.isTextSection()) {
             text += " >";
+        }else {
+            ;//text += " " + "\u2228";
         }
         sectionroot.setText(text);
 
     }
-
-    private boolean isContainer(){
-        return node.getChildren().size() > 0;
-
-    }
-
 
     OnClickListener clickListener = new OnClickListener() {
         @Override
@@ -103,7 +96,7 @@ public class TOCSectionName extends LinearLayout implements TOCElement {
             }catch (Exception e){
                 ;
             }
-            if(false && isContainer()){ //TODO maybe try to make this work at some point .. && get rid of false
+            if(false && !node.isTextSection()){ //TODO maybe try to make this work at some point .. && get rid of false
                 for(int i=0;i<This.getChildCount();i++){
                     View child = This.getChildAt(i);
                     if(child == sectionroot)
@@ -116,7 +109,7 @@ public class TOCSectionName extends LinearLayout implements TOCElement {
             }
 
             //TODO determine if it's a leaf and if so then display text
-            if(isContainer())
+            if(!node.isTextSection())
                 return;
             Node.saveNode(node);
             Intent intent = new Intent(context, SectionActivity.class);
