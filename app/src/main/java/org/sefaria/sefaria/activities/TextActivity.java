@@ -443,7 +443,7 @@ public class TextActivity extends Activity {
 
     }
 
-    private Handler yo = new Handler() {
+    public static Handler yo = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
