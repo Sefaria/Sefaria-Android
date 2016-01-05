@@ -107,7 +107,7 @@ public class PerekTextView extends JustifyTextView {
         if (isPrev && !hasBeenDrawn) {
             hasBeenDrawn = true;
             Log.d("text","FIRST DRAW " + getHeight());
-            Handler h = new Html.TagHandler();
+           
         }
 
         for (int i = firstDrawnLine; i <= lastDrawnLine; i++) {
