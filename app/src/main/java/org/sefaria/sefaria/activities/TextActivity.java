@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -26,14 +29,18 @@ import org.sefaria.sefaria.menu.MenuState;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.LogRecord;
 
 public class TextActivity extends Activity {
 
     public enum TextEnums {
         NEXT_SECTION, PREV_SECTION
     }
+
+    public static final int TOC_CHAPTER_CLICKED_CODE = 3456;
     private static final int WHERE_PAGE = 2;
-    private static final int LOAD_PIXEL_THRESHOLD = 20; //num pixels before the bottom (or top) of a segment after (before) which the next (previous) segment will be loaded
+    private static final int LOAD_PIXEL_THRESHOLD = 500; //num pixels before the bottom (or top) of a segment after (before) which the next (previous) segment will be loaded
+
 
     private MenuState menuState;
     private Node node;
@@ -54,6 +61,13 @@ public class TextActivity extends Activity {
     private float textSize;
     private boolean isLoadingSection; //to make sure multiple sections don't get loaded at once
 
+    //variables to properly handle scrolling on prev loaded chapter
+    private boolean justLoadedPrevChap;
+    public int oldScroll;
+    private int addH;
+    private PerekTextView justLoadedPTV;
+    private TextChapterHeader justLoadedTCH;
+
     @Override
     protected void onCreate(Bundle in) {
         super.onCreate(in);
@@ -72,6 +86,17 @@ public class TextActivity extends Activity {
                 node = in.getParcelable("node");
         }
         */
+
+        //These vars are specifically initialized here and not in init() so that they don't get overidden when coming from TOC
+        //defaults
+        isCts = false;
+        lang = Util.Lang.BI;
+        textSize = getResources().getDimension(R.dimen.default_text_font_size);
+        //end defaults
+
+        firstLoadedChap = 0;
+        lastLoadedChapter = 0;
+
         init();
     }
 
@@ -79,19 +104,17 @@ public class TextActivity extends Activity {
 
 
 
-        //defaults
-        isCts = false;
-        lang = Util.Lang.BI;
-        textSize = getResources().getDimension(R.dimen.default_text_font_size);
-        //end defaults
+
 
         perekTextViews = new ArrayList<>();
         textChapterHeaders = new ArrayList<>();
-        firstLoadedChap = 0;
-        lastLoadedChapter = 0;
+
         isTextMenuVisible = false;
         textMenuRoot = (LinearLayout) findViewById(R.id.textMenuRoot);
         textRoot = (LinearLayout) findViewById(R.id.textRoot);
+        textRoot.removeAllViews(); //in case you're coming from result of toc click
+
+
         textScrollView = (ScrollViewExt) findViewById(R.id.textScrollView);
         textScrollView.setScrollViewListener(new ScrollViewListener() {
              @Override
@@ -106,13 +129,14 @@ public class TextActivity extends Activity {
 
                  // if diff is zero, then the bottom has been reached
 
+
                  if (!isLoadingSection) {
                      if (bottomDiff <= LOAD_PIXEL_THRESHOLD) {
                          //Log.d("text","NEXT");
                          AsyncLoadSection als = new AsyncLoadSection(TextEnums.NEXT_SECTION);
                          als.execute();
                      }
-                     if (topDiff >= 0) {
+                     if (topDiff >= -LOAD_PIXEL_THRESHOLD && !justLoadedPrevChap) {
                          //Log.d("text","PREV");
                          AsyncLoadSection als = new AsyncLoadSection(TextEnums.PREV_SECTION);
                          als.execute();
@@ -171,11 +195,27 @@ public class TextActivity extends Activity {
         }
     }
 
-
     @Override
     public void onSaveInstanceState(Bundle out) {
         super.onSaveInstanceState(out);
         out.putParcelable("menuState", menuState);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (data != null) {
+            //you're returning to text page b/c chapter was clicked in toc
+            if (requestCode == TOC_CHAPTER_CLICKED_CODE) {
+                //lang = (Util.Lang) data.getSerializableExtra("lang"); TODO you might need to set lang here if user can change lang in TOC
+                Integer nodeHash = data.getIntExtra("nodeHash", -1);
+                firstLoadedChap = data.getIntExtra("firstLoadedChap",0);
+
+                lastLoadedChapter = firstLoadedChap -1;
+                //Log.d("Section","firstLoadedChap init:" + firstLoadedChap);
+                init();
+            }
+        }
     }
 
     private void toggleTextMenu() {
@@ -204,7 +244,7 @@ public class TextActivity extends Activity {
         public void onClick(View v) {
             Intent intent = new Intent(TextActivity.this, TOCActivity.class);
             intent.putExtra("currBook",book);
-            startActivity(intent);
+            startActivityForResult(intent, TOC_CHAPTER_CLICKED_CODE);
         }
     };
 
@@ -301,34 +341,59 @@ public class TextActivity extends Activity {
 
         @Override
         protected void onPostExecute(List<Text> textsList) {
+            isLoadingSection = false;
             if (textsList.size() == 0) return;
 
+
+            final TextChapterHeader tch;
             if (levels.length > WHERE_PAGE-1) {
                 //MenuNode tempNode = new MenuNode(book.sectionNamesL2B[wherePage-1] + " " + currLoadedChapter,
                 //        book.heSectionNamesL2B[wherePage-1] + " " + Util.int2heb(currLoadedChapter),null,null);
 
-                TextChapterHeader tch = new TextChapterHeader(TextActivity.this,levels[WHERE_PAGE-1],lang,textSize);
+                tch = new TextChapterHeader(TextActivity.this,levels[WHERE_PAGE-1],lang,textSize);
                 textChapterHeaders.add(tch);
-                textRoot.addView(tch);
-            }
 
-            PerekTextView content = new PerekTextView(TextActivity.this,textsList,isCts,lang,textSize,textScrollView.getScrollY());
+            } else tch = null;
+
+            final PerekTextView content;
 
 
             /*ListView lv = new ListView(TextActivity.this);
             lv.setLayoutParams(new ListView.LayoutParams(ListView.LayoutParams.MATCH_PARENT,ListView.LayoutParams.WRAP_CONTENT));
             SectionAdapter sa = new SectionAdapter(TextActivity.this,R.layout.adapter_text_mono,textsList);
             lv.setAdapter(sa);*/
-            perekTextViews.add(content);
 
-            isLoadingSection = false;
+
+
 
             //SectionView sv = new SectionView(TextActivity.this,textsList,lang,isCts,textSize);
 
-            if (dir == null || dir == TextEnums.NEXT_SECTION)
+            if (dir == null || dir == TextEnums.NEXT_SECTION) {
+                content = new PerekTextView(TextActivity.this,textsList,isCts,lang,textSize,textScrollView.getScrollY(),false);
+                perekTextViews.add(content);
+                //YES, order that you add these two views matters (note difference in PREV_SECTION)
+                if (tch != null)
+                    textRoot.addView(tch);
                 textRoot.addView(content); //add to end by default
-            else if (dir == TextEnums.PREV_SECTION)
-                textRoot.addView(content,0); //add to before
+            } else if (dir == TextEnums.PREV_SECTION) {
+                content = new PerekTextView(TextActivity.this,textsList,isCts,lang,textSize,textScrollView.getScrollY(),true);
+                perekTextViews.add(content);
+                oldScroll = textScrollView.getScrollY();
+                addH = 0;
+                textRoot.addView(content, 0); //add to before
+                justLoadedPrevChap = true;
+                //make sure to keep equivalent scroll position
+                /*textScrollView.post(new Runnable() {
+                    public void run() {
+                        textScrollView.scrollTo(0,oldScroll + content.getHeight() + tch.getHeight());
+                    }
+                });*/
+
+
+            }
+
+
+
         }
 
         private List<Text> loadSection() {
@@ -376,5 +441,14 @@ public class TextActivity extends Activity {
         }
 
     }
+
+    private Handler yo = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 1:
+            }
+        }
+    };
 
 }
