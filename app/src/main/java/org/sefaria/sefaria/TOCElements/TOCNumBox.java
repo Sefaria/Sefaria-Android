@@ -94,7 +94,6 @@ public class TOCNumBox extends TextView implements TOCElement {
             /*
             try {
                 Log.d("toc", "go to:" + node  + node.getGridNum());
-                Log.d("toc", "texts: " + node.getTexts());
             }catch(API.APIException e){//use API.Excet
                 ;
             }*/
@@ -107,12 +106,12 @@ public class TOCNumBox extends TextView implements TOCElement {
             intent.putExtra("nodeHash", node.hashCode());
             intent.putExtra("lang", lang);
             //TODO determine if SectionActivity was already open... Make sure to be careful of multi-tab stuff
-            //context.startActivity(intent);
-
+            context.startActivity(intent);
+            /*
             Activity act = (Activity) context; //stupid casting
             act.setResult(Activity.RESULT_OK,intent);
             act.finish();//close the TOC
-
+            */
 
         }
     };

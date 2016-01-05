@@ -305,7 +305,7 @@ public class SectionActivity extends Activity implements AbsListView.OnScrollLis
 
             List<Text> textsList;
             try {
-                textsList = node.getTexts(tempChap);
+                textsList = node.getTexts();
                 //textsList = Text.get(book, levels); //TODO remove this method as it shuold always be using nodes (so that it can handle complex stuff)
                 return textsList;
             } catch (API.APIException e) {
