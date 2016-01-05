@@ -37,6 +37,7 @@ public class TextActivity extends Activity {
         NEXT_SECTION, PREV_SECTION
     }
 
+    public static final int PREV_CHAP_DRAWN = 234234;
     public static final int TOC_CHAPTER_CLICKED_CODE = 3456;
     private static final int WHERE_PAGE = 2;
     private static final int LOAD_PIXEL_THRESHOLD = 500; //num pixels before the bottom (or top) of a segment after (before) which the next (previous) segment will be loaded
@@ -443,11 +444,15 @@ public class TextActivity extends Activity {
 
     }
 
-    public static Handler yo = new Handler() {
+    public static Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case 1:
+                case PREV_CHAP_DRAWN:
+
+                    PerekTextView.PrevMessage prevMessage = (PerekTextView.PrevMessage) msg.obj;
+                    Log.d("text","DRAWN " + prevMessage.height);
+                    break;
             }
         }
     };
