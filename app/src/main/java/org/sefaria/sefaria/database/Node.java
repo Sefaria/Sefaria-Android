@@ -154,6 +154,11 @@ public class Node{ //TODO implements  Parcelable
         return children;
     }
 
+    /**
+     *
+     * @return bid
+     */
+    public int getBid(){ return bid; }
     /*
     private void addSectionNames1(){
         //TODO move to create SQL
@@ -194,6 +199,8 @@ public class Node{ //TODO implements  Parcelable
     public boolean isTextSection(){ return isTextSection; }
     public boolean isGridItem() { return isGridItem; }
     public boolean isRef(){ return isRef;}
+
+
 
     private void getFromCursor(Cursor cursor){
         try{
@@ -406,44 +413,46 @@ public class Node{ //TODO implements  Parcelable
      * @throws API.APIException
      */
     public List<Text> getTexts() throws API.APIException{
-        //TODO check for chapters (if it was supposed to pass a chapNum)
-
-        if(textList == null) {
-            textList = Text.get(getBid(), getLevels(), false);//// TODO: 12/30/2015 nid
+        if(textList != null) {
+            return textList;
         }
-        return textList;
-    }
-
-    /**
-     * get Texts for non-complex texts. Given a chapter  number.
-     * @param chapNum
-     * @return textList
-     * @throws API.APIException
-     */
-    public List<Text> getTexts(int chapNum) throws API.APIException{
-        //TODO check if it wasn't supposed to check for chapters
-        List<Text> texts = new ArrayList<>();
-        Log.d("Node", "" + this);
-        if(!isComplex()){
+        Log.d("Node", "starting getTexts algo");
+        if(!isTextSection()){
+            Log.e("Node", "getTexts() was called when it's not a textSection!");
+            textList = new ArrayList<>();
+            return textList;
+        }
+        if(!isComplex() && !isGridItem()) {
+            Log.e("Node", "It thinks (!isComplex() && !isGridItem())... I don't know how.");
+            textList = new ArrayList<>();
+            return textList;
+        }else if(!isComplex() && isGridItem() && !isRef()){
             //TODO make work for more than 2 levels!!!!
-            int [] levels = {0,chapNum};
+            textList =  Text.get(getBid(),getLevels(),false);
+        }else if(isRef()){
+            if(!isComplex()){
+                Log.e("Node", "It thinks (!isComplex() && isRef())... I don't know how.");
+                textList = new ArrayList<>();
+                return textList;
+            }
+            //TODO deal with this
+            textList = new ArrayList<>();
+            if(isGridItem()){
 
-            texts =  Text.get(bid,levels,false);
+            }else{
+
+            }
+        }else if(isComplex()){
+            //TODO make sure this works
+            // && isGridItem()
+            //levels will be diff based on if it's a gridItem
+            textList = Text.get(nid,getLevels(),true);
         }
-        else if(isTextSection()){
-
-            //TODO error check bid and maybe levels
-
-            //TODO this has to figure out if we're talking about nid (complex text) or not.
-        }else{
-            Log.d("Node","NODE_TYPE:" + this);
+        else{
+            Log.e("Node", "In Node.getText() and I'm confused. NodeTypeFlags: " + getNodeTypeFlagsStr());
         }
-        return texts;
-    }
-
-
-    public int getBid(){
-        return bid;
+        Log.d("Node", "finishing getTexts algo");
+        return textList;
     }
 
     /**
@@ -452,7 +461,14 @@ public class Node{ //TODO implements  Parcelable
      * return levels
      */
     public int [] getLevels(){
-        int levels [] = new int [] {1,2};//TODO based on logic
+        //TODO make work for more than 2 levels
+        int [] levels;
+        if(isGridItem()) {
+            levels = new int[]{0, getGridNum()};
+        }else{ //It's not a gridItem
+            levels = new int[] {0};
+        }
+
         return levels;
     }
 
@@ -484,7 +500,6 @@ public class Node{ //TODO implements  Parcelable
             } while (cursor.moveToNext());
         }
         List<Node> allRoots = new ArrayList<>();
-        //TODO need to add way if the main text is regular but has alt... make it always try to add it.
         /**
          * this is for the rigid structure
          */
@@ -492,6 +507,12 @@ public class Node{ //TODO implements  Parcelable
         root.nid = NID_NON_COMPLEX;
         root.setAllChaps(false);
         if(root.getChildren().size()>0) {
+            String sectionName = root.sectionNames[root.sectionNames.length-1];
+            if(sectionName.length() > 0)
+                root.enTitle = sectionName;
+            String heSectionName = root.heSectionNames[root.heSectionNames.length-1];
+            if(heSectionName.length() > 0)
+                root.heTitle = heSectionName;
             allRoots.add(root);
             showTree(root);
         }
@@ -517,10 +538,8 @@ public class Node{ //TODO implements  Parcelable
         return allRoots;
     }
 
-    @Override
-    public String toString() {
-        String str = "{"+  nid + ",bid:" + bid + ",titles:" + enTitle + " " + heTitle + ",sections:" + Util.array2str(sectionNames) + "," + Util.array2str(heSectionNames) + ",structN:" + structNum + ",textD:" + textDepth + ",tids:" + startTid + "-" + endTid + ",ref:" + extraTids;
-        str += ",gridN:" + getGridNum();
+    private String getNodeTypeFlagsStr(){
+        String str = "";
         if(isComplex())
             str += " IS_COMPLX";
         if(isGridItem)
@@ -529,6 +548,14 @@ public class Node{ //TODO implements  Parcelable
             str += " IS_TEXT";
         if(isRef())
             str += " IS_REF";
+        return str;
+    }
+
+    @Override
+    public String toString() {
+        String str = "{"+  nid + ",bid:" + bid + ",titles:" + enTitle + " " + heTitle + ",sections:" + Util.array2str(sectionNames) + "," + Util.array2str(heSectionNames) + ",structN:" + structNum + ",textD:" + textDepth + ",tids:" + startTid + "-" + endTid + ",ref:" + extraTids;
+        str += ",gridN:" + getGridNum();
+        str += getNodeTypeFlagsStr();
         str += "}";
         return str;
     }
