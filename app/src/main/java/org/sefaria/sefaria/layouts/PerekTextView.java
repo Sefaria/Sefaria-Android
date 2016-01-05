@@ -21,7 +21,9 @@ import org.sefaria.sefaria.TextElements.VerseSpannable;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.Text;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Handler;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -57,13 +59,20 @@ public class PerekTextView extends JustifyTextView {
     private String drawText;
     private int startY;
 
-    private boolean inited;
+    private List<String[]> characters;
+    private List<float[]> charWidths;
 
-    public PerekTextView (Context context, List<Text> textList,boolean isCts,Util.Lang lang, float textSize, int scrollY) {
+    private boolean inited;
+    private boolean isPrev; //true when chapter tv has been loaded as a previous tv
+    private boolean hasBeenDrawn; //goes along with isPrev
+
+    public PerekTextView (Context context, List<Text> textList,boolean isCts,Util.Lang lang, float textSize, int scrollY, boolean isPrev) {
         super(context);
         this.textList = textList;
         this.scrollY = scrollY;
         this.inited = false;
+        this.isPrev = isPrev;
+        this.hasBeenDrawn = false;
 
         ViewTreeObserver vto = getViewTreeObserver();
         vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -94,18 +103,25 @@ public class PerekTextView extends JustifyTextView {
     protected void onDraw(Canvas canvas) {
         //oldOnDraw(canvas);
         //Log.d("text","DRAW");
-        for (int i = firstDrawnLine; i < lastDrawnLine; i++) {
+        if (layout == null) return;
+        if (isPrev && !hasBeenDrawn) {
+            hasBeenDrawn = true;
+            Log.d("text","FIRST DRAW " + getHeight());
+            Handler h = new Html.TagHandler();
+        }
+
+        for (int i = firstDrawnLine; i <= lastDrawnLine; i++) {
             int lineStart = layout.getLineStart(i);
             int lineEnd = layout.getLineEnd(i);
             int startY = layout.getLineBottom(i);
             String line = text.substring(lineStart, lineEnd);
 
-            if (isCts) {//justified  //TODO make this work
+            if (isCts && false) {//justified  //TODO make this work. to use justified, also remove false from updateVisibleLines()
 
                 float width = StaticLayout.getDesiredWidth(line, paint);
                 if (needScale(line) && i != lineCount-1) {
 
-                    drawScaledText(canvas, line, startY,width, lang == Util.Lang.HE);
+                    drawScaledText(canvas, line, i-firstDrawnLine, startY,width, lang == Util.Lang.HE);
                 } else {
                     //float startX = lang == Util.Lang.HE ? mViewWidth-width : 0;
                     canvas.drawText(line,0,startY,paint);
@@ -208,12 +224,14 @@ public class PerekTextView extends JustifyTextView {
     public void updateScroll(int scrollY,int scrollH) {
         this.scrollY = scrollY;
         this.scrollH = scrollH;
-        updateVisibleLines();
         noahDraw();
     }
 
     private void updateVisibleLines() {
         try {
+            int oldFirst = firstDrawnLine;
+            int oldLast = lastDrawnLine;
+
             int min = this.scrollY - relativeTop;
             if (min < 0) min = 0;
             else if (min > getHeight() - scrollH) min = getHeight() - scrollH;
@@ -221,6 +239,85 @@ public class PerekTextView extends JustifyTextView {
             if (firstDrawnLine < 0) firstDrawnLine = 0;
             this.lastDrawnLine = layout.getLineForVertical(min + scrollH) + EXTRA_LOAD_LINES;
             if (lastDrawnLine > lineCount - 1) lastDrawnLine = lineCount - 1;
+
+            //update justified characters - assuming this is always run on update()
+
+            //TODO make this work when switching to and from isCts
+            //TODO also, this is slightly too slow. and there's a bug when you scroll up then down
+            if (characters == null && isCts && false) {
+                characters = new ArrayList<>();
+                charWidths = new ArrayList<>();
+                for (int i = firstDrawnLine; i <= lastDrawnLine; i++) {
+                    int lineStart = layout.getLineStart(i);
+                    int lineEnd = layout.getLineEnd(i);
+                    String line = text.substring(lineStart, lineEnd);
+
+                    String[] charList = new String[line.length()];
+                    float[] cwList = new float[line.length()];
+
+                    for (int j = 0; j < line.length(); j++) {
+                        String c = String.valueOf(line.charAt(j));
+                        charList[j] = c;
+                        cwList[j] = StaticLayout.getDesiredWidth(c, paint);
+                    }
+
+                    characters.add(charList);
+                    charWidths.add(cwList);
+                }
+            } else if (isCts) {
+                int starti, endi;
+                if (firstDrawnLine - oldFirst >= 0) {
+                    characters = characters.subList(firstDrawnLine-oldFirst,characters.size());
+                    charWidths = charWidths.subList(firstDrawnLine-oldFirst,charWidths.size());
+                    starti = oldLast + 1;
+                    endi = lastDrawnLine;
+
+                    for (int i = starti; i <= endi; i++) {
+                        int lineStart = layout.getLineStart(i);
+                        int lineEnd = layout.getLineEnd(i);
+                        String line = text.substring(lineStart, lineEnd);
+
+                        String[] charList = new String[line.length()];
+                        float[] cwList = new float[line.length()];
+
+                        for (int j = 0; j < line.length(); j++) {
+                            String c = String.valueOf(line.charAt(j));
+                            charList[j] = c;
+                            cwList[j] = StaticLayout.getDesiredWidth(c, paint);
+                        }
+
+                        characters.add(charList);
+                        charWidths.add(cwList);
+                    }
+                } else {
+                    characters = characters.subList(0, lastDrawnLine - oldFirst + 1);
+                    charWidths = charWidths.subList(0, lastDrawnLine - oldFirst + 1);
+                    starti = firstDrawnLine;
+                    endi = oldFirst - 1;
+
+                    for (int i = endi; i >= starti; i--) {
+                        int lineStart = layout.getLineStart(i);
+                        int lineEnd = layout.getLineEnd(i);
+                        String line = text.substring(lineStart, lineEnd);
+
+                        String[] charList = new String[line.length()];
+                        float[] cwList = new float[line.length()];
+
+                        for (int j = 0; j < line.length(); j++) {
+                            String c = String.valueOf(line.charAt(j));
+                            charList[j] = c;
+                            cwList[j] = StaticLayout.getDesiredWidth(c, paint);
+                        }
+
+                        characters.add(0, charList);
+                        charWidths.add(0, cwList);
+                    }
+                }
+            }
+
+
+
+
         } catch (NullPointerException e) {
             return;
         }
@@ -258,6 +355,8 @@ public class PerekTextView extends JustifyTextView {
 
 
 
+
+
         //AsyncLoadText alt = new AsyncLoadText();
         //alt.execute();
 
@@ -283,7 +382,9 @@ public class PerekTextView extends JustifyTextView {
         lineHeight = getLineHeight(); //(int)Math.round(getLineHeight() - getLineHeight()/12);
     }
 
-    protected void drawScaledText(Canvas canvas, String line, float y, float lineWidth,boolean isHeb) {
+
+    //lineindex is relative to the characters and charWidth ArrayLists
+    protected void drawScaledText(Canvas canvas, String line, int lineindex, float y, float lineWidth,boolean isHeb) {
 
 
         float x = isHeb ? mViewWidth : 0;
@@ -322,8 +423,8 @@ public class PerekTextView extends JustifyTextView {
                 canvas.drawText(c, x-cw, y, paint);
                 x -= (cw + d);
             } else {
-                c = String.valueOf(line.charAt(i));
-                cw = 15f; //StaticLayout.getDesiredWidth(c, paint);
+                c = characters.get(lineindex)[i];//String.valueOf(line.charAt(i));
+                cw = charWidths.get(lineindex)[i]; //15f; //StaticLayout.getDesiredWidth(c, paint);
                 //Log.d("yo","C " + cw);
                 canvas.drawText(c, x, y, paint);
                 x += cw + d;
