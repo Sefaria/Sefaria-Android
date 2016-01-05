@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.os.Message;
 import android.text.Html;
 import android.text.Layout;
 import android.text.SpannableString;
@@ -19,6 +20,7 @@ import android.widget.TextView;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.TextElements.VerseSpannable;
 import org.sefaria.sefaria.Util;
+import org.sefaria.sefaria.activities.TextActivity;
 import org.sefaria.sefaria.database.Text;
 
 import java.util.ArrayList;
@@ -107,7 +109,10 @@ public class PerekTextView extends JustifyTextView {
         if (isPrev && !hasBeenDrawn) {
             hasBeenDrawn = true;
             Log.d("text","FIRST DRAW " + getHeight());
-           
+            Message msg = TextActivity.handler.obtainMessage();
+            msg.what = TextActivity.PREV_CHAP_DRAWN;
+            msg.obj = new PrevMessage(getHeight());
+            TextActivity.handler.sendMessage(msg);
         }
 
         for (int i = firstDrawnLine; i <= lastDrawnLine; i++) {
@@ -513,4 +518,16 @@ public class PerekTextView extends JustifyTextView {
 
 
     }*/
+
+    //used to inform TextActivity that the PTV has just been drawn
+    public class PrevMessage {
+
+        public int height;
+
+        public PrevMessage(int height) {
+            this.height = height;
+        }
+    }
 }
+
+
