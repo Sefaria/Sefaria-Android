@@ -27,7 +27,6 @@ import org.sefaria.sefaria.menu.MenuState;
  */
 public class TOCNumBox extends TextView implements TOCElement {
 
-    private int number;
     private Context context;
     private Node node;
     private Util.Lang lang;
@@ -38,7 +37,7 @@ public class TOCNumBox extends TextView implements TOCElement {
         this.setVisibility(View.INVISIBLE);
     }
 
-    public TOCNumBox(Context context, int number, Node node, Util.Lang lang){
+    public TOCNumBox(Context context, Node node, Util.Lang lang){
         super(context);
 
         //FORMATTING
@@ -57,11 +56,10 @@ public class TOCNumBox extends TextView implements TOCElement {
         //setWidth((int) r.getDimension(R.dimen.toc_numbox));
         //setHeight((int) r.getDimension(R.dimen.toc_numbox));
 
-        setPadding(1,1,1,1);
+        setPadding(1, 1, 1, 1);
         setTextSize(10);
         setGravity(Gravity.CENTER);
 
-        this.number = number;
         this.node = node;
         this.context = context;
         this.lang = lang;
@@ -78,9 +76,9 @@ public class TOCNumBox extends TextView implements TOCElement {
     @Override
     public void setLang(Util.Lang lang) {
         if(Util.Lang.HE == lang)
-            setText(Util.int2heb(number));
+            setText(Util.int2heb(node.getGridNum()));
         else
-            setText("" + number);
+            setText("" + node.getGridNum());
     }
 
 
@@ -88,27 +86,32 @@ public class TOCNumBox extends TextView implements TOCElement {
     OnClickListener clickListener = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            //TODO go to intent of text page
+            if(!node.isTextSection()) {
+                Log.e("TOCNumBox","TOCNumBox.clickListener isn't a textSection");
+                return;
+            }
             Node.saveNode(node);
+            /*
             try {
-                Log.d("toc", "go to:" + node + number);
-                Log.d("toc", "texts: " + node.getTexts(number));
+                Log.d("toc", "go to:" + node  + node.getGridNum());
+                Log.d("toc", "texts: " + node.getTexts());
             }catch(API.APIException e){//use API.Excet
                 ;
-            }
+            }*/
 
-            //Intent intent = new Intent(context, TextActivity.class);
-            //intent.putExtra("menuState", newMenuState);
-            //context.startActivity(intent);
+
+
 
             Node.saveNode(node);
             Intent intent = new Intent(context, SectionActivity.class);
             intent.putExtra("nodeHash", node.hashCode());
             intent.putExtra("lang", lang);
-            intent.putExtra("firstLoadedChap", number);
+            //TODO determine if SectionActivity was already open... Make sure to be careful of multi-tab stuff
+            //context.startActivity(intent);
+
             Activity act = (Activity) context; //stupid casting
             act.setResult(Activity.RESULT_OK,intent);
-            act.finish();
+            act.finish();//close the TOC
 
 
         }

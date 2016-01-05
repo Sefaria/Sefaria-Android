@@ -345,13 +345,13 @@ public class TextActivity extends Activity {
             if (textsList.size() == 0) return;
 
 
-            final TextChapterHeader tch;
+            TextChapterHeader tch;
             if (levels.length > WHERE_PAGE-1) {
                 //MenuNode tempNode = new MenuNode(book.sectionNamesL2B[wherePage-1] + " " + currLoadedChapter,
                 //        book.heSectionNamesL2B[wherePage-1] + " " + Util.int2heb(currLoadedChapter),null,null);
 
                 Text segment = new Text(true,""+ levels[WHERE_PAGE-1], Util.int2heb(levels[WHERE_PAGE-1]));
-                TextChapterHeader tch = new TextChapterHeader(TextActivity.this,segment,lang,textSize);
+                tch = new TextChapterHeader(TextActivity.this,segment,lang,textSize);
                 textChapterHeaders.add(tch);
 
             } else tch = null;
