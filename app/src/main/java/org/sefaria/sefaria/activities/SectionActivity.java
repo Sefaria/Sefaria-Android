@@ -246,6 +246,7 @@ public class SectionActivity extends Activity implements AbsListView.OnScrollLis
             if (textsList.size() == 0) return;
 
             if (levels.length > WHERE_PAGE-1) {
+                //TODO these names shouldn't be based on the level number ... that is also assuming that it's not complex texts
                 //MenuNode tempNode = new MenuNode(book.sectionNamesL2B[wherePage-1] + " " + currLoadedChapter,
                 //        book.heSectionNamesL2B[wherePage-1] + " " + Util.int2heb(currLoadedChapter),null,null);
                 MenuNode tempNode = new MenuNode(""+levels[WHERE_PAGE-1],""+Util.int2heb(levels[WHERE_PAGE-1]),null);
@@ -253,7 +254,7 @@ public class SectionActivity extends Activity implements AbsListView.OnScrollLis
                 //TextChapterHeader tch = new TextChapterHeader(TextActivity.this,tempNode,lang,textSize);
                 //textChapterHeaders.add(tch);
                 //textRoot.addView(tch);
-                sectionAdapter.add(new Text(true,levels[WHERE_PAGE-1]));
+                sectionAdapter.add(new Text(true,""+levels[WHERE_PAGE-1],Util.int2heb(levels[WHERE_PAGE-1])));
             }
 
             sectionAdapter.addAll(textsList);
@@ -301,7 +302,7 @@ public class SectionActivity extends Activity implements AbsListView.OnScrollLis
 
             //int[] levels = {0,currLoadedChapter};
             //Text.getNextChap(book,levels,next);
-            
+
             List<Text> textsList;
             try {
                 textsList = node.getTexts(tempChap);

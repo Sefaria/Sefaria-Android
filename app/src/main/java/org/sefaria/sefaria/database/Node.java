@@ -267,8 +267,10 @@ public class Node{ //TODO implements  Parcelable
     }
 
 
+    private List<Node> chapChildren = new ArrayList<>();
     private void getAllChaps(boolean useNID) throws API.APIException {
         //if(true) return;
+        Log.d("Node","starting getAllChap()");
         if(textDepth < 2){
             Log.e("Node", "called getAllChaps with too low texdepth" + this.toString());
             return;
@@ -311,6 +313,7 @@ public class Node{ //TODO implements  Parcelable
                 do {
                     if(textDepth == 2) {
                         chaps.add(cursor.getInt(0));
+                        //chapChildren.add(new Node(cursor));//TODO maybe use children instead of chaps
                     }else if(textDepth == 3){
                         this.nodeType = NODE_TYPE_BRANCH;//TODO see if this needs a different nodeType number
                         int level3 = cursor.getInt(0);
@@ -336,6 +339,8 @@ public class Node{ //TODO implements  Parcelable
         }catch(Exception e){
             Log.e("Node", e.toString());
         }
+
+        Log.d("Node","finishing getAllChap()");
 
         return;
     }
@@ -406,6 +411,7 @@ public class Node{ //TODO implements  Parcelable
         return getRoots(book,true);
     }
 
+
     private static List<Node> getRoots(Book book, boolean addMoreh) throws API.APIException{
         Database2 dbHandler = Database2.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
@@ -438,7 +444,7 @@ public class Node{ //TODO implements  Parcelable
 
 
         if(addMoreh){//TODO remove only for testing alt structures
-            nodes.add(getRoots(new Book(1175),false).get(0));
+            ;//nodes.add(getRoots(new Book(1175),false).get(0));
         }
 
 
