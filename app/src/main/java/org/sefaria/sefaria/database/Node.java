@@ -3,10 +3,6 @@ package org.sefaria.sefaria.database;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import org.sefaria.sefaria.MyApp;
@@ -23,16 +19,18 @@ import java.util.Set;
 
 public class Node{ //TODO implements  Parcelable
 
+
     public final static int NODE_TYPE_BRANCH = 1;
     public final static int NODE_TYPE_TEXTS = 2;
     public final static int NODE_TYPE_REFS = 3;
+
 
     public final static int NID_NON_COMPLEX = -3;
     public  final static int NID_NO_INFO = -1;
 
     private int nid;
     private int bid;
-    private int parentNode;
+    private int parentNodeID;
     private int nodeType;
     private int siblingNum;
     private String enTitle;
@@ -48,7 +46,17 @@ public class Node{ //TODO implements  Parcelable
     private List<Node> children;
     private List<Integer> chaps;
     private List<Text> textList;
-    //private Node parent;
+    private Node parent = null;
+
+    /**
+     * These booleans are set in setFlagsFromNodeType()
+     */
+    private boolean isTextSection = false;
+    private boolean isGridItem = false;
+    private boolean isComplex = false;
+    private boolean isRef = false;
+
+    private int [] levelsOfNode = new int [] {};
 
     private static Map<Integer,Node> allSavedNodes = new HashMap<Integer, Node>();
 
@@ -80,18 +88,27 @@ public class Node{ //TODO implements  Parcelable
         textDepth = book.textDepth;
         enTitle = book.title;
         heTitle = book.heTitle;
-
     }
+
 
     public  Node (Cursor cursor){
         children = new ArrayList<>();
         nid = NID_NO_INFO;
         chaps = new ArrayList<>();
         getFromCursor(cursor);
-        addSectionNames();
+
     }
 
-
+    /***
+     *  Returns full description of current text.
+     *  For example, includes Genesis 2
+     *  //TODO actually create function (maybe use headers from beatmidrash)
+     * @param lang
+     * @return
+     */
+    public String getWholeTitle(Util.Lang lang){
+        return getTitle(lang);
+    }
 
     /**
      * use lang from Util.HE or EN (maybe or BI)
@@ -124,7 +141,7 @@ public class Node{ //TODO implements  Parcelable
      * if (children.size() == 0)
      *      this is a leaf and you need to check
      *
-     * @return children
+     * @return childrenl
      */
     public List<Node> getChildren(){
         if(children == null)
@@ -148,6 +165,8 @@ public class Node{ //TODO implements  Parcelable
 
     private void addSectionNames(){
         //TODO move to create SQL
+        if(sectionNames.length > 0)
+            return;
         String sectionStr = "[";
         for(int i=0;i<textDepth;i++) {
             sectionStr += "Section" + i;
@@ -161,11 +180,24 @@ public class Node{ //TODO implements  Parcelable
 
     }
 
+    private static final int IS_COMPLEX = 2;
+    private static final int IS_TEXT_SECTION = 4;
+    private static final int IS_GRID_ITEM = 8;
+    private static final int IS_REF = 16;
+    private void setFlagsFromNodeType(){
+        if(nodeType == 0)
+            Log.e("Node", "Node.setFlagsFromNodeType: nodeType == 0. I don't know anything");
+        isComplex = (nodeType & IS_COMPLEX) != 0;
+        isTextSection = (nodeType & IS_TEXT_SECTION) != 0;
+        isGridItem = (nodeType & IS_GRID_ITEM) != 0;
+        isRef = (nodeType & IS_REF) != 0;
+    }
+
     private void getFromCursor(Cursor cursor){
         try{
             nid = cursor.getInt(0);
             bid = cursor.getInt(1);
-            parentNode = cursor.getInt(2);
+            parentNodeID = cursor.getInt(2);
             nodeType = cursor.getInt(3);
             siblingNum = cursor.getInt(4);
             enTitle = cursor.getString(5);
@@ -177,6 +209,9 @@ public class Node{ //TODO implements  Parcelable
             startTid = cursor.getInt(11);
             endTid = cursor.getInt(12);
             extraTids = cursor.getString(13);
+
+            setFlagsFromNodeType();
+            addSectionNames();
         }
         catch(Exception e){
             MyApp.sendException(e);
@@ -188,7 +223,7 @@ public class Node{ //TODO implements  Parcelable
 
     private void addChild(Node node){
         this.children.add(node);
-        //node.parent = this;
+        node.parent = this;
         if(node.siblingNum != this.children.size() -1) {
             //TODO make sure the order is correct
             Log.e("Node", "wrong sibling num");
@@ -235,20 +270,20 @@ public class Node{ //TODO implements  Parcelable
             if(startID < 0)
                 startID = node.nid;
 
-            if(node.parentNode == 0){
+            if(node.parentNodeID == 0){
                 if(root == null)
                     root = node;
                 else
                     Log.e("Node", "Root already taken!!");
             }else{
-                Node node2 = nodes.get(node.parentNode - startID);
-                if(node2.nid == node.parentNode)
+                Node node2 = nodes.get(node.parentNodeID - startID);
+                if(node2.nid == node.parentNodeID)
                     node2.addChild(node);
                 else{
                     Log.e("Node","Parent in wrong spot");
                     for(int j=0;j<nodes.size();j++){
                         node2 = nodes.get(j);
-                        if(node2.nid == node.parentNode) {
+                        if(node2.nid == node.parentNodeID) {
                             node2.addChild(node);
                             break;
                         }
@@ -411,45 +446,55 @@ public class Node{ //TODO implements  Parcelable
         return getRoots(book,true);
     }
 
-
     private static List<Node> getRoots(Book book, boolean addMoreh) throws API.APIException{
         Database2 dbHandler = Database2.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
         Cursor cursor = db.query(NODE_TABLE, null, "bid" + "=?",
-                new String[]{String.valueOf(book.bid)}, null, null, "_id", null); //structNum, parentNode, siblingNum
+                new String[]{String.valueOf(book.bid)}, null, null, "structNum,_id", null); //structNum, parentNode, siblingNum
         Node root;
 
-        List<Node> nodes = new ArrayList<>();
+        int lastStructNum = -1;
+        List<List<Node>> allNodeStructs = new ArrayList<>();
         if (cursor != null && cursor.moveToFirst()){
             do {
                 Node node = new Node(cursor);
                 //node.log();
-                nodes.add(node);
+                if(lastStructNum != node.structNum){
+                    allNodeStructs.add(new ArrayList<Node>());
+                    lastStructNum = node.structNum;
+                    Log.d("Node", "On structNum" + node.structNum);
+                }
+                allNodeStructs.get(allNodeStructs.size()-1).add(node);
+                //nodes.add(node);
             } while (cursor.moveToNext());
         }
+        List<Node> allRoots = new ArrayList<>();
+        //TODO need to add way if the main text is regular but has alt... make it always try to add it.
+        root = new Node(book);
+        root.nid = NID_NON_COMPLEX;
+        root.getAllChaps(false);
+        if(root.children.size()>0 || root.chaps.size()>0)
+            allRoots.add(root);
 
-        if(nodes.size() == 0){//TODO need to add way if the main text is regular but has alt... make it always try to add it.
-            root = new Node(book);
-            root.nid = NID_NON_COMPLEX;
-            root.getAllChaps(false);
-            nodes.add(root);
+        for(int i=0;i<allNodeStructs.size();i++) {
+            List<Node> nodes = allNodeStructs.get(i);
+            if (nodes.size() > 0) {
+                //Complex text combining nodes into root
+                root = convertToTree(nodes);
+            }
+            allRoots.add(root);
+            //showTree(root);
         }
-        else {
-            //Complex text combining nodes into root
-            root = convertToTree(nodes);
-        }
-        nodes = new ArrayList<>();
-        nodes.add(root);
-        //showTree(root);
 
 
         if(addMoreh){//TODO remove only for testing alt structures
-            ;//nodes.add(getRoots(new Book(1175),false).get(0));
+            allRoots.add(getRoots(new Book("Orot"),false).get(0));
+            allRoots.add(getRoots(new Book(1175),false).get(0));
+
         }
 
 
-        return nodes;
-        //return root;
+        return allRoots;
     }
 
     @Override
