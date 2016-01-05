@@ -1,5 +1,6 @@
 package org.sefaria.sefaria.TOCElements;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -104,8 +105,10 @@ public class TOCNumBox extends TextView implements TOCElement {
             Intent intent = new Intent(context, SectionActivity.class);
             intent.putExtra("nodeHash", node.hashCode());
             intent.putExtra("lang", lang);
-            intent.putExtra("firstLoadedChap",number);
-            context.startActivity(intent);
+            intent.putExtra("firstLoadedChap", number);
+            Activity act = (Activity) context; //stupid casting
+            act.setResult(Activity.RESULT_OK,intent);
+            act.finish();
 
 
         }
