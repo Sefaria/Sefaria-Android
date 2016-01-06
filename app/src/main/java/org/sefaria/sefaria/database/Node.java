@@ -33,7 +33,7 @@ public class Node{ //TODO implements  Parcelable
     private int bid;
     private int parentNodeID;
     private Node parent = null;
-    private int siblingNum;
+    //private int siblingNum;
     private String enTitle;
     private String heTitle;
     private String [] sectionNames;
@@ -43,23 +43,15 @@ public class Node{ //TODO implements  Parcelable
     private int startTid;
     private int endTid;
     private String extraTids;
-
     private List<Node> children;
     private List<Text> textList;
-
-
-    /**
-     * These booleans are set in setFlagsFromNodeType(nodeType) and other places
-     *
-     */
     private boolean isTextSection = false;
     private boolean isGridItem = false;
     private boolean isComplex = false;
     private boolean isRef = false;
-
-    //private int [] levelsOfNode = new int [] {};
     int gridNum = -1;
-    public int getGridNum(){ return gridNum;}
+
+
 
     private static Map<Integer,Node> allSavedNodes = new HashMap<Integer, Node>();
 
@@ -116,6 +108,8 @@ public class Node{ //TODO implements  Parcelable
         return getTitle(lang);
     }
 
+    public int getGridNum(){ return gridNum;}
+
     /**
      * use lang from Util.HE or EN (maybe or BI)
      * @param lang
@@ -132,6 +126,15 @@ public class Node{ //TODO implements  Parcelable
             Log.e("Node", "wrong lang num");
             return "";
         }
+    }
+
+
+    private Node getFirstDescendant(){
+        Node node = this;
+        while(node.getChildren().size() > 0){
+            node = getChildren().get(0);
+        }
+        return node;
     }
 
     public static Node getFirstDescendant(Node node){
@@ -178,7 +181,7 @@ public class Node{ //TODO implements  Parcelable
     }
     */
 
-    private void setFlagsFromNodeType(int nodeType){
+    private void setFlagsFromNodeType(int nodeType, int siblingNum){
         final int IS_COMPLEX = 2;
         final int IS_TEXT_SECTION = 4;
         final int IS_GRID_ITEM = 8;
@@ -208,7 +211,7 @@ public class Node{ //TODO implements  Parcelable
             bid = cursor.getInt(1);
             parentNodeID = cursor.getInt(2);
             int nodeType = cursor.getInt(3);
-            siblingNum = cursor.getInt(4);
+            int siblingNum = cursor.getInt(4);
             enTitle = cursor.getString(5);
             heTitle = cursor.getString(6);
             sectionNames = Util.str2strArray(cursor.getString(7));
@@ -219,7 +222,7 @@ public class Node{ //TODO implements  Parcelable
             endTid = cursor.getInt(12);
             extraTids = cursor.getString(13);
 
-            setFlagsFromNodeType(nodeType);
+            setFlagsFromNodeType(nodeType, siblingNum);
         }
         catch(Exception e){
             MyApp.sendException(e);
@@ -237,7 +240,7 @@ public class Node{ //TODO implements  Parcelable
         node.isRef = false;
         node.isComplex = isComplex;
         node.gridNum = chapNum;
-        node.siblingNum = -1;
+        //node.siblingNum = -1;
         node.enTitle = node.heTitle =  "";
         node.heSectionNames = node.sectionNames = sectionNames;
         node.parentNodeID = nid;
@@ -253,14 +256,37 @@ public class Node{ //TODO implements  Parcelable
         node.parent = this;
         if(node.parentNodeID == NID_NO_INFO)
             node.parentNodeID = this.nid;
+        /*
         if(node.siblingNum == -1){
             node.siblingNum = this.children.size() -1;
         }else if(node.siblingNum != this.children.size() -1) {
             //TODO make sure the order is correct
-            Log.e("Node", "wrong sibling num. siblingNum:" + node.siblingNum + " children.size():" + children.size());
+            Log.e("Node", "wrong sibling num. siblingNum:" + node.siblingNum + " children.size():" + children.size()  + "__" + this);
         }
+        */
     }
 
+    /**
+     * if it's called on a node that !isTextSection(), it will first move to the next sibling node and then get it's first descendant
+     * @return the next node in the tree that contains text
+     */
+    public Node getNextTextNode(){
+        int index = parent.getChildren().indexOf(this);
+        if(index == -1){
+            Log.e("Node.getNextTextNode","Couldn't find index in parent's children: " + this);
+            return getFirstDescendant();
+        } else if(index < parent.getChildren().size()-1){
+            Node node = parent.getChildren().get(index +1);
+            if(!node.isTextSection){
+                return node.getFirstDescendant();
+            }else {
+                return node;
+            }
+        }else {// if(index >=parent.getChildren().size()){
+            Node node = parent;
+            return parent.getNextTextNode();
+        }
+    }
     /**
      * Shows the TOC Node tree. This is only used for debugging.
      * @param node
@@ -387,16 +413,18 @@ public class Node{ //TODO implements  Parcelable
                             tempNode.isRef = false;
                             tempNode.isGridItem = false;
                             tempNode.isTextSection = false;
+                            //tempNode.siblingNum = sectionNum - 1;
                             tempNode.gridNum = sectionNum;
                             tempNode.nid = NID_CHAP_NO_NID;
                             tempNode.bid = bid;
+
                             this.addChild(tempNode);
                         }
                         tempNode.addChapChild(cursor.getInt(1));
-                        //TODO extend to more than 3 levels
                     }
                     else{
-                        Log.e("Node", "add 4 or more levels");//TODO
+                        //TODO extend to more than 3 levels
+                        Log.e("Node", "add 4 or more levels");
                     }
                 } while (cursor.moveToNext());
             }
@@ -605,6 +633,7 @@ public class Node{ //TODO implements  Parcelable
     public String toString() {
         String str = "{"+  nid + ",bid:" + bid + ",titles:" + enTitle + " " + heTitle + ",sections:" + Util.array2str(sectionNames) + "," + Util.array2str(heSectionNames) + ",structN:" + structNum + ",textD:" + textDepth + ",tids:" + startTid + "-" + endTid + ",ref:" + extraTids;
         str += ",gridN:" + getGridNum();
+        //str +=  ",siblingN:" + siblingNum;
         str += getNodeTypeFlagsStr();
         str += "}";
         return str;
