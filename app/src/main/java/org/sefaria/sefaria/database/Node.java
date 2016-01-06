@@ -68,14 +68,12 @@ public class Node{ //TODO implements  Parcelable
 
     public Node(){
         children = new ArrayList<>();
-        //chaps = new ArrayList<>();
         nid = NID_NO_INFO;
         parentNodeID = NID_NO_INFO;
     }
 
     public Node(Book book){
         children = new ArrayList<>();
-        //chaps = new ArrayList<>();
         nid = NID_NO_INFO;
         parentNodeID = NID_NO_INFO;
 
@@ -92,26 +90,55 @@ public class Node{ //TODO implements  Parcelable
         children = new ArrayList<>();
         nid = NID_NO_INFO;
         parentNodeID = NID_NO_INFO;
-        //chaps = new ArrayList<>();
         getFromCursor(cursor);
-
     }
 
     /***
-     *  Returns full description of current text.
-     *  For example, includes Genesis 2
+     *
+     *
      *  //TODO actually create function (maybe use headers from beatmidrash)
      * @param lang
-     * @return
+     * @return full description of current text. For example, Genesis 2
      */
     public String getWholeTitle(Util.Lang lang){
-        String str = getTitle(lang);
-        if(lang == Util.Lang.EN) {
-            str += " " + getGridNum();
-        }else{
-            str += " " + Util.int2heb(getGridNum());
+        String str = "";
+        Node node = this;
+        while(node.parent != null){
+            str = node.getWholeTitleForNode(lang) + " " + str;
+            node = node.parent;
         }
         return str;
+    }
+
+    private String getWholeTitleForNode(Util.Lang lang){
+        String str;
+        if(isGridItem() || nid == NID_CHAP_NO_NID) {
+            str = getSectionName(lang);
+            if (lang == Util.Lang.EN) {
+                str += " " + getGridNum();
+            } else {
+                str += " " + Util.int2heb(getGridNum());
+            }
+        }
+        else
+            str = getTitle(lang);
+        return str;
+    }
+
+    private String getSectionName(Util.Lang lang){
+        String name = "";
+        if(lang == Util.Lang.BI)
+            lang = MyApp.getDefaultLang(Util.SETTING_LANG_TYPE.MENU);
+
+        String [] names;
+        if(lang == Util.Lang.EN){
+            names = sectionNames;
+        }else{// if(lang == Util.Lang.HE){
+            names = heSectionNames;
+        }
+        if(names.length > 0)
+            name = names[names.length-1];
+        return name;
     }
 
     public int getGridNum(){ return gridNum;}
@@ -355,10 +382,8 @@ public class Node{ //TODO implements  Parcelable
             Log.e("Node", "called setAllChaps with too low texdepth" + this.toString());
             return;
         }
-
         Database2 dbHandler = Database2.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
-
 
         String levels = "";
         for(int i=textDepth;i>1;i--){
@@ -515,13 +540,6 @@ public class Node{ //TODO implements  Parcelable
             parent = parent.parent;
         }
 
-        /*
-        if(isGridItem()) {
-             levels = new int[]{0, getGridNum()};
-        }else{ //It's not a gridItem
-            levels = new int[] {0};
-        }
-         */
         int [] levels2 = new int [levels.size()];
         for(int i=0;i<levels.size();i++){
             levels2[i] = levels.get(i);
