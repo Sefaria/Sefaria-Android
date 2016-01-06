@@ -64,9 +64,9 @@ public class SectionAdapter extends ArrayAdapter<Text> {
             tch.setVisibility(View.GONE);
             tv.setVisibility(View.VISIBLE);
 
-            if (context.getLang() == Util.Lang.HE) {
+            if (context.getTextLang() == Util.Lang.HE) {
                 tv.setText(Html.fromHtml(segment.heText));
-            } else /*if (context.getLang() == Util.Lang.EN)*/ {
+            } else /*if (context.getTextLang() == Util.Lang.EN)*/ {
                 tv.setText(Html.fromHtml(segment.enText));
             }
             tv.setTextColor(Color.parseColor("#000000"));

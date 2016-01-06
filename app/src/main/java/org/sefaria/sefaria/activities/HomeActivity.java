@@ -54,8 +54,8 @@ public class HomeActivity extends Activity {
         if (menuState == null) {
             menuState = new MenuState();
         }
-
-        menuGrid = new MenuGrid(this,NUM_COLUMNS, menuState,LIMIT_GRID_SIZE,Util.Lang.HE);
+        Util.Lang menuLang = MyApp.getDefaultLang(Util.SETTING_LANG_TYPE.MENU);
+        menuGrid = new MenuGrid(this,NUM_COLUMNS, menuState,LIMIT_GRID_SIZE,menuLang);
         ScrollView gridRoot = (ScrollView) findViewById(R.id.gridRoot);
         gridRoot.addView(menuGrid);
 
@@ -64,7 +64,7 @@ public class HomeActivity extends Activity {
         if (isPopup) tempCloseClick = closeClick;
 
         CustomActionbar cab = new CustomActionbar(this,new MenuNode("Sefaria","ספאריה",null),
-                Util.Lang.EN,null,tempCloseClick,null,null);
+                menuLang,null,tempCloseClick,null,null);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(cab);
 
