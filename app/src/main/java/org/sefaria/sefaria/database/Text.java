@@ -164,7 +164,7 @@ public class Text implements Parcelable {
             //return new ArrayList<Text>();
         }
         //else
-        return get(book.bid, levels,false);
+        return get(book.bid, levels,0);
     }
 
     //TODO remove this function...
@@ -228,12 +228,13 @@ public class Text implements Parcelable {
 
 
 
-    private static List<Text> getFromDB(int id, int[] levels,boolean usingNID) {
+    private static List<Text> getFromDB(int bid, int[] levels, int parentNID) {
         List<Text> textList = new ArrayList<Text>();
         Database2 dbHandler = Database2.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
 
-        Cursor cursor = db.rawQuery("SELECT DISTINCT * FROM "+ TABLE_TEXTS +" " + fullWhere(id, levels,usingNID) + " ORDER BY " + orderBy(levels), null);
+        String sql = "SELECT DISTINCT * FROM "+ TABLE_TEXTS +" " + fullWhere(bid, levels, parentNID) + " ORDER BY " + orderBy(levels);
+        Cursor cursor = db.rawQuery(sql, null);
 
         if (cursor.moveToFirst()) {
             do {
@@ -250,49 +251,58 @@ public class Text implements Parcelable {
 
     /**
      *
-     * @param bid
+     * @param id
      * @param levels
-     * EXAMPLE:
-     * 	int[] levels = new {0, 12};
-     * 	Text.get(1, levels); //get book bid 1 everything in chap 12.
-     * @return
+     *
+     *
+     * @return textList
      * @throws API.APIException
      */
-    public static List<Text> get(int bid, int[] levels, boolean usingNID) throws API.APIException {
 
+    /**
+     *
+     * @param bid
+     * @param levels
+     * @param parentNID
+     *  set parentNID == 0 if you don't want to use parentNID at all
+     *  Sample usage:
+     *  int[] levels = new {0, 12};
+     * 	Text.get(1, levels,false); //get book bid 1 everything in chap 12.
+     * @return textList
+     * @throws API.APIException
+     */
+    public static List<Text> get(int bid, int[] levels, int parentNID) throws API.APIException {
         List<Text> textList = new ArrayList<Text>();
         try {
-            textList = getFromDB(bid,levels,usingNID);
+            textList = getFromDB(bid,levels,parentNID);
         }catch(SQLiteException e){
             if(!e.toString().contains(API.NO_TEXT_MESSAGE)){
                 throw e; //don't know what the problem is so throw it back out
             }
-            if(!usingNID) //TODO make it work for API with NID
+            if(parentNID <=0) //TODO make it work for API with NID
                 textList = API.getTextsFromAPI(Book.getTitle(bid), levels);
         }catch(Exception e){
             e.printStackTrace();
         }
 
         return textList;
+    }
 
-        //Cursor cursor1 = db.query(TABLE_TEXTS, null, whereStatement, whereArgs, null, null, orderBy);
+    public static List<Text> getWithTids(int startTID,int endTID){
+        List<Text> textList = new ArrayList<Text>();
+        Database2 dbHandler = Database2.getInstance();
+        SQLiteDatabase db = dbHandler.getReadableDatabase();
 
-        // looping through all rows and adding to list
-		/*if (cursor.moveToFirst()) {
-			do {
-				// Adding  to list
-				textList.add(new Text(cursor));
-			} while (cursor.moveToNext());
-		}**/
+        String sql = "SELECT * FROM "+ TABLE_TEXTS +" where _id BETWEEN ? AND ? ORDER BY _id";
+        Cursor cursor = db.rawQuery(sql, new String [] {"" + startTID,"" + endTID});
 
-		/*	//LOGING:
-		for(int i = 0; i < textList.size(); i++)
-			textList.get(i).log();
-		 */
-        //findWordsInList(textList, "the");
-        //findWordsInList(textList,"׳©");
-
-
+        if (cursor.moveToFirst()) {
+            do {
+                // Adding  to list
+                textList.add(new Text(cursor));
+            } while (cursor.moveToNext());
+        }
+        return textList;
     }
 
 
@@ -430,7 +440,7 @@ public class Text implements Parcelable {
         ArrayList<Integer> chapList = new ArrayList<Integer>();
 
         int nonZeroLevel = getNonZeroLevel(levels);
-        String sql = "SELECT DISTINCT level" + nonZeroLevel + " FROM " + TABLE_TEXTS + " " + fullWhere(bid, levels,false) + " ORDER BY " + "level" + nonZeroLevel;
+        String sql = "SELECT DISTINCT level" + nonZeroLevel + " FROM " + TABLE_TEXTS + " " + fullWhere(bid, levels,0) + " ORDER BY " + "level" + nonZeroLevel;
 
         try {
             Cursor cursor = db.rawQuery(sql, null);
@@ -480,16 +490,16 @@ public class Text implements Parcelable {
     /**
      *  makes a where statement for getting the texts from a book with a id (as bid) or with text that have a parentNode with nid of id
      *
-     * @param id
+     * @param bid
      * @param levels
      * @return whereStatement
      */
-    private static String fullWhere(int id, int[] levels, boolean usingNID){
+    private static String fullWhere(int bid, int[] levels, int parentNID){
         String fullWhere;
-        if(!usingNID)
-            fullWhere = " WHERE " + Kbid + "= " + String.valueOf(id);
-        else
-            fullWhere = " WHERE parentNode = " + String.valueOf(id);
+
+        fullWhere = " WHERE " + Kbid + "= " + String.valueOf(bid);
+        if(parentNID >0)
+            fullWhere += " AND parentNode = " + String.valueOf(parentNID);
         for(int i = 0; i < levels.length; i++){
             if(!(levels[i] == 0)){
                 fullWhere +=  " AND level" + String.valueOf(i + 1) + "= " + String.valueOf(levels[i]);
