@@ -138,7 +138,7 @@ public class Node{ //TODO implements  Parcelable
     public Node getFirstDescendant(){
         Node node = this;
         while(node.getChildren().size() > 0){
-            node = getChildren().get(0);
+            node = node.getChildren().get(0);
         }
         return node;
     }
@@ -351,7 +351,6 @@ public class Node{ //TODO implements  Parcelable
 
     private void setAllChaps(boolean useNID) throws API.APIException {
         //if(true) return;
-        Log.d("Node","starting setAllChap()");
         if(textDepth < 2){
             Log.e("Node", "called setAllChaps with too low texdepth" + this.toString());
             return;
@@ -430,8 +429,6 @@ public class Node{ //TODO implements  Parcelable
             Log.e("Node", e.toString());
         }
 
-        Log.d("Node","finishing getAllChap()");
-
         return;
     }
 
@@ -446,7 +443,6 @@ public class Node{ //TODO implements  Parcelable
         if(textList != null) {
             return textList;
         }
-        Log.d("Node", "starting getTexts algo");
         if(!isTextSection()){
             Log.e("Node", "getTexts() was called when it's not a textSection!");
             textList = new ArrayList<>();
@@ -478,14 +474,14 @@ public class Node{ //TODO implements  Parcelable
             // && isGridItem()
             //levels will be diff based on if it's a gridItem
             if(isGridItem())
-                textList = Text.get(bid, getLevels(), getDBNodeParentNID());
+                textList = Text.get(bid, getLevels(), getNodeInDBParentNID());
             else
                 textList = Text.get(bid, getLevels(), nid);
         }
         else{
             Log.e("Node", "In Node.getText() and I'm confused. NodeTypeFlags: " + getNodeTypeFlagsStr());
         }
-        Log.d("Node", "finishing getTexts algo");
+        Log.d("Node", "finishing getTexts algo. textList.size():" + textList.size());
         return textList;
     }
 
@@ -493,12 +489,11 @@ public class Node{ //TODO implements  Parcelable
      * gets the NID of a parent that is actually in the database. So if it's 3 levels of text, it will be using a real nid
      * @return ancestorNID
      */
-    private int getDBNodeParentNID(){
+    private int getNodeInDBParentNID(){
         Node parent = this.parent;
         while(parent.nid < 0) {
             parent = parent.parent;
         }
-        Log.d("Node.getDBNodeParentNID", "nid:" + parent.nid);
         return parent.nid;
     }
     /**
@@ -506,7 +501,7 @@ public class Node{ //TODO implements  Parcelable
      * ex. chap 4 and verse 7 would be {7,3}
      * return levels
      */
-    public int [] getLevels(){
+    private int [] getLevels(){
         //TODO make work for more than 2 levels
 
         List<Integer> levels = new ArrayList<>();
@@ -555,7 +550,7 @@ public class Node{ //TODO implements  Parcelable
                 if(lastStructNum != node.structNum){
                     allNodeStructs.add(new ArrayList<Node>());
                     lastStructNum = node.structNum;
-                    Log.d("Node", "On structNum" + node.structNum);
+                    //Log.d("Node", "On structNum" + node.structNum);
                 }
                 allNodeStructs.get(allNodeStructs.size()-1).add(node);
                 //nodes.add(node);
