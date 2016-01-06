@@ -69,7 +69,7 @@ public abstract class SuperTextActivity extends Activity {
             book = new Book(title);
             lang = menuState.getLang();
             Node root = book.getTOCroots().get(0);
-            firstLoadedNode = Node.getFirstDescendant(root);
+            firstLoadedNode = root.getFirstDescendant();
         }
         else { // no menuState means it came in from TOC
             lang = (Util.Lang) intent.getSerializableExtra("lang");
@@ -100,7 +100,6 @@ public abstract class SuperTextActivity extends Activity {
 
         isTextMenuVisible = false;
         textMenuRoot = (LinearLayout) findViewById(R.id.textMenuRoot);
-
 
         textScrollView = (ScrollViewExt) findViewById(R.id.textScrollView);
 
