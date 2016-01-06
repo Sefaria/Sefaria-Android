@@ -33,14 +33,12 @@ public class Book implements Parcelable {
     }
 
     public Book(String title){
-        Log.d("book", "here..." + title);
         //Node root = Node.getTOC(116);
         wherePage = DEFAULT_WHERE_PAGE;
         get(title);
     }
 
     public Book(int bid) {
-        Log.d("book", "here 2..." + title);
         wherePage = DEFAULT_WHERE_PAGE;
         get(bid);
     }
@@ -50,7 +48,6 @@ public class Book implements Parcelable {
      * @return roots
      */
     public List<Node> getTOCroots(){
-        Log.d("Book", "get toc");
         if(TOCroots != null)
             return TOCroots;
 
@@ -61,7 +58,7 @@ public class Book implements Parcelable {
                 roots = new ArrayList<>();
                 Log.e("api", "api exception getting node TOC");
             }
-            Log.d("Node", roots.toString());
+            Log.d("Book.getTOCroots", roots.toString());
         }
         return roots;
     }

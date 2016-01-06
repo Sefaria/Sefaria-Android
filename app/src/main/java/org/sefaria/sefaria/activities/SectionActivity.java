@@ -60,6 +60,8 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
 
     }
 
+
+
     protected void setLang(Util.Lang lang) {
         this.lang = lang;
         sectionAdapter.notifyDataSetChanged();
@@ -112,7 +114,6 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
     public class AsyncLoadSection extends AsyncTask<Void,Void,List<Text>> {
 
         private TextEnums dir;
-        private int levels[];
 
         public AsyncLoadSection (TextEnums dir) {
             this.dir = dir;
@@ -133,31 +134,8 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
         protected void onPostExecute(List<Text> textsList) {
             if (textsList.size() == 0) return;
 
-            //TODO levels is gonna be replaced I believe, so do whatever you want here
-            levels = new int[book.textDepth];
-            for (int i = 0; i < levels.length; i++) {
-                levels[i] = 0;
-            }
-            if (levels.length > WHERE_PAGE-1) {
-                if (levels.length > WHERE_PAGE)
-                    levels[WHERE_PAGE] = 1; //TODO make this dynamic!
-                levels[WHERE_PAGE - 1] = 0;
-            }
-
-            if (levels.length > WHERE_PAGE-1) {
-                //TODO these names shouldn't be based on the level number ... that is also assuming that it's not complex texts
-                //MenuNode tempNode = new MenuNode(book.sectionNamesL2B[wherePage-1] + " " + currLoadedChapter,
-                //        book.heSectionNamesL2B[wherePage-1] + " " + Util.int2heb(currLoadedChapter),null,null);
-                MenuNode tempNode = new MenuNode(""+levels[WHERE_PAGE-1],""+Util.int2heb(levels[WHERE_PAGE-1]),null);
-
-                //TextChapterHeader tch = new TextChapterHeader(TextActivity.this,tempNode,lang,textSize);
-                //textChapterHeaders.add(tch);
-                //textRoot.addView(tch);
-                sectionAdapter.add(new Text(true,""+levels[WHERE_PAGE-1],Util.int2heb(levels[WHERE_PAGE-1])));
-            }
-
+            sectionAdapter.add(getSectionHeaderText());
             sectionAdapter.addAll(textsList);
-
             isLoadingSection = false;
 
             //SectionView sv = new SectionView(TextActivity.this,textsList,lang,isCts,textSize);

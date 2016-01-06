@@ -111,6 +111,34 @@ public abstract class SuperTextActivity extends Activity {
         abRoot.addView(cab);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (data != null) {
+            //you're returning to text page b/c chapter was clicked in toc
+            if (requestCode == TOC_CHAPTER_CLICKED_CODE) {
+                //lang = (Util.Lang) data.getSerializableExtra("lang"); TODO you might need to set lang here if user can change lang in TOC
+                int nodeHash = data.getIntExtra("nodeHash", -1);
+                //TODO it might want to try to keep the old loaded sections and just go scroll to it if the new section is already loaded
+                firstLoadedNode = Node.getSavedNode(nodeHash);
+                lastLoadedNode = null;
+                init();
+            }
+        }
+    }
+
+    protected Text getSectionHeaderText(){
+        Node node;
+        if(lastLoadedNode != null) {
+            Log.d("SuperTextAct","using lastLoadedNode for getSectionHeaderText()");
+            node = lastLoadedNode;
+        } else{
+            Log.d("SuperTextAct","using firstLoadedNode for getSectionHeaderText()");
+            node = firstLoadedNode;
+        }
+        return new Text(true,node.getWholeTitle(Util.Lang.EN),node.getWholeTitle(Util.Lang.HE));
+    }
+
     protected void toggleTextMenu() {
         if (isTextMenuVisible) {
             textMenuRoot.removeAllViews();
@@ -238,13 +266,10 @@ public abstract class SuperTextActivity extends Activity {
 
 
 
-        //int[] levels = {0,currLoadedChapter};
-        //Text.getNextChap(book,levels,next);
 
         List<Text> textsList;
         try {
             textsList = newNode.getTexts();
-            //textsList = Text.get(book, levels);
             return textsList;
         } catch (API.APIException e) {
             Toast.makeText(SuperTextActivity.this, "API Exception!!!", Toast.LENGTH_SHORT).show();

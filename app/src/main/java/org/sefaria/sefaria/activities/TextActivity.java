@@ -67,20 +67,7 @@ public class TextActivity extends SuperTextActivity {
         //out.putParcelable("menuState", menuState);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (data != null) {
-            //you're returning to text page b/c chapter was clicked in toc
-            if (requestCode == TOC_CHAPTER_CLICKED_CODE) {
-                //lang = (Util.Lang) data.getSerializableExtra("lang"); TODO you might need to set lang here if user can change lang in TOC
-                int nodeHash = data.getIntExtra("nodeHash", -1);
-                firstLoadedNode = Node.getSavedNode(nodeHash);
-                lastLoadedNode = null;
-                init();
-            }
-        }
-    }
+
 
     protected void setLang(Util.Lang lang) {
         this.lang = lang;
@@ -205,27 +192,10 @@ public class TextActivity extends SuperTextActivity {
             if (textsList.size() == 0) return;
 
 
-            //TODO levels is gonna be replaced I believe, so do whatever you want here
-            levels = new int[book.textDepth];
-            for (int i = 0; i < levels.length; i++) {
-                levels[i] = 0;
-            }
-            if (levels.length > WHERE_PAGE-1) {
-                if (levels.length > WHERE_PAGE)
-                    levels[WHERE_PAGE] = 1; //TODO make this dynamic!
-                levels[WHERE_PAGE - 1] = 0;
-            }
-
             TextChapterHeader tch;
-            if (levels.length > WHERE_PAGE-1) {
-                //MenuNode tempNode = new MenuNode(book.sectionNamesL2B[wherePage-1] + " " + currLoadedChapter,
-                //        book.heSectionNamesL2B[wherePage-1] + " " + Util.int2heb(currLoadedChapter),null,null);
-
-                Text segment = new Text(true,""+ levels[WHERE_PAGE-1], Util.int2heb(levels[WHERE_PAGE-1]));
-                tch = new TextChapterHeader(TextActivity.this,segment,lang,textSize);
-                textChapterHeaders.add(tch);
-
-            } else tch = null;
+            Text segment = getSectionHeaderText();
+            tch = new TextChapterHeader(TextActivity.this,segment,lang,textSize);
+            textChapterHeaders.add(tch);
 
             PerekTextView content;
 
