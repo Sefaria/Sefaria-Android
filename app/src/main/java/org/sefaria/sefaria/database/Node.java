@@ -129,7 +129,7 @@ public class Node{ //TODO implements  Parcelable
     }
 
 
-    private Node getFirstDescendant(){
+    public Node getFirstDescendant(){
         Node node = this;
         while(node.getChildren().size() > 0){
             node = getChildren().get(0);
@@ -137,14 +137,6 @@ public class Node{ //TODO implements  Parcelable
         return node;
     }
 
-    public static Node getFirstDescendant(Node node){
-        if(node.getChildren().size() > 0){
-            node = node.getChildren().get(0);
-            return getFirstDescendant(node);
-        }else{
-            return node;
-        }
-    }
 
     /**
      * Return the List<Node> of all the children (in order) of this node.
