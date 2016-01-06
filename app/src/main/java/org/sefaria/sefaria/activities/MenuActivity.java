@@ -49,11 +49,11 @@ public class MenuActivity extends Activity {
         setTitle(menuState.getCurrNode().getTitle(menuState.getLang()));
 
         //this specifically comes before menugrid, b/c in tabs it menugrid does funny stuff to currnode
-        CustomActionbar cab = new CustomActionbar(this, menuState.getCurrNode(),Util.Lang.EN,searchClick,null,null,null);
+        CustomActionbar cab = new CustomActionbar(this, menuState.getCurrNode(),menuState.getLang(),searchClick,null,null,null);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(cab);
 
-        menuGrid = new MenuGrid(this,NUM_COLUMNS, menuState,LIMIT_GRID_SIZE,Util.Lang.HE);
+        menuGrid = new MenuGrid(this,NUM_COLUMNS, menuState,LIMIT_GRID_SIZE,menuState.getLang());
         ScrollView root = (ScrollView) findViewById(R.id.gridRoot);
         root.addView(menuGrid);
 
@@ -84,7 +84,7 @@ public class MenuActivity extends Activity {
                 finish();
             }
         }
-        menuGrid.setLang(menuGrid.getLang());
+        menuGrid.setLang(menuGrid.getLang());//TODO noah this line seems useless
     }
 
     @Override

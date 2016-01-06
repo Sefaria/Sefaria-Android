@@ -31,6 +31,10 @@ public class Util {
         HE,BI,EN
     }
 
+    public enum SETTING_LANG_TYPE{
+        TEXTS,MENU,SYSTEM
+    }
+
     public static final float EN_HE_RATIO = 40f/35f; //universal constant
 
     public static int dp2pixel(int dp, Context context) {

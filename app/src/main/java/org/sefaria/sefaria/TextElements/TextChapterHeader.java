@@ -33,7 +33,7 @@ public class TextChapterHeader extends LinearLayout {
         super(context, attrSet);
         enText = "Section";
         heText = "Section";
-        init(context,Util.Lang.HE,0f);
+        init(context,lang,0f);
     }
 
     public TextChapterHeader(Context context, AttributeSet attrs, int defStyle)
@@ -41,7 +41,7 @@ public class TextChapterHeader extends LinearLayout {
         super(context, attrs, defStyle);
         enText = "Section";
         heText = "Section";
-        init(context,Util.Lang.HE,0f);
+        init(context,lang,0f);
     }
 
     private void init(Context context,Util.Lang lang, float textSize) {

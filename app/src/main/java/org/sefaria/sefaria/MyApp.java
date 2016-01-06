@@ -58,6 +58,22 @@ public class MyApp extends Application {
     }
 
 
+    /**
+     * returns the default lang that should be used different types of things
+     * //TODO make this changable in some user level thing and save them in settings.
+     */
+    public static Util.Lang getDefaultLang(Util.SETTING_LANG_TYPE setting_lang_type){
+
+        if(setting_lang_type == Util.SETTING_LANG_TYPE.TEXTS){
+            return Util.Lang.HE; //TODO change to BI
+        }else if(setting_lang_type == Util.SETTING_LANG_TYPE.MENU){
+            return Util.Lang.EN;
+        }
+        else {//if(setting_lang_type == Util.SETTING_LANG_TYPE.SYSTEM) {
+            return Util.Lang.EN;//TODO check if it's a hebrew phone
+        }
+    }
+
     public static Context getContext() { return context; }
     public static String getAppPackageName() { return appPackageName; }
 
