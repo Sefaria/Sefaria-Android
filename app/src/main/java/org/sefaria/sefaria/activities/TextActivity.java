@@ -53,6 +53,7 @@ public class TextActivity extends SuperTextActivity {
         super.init();
 
         textRoot = (LinearLayout) findViewById(R.id.textRoot);
+        textRoot.removeAllViews();
         textScrollView.setScrollViewListener(scrollViewListener);
         if (!isLoadingSection) {
             AsyncLoadSection als = new AsyncLoadSection(TextEnums.NEXT_SECTION);
@@ -75,6 +76,7 @@ public class TextActivity extends SuperTextActivity {
                 //lang = (Util.Lang) data.getSerializableExtra("lang"); TODO you might need to set lang here if user can change lang in TOC
                 int nodeHash = data.getIntExtra("nodeHash", -1);
                 firstLoadedNode = Node.getSavedNode(nodeHash);
+                lastLoadedNode = null;
                 init();
             }
         }

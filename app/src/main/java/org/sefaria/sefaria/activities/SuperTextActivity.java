@@ -70,6 +70,7 @@ public abstract class SuperTextActivity extends Activity {
             lang = menuState.getLang();
             Node root = book.getTOCroots().get(0);
             firstLoadedNode = root.getFirstDescendant();
+            //lastLoadedNode = firstLoadedNode; PURPOSEFULLY NOT INITIALLIZING TO INDICATE THAT NOTHING HAS BEEN LOADED YET
         }
         else { // no menuState means it came in from TOC
             lang = (Util.Lang) intent.getSerializableExtra("lang");
@@ -80,7 +81,7 @@ public abstract class SuperTextActivity extends Activity {
             }
 
             firstLoadedNode = Node.getSavedNode(nodeHash);
-            lastLoadedNode = firstLoadedNode;
+            //lastLoadedNode = firstLoadedNode;
             Log.d("Section","firstLoadedChap init:" + firstLoadedNode.getGridNum());
             book = new Book(firstLoadedNode.getBid());
         }
@@ -221,9 +222,12 @@ public abstract class SuperTextActivity extends Activity {
     protected List<Text> loadSection(TextEnums dir) {
         Node newNode = null;
         if (dir == TextEnums.NEXT_SECTION) {
-            //newNode = lastLoadedNode.getNextTextNode();
-            //lastLoadedNode = newNode;
-            newNode = firstLoadedNode;
+            if (lastLoadedNode == null) { //this is the initial load
+                newNode = firstLoadedNode;
+            } else {
+                newNode = lastLoadedNode.getNextTextNode();
+            }
+            lastLoadedNode = newNode;
         }
 
         else if (dir == TextEnums.PREV_SECTION) {
