@@ -225,7 +225,7 @@ public class TextActivity extends SuperTextActivity {
 
             } else tch = null;
 
-            final PerekTextView content;
+            PerekTextView content;
 
             if (dir == null || dir == TextEnums.NEXT_SECTION) {
                 content = new PerekTextView(TextActivity.this,textsList,isCts,lang,textSize,textScrollView.getScrollY(),false);
