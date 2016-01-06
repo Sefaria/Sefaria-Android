@@ -222,7 +222,9 @@ public abstract class SuperTextActivity extends Activity {
     protected List<Text> loadSection(TextEnums dir) {
         Node newNode = null;
         if (dir == TextEnums.NEXT_SECTION) {
-            newNode = firstLoadedNode; //TODO this needs to actually update
+            //newNode = lastLoadedNode.getNextTextNode();
+            //lastLoadedNode = newNode;
+            newNode = firstLoadedNode;
         }
 
         else if (dir == TextEnums.PREV_SECTION) {
