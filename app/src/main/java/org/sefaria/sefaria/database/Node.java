@@ -244,6 +244,7 @@ public class Node{ //TODO implements  Parcelable
         node.textDepth = 2;
         node.structNum = structNum;
         node.nid = NID_CHAP_NO_NID;
+        node.parent = this;
         addChild(node);
     }
 
@@ -382,10 +383,13 @@ public class Node{ //TODO implements  Parcelable
                             tempNode.sectionNames = Arrays.copyOfRange(this.sectionNames,0,2);
                             tempNode.heSectionNames = Arrays.copyOfRange(this.heSectionNames,0,2);
                             tempNode.textDepth = this.textDepth -1;
-                            tempNode.isComplex = isComplex();
+                            tempNode.isComplex = isComplex;
                             tempNode.isRef = false;
                             tempNode.isGridItem = false;
                             tempNode.isTextSection = false;
+                            tempNode.gridNum = sectionNum;
+                            tempNode.nid = NID_CHAP_NO_NID;
+                            tempNode.bid = bid;
                             this.addChild(tempNode);
                         }
                         tempNode.addChapChild(cursor.getInt(1));
@@ -428,7 +432,7 @@ public class Node{ //TODO implements  Parcelable
             return textList;
         }else if(!isComplex() && isGridItem() && !isRef()){
             //TODO make work for more than 2 levels!!!!
-            textList =  Text.get(getBid(),getLevels(),false);
+            textList =  Text.get(getBid(),getLevels(),0);
         }else if(isRef()){
             if(!isComplex()){
                 Log.e("Node", "It thinks (!isComplex() && isRef())... I don't know how.");
@@ -436,17 +440,21 @@ public class Node{ //TODO implements  Parcelable
                 return textList;
             }
             //TODO deal with this
-            textList = new ArrayList<>();
-            if(isGridItem()){
-
-            }else{
-
+            if(startTid>0 && endTid >0) {
+                textList = Text.getWithTids(startTid, endTid);
+            }
+            else{
+                Log.e("Node.getTexts", "My start and end TIDs are no good for trying to get ref. TID:" + startTid + "-" + endTid + " ref:" + extraTids);
+                textList = new ArrayList<>();
             }
         }else if(isComplex()){
             //TODO make sure this works
             // && isGridItem()
             //levels will be diff based on if it's a gridItem
-            textList = Text.get(nid,getLevels(),true);
+            if(isGridItem())
+                textList = Text.get(bid, getLevels(), getDBNodeParentNID());
+            else
+                textList = Text.get(bid, getLevels(), nid);
         }
         else{
             Log.e("Node", "In Node.getText() and I'm confused. NodeTypeFlags: " + getNodeTypeFlagsStr());
@@ -455,6 +463,18 @@ public class Node{ //TODO implements  Parcelable
         return textList;
     }
 
+     /**
+     * gets the NID of a parent that is actually in the database. So if it's 3 levels of text, it will be using a real nid
+     * @return ancestorNID
+     */
+    private int getDBNodeParentNID(){
+        Node parent = this.parent;
+        while(parent.nid < 0) {
+            parent = parent.parent;
+        }
+        Log.d("Node.getDBNodeParentNID", "nid:" + parent.nid);
+        return parent.nid;
+    }
     /**
      * create an array describing the levels:
      * ex. chap 4 and verse 7 would be {7,3}
@@ -462,15 +482,31 @@ public class Node{ //TODO implements  Parcelable
      */
     public int [] getLevels(){
         //TODO make work for more than 2 levels
-        int [] levels;
+
+        List<Integer> levels = new ArrayList<>();
+        levels.add(0);
         if(isGridItem()) {
-            levels = new int[]{0, getGridNum()};
+            levels.add(getGridNum());
+        }
+        Node parent = this.parent;
+        while(parent.nid == NID_CHAP_NO_NID) {
+            levels.add(parent.getGridNum());
+            parent = parent.parent;
+        }
+
+        /*
+        if(isGridItem()) {
+             levels = new int[]{0, getGridNum()};
         }else{ //It's not a gridItem
             levels = new int[] {0};
         }
-
-        return levels;
+         */
+        int [] levels2 = new int [levels.size()];
+        for(int i=0;i<levels.size();i++){
+            levels2[i] = levels.get(i);
+        }return levels2;
     }
+
 
 
     public static List<Node> getRoots(Book book) throws API.APIException {
@@ -507,14 +543,8 @@ public class Node{ //TODO implements  Parcelable
         root.nid = NID_NON_COMPLEX;
         root.setAllChaps(false);
         if(root.getChildren().size()>0) {
-            String sectionName = root.sectionNames[root.sectionNames.length-1];
-            if(sectionName.length() > 0)
-                root.enTitle = sectionName;
-            String heSectionName = root.heSectionNames[root.heSectionNames.length-1];
-            if(heSectionName.length() > 0)
-                root.heTitle = heSectionName;
             allRoots.add(root);
-            showTree(root);
+            //showTree(root);
         }
 
         for(int i=0;i<allNodeStructs.size();i++) {
@@ -524,7 +554,7 @@ public class Node{ //TODO implements  Parcelable
                 root = convertToTree(nodes);
             }
             allRoots.add(root);
-            showTree(root);
+            //showTree(root);
         }
 
 
@@ -536,6 +566,26 @@ public class Node{ //TODO implements  Parcelable
 
 
         return allRoots;
+    }
+
+    public String getTabName(Util.Lang lang){
+        String name = "";
+        if (!isComplex() || isRef()) {
+            try {
+                if (lang == Util.Lang.HE) {
+                    name = heSectionNames[heSectionNames.length - 1];
+                    return name;
+                } else { //use EN for BI and EN
+                    name = sectionNames[sectionNames.length - 1];
+                    return name;
+                }
+            }catch (Exception e){
+                Log.d("Node.getTabName", e.toString());
+            }
+        }
+        //TODO I don't understand why this is causing me problems
+        //if (!name.equals("")) return name;
+        return getTitle(lang);
     }
 
     private String getNodeTypeFlagsStr(){
