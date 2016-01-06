@@ -44,15 +44,19 @@
         <org.sefaria.sefaria.layouts.AutoResizeTextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
+            android:layout_toRightOf="@id/search_btn"
+            android:layout_toLeftOf="@id/menu_btn"
             android:layout_height="32dp"
             android:text="Tanach"
             android:textSize="30sp"
             android:textAllCaps="true"
             android:layout_centerHorizontal="true"
+            android:gravity="center"
             android:padding="5dp"
             android:layout_centerVertical="true"
             />
 
+        <!--I ACTUALLY CANT FIGURE OUT HOW TO PROPERLY PUT THIS NEXT TO TITLE!!!!-->
         <View
             android:id="@+id/toc_btn"
             android:layout_width="15dp"

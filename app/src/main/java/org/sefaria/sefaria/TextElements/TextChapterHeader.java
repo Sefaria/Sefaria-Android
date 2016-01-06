@@ -76,4 +76,6 @@ public class TextChapterHeader extends LinearLayout {
     public void setTextSize(float textSize) {
         tv.setTextSize(textSize);
     }
+
+    public float getTextSize() { return tv.getTextSize(); }
 }
