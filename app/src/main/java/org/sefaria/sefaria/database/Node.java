@@ -105,7 +105,13 @@ public class Node{ //TODO implements  Parcelable
      * @return
      */
     public String getWholeTitle(Util.Lang lang){
-        return getTitle(lang);
+        String str = getTitle(lang);
+        if(lang == Util.Lang.EN) {
+            str += " " + getGridNum();
+        }else{
+            str += " " + Util.int2heb(getGridNum());
+        }
+        return str;
     }
 
     public int getGridNum(){ return gridNum;}
