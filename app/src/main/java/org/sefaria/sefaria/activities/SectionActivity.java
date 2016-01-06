@@ -62,9 +62,14 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
 
 
 
-    protected void setLang(Util.Lang lang) {
-        this.lang = lang;
+    protected void setTextLang(Util.Lang textLang) {
+        this.textLang = textLang;
         sectionAdapter.notifyDataSetChanged();
+    }
+
+    protected void setMenuLang(Util.Lang menuLang){
+        this.menuLang = menuLang;
+        //TODO change the menuItems' lang
     }
 
     protected void setIsCts(boolean isCts) {
@@ -134,7 +139,8 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
         protected void onPostExecute(List<Text> textsList) {
             if (textsList.size() == 0) return;
 
-            sectionAdapter.add(getSectionHeaderText());
+            Text sectionHeader = getSectionHeaderText();
+            sectionAdapter.add(sectionHeader);
             sectionAdapter.addAll(textsList);
             isLoadingSection = false;
 
