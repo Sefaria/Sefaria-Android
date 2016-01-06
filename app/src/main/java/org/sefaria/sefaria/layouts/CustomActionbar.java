@@ -45,13 +45,16 @@ public class CustomActionbar extends MenuElement {
         else colorBar.setBackgroundColor(getResources().getColor(topColor));
 
         if (searchClick != null) searchBtn.setOnClickListener(searchClick);
-        else searchBtn.setVisibility(View.GONE);
+        else searchBtn.setVisibility(View.INVISIBLE);
         if (closeClick != null)  closeBtn.setOnClickListener(closeClick);
         else closeBtn.setVisibility(View.GONE);
         if (menuClick != null) menuBtn.setOnClickListener(menuClick);
-        else menuBtn.setVisibility(View.GONE);
-        if (titleClick != null) { titleTV.setOnClickListener(titleClick); tocBtn.setOnClickListener(titleClick); }
+        else menuBtn.setVisibility(View.INVISIBLE);
+        if (titleClick != null ) { titleTV.setOnClickListener(titleClick); tocBtn.setOnClickListener(titleClick); }
         else tocBtn.setVisibility(View.GONE);
+
+        //TODO - make this look normal centered
+        tocBtn.setVisibility(View.GONE);
     }
 
     private void setTitle(String title) {
