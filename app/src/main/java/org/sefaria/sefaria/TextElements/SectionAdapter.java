@@ -15,6 +15,7 @@ import android.widget.TextView;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
+import org.sefaria.sefaria.activities.SectionActivity;
 import org.sefaria.sefaria.database.Text;
 import org.sefaria.sefaria.menu.MenuNode;
 
@@ -25,22 +26,16 @@ import java.util.List;
  */
 public class SectionAdapter extends ArrayAdapter<Text> {
 
-    private Context context;
+    private SectionActivity context;
     private List<Text> texts;
     private int resourceId;
     private int preLast;
 
-    private Util.Lang lang;
-    private float textSize;
-
-    public SectionAdapter(Context context, int resourceId, List<Text> objects, Util.Lang lang, float textSize) {
+    public SectionAdapter(SectionActivity context, int resourceId, List<Text> objects) {
         super(context,resourceId,objects);
         this.context = context;
         this.texts = objects;
         this.resourceId = resourceId;
-
-        setLang(lang);
-        setTextSize(textSize);
 
 
     }
@@ -63,42 +58,21 @@ public class SectionAdapter extends ArrayAdapter<Text> {
             tv.setVisibility(View.GONE);
 
             tch.setSectionTitle(segment);
-            tch.setTextSize(textSize);
+            tch.setTextSize(context.getTextSize());
 
         } else {
             tch.setVisibility(View.GONE);
             tv.setVisibility(View.VISIBLE);
 
-            if (lang == Util.Lang.HE) {
+            if (context.getLang() == Util.Lang.HE) {
                 tv.setText(Html.fromHtml(segment.heText));
-            } else if (lang == Util.Lang.EN) {
+            } else /*if (context.getLang() == Util.Lang.EN)*/ {
                 tv.setText(Html.fromHtml(segment.enText));
             }
             tv.setTextColor(Color.parseColor("#000000"));
             tv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
-            tv.setTextSize(textSize);
+            tv.setTextSize(context.getTextSize());
         }
         return view;
     }
-
-    public void setTextSize(float textSize) {
-        this.textSize = textSize;
-        this.notifyDataSetChanged();
-    }
-
-    public void incrementTextSize(boolean isIncrement) {
-        float increment = context.getResources().getDimension(R.dimen.text_font_size_increment);
-        if (textSize <= context.getResources().getDimension(R.dimen.max_text_font_size)+increment) {
-            if (isIncrement) textSize += increment;
-            else textSize -= increment;
-        }
-        this.notifyDataSetChanged();
-    }
-
-    public void setLang(Util.Lang lang) {
-        this.lang = lang;
-        this.notifyDataSetChanged();
-    }
-
-
 }
