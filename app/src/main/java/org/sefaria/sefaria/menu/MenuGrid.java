@@ -27,7 +27,7 @@ import java.util.List;
  */
 public class MenuGrid extends LinearLayout {
 
-    private static final String[] CTS_TEXT_CATS = {"Tanach","Talmud"};
+    private static final String[] CTS_TEXT_CATS = {"Talmud"};// {"Tanach","Talmud"};
 
     private static final int HOME_MENU_OVERFLOW_NUM = 9;
 
