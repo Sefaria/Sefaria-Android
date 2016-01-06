@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.TOCElements.TOCGrid;
 import org.sefaria.sefaria.Util;
@@ -32,9 +33,7 @@ public class TOCActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         book = intent.getParcelableExtra("currBook");
-        lang = Util.Lang.EN;
-        //TODO use real lang
-
+        lang = MyApp.getDefaultLang(Util.SETTING_LANG_TYPE.MENU);
         init();
     }
 

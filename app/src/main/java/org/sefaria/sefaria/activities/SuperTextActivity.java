@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.TextElements.TextChapterHeader;
 import org.sefaria.sefaria.TextElements.TextMenuBar;
@@ -49,7 +50,8 @@ public abstract class SuperTextActivity extends Activity {
     protected Node firstLoadedNode;
     protected Node lastLoadedNode;
 
-    protected Util.Lang lang;
+    protected Util.Lang menuLang;
+    protected Util.Lang textLang;
     protected boolean isCts;
     protected float textSize;
     protected boolean isLoadingSection; //to make sure multiple sections don't get loaded at once
@@ -65,18 +67,18 @@ public abstract class SuperTextActivity extends Activity {
             menuState = in.getParcelable("menuState");
         }
         if(menuState != null){//menuState means it came in from the menu
-            String title = menuState.getCurrNode().getTitle(Util.Lang.EN);
-            book = new Book(title);
-            lang = menuState.getLang();
+            String enTitle = menuState.getCurrNode().getTitle(Util.Lang.EN);
+            book = new Book(enTitle);
+            menuLang = menuState.getLang();
             Node root = book.getTOCroots().get(0);
             firstLoadedNode = root.getFirstDescendant();
             //lastLoadedNode = firstLoadedNode; PURPOSEFULLY NOT INITIALLIZING TO INDICATE THAT NOTHING HAS BEEN LOADED YET
         }
         else { // no menuState means it came in from TOC
-            lang = (Util.Lang) intent.getSerializableExtra("lang");
+            menuLang = (Util.Lang) intent.getSerializableExtra("lang");
             Integer nodeHash = intent.getIntExtra("nodeHash", -1);
             if(in != null){
-                lang = (Util.Lang) in.getSerializable("lang");
+                menuLang = (Util.Lang) in.getSerializable("lang");
                 nodeHash = in.getInt("nodeHash",-1);
             }
 
@@ -88,10 +90,10 @@ public abstract class SuperTextActivity extends Activity {
         //These vars are specifically initialized here and not in init() so that they don't get overidden when coming from TOC
         //defaults
         isCts = false;
-        lang = Util.Lang.BI;
+        textLang = MyApp.getDefaultLang(Util.SETTING_LANG_TYPE.TEXTS);
         textSize = getResources().getDimension(R.dimen.default_text_font_size);
         //end defaults
-        setTitle(book.getTitle(lang));
+        setTitle(book.getTitle(menuLang));
     }
 
 
@@ -106,7 +108,7 @@ public abstract class SuperTextActivity extends Activity {
 
         //this specifically comes before menugrid, b/c in tabs it menugrid does funny stuff to currnode
         MenuNode menuNode = new MenuNode(book.getTitle(Util.Lang.EN),book.getTitle(Util.Lang.HE),null); //TODO possibly replace this object with a more general bilinual node
-        CustomActionbar cab = new CustomActionbar(this, menuNode, Util.Lang.EN,searchClick,null,titleClick,menuClick);
+        CustomActionbar cab = new CustomActionbar(this, menuNode, menuLang,searchClick,null,titleClick,menuClick); //TODO.. I'm not actually sure this should be lang.. instead it shuold be MENU_LANG from Util.S
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(cab);
     }
@@ -182,17 +184,17 @@ public abstract class SuperTextActivity extends Activity {
             boolean updatedTextSize = false;
             switch (v.getId()) {
                 case R.id.en_btn:
-                    setLang(Util.Lang.EN);
+                    setTextLang(Util.Lang.EN);
                     break;
                 case R.id.he_btn:
-                    setLang(Util.Lang.HE);
+                    setTextLang(Util.Lang.HE);
                     break;
                 case R.id.bi_btn:
-                     setLang(Util.Lang.BI);
+                    setTextLang(Util.Lang.BI);
                     break;
                 case R.id.cts_btn:
                     //can only be cts if not bilingual
-                    if (lang != Util.Lang.BI) {
+                    if (textLang != Util.Lang.BI) {
                         setIsCts(true);
                     }
                     break;
@@ -232,7 +234,9 @@ public abstract class SuperTextActivity extends Activity {
         }
     };
 
-    public Util.Lang getLang() { return lang; }
+    public Util.Lang getMenuLang() { return menuLang; }
+
+    public Util.Lang getTextLang() { return textLang; }
 
     public float getTextSize() {
         return textSize;
@@ -242,7 +246,8 @@ public abstract class SuperTextActivity extends Activity {
         this.textSize = textSize;
     }
 
-    protected abstract void setLang(Util.Lang lang);
+    protected abstract void setTextLang(Util.Lang textLang);
+    protected abstract void setMenuLang(Util.Lang menuLang);
     protected abstract void setIsCts(boolean isCts);
     protected abstract void incrementTextSize(boolean isIncrement);
 

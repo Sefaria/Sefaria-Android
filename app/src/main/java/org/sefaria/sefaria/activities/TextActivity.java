@@ -69,15 +69,18 @@ public class TextActivity extends SuperTextActivity {
 
 
 
-    protected void setLang(Util.Lang lang) {
-        this.lang = lang;
-        for (TextChapterHeader tch : textChapterHeaders) {
-            tch.setLang(lang);
-        }
-
+    protected void setTextLang(Util.Lang textLang) {
+        this.textLang = textLang;
         for (PerekTextView ptv : perekTextViews) {
-            ptv.setLang(lang);
+            ptv.setLang(textLang);
             ptv.update();
+        }
+    }
+
+    protected void setMenuLang(Util.Lang menuLang){
+        this.menuLang = menuLang;
+        for (TextChapterHeader tch : textChapterHeaders) {
+            tch.setLang(menuLang);
         }
     }
 
@@ -194,20 +197,20 @@ public class TextActivity extends SuperTextActivity {
 
             TextChapterHeader tch;
             Text segment = getSectionHeaderText();
-            tch = new TextChapterHeader(TextActivity.this,segment,lang,textSize);
+            tch = new TextChapterHeader(TextActivity.this,segment,menuLang,textSize);
             textChapterHeaders.add(tch);
 
             PerekTextView content;
 
             if (dir == null || dir == TextEnums.NEXT_SECTION) {
-                content = new PerekTextView(TextActivity.this,textsList,isCts,lang,textSize,textScrollView.getScrollY(),false);
+                content = new PerekTextView(TextActivity.this,textsList,isCts,textLang,textSize,textScrollView.getScrollY(),false);
                 perekTextViews.add(content);
                 //YES, order that you add these two views matters (note difference in PREV_SECTION)
                 if (tch != null)
                     textRoot.addView(tch);
                 textRoot.addView(content); //add to end by default
             } else if (dir == TextEnums.PREV_SECTION) {
-                content = new PerekTextView(TextActivity.this,textsList,isCts,lang,textSize,textScrollView.getScrollY(),true);
+                content = new PerekTextView(TextActivity.this,textsList,isCts,textLang,textSize,textScrollView.getScrollY(),true);
                 perekTextViews.add(content);
                 oldScroll = textScrollView.getScrollY();
                 addH = 0;
