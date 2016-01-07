@@ -79,10 +79,6 @@ public class API {
 
 
     public class APIException extends Exception{
-
-        /**
-         *
-         */
         public APIException(){
             super();
         }

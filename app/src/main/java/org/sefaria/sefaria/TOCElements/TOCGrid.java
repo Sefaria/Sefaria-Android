@@ -50,18 +50,18 @@ public class TOCGrid extends LinearLayout {
 
     private int numColumns = 7;
 
-    public TOCGrid(Context context,List<Node> tocRoots, boolean limitGridSize, Util.Lang lang) {
+    public TOCGrid(Context context,List<Node> tocRoots, boolean limitGridSize, Util.Lang lang, int tocRootHashCode) {
         super(context);
         this.tocRoots = tocRoots;
         this.context = context;
         this.limitGridSize = limitGridSize;
         this.lang = lang;
 
-        init();
+        init(tocRootHashCode);
         setLang(lang);
     }
 
-    private void init() {
+    private void init(int tocRootHashCode) {
         this.setOrientation(LinearLayout.VERTICAL);
         this.setPadding(10, 10, 10, 10);
         this.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
@@ -81,7 +81,14 @@ public class TOCGrid extends LinearLayout {
 
 
         addTabsections(tocRoots);
-        activateTab(0);//0 is default
+        int tocRootIndex = 0;
+        for(int i=0;i<tocRoots.size();i++) {
+            if(tocRoots.get(i).hashCode() == tocRootHashCode){
+                tocRootIndex = i;
+                break;
+            }
+        }
+        activateTab(tocRootIndex);
 
 
     }

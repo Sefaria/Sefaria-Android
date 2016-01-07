@@ -170,6 +170,13 @@ public class Node{ //TODO implements  Parcelable
         return node;
     }
 
+    private Node getLastDescendant(){
+        Node node = this;
+        while(node.getChildren().size() > 0){
+            node = node.getChildren().get(node.getChildren().size()-1);
+        }
+        return node;
+    }
 
     /**
      * Return the List<Node> of all the children (in order) of this node.
@@ -292,26 +299,71 @@ public class Node{ //TODO implements  Parcelable
     }
 
     /**
-     * if it's called on a node that !isTextSection(), it will first move to the next sibling node and then get it's first descendant
+     * this is only meant to be called on a node that node.isTextSection()
      * @return the next node in the tree that contains text
      */
-    public Node getNextTextNode(){
+    public Node getNextTextNode() throws LastNodeException {
+        if(parent == null){
+            throw new LastNodeException();
+        }
         int index = parent.getChildren().indexOf(this);
         if(index == -1){
             Log.e("Node.getNextTextNode","Couldn't find index in parent's children: " + this);
             return getFirstDescendant();
         } else if(index < parent.getChildren().size()-1){
             Node node = parent.getChildren().get(index +1);
-            if(!node.isTextSection){
-                return node.getFirstDescendant();
-            }else {
+            if(node.isTextSection){
                 return node;
+            }else {
+                return node.getFirstDescendant();
             }
         }else {// if(index >=parent.getChildren().size()){
             Node node = parent;
             return parent.getNextTextNode();
         }
     }
+    /**
+     * this is only meant to be called on a node that node.isTextSection()
+     * @return the prev node in the tree that contains text
+     */
+    public Node getPrevTextNode() throws LastNodeException {
+        if(parent == null){
+            throw new LastNodeException();
+        }
+        int index = parent.getChildren().indexOf(this);
+        if(index == -1){
+            Log.e("Node.getNextTextNode","Couldn't find index in parent's children: " + this);
+            return getLastDescendant();
+        }else if(index > 0){
+            Node node = parent.getChildren().get(index - 1);
+            if(node.isTextSection){
+                return node;
+            }else {
+                return node.getLastDescendant();
+            }
+        }else {// if(index == 0){
+            return parent.getPrevTextNode();
+        }
+    }
+
+    public class LastNodeException extends Exception{
+        public LastNodeException(){
+            super();
+        }
+
+        private static final long serialVersionUID = 1L;
+
+    }
+
+    public Node getAncestorRoot(){
+        Node node = this;
+        while(node.parent != null){
+            node = node.parent;
+        }
+        Log.d("Node.getAncestorRoot", "root:" + node);
+        return node;
+    }
+
     /**
      * Shows the TOC Node tree. This is only used for debugging.
      * @param node

@@ -90,29 +90,28 @@ public class TOCNumBox extends TextView implements TOCElement {
                 Log.e("TOCNumBox","TOCNumBox.clickListener isn't a textSection");
                 return;
             }
-            Node.saveNode(node);
-            /*
-            try {
-                Log.d("toc", "go to:" + node  + node.getGridNum());
-            }catch(API.APIException e){//use API.Excet
-                ;
-            }*/
-
-
-
-
-            Node.saveNode(node);
-            Intent intent = new Intent(context, SectionActivity.class);
-            intent.putExtra("nodeHash", node.hashCode());
-            intent.putExtra("lang", lang);
-            //TODO determine if SectionActivity was already open... Make sure to be careful of multi-tab stuff
-            //context.startActivity(intent);
-
-            Activity act = (Activity) context; //stupid casting
-            act.setResult(Activity.RESULT_OK,intent);
-            act.finish();//close the TOC
-
-
+            gotoTextActivity(context,node,lang);
         }
     };
+
+    /**
+     * go from TOC to textActivity
+     *
+     * @param context
+     * @param node
+     * @param lang
+     */
+    public static void gotoTextActivity(Context context,Node node,Util.Lang lang){
+        Node.saveNode(node);
+        Intent intent = new Intent(context, SectionActivity.class);
+        intent.putExtra("nodeHash", node.hashCode());
+        intent.putExtra("lang", lang);
+        //TODO determine if SectionActivity was already open... Make sure to be careful of multi-tab stuff
+        //TODO I think it should also actually have the back button work for going to the TOC from textActivity
+        //context.startActivity(intent);
+
+        Activity act = (Activity) context; //stupid casting
+        act.setResult(Activity.RESULT_OK,intent);
+        act.finish();//close the TOC
+    }
 }

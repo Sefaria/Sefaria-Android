@@ -166,6 +166,9 @@ public abstract class SuperTextActivity extends Activity {
         public void onClick(View v) {
             Intent intent = new Intent(SuperTextActivity.this, TOCActivity.class);
             intent.putExtra("currBook",book);
+            Node root = firstLoadedNode.getAncestorRoot();
+            int tocRootHashCode = root.hashCode();
+            intent.putExtra("tocRootHashCode",tocRootHashCode);
             startActivityForResult(intent, TOC_CHAPTER_CLICKED_CODE);
         }
     };
@@ -254,19 +257,22 @@ public abstract class SuperTextActivity extends Activity {
 
     protected List<Text> loadSection(TextEnums dir) {
         Node newNode = null;
-        if (dir == TextEnums.NEXT_SECTION) {
-            if (lastLoadedNode == null) { //this is the initial load
-                newNode = firstLoadedNode;
-            } else {
-                newNode = lastLoadedNode.getNextTextNode();
+        try {
+            if (dir == TextEnums.NEXT_SECTION) {
+                if (lastLoadedNode == null) { //this is the initial load
+                    newNode = firstLoadedNode;
+                } else {
+                    newNode = lastLoadedNode.getNextTextNode();
+                }
+                lastLoadedNode = newNode;
             }
-            lastLoadedNode = newNode;
-        }
 
-        else if (dir == TextEnums.PREV_SECTION) {
-            newNode = lastLoadedNode; //TODO this needs to actually update
+            else if (dir == TextEnums.PREV_SECTION) {
+                newNode = lastLoadedNode; //TODO this needs to actually update
+            }
+        } catch (Node.LastNodeException e) {
+            return new ArrayList<>();
         }
-
         Log.d("Section","firstLoadedChap in loadSection " + firstLoadedNode.getGridNum());
 
 
