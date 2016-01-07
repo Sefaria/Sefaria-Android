@@ -63,6 +63,10 @@ public class Book implements Parcelable {
         return roots;
     }
 
+    public Node getNodeFromPathStr(String path) throws Node.InvalidPathException {
+        return Node.getNodeFromPathStr(this,path);
+    }
+
     public String getTitle(Util.Lang lang){
         if(Util.Lang.EN == lang)
             return title;

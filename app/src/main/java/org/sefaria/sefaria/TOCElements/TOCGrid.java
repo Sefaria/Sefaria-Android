@@ -3,6 +3,7 @@ package org.sefaria.sefaria.TOCElements;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -10,12 +11,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridLayout;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.activities.TextActivity;
+import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Node;
 import org.sefaria.sefaria.activities.MenuActivity;
+import org.sefaria.sefaria.layouts.AutoResizeTextView;
 import org.sefaria.sefaria.menu.MenuButton;
 import org.sefaria.sefaria.menu.MenuNode;
 
@@ -40,28 +44,34 @@ public class TOCGrid extends LinearLayout {
 
     //the LinearLayout which contains the actual grid of buttons, as opposed to the tabs
     //which is useful for destroying the page and switching to a new tab
-    private LinearLayout gridRoot;
+    private TextView bookTitleView;
+    private AutoResizeTextView currSectionTitleView;
     private LinearLayout tabRoot;
+    private LinearLayout gridRoot;
+    private Book book;
 
-    private List<Node> tocRoots;
+
+
+    private List<Node> tocNodesRoots;
 
     private Util.Lang lang;
     private boolean flippedForHe; //are the views flipped for hebrew
 
     private int numColumns = 7;
 
-    public TOCGrid(Context context,List<Node> tocRoots, boolean limitGridSize, Util.Lang lang, int tocRootHashCode) {
+    public TOCGrid(Context context,Book book, List<Node> tocRoots, boolean limitGridSize, Util.Lang lang, String pathDefiningNode) {
         super(context);
-        this.tocRoots = tocRoots;
+        this.tocNodesRoots = tocRoots;
         this.context = context;
         this.limitGridSize = limitGridSize;
         this.lang = lang;
+        this.book = book;
 
-        init(tocRootHashCode);
+        init(pathDefiningNode);
         setLang(lang);
     }
 
-    private void init(int tocRootHashCode) {
+    private void init(String pathDefiningNode) {
         this.setOrientation(LinearLayout.VERTICAL);
         this.setPadding(10, 10, 10, 10);
         this.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
@@ -79,16 +89,38 @@ public class TOCGrid extends LinearLayout {
         this.hasTabs = true;//lets assume for now... either with enough roots or with commentary
         this.flippedForHe = false;
 
+        bookTitleView = new TextView(context);
+        bookTitleView.setTextSize(40);
+        bookTitleView.setTextColor(Color.BLACK);
+        bookTitleView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        bookTitleView.setText(book.getTitle(lang));
+        bookTitleView.setGravity(Gravity.CENTER);
+        int bookTitlepaddding =10;
+        bookTitleView.setPadding(bookTitlepaddding, bookTitlepaddding, bookTitlepaddding, bookTitlepaddding);
+        this.addView(bookTitleView,0);
 
-        addTabsections(tocRoots);
-        int tocRootIndex = 0;
-        for(int i=0;i<tocRoots.size();i++) {
-            if(tocRoots.get(i).hashCode() == tocRootHashCode){
-                tocRootIndex = i;
-                break;
-            }
+        currSectionTitleView = new AutoResizeTextView(context);
+        currSectionTitleView.setTextColor(getResources().getColor(R.color.toc_curr_section_title));
+        currSectionTitleView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        int defaultTab = 0;
+        try {
+            Node node = book.getNodeFromPathStr(pathDefiningNode);
+            defaultTab = node.getTocRootNum();
+            String sectionTitle = node.getWholeTitle(lang);
+            currSectionTitleView.setText(sectionTitle);
+            currSectionTitleView.setTextSize(40);
+            int padding = 8;
+            currSectionTitleView.setPadding(padding, padding, padding, padding);
+        } catch (Node.InvalidPathException e) {
+            currSectionTitleView.setHeight(0);
         }
-        activateTab(tocRootIndex);
+        currSectionTitleView.setGravity(Gravity.CENTER);
+        this.addView(currSectionTitleView, 1);
+
+        tabRoot = makeTabsections(tocNodesRoots);
+        this.addView(tabRoot,2);//It's the 2nd view starting with bookTitle and CurrSectionName
+
+        activateTab(defaultTab);
 
 
     }
@@ -164,6 +196,9 @@ public class TOCGrid extends LinearLayout {
     }
 
     private void activateTab(int num) {
+        if(num >= TocTabList.size()){
+            num = 0;
+        }
         TOCTab tocTab = TocTabList.get(num);
         activateTab(tocTab);
     }
@@ -194,14 +229,14 @@ public class TOCGrid extends LinearLayout {
         }
     }
 
-    private void addTabsections(List<Node> nodeList) {
+    private LinearLayout makeTabsections(List<Node> nodeList) {
 
-        tabRoot = new LinearLayout(context);
-        tabRoot.setOrientation(LinearLayout.HORIZONTAL);
-        tabRoot.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+        LinearLayout tabs = new LinearLayout(context);
+        tabs.setOrientation(LinearLayout.HORIZONTAL);
+        tabs.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 
-        tabRoot.setGravity(Gravity.CENTER);
-        this.addView(tabRoot, 0); //make sure it's on top
+        tabs.setGravity(Gravity.CENTER);
+
 
         Log.d("TOC", "nodeList.size(): " + nodeList.size());
         for (int i=0;i<nodeList.size();i++) {
@@ -215,15 +250,16 @@ public class TOCGrid extends LinearLayout {
                 LayoutInflater inflater = (LayoutInflater)
                         context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
 
-                inflater.inflate(R.layout.tab_divider_menu, tabRoot);
+                inflater.inflate(R.layout.tab_divider_menu, tabs);
             }
             TOCTab tocTab = new TOCTab(context,node,lang);
             tocTab.setOnClickListener(tabButtonClick);
-            tabRoot.addView(tocTab);
+            tabs.addView(tocTab);
 
             TocTabList.add(tocTab);
 
         }
+        return tabs;
     }
 
     private TOCNumBox addElement(MenuNode node, MenuNode sectionNode, LinearLayout ll, int childIndex) {
