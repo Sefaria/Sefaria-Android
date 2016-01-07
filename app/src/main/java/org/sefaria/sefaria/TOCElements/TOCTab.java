@@ -21,6 +21,7 @@ public class TOCTab extends LinearLayout implements TOCElement {
 
     private Node node;
     private TextView tv;
+    private boolean isActive;
 
     public TOCTab(Context context, Node node, Util.Lang lang) {
         super(context);
@@ -51,6 +52,7 @@ public class TOCTab extends LinearLayout implements TOCElement {
     }
 
     public void setActive(boolean isActive) {
+        this.isActive = isActive;
         if (isActive) {
             tv.setTextColor(getResources().getColor(R.color.tab_active));
         } else {
@@ -58,5 +60,8 @@ public class TOCTab extends LinearLayout implements TOCElement {
         }
     }
 
+    public boolean getActive(){
+        return isActive;
+    }
 
 }

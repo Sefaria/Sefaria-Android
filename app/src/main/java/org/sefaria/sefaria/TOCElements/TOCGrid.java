@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -30,17 +31,11 @@ import java.util.List;
 
 public class TOCGrid extends LinearLayout {
 
-    private static final int HOME_MENU_OVERFLOW_NUM = 9;
 
     private Context context;
-
     private List<TOCNumBox> overflowButtonList;
-
-    private List<TOCElement> menuElementList;
     private List<TOCTab> TocTabList;
-
     private boolean hasTabs; //does current page tabs (eg with Talmud)
-    private boolean limitGridSize;
 
     //the LinearLayout which contains the actual grid of buttons, as opposed to the tabs
     //which is useful for destroying the page and switching to a new tab
@@ -49,13 +44,9 @@ public class TOCGrid extends LinearLayout {
     private LinearLayout tabRoot;
     private LinearLayout gridRoot;
     private Book book;
-
-
-
     private List<Node> tocNodesRoots;
-
     private Util.Lang lang;
-    private boolean flippedForHe; //are the views flipped for hebrew
+    private TOCTab lastActivatedTab;
 
     private int numColumns = 7;
 
@@ -63,7 +54,7 @@ public class TOCGrid extends LinearLayout {
         super(context);
         this.tocNodesRoots = tocRoots;
         this.context = context;
-        this.limitGridSize = limitGridSize;
+        //this.limitGridSize = limitGridSize;
         this.lang = lang;
         this.book = book;
 
@@ -76,18 +67,13 @@ public class TOCGrid extends LinearLayout {
         this.setPadding(10, 10, 10, 10);
         this.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 
-        this.gridRoot = new LinearLayout(context);
-        gridRoot.setOrientation(LinearLayout.VERTICAL);
-        gridRoot.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-        gridRoot.setGravity(Gravity.CENTER);
-        this.addView(gridRoot);
+
 
 
         this.overflowButtonList = new ArrayList<>();
-        this.menuElementList = new ArrayList<>();
         this.TocTabList = new ArrayList<>();
         this.hasTabs = true;//lets assume for now... either with enough roots or with commentary
-        this.flippedForHe = false;
+
 
         bookTitleView = new TextView(context);
         bookTitleView.setTextSize(40);
@@ -120,12 +106,18 @@ public class TOCGrid extends LinearLayout {
         tabRoot = makeTabsections(tocNodesRoots);
         this.addView(tabRoot,2);//It's the 2nd view starting with bookTitle and CurrSectionName
 
+        this.gridRoot = new LinearLayout(context);
+        gridRoot.setOrientation(LinearLayout.VERTICAL);
+        gridRoot.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+        gridRoot.setGravity(Gravity.CENTER);
+        this.addView(gridRoot,3);
+
         activateTab(defaultTab);
 
 
     }
 
-
+    /* saving method in case switch  back to non-grid item
     private LinearLayout addRow(LinearLayout linearLayoutRoot) {
         LinearLayout ll = new LinearLayout(context);
         ll.setOrientation(LinearLayout.HORIZONTAL);
@@ -138,6 +130,7 @@ public class TOCGrid extends LinearLayout {
         linearLayoutRoot.addView(ll);
         return ll;
     }
+    */
 
     public void addNumGrid(List<Node> gridNodes,LinearLayout linearLayoutRoot) {
 
@@ -148,23 +141,34 @@ public class TOCGrid extends LinearLayout {
         }
 
 
-        Log.d("grid","NUM ROWS " + ((int) Math.ceil(gridNodes.size()/numColumns)));
+        Log.d("grid", "NUM ROWS " + ((int) Math.ceil(gridNodes.size() / numColumns)));
 
         GridLayout gl = new GridLayout(context);
-        gl.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
-
-
+        gl.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+        /**
+         * This a hack to switch the order of boxes to go from right to left
+         * as described in http://stackoverflow.com/questions/17830300/android-grid-view-place-items-from-right-to-left
+         */
+        if(lang == Util.Lang.HE) {
+            //TODO make sure that this stuff still works (ei is called) when doing setLang()
+            gl.setRotationY(180);
+            gl.setRotationY(180);
+        }
 
         gl.setRowCount((int) Math.ceil(gridNodes.size()/numColumns));
         gl.setColumnCount(numColumns);
         for (int j = 0; j <  gridNodes.size();  j++) {
             TOCNumBox tocNumBox = new TOCNumBox(context,gridNodes.get(j), lang);
+            if(lang == Util.Lang.HE) {//same hack as above, such that the letters look normal
+                tocNumBox.setRotationY(180);
+                tocNumBox.setRotationY(180);
+            }
             gl.addView(tocNumBox);
         }
-
         linearLayoutRoot.addView(gl);
 
-        /*for (int i = 0; i <= Math.ceil(chaps.size()/numColumns) && currNodeIndex < chaps.size(); i++) {
+        /* saving method in case switch  back to non-grid item
+        for (int i = 0; i <= Math.ceil(chaps.size()/numColumns) && currNodeIndex < chaps.size(); i++) {
             LinearLayout linearLayout = addRow(linearLayoutRoot);
 
             for (int j = 0; j < numColumns && currNodeIndex < chaps.size();  j++) {
@@ -207,8 +211,13 @@ public class TOCGrid extends LinearLayout {
         displayTree(node, linearLayout, true);
     }
     private void displayTree(Node node, LinearLayout linearLayout, boolean displayLevel){
-        TOCSectionName tocSectionName = new TOCSectionName(context, node, lang,displayLevel);
+        TOCSectionName tocSectionName = new TOCSectionName(context, node, lang, displayLevel);
         linearLayout.addView(tocSectionName);
+        if(lang == Util.Lang.HE) { //TODO make sure this is  still called at setLang()
+            tocSectionName.setGravity(Gravity.RIGHT);
+        }else {
+            tocSectionName.setGravity(Gravity.LEFT);
+        }
         List<Node> gridNodes = new ArrayList<>();
         for (int i = 0; i < node.getChildren().size(); i++) {
             Node child = node.getChildren().get(i);
@@ -262,63 +271,19 @@ public class TOCGrid extends LinearLayout {
         return tabs;
     }
 
-    private TOCNumBox addElement(MenuNode node, MenuNode sectionNode, LinearLayout ll, int childIndex) {
-        ll.removeViewAt(childIndex);
-        TOCNumBox mb = new TOCNumBox(context);
-        mb.setOnClickListener(menuButtonClick);
-        ll.addView(mb, childIndex);
-
-        menuElementList.add(mb);
-
-        return mb;
-
-
-    }
 
 
     public void setLang(Util.Lang lang) {
         this.lang = lang;
-        if ((lang == Util.Lang.HE && !flippedForHe) ||
-                (lang == Util.Lang.EN && flippedForHe)) {
-
-            flippedForHe = lang == Util.Lang.HE;
-            flipViews(true);
-        }
-        for (TOCElement me : menuElementList) {
-            me.setLang(lang);
+        //TODO also setLang of all the Header feilds
+        for (TOCTab tempTocTab : TocTabList) {
+            if(tempTocTab.getActive()){
+                activateTab(tempTocTab);
+            }
         }
 
     }
 
-    //used when switching languages or building a hebrew page
-    //reverse the order of every row in the grid
-    private void flipViews(boolean flipTabsAlso) {
-
-        int numChildren;
-        if (tabRoot != null && flipTabsAlso) {
-            numChildren = tabRoot.getChildCount();
-            for (int i = 0; i < numChildren; i++) {
-                View tempView = tabRoot.getChildAt(numChildren - 1);
-                tabRoot.removeViewAt(numChildren - 1);
-                tabRoot.addView(tempView, i);
-            }
-        }
-
-        for (int i = 0; i < gridRoot.getChildCount(); i++) {
-            View v = gridRoot.getChildAt(i);
-            if (v instanceof LinearLayout) {
-                LinearLayout ll = (LinearLayout) v;
-                numChildren = ll.getChildCount();
-                for (int j = 0; j < numChildren - 1; j++) {
-                    View tempView = ll.getChildAt(numChildren - 1);
-                    ll.removeViewAt(numChildren - 1);
-                    ll.addView(tempView, j);
-                }
-
-
-            }
-        }
-    }
 
     public Util.Lang getLang() { return lang; }
 
