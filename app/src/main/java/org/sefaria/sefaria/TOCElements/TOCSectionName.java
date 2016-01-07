@@ -1,5 +1,6 @@
 package org.sefaria.sefaria.TOCElements;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -106,13 +107,7 @@ public class TOCSectionName extends LinearLayout implements TOCElement {
             //TODO determine if it's a leaf and if so then display text
             if(!node.isTextSection())
                 return;
-            Node.saveNode(node);
-            Intent intent = new Intent(context, SectionActivity.class);
-            intent.putExtra("nodeHash", node.hashCode());
-            intent.putExtra("lang", lang);
-            context.startActivity(intent);
-
-
+            TOCNumBox.gotoTextActivity(context,node,lang);
         }
     };
 }

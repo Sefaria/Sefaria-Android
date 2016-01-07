@@ -24,6 +24,7 @@ import java.util.List;
 public class TOCActivity extends AppCompatActivity {
 
     private Book book;
+    private int tocRootHashCode;
     private Util.Lang lang;
 
     @Override
@@ -33,6 +34,7 @@ public class TOCActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         book = intent.getParcelableExtra("currBook");
+        tocRootHashCode = intent.getIntExtra("tocRootHashCode",0);
         lang = MyApp.getDefaultLang(Util.SETTING_LANG_TYPE.MENU);
         init();
     }
@@ -43,10 +45,6 @@ public class TOCActivity extends AppCompatActivity {
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(cab);
 
-
-
-
-
         TextView bookTitleTV = (TextView) findViewById(R.id.book_name);
         bookTitleTV.setText(book.getTitle(lang));
 
@@ -56,7 +54,7 @@ public class TOCActivity extends AppCompatActivity {
         Log.d("toc", "ROOTs SIZE " + tocRoots.size());
 
         ScrollView tocRoot = (ScrollView) findViewById(R.id.toc_root);
-        TOCGrid tocGrid = new TOCGrid(this,tocRoots,false,lang);
+        TOCGrid tocGrid = new TOCGrid(this,tocRoots,false,lang,tocRootHashCode);
         tocRoot.addView(tocGrid);
 
     }
