@@ -107,8 +107,15 @@ public class Node{ //TODO implements  Parcelable
     public String getWholeTitle(Util.Lang lang){
         String str = "";
         Node node = this;
-        while(node.parent != null){
-            str = node.getWholeTitleForNode(lang) + " " + str;
+        while(node.parent != null) {
+            if (str.length() == 0){
+                str = node.getWholeTitleForNode(lang);
+            }else {
+                if (node.isComplex() && !node.isGridItem())
+                    str = node.getWholeTitleForNode(lang) + ", " + str;
+                else
+                    str = node.getWholeTitleForNode(lang) + " " + str;
+            }
             node = node.parent;
         }
         return str;
