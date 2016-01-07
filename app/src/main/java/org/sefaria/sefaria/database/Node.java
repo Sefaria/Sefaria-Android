@@ -109,19 +109,19 @@ public class Node{ //TODO implements  Parcelable
         Node node = this;
         while(node.parent != null) {
             if (str.length() == 0){
-                str = node.getWholeTitleForNode(lang);
+                str = node.getWholeTitleForOnly1Node(lang);
             }else {
                 if (node.isComplex() && !node.isGridItem())
-                    str = node.getWholeTitleForNode(lang) + ", " + str;
+                    str = node.getWholeTitleForOnly1Node(lang) + ", " + str;
                 else
-                    str = node.getWholeTitleForNode(lang) + " " + str;
+                    str = node.getWholeTitleForOnly1Node(lang) + " " + str;
             }
             node = node.parent;
         }
         return str;
     }
 
-    private String getWholeTitleForNode(Util.Lang lang){
+    private String getWholeTitleForOnly1Node(Util.Lang lang){
         String str;
         if(isGridItem() || nid == NID_CHAP_NO_NID) {
             str = getSectionName(lang);

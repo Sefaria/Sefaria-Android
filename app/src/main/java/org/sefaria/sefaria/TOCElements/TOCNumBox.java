@@ -75,10 +75,11 @@ public class TOCNumBox extends TextView implements TOCElement {
 
     @Override
     public void setLang(Util.Lang lang) {
-        if(Util.Lang.HE == lang)
+        if(Util.Lang.HE == lang) {
             setText(Util.int2heb(node.getGridNum()));
-        else
+        }else {
             setText("" + node.getGridNum());
+        }
     }
 
 
