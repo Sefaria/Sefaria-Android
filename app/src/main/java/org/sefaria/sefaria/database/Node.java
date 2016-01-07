@@ -50,6 +50,10 @@ public class Node{ //TODO implements  Parcelable
     private boolean isComplex = false;
     private boolean isRef = false;
     int gridNum = -1;
+    /**
+     * this number should only be defined for the root of a tree.
+     */
+    private int tocRootsNum = -1;
 
 
 
@@ -161,6 +165,10 @@ public class Node{ //TODO implements  Parcelable
         }
     }
 
+    public int getTocRootNum(){
+        Node root = getAncestorRoot();
+        return root.tocRootsNum;
+    }
 
     public Node getFirstDescendant(){
         Node node = this;
@@ -355,12 +363,12 @@ public class Node{ //TODO implements  Parcelable
 
     }
 
-    public Node getAncestorRoot(){
+    private Node getAncestorRoot(){
         Node node = this;
         while(node.parent != null){
             node = node.parent;
         }
-        Log.d("Node.getAncestorRoot", "root:" + node);
+        //Log.d("Node.getAncestorRoot", "root:" + node);
         return node;
     }
 
@@ -598,6 +606,76 @@ public class Node{ //TODO implements  Parcelable
         }return levels2;
     }
 
+    /**
+     * This is the version number, so that we can change the schema, and it won't break the app, but it will just know it's a diff version.
+     */
+    final static private String PATH_DEFINING_NODE_VERSION = "a";
+    public String makePathDefiningNode(){
+        String str = "";
+        Node node = this;
+        while(node.parent != null){
+            int index =  node.parent.getChildren().indexOf(node);
+            if(index < 0) {
+                Log.e("Node", "makeStringDefiningTreeAndNode: index is -1. node:" + node);
+                return "";
+            }
+            str = index + "." + str;
+            node = node.parent;
+        }
+        int index =  node.tocRootsNum;
+        if(index < 0) {
+            Log.e("Node", "makeStringDefiningTreeAndNode: tocRootsNum is <0 node:" + node);
+            return "";
+        }
+        str = index + "." + str;
+        str = PATH_DEFINING_NODE_VERSION + str;
+        Log.d("Node", "makeStringDefiningTreeAndNode:" + str);
+        return str;
+    }
+
+
+    /**
+     *
+     * @param book
+     * @param path
+     * @return
+     * @throws InvalidPathException
+     */
+    static public Node getNodeFromPathStr(Book book, String path) throws InvalidPathException {
+        return getNodeFromPathStr(book.getTOCroots(),path);
+    }
+
+
+    static public Node getNodeFromPathStr(List<Node> tocRoots, String path) throws InvalidPathException {
+        Node node;
+        try {
+            if(path.length() == 0 || path.indexOf(PATH_DEFINING_NODE_VERSION) != 0){
+                throw (new Node()).new InvalidPathException();
+            }
+            path = path.replaceFirst(PATH_DEFINING_NODE_VERSION,"");
+            String [] nums = path.split("\\.");
+            if(nums.length == 0) {
+                throw (new Node()).new InvalidPathException();
+            }
+
+            node = tocRoots.get(Integer.valueOf(nums[0]));
+            for(int i=1;i<nums.length;i++) { //starts at 1 b/c it already used 0 for root
+                String num = nums[i];
+                if(num.length() > 0)
+                    node = node.getChildren().get(Integer.valueOf(num));
+            }
+        }catch(Exception e){
+            throw (new Node()).new InvalidPathException();
+        }
+        return node;
+    }
+
+    public class InvalidPathException extends Exception{
+        public InvalidPathException(){
+            super();
+        }
+        private static final long serialVersionUID = 1L;
+    }
 
 
     public static List<Node> getRoots(Book book) throws API.APIException {
@@ -634,6 +712,7 @@ public class Node{ //TODO implements  Parcelable
         root.nid = NID_NON_COMPLEX;
         root.setAllChaps(false);
         if(root.getChildren().size()>0) {
+            root.tocRootsNum = allRoots.size();
             allRoots.add(root);
             //showTree(root);
         }
@@ -644,14 +723,17 @@ public class Node{ //TODO implements  Parcelable
                 //Complex text combining nodes into root
                 root = convertToTree(nodes);
             }
+            root.tocRootsNum = allRoots.size();
             allRoots.add(root);
             //showTree(root);
         }
 
-
         if(addMoreh){//TODO remove only for testing alt structures
-            allRoots.add(getRoots(new Book("Orot"),false).get(0)); //has complex texts
-            allRoots.add(getRoots(new Book("Sefer Tomer Devorah"),false).get(0));//has textDepth == 3
+            root = getRoots(new Book("Orot"),false).get(0);
+            root.tocRootsNum = allRoots.size();
+            allRoots.add(root); //has complex texts
+            root = getRoots(new Book("Sefer Tomer Devorah"),false).get(0);//has textDepth == 3
+            allRoots.add(root);
 
         }
 

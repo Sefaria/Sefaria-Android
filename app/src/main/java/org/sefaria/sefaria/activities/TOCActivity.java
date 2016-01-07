@@ -1,6 +1,9 @@
 package org.sefaria.sefaria.activities;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.os.IInterface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +18,7 @@ import org.sefaria.sefaria.TOCElements.TOCGrid;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Node;
+import org.sefaria.sefaria.layouts.AutoResizeTextView;
 import org.sefaria.sefaria.layouts.CustomActionbar;
 import org.sefaria.sefaria.menu.MenuNode;
 
@@ -24,8 +28,16 @@ import java.util.List;
 public class TOCActivity extends AppCompatActivity {
 
     private Book book;
-    private int tocRootHashCode;
+    private String pathDefiningNode;
     private Util.Lang lang;
+
+    public static Intent getStartTOCActivityIntent(Context superTextActivityThis, Book book, Node currNode){
+        Intent intent = new Intent(superTextActivityThis, TOCActivity.class);
+        intent.putExtra("currBook",book);
+        String pathDefiningNode = currNode.makePathDefiningNode();
+        intent.putExtra("pathDefiningNode",pathDefiningNode);
+        return intent;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +46,7 @@ public class TOCActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         book = intent.getParcelableExtra("currBook");
-        tocRootHashCode = intent.getIntExtra("tocRootHashCode",0);
+        pathDefiningNode = intent.getStringExtra("pathDefiningNode");
         lang = MyApp.getDefaultLang(Util.SETTING_LANG_TYPE.MENU);
         init();
     }
@@ -45,19 +57,17 @@ public class TOCActivity extends AppCompatActivity {
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(cab);
 
-        TextView bookTitleTV = (TextView) findViewById(R.id.book_name);
-        bookTitleTV.setText(book.getTitle(lang));
-
-        //Log.d("toc", "TOC " + tocRoots.get(0).getChildren());
-
-        List<Node> tocRoots = book.getTOCroots();
-        Log.d("toc", "ROOTs SIZE " + tocRoots.size());
+        List<Node> tocNodesRoots = book.getTOCroots();
+        Log.d("toc", "ROOTs SIZE " + tocNodesRoots.size());
 
         ScrollView tocRoot = (ScrollView) findViewById(R.id.toc_root);
-        TOCGrid tocGrid = new TOCGrid(this,tocRoots,false,lang,tocRootHashCode);
+
+        TOCGrid tocGrid = new TOCGrid(this,book, tocNodesRoots,false,lang,pathDefiningNode);
         tocRoot.addView(tocGrid);
 
     }
+
+
 
     View.OnClickListener closeClick = new View.OnClickListener() {
         @Override

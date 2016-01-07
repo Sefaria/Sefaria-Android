@@ -13,26 +13,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"></LinearLayout>
 
-    <org.sefaria.sefaria.layouts.AutoResizeTextView
-        android:id="@+id/book_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="30sp"
-        android:text="Gensis"
-        android:gravity="center"
-        />
-
-    <org.sefaria.sefaria.layouts.AutoResizeTextView
-        android:id="@+id/curr_section"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="15sp"
-        android:textColor="@android:color/darker_gray"
-        android:gravity="center"
-        android:text="Chapter 24"
-        android:padding="10sp"
-        />
-
     <ScrollView
         android:id="@+id/toc_root"
         android:layout_width="match_parent"

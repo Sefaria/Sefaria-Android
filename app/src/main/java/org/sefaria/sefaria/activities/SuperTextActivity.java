@@ -1,7 +1,9 @@
 package org.sefaria.sefaria.activities;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -70,8 +72,24 @@ public abstract class SuperTextActivity extends Activity {
             String enTitle = menuState.getCurrNode().getTitle(Util.Lang.EN);
             book = new Book(enTitle);
             menuLang = menuState.getLang();
-            Node root = book.getTOCroots().get(0);
-            firstLoadedNode = root.getFirstDescendant();
+            try{
+                SharedPreferences bookSavedSettings = getBookSavedSettings();
+                String stringThatRepsSavedSettings = bookSavedSettings.getString(book.title, "");
+                Log.d("SuperTextAct", "bookSavedSettings:" + stringThatRepsSavedSettings);
+                String nodePathStr = stringThatRepsSavedSettings; //TODO  make based on split()
+                Node node = book.getNodeFromPathStr(nodePathStr);
+                Log.d("SuperTextAct", "bookSavedSettings... node:" + node);
+                node  = node.getFirstDescendant();//should be unneeded line, but in case there was a previous bug this shuold return a isTextSection() node to avoid bugs
+                firstLoadedNode = node;
+            }catch (Node.InvalidPathException e){
+                Log.e("SuperTextAct", "Problem gettting saved book data");
+                Node root = book.getTOCroots().get(0);
+                firstLoadedNode = root.getFirstDescendant();
+            }
+
+
+
+
             //lastLoadedNode = firstLoadedNode; PURPOSEFULLY NOT INITIALLIZING TO INDICATE THAT NOTHING HAS BEEN LOADED YET
         }
         else { // no menuState means it came in from TOC
@@ -164,12 +182,8 @@ public abstract class SuperTextActivity extends Activity {
     View.OnClickListener titleClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(SuperTextActivity.this, TOCActivity.class);
-            intent.putExtra("currBook",book);
-            Node root = firstLoadedNode.getAncestorRoot();
-            int tocRootHashCode = root.hashCode();
-            intent.putExtra("tocRootHashCode",tocRootHashCode);
-            startActivityForResult(intent, TOC_CHAPTER_CLICKED_CODE);
+            Intent intent = TOCActivity.getStartTOCActivityIntent(SuperTextActivity.this, book,firstLoadedNode);
+            startActivityForResult(intent,TOC_CHAPTER_CLICKED_CODE);
         }
     };
 
@@ -268,12 +282,16 @@ public abstract class SuperTextActivity extends Activity {
             }
 
             else if (dir == TextEnums.PREV_SECTION) {
-                newNode = lastLoadedNode; //TODO this needs to actually update
+                if(firstLoadedNode == null){
+                    newNode = lastLoadedNode;
+                }else{
+                    newNode = firstLoadedNode.getPrevTextNode();
+                }
             }
         } catch (Node.LastNodeException e) {
             return new ArrayList<>();
         }
-        Log.d("Section","firstLoadedChap in loadSection " + firstLoadedNode.getGridNum());
+        Log.d("Section","firstLoadedChap in loadSection " + firstLoadedNode.getWholeTitle(Util.Lang.EN));
 
 
 
@@ -281,6 +299,15 @@ public abstract class SuperTextActivity extends Activity {
         List<Text> textsList;
         try {
             textsList = newNode.getTexts();
+            if(textsList.size()>0){
+
+                SharedPreferences bookSavedSettings = getBookSavedSettings();
+                SharedPreferences.Editor editor = bookSavedSettings.edit();
+                String strTreeAndNode = newNode.makePathDefiningNode();
+                //"<en|he|bi>.<cts|sep>.<white|grey|black>.10px:"+ <rootNum>.<Childnum>.<until>.<leaf>.<verseNum>"
+                editor.putString(book.title, strTreeAndNode);
+                editor.commit();
+            }
             return textsList;
         } catch (API.APIException e) {
             Toast.makeText(SuperTextActivity.this, "API Exception!!!", Toast.LENGTH_SHORT).show();
@@ -288,5 +315,9 @@ public abstract class SuperTextActivity extends Activity {
         }
 
 
+    }
+
+    static private SharedPreferences getBookSavedSettings(){
+        return MyApp.getContext().getSharedPreferences("org.sefaria.sefaria.book_save_settings", Context.MODE_PRIVATE);
     }
 }

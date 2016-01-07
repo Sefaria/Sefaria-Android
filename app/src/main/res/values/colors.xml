@@ -30,4 +30,6 @@
     <color name="text_white_background">#F8FCF8</color>
     <color name="text_black_background">#000000</color>
 
+    <color name="toc_curr_section_title">#AAA</color>
+
 </resources>
