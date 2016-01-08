@@ -16,5 +16,6 @@
     <dimen name="fab_margin">16dp</dimen>
 
     <dimen name="toc_numbox">35dp</dimen>
+    <dimen name="text_menu_bar_box">25dp</dimen>
 
 </resources>

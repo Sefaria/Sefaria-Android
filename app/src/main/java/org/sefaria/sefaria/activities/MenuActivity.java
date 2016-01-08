@@ -47,7 +47,7 @@ public class MenuActivity extends Activity {
         setTitle(menuState.getCurrNode().getTitle(menuState.getLang()));
 
         //this specifically comes before menugrid, b/c in tabs it menugrid does funny stuff to currnode
-        CustomActionbar cab = new CustomActionbar(this, menuState.getCurrNode(),menuState.getLang(),searchClick,null,null,null);
+        CustomActionbar cab = new CustomActionbar(this, menuState.getCurrNode(),menuState.getLang(),homeClick,null,null,null);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(cab);
 
@@ -92,7 +92,7 @@ public class MenuActivity extends Activity {
         out.putBoolean("hasSectionBack", hasSectionBack);
     }
 
-    View.OnClickListener searchClick = new View.OnClickListener() {
+    View.OnClickListener homeClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Intent returnIntent = new Intent();

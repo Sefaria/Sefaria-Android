@@ -25,13 +25,13 @@ public class CustomActionbar extends MenuElement {
     private MenuNode node;
 
 
-    public CustomActionbar(Context context, MenuNode node, Util.Lang lang, OnClickListener searchClick, OnClickListener closeClick, OnClickListener titleClick, OnClickListener menuClick) {
+    public CustomActionbar(Context context, MenuNode node, Util.Lang lang, OnClickListener homeClick, OnClickListener closeClick, OnClickListener titleClick, OnClickListener menuClick) {
         super(context);
         inflate(context, R.layout.custom_actionbar, this);
 
         this.node = node;
 
-        searchBtn = findViewById(R.id.search_btn);
+        searchBtn = findViewById(R.id.home_btn);
         closeBtn = findViewById(R.id.close_btn);
         tocBtn = findViewById(R.id.toc_btn);
         menuBtn = findViewById(R.id.menu_btn);
@@ -44,7 +44,7 @@ public class CustomActionbar extends MenuElement {
         if (topColor == -1) colorBar.setVisibility(View.GONE);
         else colorBar.setBackgroundColor(getResources().getColor(topColor));
 
-        if (searchClick != null) searchBtn.setOnClickListener(searchClick);
+        if (homeClick != null) searchBtn.setOnClickListener(homeClick);
         else searchBtn.setVisibility(View.INVISIBLE);
         if (closeClick != null)  closeBtn.setOnClickListener(closeClick);
         else closeBtn.setVisibility(View.GONE);
