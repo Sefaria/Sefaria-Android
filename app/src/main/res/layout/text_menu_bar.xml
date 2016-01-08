@@ -14,30 +14,33 @@
             android:id="@+id/en_btn"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:text="En"
+            android:layout_height="@dimen/text_menu_bar_box"
+            android:text=""
             android:gravity="center"
-            android:background="@color/tanach"
-            android:padding="20dp"/>
+            android:background="@drawable/en_icon2"
+            android:padding="20dp"
+            android:textSize="20dp"
+            />
+
 
         <TextView
             android:id="@+id/bi_btn"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:text="Bi"
+            android:layout_height="@dimen/text_menu_bar_box"
+            android:text=""
             android:gravity="center"
-            android:background="@color/mishnah"
+            android:background="@drawable/bi_icon2"
             android:padding="20dp"/>
 
         <TextView
             android:id="@+id/he_btn"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:text="He"
+            android:layout_height="@dimen/text_menu_bar_box"
+            android:text=""
             android:gravity="center"
-            android:background="@color/talmud"
+            android:background="@drawable/he_icon2"
             android:padding="20dp"/>
 
 

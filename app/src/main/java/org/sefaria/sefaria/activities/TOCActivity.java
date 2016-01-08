@@ -54,7 +54,7 @@ public class TOCActivity extends AppCompatActivity {
 
     private void init() {
         MenuNode titleNode = new MenuNode("Table of Contents","תוכן העניינים",null);
-        CustomActionbar cab = new CustomActionbar(this, titleNode, lang,null,closeClick,null,null);
+        CustomActionbar cab = new CustomActionbar(this, titleNode, lang,homeClick,closeClick,null,null);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(cab);
 
@@ -75,6 +75,19 @@ public class TOCActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             finish();
+        }
+    };
+
+    View.OnClickListener homeClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            //TODO make this work
+            /*
+            Intent returnIntent = new Intent();
+            returnIntent.putExtra("searchClicked",true);
+            setResult(0, returnIntent);
+            finish();
+            */
         }
     };
 
