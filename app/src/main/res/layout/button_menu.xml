@@ -13,5 +13,6 @@
     android:background="@android:color/white"
     android:text="yoyo"
     android:textColor="@android:color/black"
-    android:gravity="center">
+    android:gravity="center"
+    >
 </org.sefaria.sefaria.layouts.AutoResizeTextView>
