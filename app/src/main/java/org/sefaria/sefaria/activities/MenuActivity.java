@@ -32,9 +32,7 @@ public class MenuActivity extends Activity {
         setContentView(R.layout.activity_menu);
 
         Intent intent = getIntent();
-
         menuState = intent.getParcelableExtra("menuState");
-
         hasSectionBack = intent.getBooleanExtra("hasSectionBack",false);
 
         boolean hasTabs = false;

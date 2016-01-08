@@ -20,6 +20,7 @@ import android.util.Log;
 public class Book implements Parcelable {
 
     private List<Node> TOCroots = null;
+    private List<Book> allCommentaries = null;
 
     private static final int DEFAULT_WHERE_PAGE = 2;
     public Book(){
@@ -260,8 +261,8 @@ public class Book implements Parcelable {
     }
 
     public static int getBid(String title, SQLiteDatabase db){
-        Cursor cursor = db.query(TABLE_BOOKS, new String [] {"_id"}, Ktitle + "=?",
-                new String[] { title }, null, null, null, null);
+        Cursor cursor = db.query(TABLE_BOOKS, new String[]{"_id"}, Ktitle + "=?",
+                new String[]{title}, null, null, null, null);
 
         if (cursor != null){
             cursor.moveToFirst();
@@ -279,8 +280,8 @@ public class Book implements Parcelable {
     public static String getTitle(int bid){
         Database2 dbHandler = Database2.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
-        Cursor cursor = db.query(TABLE_BOOKS, new String [] {"title"},  "_id=?",
-                new String[] { String.valueOf(bid) }, null, null, null, null);
+        Cursor cursor = db.query(TABLE_BOOKS, new String[]{"title"}, "_id=?",
+                new String[]{String.valueOf(bid)}, null, null, null, null);
 
         if (cursor != null){
             cursor.moveToFirst();
@@ -300,8 +301,8 @@ public class Book implements Parcelable {
         Database2 dbHandler = Database2.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
 
-        Cursor cursor = db.query(TABLE_BOOKS, new String [] {type}, Ktitle + "=?",
-                new String[] { title }, null, null, null, null);
+        Cursor cursor = db.query(TABLE_BOOKS, new String[]{type}, Ktitle + "=?",
+                new String[]{title}, null, null, null, null);
 
         if (cursor != null){
             cursor.moveToFirst();
@@ -314,6 +315,32 @@ public class Book implements Parcelable {
 
         }
         return 0;
+    }
+
+
+    public List<Book> getAllCommentaries(){
+        if(allCommentaries != null)
+            return allCommentaries;
+        Database2 dbHandler = Database2.getInstance();
+        List<Book> bookList = new ArrayList<Book>();
+        String selectQuery = "SELECT  * FROM " + TABLE_BOOKS + " WHERE commentsOn = ?";
+
+        SQLiteDatabase db = dbHandler.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String [] {""+this.bid});
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                // Adding  to list
+                bookList.add(new Book(cursor));
+            } while (cursor.moveToNext());
+        }
+
+		  //LOGING:
+	    for(int i = 0; i < bookList.size(); i++)
+			bookList.get(i).log();
+
+        allCommentaries = bookList;
+        return bookList;
     }
 
     public static List<Book> getAll() {

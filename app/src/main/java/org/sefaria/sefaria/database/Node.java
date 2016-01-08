@@ -740,7 +740,7 @@ public class Node{ //TODO implements  Parcelable
             root.tocRootsNum = allRoots.size();
             allRoots.add(root); //has complex texts
             root = getRoots(new Book("Sefer Tomer Devorah"),false).get(0);//has textDepth == 3
-            allRoots.add(root);
+            //allRoots.add(root);
 
         }
 

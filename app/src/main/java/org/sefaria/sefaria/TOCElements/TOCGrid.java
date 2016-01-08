@@ -103,7 +103,7 @@ public class TOCGrid extends LinearLayout {
         currSectionTitleView.setGravity(Gravity.CENTER);
         this.addView(currSectionTitleView, 1);
 
-        tabRoot = makeTabsections(tocNodesRoots);
+        tabRoot = makeTabSections(tocNodesRoots);
         this.addView(tabRoot,2);//It's the 2nd view starting with bookTitle and CurrSectionName
 
         this.gridRoot = new LinearLayout(context);
@@ -186,6 +186,14 @@ public class TOCGrid extends LinearLayout {
         }
     }
 
+    private void activateTab(int num) {
+        if(num >= TocTabList.size()){
+            num = 0;
+        }
+        TOCTab tocTab = TocTabList.get(num);
+        activateTab(tocTab);
+    }
+
     private void activateTab(TOCTab tocTab) {
         for (TOCTab tempTocTab : TocTabList) {
             tempTocTab.setActive(false);
@@ -195,17 +203,21 @@ public class TOCGrid extends LinearLayout {
 
         freshGridRoot();
         Node root = tocTab.getNode();
-        displayTree(root, gridRoot, false);
+        if(root != null) {
+            displayTree(root, gridRoot, false);
+        }else{
+            List<Book> commentaries = book.getAllCommentaries();
+            displayCommenaries(commentaries,gridRoot);
 
-    }
-
-    private void activateTab(int num) {
-        if(num >= TocTabList.size()){
-            num = 0;
         }
-        TOCTab tocTab = TocTabList.get(num);
-        activateTab(tocTab);
     }
+
+    private void displayCommenaries(List<Book> commentaries, LinearLayout linearLayout){
+
+        return;
+    }
+
+
 
     private void displayTree(Node node, LinearLayout linearLayout){
         displayTree(node, linearLayout, true);
@@ -238,7 +250,7 @@ public class TOCGrid extends LinearLayout {
         }
     }
 
-    private LinearLayout makeTabsections(List<Node> nodeList) {
+    private LinearLayout makeTabSections(List<Node> nodeList) {
 
         LinearLayout tabs = new LinearLayout(context);
         tabs.setOrientation(LinearLayout.HORIZONTAL);
@@ -248,26 +260,37 @@ public class TOCGrid extends LinearLayout {
 
 
         Log.d("TOC", "nodeList.size(): " + nodeList.size());
-        for (int i=0;i<nodeList.size();i++) {
+        int numberOfTabs = nodeList.size();
+        if(book.getAllCommentaries().size()>0)
+            numberOfTabs++;
+        for (int i=0;i<numberOfTabs;i++) {
             //ns comment from menu
             //although generally this isn't necessary b/c the nodes come from menuState.getSections
             //this is used when rebuilding after memory dump and nodes come from setHasTabs()
             //
 
-            Node node = nodeList.get(i);
+
             if(i > 0) { //skip adding the | (line) for the first item
                 LayoutInflater inflater = (LayoutInflater)
                         context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
 
                 inflater.inflate(R.layout.tab_divider_menu, tabs);
             }
-            TOCTab tocTab = new TOCTab(context,node,lang);
+
+            TOCTab tocTab;
+            if(i<nodeList.size()){
+                Node node = nodeList.get(i);
+                tocTab = new TOCTab(context, node, lang);
+            }else {
+                tocTab = new TOCTab(context, lang);//for the last one it's just commentary tab
+            }
             tocTab.setOnClickListener(tabButtonClick);
             tabs.addView(tocTab);
-
             TocTabList.add(tocTab);
 
         }
+
+
         return tabs;
     }
 
@@ -289,8 +312,6 @@ public class TOCGrid extends LinearLayout {
 
 
     /*
-    public boolean getHasTabs() { return hasTabs; }
-
     //used when you're rebuilding after memore dump
     //you need to make sure that you add the correct tabs
     public void setHasTabs(boolean hasTabs) {
@@ -318,10 +339,7 @@ public class TOCGrid extends LinearLayout {
                 //trick to destroy all activities beforehand
                 //ComponentName cn = intent.getComponent();
                 //Intent mainIntent = IntentCompat.makeRestartActivityTask(cn);
-                //intent.putExtra("menuState", newMenuState);
-
-
-
+                //intent.putExtra("menuState", newMenuState)
 
                 //jh
                 //context.startActivity(intent);
@@ -340,16 +358,6 @@ public class TOCGrid extends LinearLayout {
         }
     };
 
-    public OnClickListener moreButtonClick = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            v.setVisibility(View.GONE);
-            for (TOCNumBox mb : overflowButtonList) {
-                mb.setVisibility(View.VISIBLE);
-            }
-
-        }
-    };
 
     public OnClickListener tabButtonClick = new OnClickListener() {
         @Override

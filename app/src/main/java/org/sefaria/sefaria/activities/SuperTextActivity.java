@@ -27,6 +27,7 @@ import org.sefaria.sefaria.menu.MenuNode;
 import org.sefaria.sefaria.menu.MenuState;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -63,15 +64,15 @@ public abstract class SuperTextActivity extends Activity {
         super.onCreate(in);
 
         Intent intent = getIntent();
-        MenuState menuState;
-        menuState = intent.getParcelableExtra("menuState");
+        Integer nodeHash = intent.getIntExtra("nodeHash", -1);
+        book = intent.getParcelableExtra("currBook");
+        menuLang = (Util.Lang) intent.getSerializableExtra("lang");
         if (in != null) {
-            menuState = in.getParcelable("menuState");
+            nodeHash = in.getInt("nodeHash", -1);
+            menuLang = (Util.Lang) in.getSerializable("lang");
+            book = in.getParcelable("currBook");
         }
-        if(menuState != null){//menuState means it came in from the menu
-            String enTitle = menuState.getCurrNode().getTitle(Util.Lang.EN);
-            book = new Book(enTitle);
-            menuLang = menuState.getLang();
+        if(book != null){ //||nodeHash == -1){// that means it came in from the menu or the TOC commentary tab
             try{
                 SharedPreferences bookSavedSettings = getBookSavedSettings();
                 String stringThatRepsSavedSettings = bookSavedSettings.getString(book.title, "");
@@ -86,20 +87,9 @@ public abstract class SuperTextActivity extends Activity {
                 Node root = book.getTOCroots().get(0);
                 firstLoadedNode = root.getFirstDescendant();
             }
-
-
-
-
             //lastLoadedNode = firstLoadedNode; PURPOSEFULLY NOT INITIALLIZING TO INDICATE THAT NOTHING HAS BEEN LOADED YET
         }
-        else { // no menuState means it came in from TOC
-            menuLang = (Util.Lang) intent.getSerializableExtra("lang");
-            Integer nodeHash = intent.getIntExtra("nodeHash", -1);
-            if(in != null){
-                menuLang = (Util.Lang) in.getSerializable("lang");
-                nodeHash = in.getInt("nodeHash",-1);
-            }
-
+        else { // no book means it came in from TOC
             firstLoadedNode = Node.getSavedNode(nodeHash);
             //lastLoadedNode = firstLoadedNode;
             Log.d("Section","firstLoadedChap init:" + firstLoadedNode.getGridNum());
@@ -114,6 +104,28 @@ public abstract class SuperTextActivity extends Activity {
         setTitle(book.getTitle(menuLang));
     }
 
+    public static void startNewTextActivityIntent(Context context, Book book,Util.Lang menuLang){
+        List<String> cats = Arrays.asList(book.categories);
+        boolean isCtsText = false;
+        final String[] CTS_TEXT_CATS = {"Talmud"};// {"Tanach","Talmud"};//
+        for (String ctsText : CTS_TEXT_CATS) {
+            isCtsText = cats.contains(ctsText);
+            if (isCtsText) break;
+        }
+        Intent intent;
+        if (isCtsText) {
+            intent = new Intent(context, TextActivity.class);
+        } else {
+            intent = new Intent(context, SectionActivity.class);
+        }
+        intent.putExtra("currBook", book);
+        intent.putExtra("lang",menuLang);
+        //trick to destroy all activities beforehand
+        //ComponentName cn = intent.getComponent();
+        //Intent mainIntent = IntentCompat.makeRestartActivityTask(cn);
+        //intent.putExtra("menuState", newMenuState);
+        context.startActivity(intent);
+    }
 
     protected void init() {
         perekTextViews = new ArrayList<>();

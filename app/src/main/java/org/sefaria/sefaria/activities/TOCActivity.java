@@ -60,6 +60,7 @@ public class TOCActivity extends AppCompatActivity {
 
         List<Node> tocNodesRoots = book.getTOCroots();
         Log.d("toc", "ROOTs SIZE " + tocNodesRoots.size());
+        List<Book> commentaries = book.getAllCommentaries();
 
         ScrollView tocRoot = (ScrollView) findViewById(R.id.toc_root);
 
