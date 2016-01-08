@@ -2,12 +2,46 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <TextView
-        android:padding="20dp"
-        android:id="@+id/mono"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="yoyoyoyo"/>
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/enVerseNum"
+            android:textColor="@color/text_verse_num"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:paddingRight="10dp"
+            android:paddingLeft="0dp"
+            android:paddingTop="20dp"
+            android:gravity="center"
+            android:text="26"/>
+        <TextView
+            android:paddingRight="10dp"
+            android:paddingLeft="10dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp"
+            android:id="@+id/mono"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/enVerseNum"
+            android:layout_alignRight="@+id/heVerseNum"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:text="Now the earth was unformed and void, and darkness was upon the face of the deep; and the spirit of God hovered over the face of the waters."/>
+        <TextView
+            android:id="@+id/heVerseNum"
+            android:textColor="@color/text_verse_num"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:paddingLeft="10dp"
+            android:paddingTop="20dp"
+            android:gravity="center"
+            android:text="26"/>
+    </RelativeLayout>
+
 
     <org.sefaria.sefaria.TextElements.TextChapterHeader
         android:id="@+id/chapHeader"
