@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<org.sefaria.sefaria.layouts.AutoResizeTextView  xmlns:android="http://schemas.android.com/apk/res/android"
+
+
+
+    android:id="@+id/content_root"
+
+
+    android:layout_centerHorizontal="true"
+    android:layout_centerVertical="true"
+    android:textColor="@android:color/black"
+    android:background="@color/text_white_background"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/toc_numbox"
+    android:layout_weight="1"
+    android:layout_margin="2dp"
+
+    android:padding="5sp"
+    android:textSize="20sp"
+
+
+
+    android:gravity="center"
+
+
+
+
+    >
+
+</org.sefaria.sefaria.layouts.AutoResizeTextView >

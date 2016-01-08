@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Build;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -22,7 +21,6 @@ import org.sefaria.sefaria.database.Node;
 import org.sefaria.sefaria.activities.MenuActivity;
 import org.sefaria.sefaria.layouts.AutoResizeTextView;
 import org.sefaria.sefaria.menu.MenuButton;
-import org.sefaria.sefaria.menu.MenuNode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -213,7 +211,22 @@ public class TOCGrid extends LinearLayout {
     }
 
     private void displayCommenaries(List<Book> commentaries, LinearLayout linearLayout){
+        LinearLayout rowLinearLayout = new LinearLayout(context);
+        for(int i =0;i<commentaries.size();i++){
+            if((i%2) == 0){
+                rowLinearLayout = new LinearLayout(context);
+                rowLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
+                if(lang == Util.Lang.HE)
+                    rowLinearLayout.setGravity(Gravity.RIGHT);
+                else
+                    rowLinearLayout.setGravity(Gravity.LEFT);
+                rowLinearLayout.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+                linearLayout.addView(rowLinearLayout);
+            }
+            TOCCommentary tocCommentary = new TOCCommentary(context,commentaries.get(i),book,lang);
+            rowLinearLayout.addView(tocCommentary);
 
+        }
         return;
     }
 

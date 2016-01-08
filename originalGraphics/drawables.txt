@@ -1,0 +1,2 @@
+using color: #989898
+http://www.flaticon.com/free-icon/close-button_61155#term=close&page=1&position=12

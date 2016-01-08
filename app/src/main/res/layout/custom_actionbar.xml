@@ -18,20 +18,22 @@
         android:background="@color/menu_background">
 
         <View
-            android:id="@+id/search_btn"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:id="@+id/home_btn"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:background="@color/menu_foreground"></View>
+            android:background="@drawable/home168"></View>
 
         <View
             android:id="@+id/close_btn"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:background="@color/menu_foreground"></View>
+            android:background="@drawable/close47"
+
+            ></View>
 
         <View
             android:id="@+id/menu_btn"
@@ -39,12 +41,14 @@
             android:layout_height="30dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:background="@color/halkhah"></View>
+            android:background="@drawable/bi_icon"
+
+            ></View>
 
         <org.sefaria.sefaria.layouts.AutoResizeTextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
-            android:layout_toRightOf="@id/search_btn"
+            android:layout_toRightOf="@id/home_btn"
             android:layout_toLeftOf="@id/menu_btn"
             android:layout_height="32dp"
             android:text="Tanach"

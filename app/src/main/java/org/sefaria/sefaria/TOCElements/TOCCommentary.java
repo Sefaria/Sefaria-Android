@@ -10,22 +10,26 @@ import android.widget.TextView;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
+import org.sefaria.sefaria.activities.SuperTextActivity;
 import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Node;
 
-public class TOCommentary extends LinearLayout implements TOCElement {
+public class TOCCommentary extends LinearLayout implements TOCElement {
 
-    private TextView sectionroot;
+    private TextView content_root;
     private Context context;
     private Book commentary;
+    private Book mainBook;
     private Util.Lang lang;
 
-    public TOCommentary(Context context, Book commentary, Util.Lang lang){
+    public TOCCommentary(Context context, Book commentary, Book mainBook, Util.Lang lang){
         super(context);
-        inflate(context, R.layout.toc_sectionname, this);
+        inflate(context, R.layout.toc_commentary, this);
         this.setOrientation(VERTICAL);
         this.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 
+
+        this.mainBook = mainBook;
         this.lang = lang;
         this.commentary = commentary;
         this.context = context;
@@ -33,8 +37,8 @@ public class TOCommentary extends LinearLayout implements TOCElement {
     }
 
     private void init(Util.Lang lang){
-        sectionroot = (TextView) findViewById(R.id.toc_sectionroot);
-        sectionroot.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
+        content_root = (TextView) findViewById(R.id.content_root);
+        content_root.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
 
         setLang(lang);
         this.setOnClickListener(clickListener);
@@ -52,15 +56,16 @@ public class TOCommentary extends LinearLayout implements TOCElement {
             this.setPadding(0, padding, sidePadding, padding);
             this.setGravity(Gravity.RIGHT);
         }
-        String text = commentary.getTitle(lang);
-        sectionroot.setText(text);
+        String text = commentary.getTitle(lang).replace(" on " + mainBook.title, "").replace(" על " + mainBook.heTitle, "");
+        content_root.setText(text);
 
     }
 
     OnClickListener clickListener = new OnClickListener() {
         @Override
         public void onClick(View v) {
-        //TODO go to intent of text page
+            //go to text page
+            SuperTextActivity.startNewTextActivityIntent(context,commentary,lang);
 
         }
     };
