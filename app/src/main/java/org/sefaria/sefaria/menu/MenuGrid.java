@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.activities.SectionActivity;
 import org.sefaria.sefaria.activities.MenuActivity;
+import org.sefaria.sefaria.activities.SuperTextActivity;
 import org.sefaria.sefaria.activities.TOCActivity;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.activities.TextActivity;
@@ -27,7 +28,7 @@ import java.util.List;
  */
 public class MenuGrid extends LinearLayout {
 
-    private static final String[] CTS_TEXT_CATS = {"Talmud"};// {"Tanach","Talmud"};//
+
 
     private static final int HOME_MENU_OVERFLOW_NUM = 9;
 
@@ -297,31 +298,15 @@ public class MenuGrid extends LinearLayout {
                 if(goToTOC){
                     intent = new Intent(context, TOCActivity.class);
                     Book book = new Book(newMenuState.getCurrNode().getTitle(Util.Lang.EN));
-                    intent.putExtra("menuState", newMenuState);
                     intent.putExtra("currBook", book);
                     intent.putExtra("lang", newMenuState.getLang());
-
+                    context.startActivity(intent);
                 }else {
                     Book book = new Book(newMenuState.getCurrNode().getTitle(Util.Lang.EN));
-                    List<String> cats = Arrays.asList(book.categories);
-                    boolean isCtsText = false;
-                    for (String ctsText : CTS_TEXT_CATS) {
-                        isCtsText = cats.contains(ctsText);
-                        if (isCtsText) break;
-                    }
-
-                    if (isCtsText) {
-                        intent = new Intent(context, TextActivity.class);
-                    } else {
-                        intent = new Intent(context, SectionActivity.class);
-                    }
-                    //trick to destroy all activities beforehand
-                    //ComponentName cn = intent.getComponent();
-                    //Intent mainIntent = IntentCompat.makeRestartActivityTask(cn);
-                    intent.putExtra("menuState", newMenuState);
+                    SuperTextActivity.startNewTextActivityIntent(context,book,getLang());
 
                 }
-                context.startActivity(intent);
+
 
             }else {
                 intent = new Intent(context, MenuActivity.class);

@@ -8,9 +8,12 @@ import android.widget.TextView;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
+import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Node;
 import org.sefaria.sefaria.menu.MenuElement;
 import org.sefaria.sefaria.menu.MenuNode;
+
+import java.util.List;
 
 
 /**
@@ -36,18 +39,45 @@ public class TOCTab extends LinearLayout implements TOCElement {
         setActive(false);
     }
 
+    /**
+     * this constructor is for commentaries only
+     * @param context
+     * @param lang
+     */
+    public TOCTab(Context context,  Util.Lang lang) {
+        super(context);
+        inflate(context, R.layout.tab_menu, this);
+        this.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT));
+
+        this.tv = (TextView) findViewById(R.id.tv);
+
+        tv.setTextSize(6);//TODO dynamic sizes
+        setLang(lang);
+        setActive(false);
+    }
+
+
+
     public Node getNode() { return node; }
 
+
     public void setLang(Util.Lang lang) {
-        tv.setText(node.getTitle(lang));
+
+
+        String newTvText;
         if (lang == Util.Lang.HE) {
             tv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
+            newTvText = "מפרשים" ;//Mifarshim //
             //tv.setTextSize(Math.round(getResources().getDimension(R.dimen.tab_menu_font_size) * Util.EN_HE_RATIO));
         } else {
+            newTvText = "Commentary";
             tv.setTypeface(MyApp.getFont(MyApp.MONTSERRAT_FONT));
             //tv.setTextSize(getResources().getDimension(R.dimen.tab_menu_font_size));
         }
-
+        if(node != null)//It's a regular TOC tab
+            newTvText = node.getTitle(lang);
+        //else it will use one of the "Commentary"s
+        tv.setText(newTvText);
 
     }
 
