@@ -29,6 +29,9 @@
 
     <color name="text_white_background">#F8FCF8</color>
     <color name="text_black_background">#000000</color>
+    <color name="text_verse_num">#666666</color>
+    <color name="text_verse_mono">#000000</color>
+    <color name="text_verse_en">#999999</color> <!-- specifically when in bilingual -->
 
     <color name="toc_curr_section_title">#AAA</color>
 
