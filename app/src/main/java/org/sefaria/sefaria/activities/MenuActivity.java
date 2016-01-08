@@ -47,7 +47,7 @@ public class MenuActivity extends Activity {
         setTitle(menuState.getCurrNode().getTitle(menuState.getLang()));
 
         //this specifically comes before menugrid, b/c in tabs it menugrid does funny stuff to currnode
-        CustomActionbar cab = new CustomActionbar(this, menuState.getCurrNode(),menuState.getLang(),homeClick,null,null,null);
+        CustomActionbar cab = new CustomActionbar(this, menuState.getCurrNode(),menuState.getLang(),homeClick,null,null,null,null);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(cab);
 
@@ -73,11 +73,11 @@ public class MenuActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (data != null) {
-            boolean searchClicked = data.getBooleanExtra("searchClicked", false);
+            boolean homeClicked = data.getBooleanExtra("homeClicked", false);
 
-            if (searchClicked) {
+            if (homeClicked) {
                 Intent returnIntent = new Intent();
-                returnIntent.putExtra("searchClicked", true);
+                returnIntent.putExtra("homeClicked", true);
                 setResult(0, returnIntent);
                 finish();
             }
@@ -96,7 +96,7 @@ public class MenuActivity extends Activity {
         @Override
         public void onClick(View v) {
             Intent returnIntent = new Intent();
-            returnIntent.putExtra("searchClicked",true);
+            returnIntent.putExtra("homeClicked",true);
             setResult(0, returnIntent);
             finish();
         }

@@ -735,7 +735,7 @@ public class Node{ //TODO implements  Parcelable
             //showTree(root);
         }
 
-        if(addMoreh){//TODO remove only for testing alt structures
+        if(addMoreh && false){//TODO remove only for testing alt structures
             root = getRoots(new Book("Orot"),false).get(0);
             root.tocRootsNum = allRoots.size();
             allRoots.add(root); //has complex texts

@@ -335,11 +335,9 @@ public class Book implements Parcelable {
             } while (cursor.moveToNext());
         }
 
-		  //LOGING:
-	    for(int i = 0; i < bookList.size(); i++)
-			bookList.get(i).log();
 
         allCommentaries = bookList;
+        Log.d("Book", "getAllCommentary returning .size():" + allCommentaries.size());
         return bookList;
     }
 

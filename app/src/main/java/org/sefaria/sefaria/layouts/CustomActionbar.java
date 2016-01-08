@@ -16,8 +16,9 @@ import org.sefaria.sefaria.menu.MenuNode;
  */
 public class CustomActionbar extends MenuElement {
 
-    private View searchBtn;
+    private View homeBtn;
     private View closeBtn;
+    private View searchBtn;
     private View tocBtn;
     private View colorBar;
     private View menuBtn;
@@ -25,14 +26,15 @@ public class CustomActionbar extends MenuElement {
     private MenuNode node;
 
 
-    public CustomActionbar(Context context, MenuNode node, Util.Lang lang, OnClickListener homeClick, OnClickListener closeClick, OnClickListener titleClick, OnClickListener menuClick) {
+    public CustomActionbar(Context context, MenuNode node, Util.Lang lang, OnClickListener homeClick, OnClickListener closeClick, OnClickListener searchClick, OnClickListener titleClick, OnClickListener menuClick) {
         super(context);
         inflate(context, R.layout.custom_actionbar, this);
 
         this.node = node;
 
-        searchBtn = findViewById(R.id.home_btn);
+        homeBtn = findViewById(R.id.home_btn);
         closeBtn = findViewById(R.id.close_btn);
+        searchBtn = findViewById(R.id.search_btn);
         tocBtn = findViewById(R.id.toc_btn);
         menuBtn = findViewById(R.id.menu_btn);
         colorBar = findViewById(R.id.color_bar);
@@ -44,14 +46,21 @@ public class CustomActionbar extends MenuElement {
         if (topColor == -1) colorBar.setVisibility(View.GONE);
         else colorBar.setBackgroundColor(getResources().getColor(topColor));
 
-        if (homeClick != null) searchBtn.setOnClickListener(homeClick);
-        else searchBtn.setVisibility(View.INVISIBLE);
+        if (homeClick != null) homeBtn.setOnClickListener(homeClick);
+        else homeBtn.setVisibility(View.INVISIBLE);
+
         if (closeClick != null)  closeBtn.setOnClickListener(closeClick);
         else closeBtn.setVisibility(View.GONE);
+
+        if (searchClick != null)  searchBtn.setOnClickListener(searchClick);
+        else searchBtn.setVisibility(View.GONE);
+
         if (menuClick != null) menuBtn.setOnClickListener(menuClick);
         else menuBtn.setVisibility(View.INVISIBLE);
+
         if (titleClick != null ) { titleTV.setOnClickListener(titleClick); tocBtn.setOnClickListener(titleClick); }
         else tocBtn.setVisibility(View.GONE);
+
 
         //TODO - make this look normal centered
         tocBtn.setVisibility(View.GONE);

@@ -25,12 +25,14 @@ public class TOCTab extends LinearLayout implements TOCElement {
     private Node node;
     private TextView tv;
     private boolean isActive;
+    private Util.Lang lang;
 
     public TOCTab(Context context, Node node, Util.Lang lang) {
         super(context);
         inflate(context, R.layout.tab_menu, this);
         this.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT));
 
+        this.lang = lang;
         this.node = node;
         this.tv = (TextView) findViewById(R.id.tv);
         tv.setText(node.getTabName(lang));
@@ -62,7 +64,7 @@ public class TOCTab extends LinearLayout implements TOCElement {
 
 
     public void setLang(Util.Lang lang) {
-
+        this.lang = lang;
 
         String newTvText;
         if (lang == Util.Lang.HE) {
@@ -93,5 +95,6 @@ public class TOCTab extends LinearLayout implements TOCElement {
     public boolean getActive(){
         return isActive;
     }
+    public Util.Lang getLang() { return lang; }
 
 }
