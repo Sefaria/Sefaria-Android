@@ -138,7 +138,7 @@ public abstract class SuperTextActivity extends Activity {
 
         //this specifically comes before menugrid, b/c in tabs it menugrid does funny stuff to currnode
         MenuNode menuNode = new MenuNode(book.getTitle(Util.Lang.EN),book.getTitle(Util.Lang.HE),null); //TODO possibly replace this object with a more general bilinual node
-        CustomActionbar cab = new CustomActionbar(this, menuNode, menuLang,searchClick,null,titleClick,menuClick); //TODO.. I'm not actually sure this should be lang.. instead it shuold be MENU_LANG from Util.S
+        CustomActionbar cab = new CustomActionbar(this, menuNode, menuLang,homeClick,null,null,titleClick,menuClick); //TODO.. I'm not actually sure this should be lang.. instead it shuold be MENU_LANG from Util.S
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(cab);
     }
@@ -181,11 +181,11 @@ public abstract class SuperTextActivity extends Activity {
         isTextMenuVisible = !isTextMenuVisible;
     }
 
-    View.OnClickListener searchClick = new View.OnClickListener() {
+    View.OnClickListener homeClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(SuperTextActivity.this, HomeActivity.class);
-            intent.putExtra("searchClicked",true);
+            intent.putExtra("homeClicked",true);
             intent.putExtra("isPopup",true);
             startActivity(intent);
         }

@@ -24,6 +24,7 @@ public class TOCCommentary extends LinearLayout implements TOCElement {
 
     public TOCCommentary(Context context, Book commentary, Book mainBook, Util.Lang lang){
         super(context);
+        Log.d("TOCCommentary", "TOCCommentary starting");
         inflate(context, R.layout.toc_commentary, this);
         this.setOrientation(VERTICAL);
         this.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));

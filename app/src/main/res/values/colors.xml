@@ -23,6 +23,7 @@
     <color name="subtitle">#9B9B9B</color>
     <color name="tab_inactive">#9B9B9B</color>
     <color name="tab_active">#000000</color>
+    <color name="transparent">#80000000</color>
 
 
     <color name="toc_front">#000000</color>

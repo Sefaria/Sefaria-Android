@@ -12,43 +12,104 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="54dp"
         android:minHeight="51dp"
-        android:padding="10dp"
+        android:paddingRight="@dimen/custom_action_bar_button_to_side_padding"
+
+
         android:background="@color/menu_background">
 
-        <View
+        <FrameLayout
             android:id="@+id/home_btn"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:background="@drawable/home168"></View>
+            android:layout_width="@dimen/custom_action_bar_button_frame_width"
+            android:layout_height="match_parent"
 
-        <View
+            android:paddingLeft="@dimen/custom_action_bar_button_to_side_padding"
+            android:layout_margin="0dp"
+
+            >
+            <ImageView
+                android:layout_width="@dimen/custom_action_bar_pic_size"
+                android:layout_height="@dimen/custom_action_bar_pic_size"
+                android:src="@drawable/home168"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center"
+
+
+                />
+
+        </FrameLayout>
+
+        <FrameLayout
             android:id="@+id/close_btn"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:background="@drawable/close47"
+            android:layout_toRightOf="@+id/home_btn"
+            android:layout_width="@dimen/custom_action_bar_button_frame_width"
+            android:layout_height="match_parent"
 
-            ></View>
+            android:paddingLeft="@dimen/custom_action_bar_button_to_side_padding"
+            android:layout_margin="0dp"
 
-        <View
+            >
+            <ImageView
+                android:layout_width="@dimen/custom_action_bar_pic_size"
+                android:layout_height="@dimen/custom_action_bar_pic_size"
+                android:src="@drawable/close47"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center"
+
+
+                />
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/search_btn"
+            android:layout_toRightOf="@+id/close_btn"
+            android:layout_width="@dimen/custom_action_bar_button_frame_width"
+            android:layout_height="match_parent"
+
+            android:paddingLeft="@dimen/custom_action_bar_button_to_side_padding"
+            android:layout_margin="0dp"
+
+            >
+            <ImageView
+                android:layout_width="@dimen/custom_action_bar_pic_size"
+                android:layout_height="@dimen/custom_action_bar_pic_size"
+                android:src="@drawable/search100"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center"
+
+
+                />
+
+        </FrameLayout>
+
+        <FrameLayout
             android:id="@+id/menu_btn"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="@dimen/custom_action_bar_button_frame_width"
+            android:layout_height="match_parent"
             android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:background="@drawable/bi_icon"
+            android:paddingRight="@dimen/custom_action_bar_button_to_side_padding"
+            android:layout_margin="0dp"
 
-            ></View>
+            >
+            <ImageView
+                android:layout_width="@dimen/custom_action_bar_pic_size"
+                android:layout_height="@dimen/custom_action_bar_pic_size"
+                android:src="@drawable/bi_icon"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center"
+
+
+                />
+
+        </FrameLayout>
+
 
         <org.sefaria.sefaria.layouts.AutoResizeTextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
-            android:layout_toRightOf="@id/home_btn"
+            android:layout_toRightOf="@id/search_btn"
             android:layout_toLeftOf="@id/menu_btn"
             android:layout_height="32dp"
             android:text="Tanach"
@@ -75,7 +136,9 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="3dp"
-        android:background="@color/menu_foreground"></View>
+        android:background="@color/menu_foreground"
+        android:layout_gravity="bottom|center"
+        ></View>
 
     <!-- small grey bar at the bottom of actionbar -->
 

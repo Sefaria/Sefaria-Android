@@ -31,6 +31,7 @@ public class TOCActivity extends AppCompatActivity {
     private Book book;
     private String pathDefiningNode;
     private Util.Lang lang;
+    private Context context;
 
     public static Intent getStartTOCActivityIntent(Context superTextActivityThis, Book book, Node currNode){
         Intent intent = new Intent(superTextActivityThis, TOCActivity.class);
@@ -44,17 +45,19 @@ public class TOCActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_toc);
+        Log.d("TOCActivity","TOCActivity started");
 
         Intent intent = getIntent();
         book = intent.getParcelableExtra("currBook");
         pathDefiningNode = intent.getStringExtra("pathDefiningNode");
         lang = MyApp.getDefaultLang(Util.SETTING_LANG_TYPE.MENU);
+        context = this;
         init();
     }
 
     private void init() {
         MenuNode titleNode = new MenuNode("Table of Contents","תוכן העניינים",null);
-        CustomActionbar cab = new CustomActionbar(this, titleNode, lang,homeClick,closeClick,null,null);
+        CustomActionbar cab = new CustomActionbar(this, titleNode, lang,homeClick,closeClick,null,null,null);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(cab);
 
@@ -81,13 +84,12 @@ public class TOCActivity extends AppCompatActivity {
     View.OnClickListener homeClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            //TODO make this work
-            /*
-            Intent returnIntent = new Intent();
-            returnIntent.putExtra("searchClicked",true);
-            setResult(0, returnIntent);
+
+            Intent intent = new Intent(context,HomeActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); //Clear Activity stack
+            startActivity(intent);//TODO make this work with the proper stack order
+
             finish();
-            */
         }
     };
 

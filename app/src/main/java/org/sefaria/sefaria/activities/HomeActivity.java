@@ -64,7 +64,7 @@ public class HomeActivity extends Activity {
         if (isPopup) tempCloseClick = closeClick;
 
         CustomActionbar cab = new CustomActionbar(this,new MenuNode("Sefaria","ספאריה",null),
-                menuLang,null,tempCloseClick,null,null);
+                menuLang,null,tempCloseClick,null,null,null);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(cab);
 

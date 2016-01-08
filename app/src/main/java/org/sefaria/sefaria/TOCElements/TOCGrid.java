@@ -139,7 +139,7 @@ public class TOCGrid extends LinearLayout {
         }
 
 
-        Log.d("grid", "NUM ROWS " + ((int) Math.ceil(gridNodes.size() / numColumns)));
+        //Log.d("grid", "NUM ROWS " + ((int) Math.ceil(gridNodes.size() / numColumns)));
 
         GridLayout gl = new GridLayout(context);
         gl.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
@@ -193,6 +193,8 @@ public class TOCGrid extends LinearLayout {
     }
 
     private void activateTab(TOCTab tocTab) {
+        if(tocTab.getActive() && tocTab.getLang() == lang)
+            return;
         for (TOCTab tempTocTab : TocTabList) {
             tempTocTab.setActive(false);
         }
@@ -264,7 +266,7 @@ public class TOCGrid extends LinearLayout {
     }
 
     private LinearLayout makeTabSections(List<Node> nodeList) {
-
+        Log.d("TOCGrid", "makeTabSections started");
         LinearLayout tabs = new LinearLayout(context);
         tabs.setOrientation(LinearLayout.HORIZONTAL);
         tabs.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
@@ -303,7 +305,7 @@ public class TOCGrid extends LinearLayout {
 
         }
 
-
+        Log.d("TOCGrid", "makeTabSections started");
         return tabs;
     }
 
