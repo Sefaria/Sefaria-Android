@@ -86,7 +86,6 @@ public class CustomActionbar extends MenuElement {
          * \u3000 is a type of space char
          */
         String title = node.getTitle(lang);
-        title = title + title + title + title ;
         if(title.length() > 18)
             titleTV.setTextSize(9);
         if(title.length()< 19)
