@@ -14,7 +14,7 @@
             android:layout_alignParentLeft="true"
             android:paddingRight="10dp"
             android:paddingLeft="0dp"
-            android:paddingTop="25dp"
+            android:paddingTop="@dimen/text_activtiy_numbering_padding"
             android:gravity="center"
             android:textSize="15sp"
             android:text="26"/>
@@ -24,10 +24,10 @@
             android:orientation="vertical">
 
             <TextView
-                android:paddingTop="20dp"
+                android:paddingTop="@dimen/text_activtiy_between_segment_padding"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                android:paddingBottom="10dp"
+                android:paddingBottom="@dimen/text_activtiy_between_segment_padding"
                 android:id="@+id/he"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -38,10 +38,10 @@
                 android:textColor="@color/text_verse_mono"
                 android:text="וְהָאָ֗רֶץ הָיְתָ֥ה תֹ֙הוּ֙ וָבֹ֔הוּ וְחֹ֖שֶׁךְ עַל־פְּנֵ֣י תְה֑וֹם וְר֣וּחַ אֱלֹהִ֔ים מְרַחֶ֖פֶת עַל־פְּנֵ֥י הַמָּֽיִם׃"/>
             <TextView
-                android:paddingBottom="20dp"
+                android:paddingBottom="@dimen/text_activtiy_between_segment_padding"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                android:paddingTop="10dp"
+                android:paddingTop="@dimen/text_activtiy_between_segment_padding"
                 android:id="@+id/en"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -60,7 +60,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:paddingLeft="10dp"
-            android:paddingTop="25dp"
+            android:paddingTop="@dimen/text_activtiy_numbering_padding"
             android:gravity="center"
             android:textSize="15sp"
             android:text="26"/>

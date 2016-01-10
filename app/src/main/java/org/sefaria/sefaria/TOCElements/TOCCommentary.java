@@ -57,7 +57,7 @@ public class TOCCommentary extends LinearLayout implements TOCElement {
             this.setPadding(0, padding, sidePadding, padding);
             this.setGravity(Gravity.RIGHT);
         }
-        String text = commentary.getTitle(lang).replace(" on " + mainBook.title, "").replace(" על " + mainBook.heTitle, "");
+        String text = Book.removeOnMainBookFromTitle(commentary.getTitle(lang),mainBook);
         content_root.setText(text);
 
     }
