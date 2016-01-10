@@ -32,6 +32,7 @@ public class TOCActivity extends AppCompatActivity {
     private String pathDefiningNode;
     private Util.Lang lang;
     private Context context;
+    private TOCGrid tocGrid;
 
     public static Intent getStartTOCActivityIntent(Context superTextActivityThis, Book book, Node currNode){
         Intent intent = new Intent(superTextActivityThis, TOCActivity.class);
@@ -50,14 +51,14 @@ public class TOCActivity extends AppCompatActivity {
         Intent intent = getIntent();
         book = intent.getParcelableExtra("currBook");
         pathDefiningNode = intent.getStringExtra("pathDefiningNode");
-        lang = MyApp.getDefaultLang(Util.SETTING_LANG_TYPE.MENU);
+        lang = MyApp.getMenuLang();
         context = this;
         init();
     }
 
     private void init() {
         MenuNode titleNode = new MenuNode("Table of Contents","תוכן העניינים",null);
-        CustomActionbar cab = new CustomActionbar(this, titleNode, lang,homeClick,closeClick,null,null,null);
+        CustomActionbar cab = new CustomActionbar(this, titleNode, lang,homeClick,closeClick,null,null,langClick);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(cab);
 
@@ -67,7 +68,8 @@ public class TOCActivity extends AppCompatActivity {
 
         ScrollView tocRoot = (ScrollView) findViewById(R.id.toc_root);
 
-        TOCGrid tocGrid = new TOCGrid(this,book, tocNodesRoots,false,lang,pathDefiningNode);
+        tocGrid = new TOCGrid(this,book, tocNodesRoots,false,lang,pathDefiningNode);
+
         tocRoot.addView(tocGrid);
 
     }
@@ -91,6 +93,23 @@ public class TOCActivity extends AppCompatActivity {
 
             finish();
         }
+    };
+
+    View.OnClickListener langClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            //TODO change icon
+            if(lang == Util.Lang.HE){
+                lang = Util.Lang.EN;
+            }else if(lang == Util.Lang.EN){
+                lang = Util.Lang.HE;
+            }else{// if(lang == Util.Lang.BI){
+                lang = Util.Lang.EN;
+            }
+            Log.d("TOCAct", "new lang is: " + lang);
+            tocGrid.setLang(lang);
+        }
+
     };
 
 }

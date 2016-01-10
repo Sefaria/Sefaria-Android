@@ -77,7 +77,7 @@ public class TOCGrid extends LinearLayout {
         bookTitleView.setTextSize(40);
         bookTitleView.setTextColor(Color.BLACK);
         bookTitleView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        bookTitleView.setText(book.getTitle(lang));
+
         bookTitleView.setGravity(Gravity.CENTER);
         int bookTitlepaddding =10;
         bookTitleView.setPadding(bookTitlepaddding, bookTitlepaddding, bookTitlepaddding, bookTitlepaddding);
@@ -90,7 +90,7 @@ public class TOCGrid extends LinearLayout {
         try {
             Node node = book.getNodeFromPathStr(pathDefiningNode);
             defaultTab = node.getTocRootNum();
-            String sectionTitle = node.getWholeTitle(lang);
+            String sectionTitle = node.getWholeTitle(lang); //TODO move lang to setLang
             currSectionTitleView.setText(sectionTitle);
             currSectionTitleView.setTextSize(40);
             int padding = 8;
@@ -313,6 +313,7 @@ public class TOCGrid extends LinearLayout {
 
     public void setLang(Util.Lang lang) {
         this.lang = lang;
+        bookTitleView.setText(book.getTitle(lang));
         //TODO also setLang of all the Header feilds
         for (TOCTab tempTocTab : TocTabList) {
             if(tempTocTab.getActive()){
