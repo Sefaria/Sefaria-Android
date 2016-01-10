@@ -14,8 +14,9 @@
             android:layout_alignParentLeft="true"
             android:paddingRight="10dp"
             android:paddingLeft="0dp"
-            android:paddingTop="20dp"
+            android:paddingTop="25dp"
             android:gravity="center"
+            android:textSize="15sp"
             android:text="26"/>
         <LinearLayout
             android:layout_width="match_parent"
@@ -59,8 +60,9 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:paddingLeft="10dp"
-            android:paddingTop="20dp"
+            android:paddingTop="25dp"
             android:gravity="center"
+            android:textSize="15sp"
             android:text="26"/>
     </RelativeLayout>
 
