@@ -7,6 +7,7 @@ import android.os.Bundle;
 import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Link;
+import org.sefaria.sefaria.database.Text;
 import org.sefaria.sefaria.layouts.CustomActionbar;
 import org.sefaria.sefaria.DialogManager;
 import org.sefaria.sefaria.MyApp;
@@ -80,7 +81,8 @@ public class HomeActivity extends Activity {
          */
         try {
             Book book = (new Book("Genesis"));
-            Link.LinkCount linkCount = Link.LinkCount.getFromLinks_small(book.getTOCroots().get(0).getFirstDescendant().getTexts().get(0));
+            Text text = book.getTOCroots().get(0).getFirstDescendant().getTexts().get(0);   
+            Link.LinkCount linkCount = Link.LinkCount.getFromLinks_small(text);
             linkCount.getSlimmedTitle(book, menuLang);
             linkCount.getCount();
             linkCount.getChildren();
