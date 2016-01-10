@@ -33,21 +33,21 @@ public class Link implements Parcelable {
 		 */
     }
 
-    public static final String KconnType = "connType";
-    public static final String Kbida = "bida";
-    public static final String Klevel1a = "level1a";
-    public static final String Klevel2a = "level2a";
-    public static final String Klevel3a = "level3a";
-    public static final String Klevel4a = "level4a";
-    public static final String Klevel5a = "level5a";
-    public static final String Klevel6a = "level6a";
-    public static final String Kbidb = "bidb";
-    public static final String Klevel1b = "level1b";
-    public static final String Klevel2b = "level2b";
-    public static final String Klevel3b = "level3b";
-    public static final String Klevel4b = "level4b";
-    public static final String Klevel5b = "level5b";
-    public static final String Klevel6b = "level6b";
+    private static final String KconnType = "connType";
+    private static final String Kbida = "bida";
+    private static final String Klevel1a = "level1a";
+    private static final String Klevel2a = "level2a";
+    private static final String Klevel3a = "level3a";
+    private static final String Klevel4a = "level4a";
+    private static final String Klevel5a = "level5a";
+    private static final String Klevel6a = "level6a";
+    private static final String Kbidb = "bidb";
+    private static final String Klevel1b = "level1b";
+    private static final String Klevel2b = "level2b";
+    private static final String Klevel3b = "level3b";
+    private static final String Klevel4b = "level4b";
+    private static final String Klevel5b = "level5b";
+    private static final String Klevel6b = "level6b";
 
     public int lid;
     public String connType;
@@ -86,7 +86,7 @@ public class Link implements Parcelable {
                 //;
     }
 
-    public static final String TABLE_LINKS = "Links" ;
+    private static final String TABLE_LINKS = "Links" ;
 
     private static String addLevelWhere(String levelName, int levelNum, String linkTableName){
         return addLevelWhere(levelName, levelNum, linkTableName, -1);
@@ -326,7 +326,7 @@ public class Link implements Parcelable {
     }
 
 
-    static String createWhere3(Text text, String type){
+    private static String createWhere3(Text text, String type){
         String whereStatement =  " WHERE L.bid" + type + " = " + text.bid;
         for(int i = 0; i < 6; i++){
             if (text.levels[i] == 0)
