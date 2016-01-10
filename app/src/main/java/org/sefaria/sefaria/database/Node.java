@@ -111,7 +111,7 @@ public class Node{ //TODO implements  Parcelable
             if (str.length() == 0){
                 str = node.getWholeTitleForOnly1Node(lang);
             }else {
-                if (node.isComplex() && !node.isGridItem())
+                if (node.isComplex && !node.isGridItem)
                     str = node.getWholeTitleForOnly1Node(lang) + ", " + str;
                 else
                     str = node.getWholeTitleForOnly1Node(lang) + " " + str;
@@ -123,7 +123,7 @@ public class Node{ //TODO implements  Parcelable
 
     private String getWholeTitleForOnly1Node(Util.Lang lang){
         String str;
-        if(isGridItem() || nid == NID_CHAP_NO_NID) {
+        if(isGridItem || nid == NID_CHAP_NO_NID) {
             str = getSectionName(lang);
             if (lang == Util.Lang.EN) {
                 str += " " + getGridNum();
@@ -139,7 +139,7 @@ public class Node{ //TODO implements  Parcelable
     private String getSectionName(Util.Lang lang){
         String name = "";
         if(lang == Util.Lang.BI)
-            lang = MyApp.getDefaultLang(Util.SETTING_LANG_TYPE.MENU);
+            lang = MyApp.getMenuLang();
 
         String [] names;
         if(lang == Util.Lang.EN){
@@ -432,7 +432,7 @@ public class Node{ //TODO implements  Parcelable
                 }
 
                 // add chap count (if it's a leaf with 2 or more levels):
-                if(node.textDepth >= 2 && node.isTextSection()) {
+                if(node.textDepth >= 2 && node.isTextSection) {
                     node.setAllChaps(true);
                 }
             }
@@ -535,21 +535,21 @@ public class Node{ //TODO implements  Parcelable
         if(textList != null) {
             return textList;
         }
-        if(!isTextSection()){
+        if(!isTextSection){
             Log.e("Node", "getTexts() was called when it's not a textSection!");
             textList = new ArrayList<>();
             return textList;
         }
-        if(!isComplex() && !isGridItem()) {
+        if(!isComplex && !isGridItem){
             Log.e("Node", "It thinks (!isComplex() && !isGridItem())... I don't know how.");
             textList = new ArrayList<>();
             return textList;
-        }else if(!isComplex() && isGridItem() && !isRef()){
+        }else if(!isComplex && isGridItem && !isRef){
             //TODO make work for more than 2 levels!!!!
             textList =  Text.get(getBid(),getLevels(),0);
         }else if(isRef()){
-            if(!isComplex()){
-                Log.e("Node", "It thinks (!isComplex() && isRef())... I don't know how.");
+            if(!isComplex){
+                Log.e("Node", "It thinks (!isComplex && isRef)... I don't know how.");
                 textList = new ArrayList<>();
                 return textList;
             }
@@ -561,11 +561,11 @@ public class Node{ //TODO implements  Parcelable
                 Log.e("Node.getTexts", "My start and end TIDs are no good for trying to get ref. TID:" + startTid + "-" + endTid + " ref:" + extraTids);
                 textList = new ArrayList<>();
             }
-        }else if(isComplex()){
+        }else if(isComplex){
             //TODO make sure this works
             // && isGridItem()
             //levels will be diff based on if it's a gridItem
-            if(isGridItem())
+            if(isGridItem)
                 textList = Text.get(bid, getLevels(), getNodeInDBParentNID());
             else
                 textList = Text.get(bid, getLevels(), nid);
@@ -598,7 +598,7 @@ public class Node{ //TODO implements  Parcelable
 
         List<Integer> levels = new ArrayList<>();
         levels.add(0);
-        if(isGridItem()) {
+        if(isGridItem) {
             levels.add(getGridNum());
         }
         Node parent = this.parent;
@@ -750,7 +750,7 @@ public class Node{ //TODO implements  Parcelable
 
     public String getTabName(Util.Lang lang){
         String name = "";
-        if (!isComplex() || isRef()) {
+        if (!isComplex || isRef) {
             try {
                 if (lang == Util.Lang.HE) {
                     name = heSectionNames[heSectionNames.length - 1];
@@ -770,13 +770,13 @@ public class Node{ //TODO implements  Parcelable
 
     private String getNodeTypeFlagsStr(){
         String str = "";
-        if(isComplex())
+        if(isComplex)
             str += " IS_COMPLX";
         if(isGridItem)
             str += " IS_GRID";
-        if(isTextSection())
+        if(isTextSection)
             str += " IS_TEXT";
-        if(isRef())
+        if(isRef)
             str += " IS_REF";
         return str;
     }

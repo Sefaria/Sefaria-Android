@@ -98,7 +98,7 @@ public abstract class SuperTextActivity extends Activity {
         //These vars are specifically initialized here and not in init() so that they don't get overidden when coming from TOC
         //defaults
         isCts = false;
-        textLang = MyApp.getDefaultLang(Util.SETTING_LANG_TYPE.TEXTS);
+        textLang = MyApp.getDefaultTextLang();
         textSize = getResources().getDimension(R.dimen.default_text_font_size);
         //end defaults
         setTitle(book.getTitle(menuLang));

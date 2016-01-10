@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
+import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.layouts.CustomActionbar;
 import org.sefaria.sefaria.Util;
 
@@ -25,6 +26,7 @@ public class MenuActivity extends Activity {
     private MenuState menuState;
     private boolean isPopup;
     private boolean hasSectionBack; //true when you clicked a subsection to get to this menu
+    private CustomActionbar cab;
 
     @Override
     protected void onCreate(Bundle in) {
@@ -44,18 +46,24 @@ public class MenuActivity extends Activity {
     }
 
     private void init() {
-        setTitle(menuState.getCurrNode().getTitle(menuState.getLang()));
-
+        Util.Lang menuLang = menuState.getLang();
+        setTitle(menuState.getCurrNode().getTitle(menuLang));
         //this specifically comes before menugrid, b/c in tabs it menugrid does funny stuff to currnode
-        CustomActionbar cab = new CustomActionbar(this, menuState.getCurrNode(),menuState.getLang(),homeClick,null,null,null,null);
+        cab = new CustomActionbar(this, menuState.getCurrNode(),menuLang,homeClick,null,null,null,menuClick);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(cab);
 
-        menuGrid = new MenuGrid(this,NUM_COLUMNS, menuState,LIMIT_GRID_SIZE,menuState.getLang());
+        menuGrid = new MenuGrid(this,NUM_COLUMNS, menuState,LIMIT_GRID_SIZE,menuLang);
         ScrollView root = (ScrollView) findViewById(R.id.gridRoot);
         root.addView(menuGrid);
-
-
+    }
+    private void setLang(Util.Lang lang){
+        if(lang == Util.Lang.BI) {
+            lang = Util.Lang.EN;
+        }
+        menuState.setLang(lang);
+        menuGrid.setLang(lang);
+        cab.setLang(lang);
     }
 
     @Override
@@ -99,6 +107,14 @@ public class MenuActivity extends Activity {
             returnIntent.putExtra("homeClicked",true);
             setResult(0, returnIntent);
             finish();
+        }
+    };
+
+
+    View.OnClickListener menuClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+           setLang(MyApp.switchMenuLang());
         }
     };
 

@@ -29,6 +29,7 @@ public class HomeActivity extends Activity {
     private MenuGrid menuGrid;
     private MenuState menuState;
     private boolean isPopup;
+    private CustomActionbar cab;
 
     @Override
     protected void onCreate(Bundle in) {
@@ -54,7 +55,7 @@ public class HomeActivity extends Activity {
         if (menuState == null) {
             menuState = new MenuState();
         }
-        Util.Lang menuLang = MyApp.getDefaultLang(Util.SETTING_LANG_TYPE.MENU);
+        Util.Lang menuLang = MyApp.getMenuLang();
         menuGrid = new MenuGrid(this,NUM_COLUMNS, menuState,LIMIT_GRID_SIZE,menuLang);
         ScrollView gridRoot = (ScrollView) findViewById(R.id.gridRoot);
         gridRoot.addView(menuGrid);
@@ -63,18 +64,25 @@ public class HomeActivity extends Activity {
         View.OnClickListener tempCloseClick = null;
         if (isPopup) tempCloseClick = closeClick;
 
-        CustomActionbar cab = new CustomActionbar(this,new MenuNode("Sefaria","ספאריה",null),
-                menuLang,null,tempCloseClick,null,null,null);
+        cab = new CustomActionbar(this,new MenuNode("Sefaria","ספאריה",null),
+                menuLang,null,tempCloseClick,null,null,menuClick);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(cab);
 
-        if(API.useAPI()) {
+        if(API.useAPI()) { //TODO move
             Toast.makeText(this, "starting download", Toast.LENGTH_SHORT).show();
             updateLibrary();
         }
-        /*List<Book> bookList = Book.getAll();
-        for(int i = 0; i < bookList.size(); i++)
-            bookList.get(i).log();*/
+    }
+
+    private void setLang(Util.Lang lang){
+        if(lang == Util.Lang.BI) {
+            lang = Util.Lang.EN;
+        }
+        menuState.setLang(lang);
+        menuGrid.setLang(lang);
+        cab.setLang(lang);
+
     }
 
     //this is a click event listener
@@ -104,7 +112,15 @@ public class HomeActivity extends Activity {
         @Override
         public void onClick(View v) {
             finish();
+        }
+    };
 
+
+
+    View.OnClickListener menuClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            setLang(MyApp.switchMenuLang());
         }
     };
 }
