@@ -48,7 +48,9 @@ public class Text implements Parcelable {
     public String enText;
     public String heText;
     public boolean isChapter; //for SectionAdapter. indicates that this obj is actually a placeholder for a perek title
-    public int numLinks = 0;
+    private int numLinks = 0;
+
+    public int getNumLinks(){ return numLinks;}
 
     /**
      * Little sections (like verse) to Big (like chap) and the rest zeros

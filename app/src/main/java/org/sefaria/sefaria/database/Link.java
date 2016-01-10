@@ -2,6 +2,7 @@ package org.sefaria.sefaria.database;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import android.database.Cursor;
@@ -11,6 +12,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 import android.util.Pair;
+
+import org.sefaria.sefaria.Util;
 
 public class Link implements Parcelable {
 
@@ -79,11 +82,6 @@ public class Link implements Parcelable {
             str += " "  + String.valueOf(levels[i]);
         }
         return str;
-                //+ " bidb: "  + String.valueOf(bidb)
-                //+ " "  + String.valueOf(level1b) + " "  + String.valueOf(level2b)
-                //+ " "  + String.valueOf(level3b) + " "  + String.valueOf(level4b)
-                //+ " "  + String.valueOf(level5b) + " "  + String.valueOf(level6b))
-                //;
     }
 
     private static final String TABLE_LINKS = "Links" ;
@@ -130,7 +128,7 @@ public class Link implements Parcelable {
         return str;
     }
 
-    static List<Pair<String, Integer>> getCountsTitles(Text text){
+    private static List<Pair<String, Integer>> getCountsTitles(Text text){
         Database2 dbHandler = Database2.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
 
@@ -163,44 +161,128 @@ public class Link implements Parcelable {
         return countList;
     }
 
-    public static List<Pair<String, Integer>> getCountsTitlesFromLinks_small(Text dummyText, int tidMin, int tidMax){
-        Database2 dbHandler = Database2.getInstance();
-        SQLiteDatabase db = dbHandler.getReadableDatabase();
-
-        List<Pair<String, Integer>> countList = new ArrayList<Pair<String, Integer>>();
 
 
-        String select1 = "SELECT T.bid"
-                + " FROM " + TABLE_LINKS +" L, " + Text.TABLE_TEXTS + " T "
-                + " WHERE " + makeWhereStatement(dummyText)
-                ;
+    public static class LinkCount {
+        protected String enTitle;
+        protected String heTitle;
+        protected int count;
+        protected List<LinkCount> children;
 
-        String select2 = "SELECT T3.bid"
-                + " FROM " + TABLE_LINKS +" L2, " + Text.TABLE_TEXTS + " T3 "
-                + " WHERE " + makeWhereStatement2(dummyText)
-                ;
-
-        String select = "SELECT T1.bid FROM " + Text.TABLE_TEXTS + " T1 WHERE T1._id"
-                + " IN ( SELECT L1.tid2 FROM Links_small L1 WHERE L1.tid1 >= " + tidMin + " AND " + " L1.tid1 < " + tidMax
-                + " UNION ALL "
-                + " SELECT L3.tid1 FROM Links_small L3 WHERE L3.tid2 >= " + tidMin + " AND " + " L3.tid2 < " + tidMax
-                + ")";
-
-        String sql = "SELECT B.title, booksCount FROM Books B, (SELECT bid as linkBid, Count(*) as booksCount FROM (" + select + " UNION ALL "  + select1 + " UNION ALL "  + select2 +  ") GROUP BY bid) WHERE B._id = linkBid";
-
-        Cursor cursor = db.rawQuery(sql, null);
-
-        if (cursor.moveToFirst()) {
-            do {
-                // Adding  to list
-                countList.add(new Pair<String, Integer> (cursor.getString(0), cursor.getInt(1)));
-            } while (cursor.moveToNext());
+        public LinkCount(String enTitle,int count,String heTitle){
+            this.enTitle = enTitle;
+            this.heTitle = heTitle;
+            this.count = count;
         }
 
-        //for(int i = 0; i < countList.size(); i++)
-        //	Log.d("SQL_linkcounts", " " + countList.get(i).first + " "+ countList.get(i).second);
+        /**
+         * This will convert the commentary name to remove the name of the book that it is commenting on.
+         * For example, it will transform "Rashi on Genesis" to "Rashi"
+         * @param book the book that it is commenting on (for example, Genesis)
+         * @param menuLang the lang for the displayed title
+         * @return the name of the commentary without the " on xyzBook" (for example, Rashi)
+         */
+        public String getSlimmedTitle(Book book, Util.Lang menuLang){
+            return Book.removeOnMainBookFromTitle(this.getTitle(menuLang),book);
+        }
 
-        return countList;
+        /**
+         * This is the real book title.
+         * use getSlimmedTitle() if you want to remove word like " on Genesis" from a title like "Rashi on Genesis"
+         * @param lang
+         * @return
+         */
+        public String getTitle(Util.Lang lang){
+            if(lang == Util.Lang.HE)
+                return heTitle;
+            else
+                return enTitle;
+        }
+
+        public int getCount(){ return count; }
+
+        public List<LinkCount> getChildren(){
+            if(children == null)
+                children = new ArrayList<>();
+            return children;
+        }
+
+        protected void addChild(LinkCount child){
+            if(children == null)
+                children = new ArrayList<>();
+            count += child.count;
+            children.add(child);
+        }
+
+        public static void printTree(LinkCount lc,int tabs){
+            String tabStr = "";
+            for(int i=0;i<tabs;i++)
+                tabStr += "\t";
+            Log.d("LinkCount", tabStr +   lc.toString());
+            for(int i=0;i<lc.getChildren().size();i++) {
+                printTree(lc.children.get(i),tabs + 1);
+            }
+        }
+
+
+        @Override
+        public String toString() {
+            String str = enTitle + " " + heTitle + " " + count +  "\n";
+
+            return str;
+        }
+
+        public static LinkCount getFromLinks_small(Text text){
+            LinkCount allLinkCounts = new LinkCount("All Connections", 0, "All Connections (He)");
+            if(text.getNumLinks() == 0)  return allLinkCounts;
+            Database2 dbHandler = Database2.getInstance();
+            SQLiteDatabase db = dbHandler.getReadableDatabase();
+            Log.d("Link", "starting getCountsTitlesFromLinks_small");
+            String sql = "SELECT B.title, Count(*) as booksCount, B.heTitle, B.commentsOn, B.categories FROM Books B, Links_small L, Texts T WHERE (" +
+                    "(L.tid1 = " + text.tid + " AND L.tid2=T._id AND T.bid= B._id) OR " +
+                    "(L.tid2 = " + text.tid + " AND L.tid1=T._id AND T.bid= B._id) ) GROUP BY B._id ORDER BY B.categories, B._id"
+                    ;
+
+            Cursor cursor = db.rawQuery(sql, null);
+
+            LinkCount commentaryGroup = new LinkCount("Commentary",0, "מפרשים");
+            LinkCount countGroups = null;
+            String lastCategory = "";
+            if (cursor.moveToFirst()) {
+                do {
+                    // Adding  to list
+                    String [] categories = Util.str2strArray(cursor.getString(4));
+                    //TODO test length
+                    if(countGroups == null || !categories[0].equals(lastCategory)){
+                        if(countGroups != null && countGroups.count >0) {
+                            allLinkCounts.addChild(countGroups);
+                        }
+                        lastCategory = categories[0];
+                        String category;
+                        if(categories[0].equals("Commentary"))
+                            category = "Quoting Commentary";
+                        else
+                            category = categories[0];
+                        countGroups = new LinkCount(category,0, category + " (he)");
+                    }
+                    LinkCount linkCount = new LinkCount(cursor.getString(0),cursor.getInt(1),cursor.getString(2));
+                    if(cursor.getInt(3) == text.bid){//Comments on this book
+                        commentaryGroup.addChild(linkCount);
+                    }else{
+                        countGroups.addChild(linkCount);
+                    }
+
+                } while (cursor.moveToNext());
+            }
+            allLinkCounts.addChild(countGroups);
+            allLinkCounts.addChild(commentaryGroup);
+            Log.d("Link", "finished getCountsTitlesFromLinks_small");
+            printTree(allLinkCounts, 0);
+
+            return allLinkCounts;
+        }
+
+
     }
 
 	/*
@@ -238,6 +320,30 @@ public class Link implements Parcelable {
 	}
 	 */
 
+    /**
+     * Get links for specific text (ex. verse).
+     * @param text
+     * @param limit
+     * @param offset
+     * @return linkList
+     */
+    static List<Text> getLinkedTexts(Text text, int limit, int offset) {
+        List<Text> linkList = new ArrayList<Text>();
+        try{
+            linkList = getLinkedTextsFromDB(text, limit, offset);
+        }catch(SQLiteException e){
+            if(!e.toString().contains(API.NO_TEXT_MESSAGE)){
+                throw e; //don't know what the problem is so throw it back out
+            }
+            linkList = API.getLinks(text,limit,offset);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        return linkList;
+    }
+
+
     private static List<Text> getLinkedTextsFromDB(Text text, int limit, int offset) {
         Database2 dbHandler = Database2.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
@@ -266,27 +372,70 @@ public class Link implements Parcelable {
         return linkList;
     }
 
+
+    private static String createWhere3(Text text, String type){
+        String whereStatement =  " WHERE L.bid" + type + " = " + text.bid;
+        for(int i = 0; i < 6; i++){
+            if (text.levels[i] == 0)
+                return whereStatement;
+            whereStatement+= " AND L.level" + (i +1) + type + " = " + text.levels[i];
+        }
+        return whereStatement;
+
+
+    }
+
+    public static List<Link> getLinks(Text text) {
+        Database2 dbHandler = Database2.getInstance();
+        SQLiteDatabase db = dbHandler.getReadableDatabase();
+
+        List<Link> linkList = new ArrayList<Link>();
+
+        String sql = "SELECT L._id, L.connType, L.bidb as bid, L.level1b, L.level2b, L.level3b, L.level4b, L.level5b, L.level6b FROM Links L"
+                + createWhere3(text,"a")
+                //+ " UNION"
+                //+ " SELECT L._id, L.connType, L.bida as bid, L.level1a, L.level2a, L.level3a, L.level4a, L.level5a, L.level6a FROM Links L"
+                //+  createWhere3(text,"b")
+                //+ " WHERE L.bidb = ? AND L.level1b = ? AND L.level2b = ? AND L.level3b = ? AND L.level4b = ?  AND L.level5b = ? AND L.level6b = ?"
+                + " ORDER BY bid";
+
+        Log.d("sql", sql);
+        Cursor cursor = db.rawQuery(sql, null);
+        if (cursor.moveToFirst()) {
+            do {
+                // Adding  to list
+                linkList.add(new Link(cursor));
+            } while (cursor.moveToNext());
+        }
+
+        return linkList;
+    }
+
+
+
     /**
-     * Get links for specific text (ex. verse).
+     * gets links to a particular level other than the last level
      * @param text
      * @param limit
      * @param offset
-     * @return linkList
+     * @return
      */
-    static List<Text> getLinkedTexts(Text text, int limit, int offset) {
-        List<Text> linkList = new ArrayList<Text>();
+    public static List<Text> getLinkedChapTexts(Text text, int limit, int offset) {
+        List<Text> texts = new ArrayList<Text>();
+        Text dummyChapText = Text.makeDummyChapText(text);
         try{
-            linkList = getLinkedTextsFromDB(text, limit, offset);
+            texts = getLinkedChapTextsFromDB(dummyChapText, limit, offset);
         }catch(SQLiteException e){
             if(!e.toString().contains(API.NO_TEXT_MESSAGE)){
                 throw e; //don't know what the problem is so throw it back out
             }
-            linkList = API.getLinks(text,limit,offset);
+            texts = API.getChapLinks(dummyChapText,limit,offset);
         }catch(Exception e){
             e.printStackTrace();
         }
 
-        return linkList;
+        return texts;
+
     }
 
 
@@ -324,65 +473,6 @@ public class Link implements Parcelable {
         }
         return linkList;
     }
-
-
-    private static String createWhere3(Text text, String type){
-        String whereStatement =  " WHERE L.bid" + type + " = " + text.bid;
-        for(int i = 0; i < 6; i++){
-            if (text.levels[i] == 0)
-                return whereStatement;
-            whereStatement+= " AND L.level" + (i +1) + type + " = " + text.levels[i];
-        }
-        return whereStatement;
-
-
-    }
-
-    private static List<Link> getLinks(Text text, int limit, int offset) {
-        Database2 dbHandler = Database2.getInstance();
-        SQLiteDatabase db = dbHandler.getReadableDatabase();
-
-        List<Link> linkList = new ArrayList<Link>();
-
-        String sql = "SELECT L._id, L.connType, L.bidb as bid, L.level1b, L.level2b, L.level3b, L.level4b, L.level5b, L.level6b FROM Links L"
-                + createWhere3(text,"a")
-                //+ " UNION"
-                //+ " SELECT L._id, L.connType, L.bida as bid, L.level1a, L.level2a, L.level3a, L.level4a, L.level5a, L.level6a FROM Links L"
-                //+  createWhere3(text,"b")
-                //+ " WHERE L.bidb = ? AND L.level1b = ? AND L.level2b = ? AND L.level3b = ? AND L.level4b = ?  AND L.level5b = ? AND L.level6b = ?"
-                + " ORDER BY bid";
-
-        Log.d("sql", sql);
-        Cursor cursor = db.rawQuery(sql, null);
-        if (cursor.moveToFirst()) {
-            do {
-                // Adding  to list
-                linkList.add(new Link(cursor));
-            } while (cursor.moveToNext());
-        }
-
-        return linkList;
-    }
-
-    //gets links to a particular level other than the last level
-    public static List<Text> getLinkedChapTexts(Text text, int limit, int offset) {
-        List<Text> texts = new ArrayList<Text>();
-        Text dummyChapText = Text.makeDummyChapText(text);
-        try{
-            texts = getLinkedChapTextsFromDB(dummyChapText, limit, offset);
-        }catch(SQLiteException e){
-            if(!e.toString().contains(API.NO_TEXT_MESSAGE)){
-                throw e; //don't know what the problem is so throw it back out
-            }
-            texts = API.getChapLinks(dummyChapText,limit,offset);
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-
-        return texts;
-
-    }
-
 
 
 
@@ -423,172 +513,6 @@ public class Link implements Parcelable {
         for(int i =0;i<NUM_LEVELS;i++)
             levels[i] = in.readInt();
     }
-
-	/*
-	 private static List<Link> getAll() { //really only to be used for testing
-		Database2 dbHandler = Database2.getInstance(MyApp.context);
-		List<Link> linkList = new ArrayList<Link>();
-		// Select All Query
-		String selectQuery = "SELECT  * FROM " + TABLE_LINKS;
-
-		SQLiteDatabase db = dbHandler.getReadableDatabase();
-		Cursor cursor = db.rawQuery(selectQuery, null);
-
-		// looping through all rows and adding to list
-		if (cursor.moveToFirst()) {
-			do {
-				// Adding  to list
-				linkList.add(new Link(cursor));
-			} while (cursor.moveToNext());
-		}
-
-		return linkList;
-	}
-
-
-	public static final String CREATE_TABLE_LINKS = "CREATE TABLE " + TABLE_LINKS + "(\r\n" +
-			"	_id INTEGER PRIMARY KEY,\r\n" +
-			KconnType + " CHAR(3),\r\n" +
-			Kbida + "  INTEGER,\r\n" +
-			"	level1a INTEGER,\r\n" +
-			"	level2a INTEGER,\r\n" +
-			"	level3a INTEGER,\r\n" +
-			"	level4a INTEGER,\r\n" +
-			"	level5a INTEGER,\r\n" +
-			"	level6a INTEGER,\r\n" +
-			//"	FOREIGN KEY(" + Kbida + ") \r\n" +
-			//"		REFERENCES Books(bid)\r\n" +
-			//"		ON DELETE CASCADE,\r\n" +
-			Kbidb + "  INTEGER,\r\n" +
-			"	level1b INTEGER,\r\n" +
-			"	level2b INTEGER,\r\n" +
-			"	level3b INTEGER,\r\n" +
-			"	level4b INTEGER,\r\n" +
-			"	level5b INTEGER,\r\n" +
-			"	level6b INTEGER\r\n" + //"	level6b INTEGER,\r\n" +
-			//"	FOREIGN KEY(" + Kbidb + ") \r\n" +
-			//"		REFERENCES Books(bid)\r\n" +
-			//"		ON DELETE CASCADE\r\n" +
-			")";
-
-
-	public static void addLinks(Context context){
-		Database2 dbHandler = Database2.getInstance(MyApp.context);
-		SQLiteDatabase db = dbHandler.getWritableDatabase();
-		db.execSQL("DROP TABLE IF EXISTS " + TABLE_LINKS);
-		db.execSQL(CREATE_TABLE_LINKS);
-
-		final int linkVer = 3;
-		int linkFileNum = -1;
-		while(true){
-			linkFileNum++;
-			String path = "links/" + linkVer+ "link"+ linkFileNum +  ".csv";
-			try{
-				CSVReader reader = new CSVReader(new InputStreamReader(context.getResources().getAssets().open(path)));
-				addLinkFile(db, reader);
-				Log.d("sql_link_adding","(I think) added links " + linkFileNum + ".csv to database");
-			}catch(Exception e){
-				sendException(e);
-				break;
-			}
-		}
-		db.close();
-
-	}
-
-	private static void addLinkFile(SQLiteDatabase db, CSVReader reader){
-
-		String next[] = {};
-
-		try {
-			Book booka = new Book();
-			Book bookb = new Book();
-			db.beginTransaction();
-			while(true) {
-				next = reader.readNext();
-				if(next != null) {
-					if(!next[0].equals(booka.title))
-						booka = new Book(next[0],db);
-					if(!next[7].equals(bookb.title))
-						bookb = new Book(next[7],db);
-					try{
-						if(db.insert(TABLE_LINKS, null, putValues(next, booka, bookb)) != -1)
-							;//Log.d("sql_link_add", "Added new link: " + title  + " " + langString);
-						else
-							Log.e("sql_link_add", "Couldn't add link: ");
-					} catch (Exception e){
-						Log.e("sql_link_add", "Couldn't add link. " + e);
-
-					}
-				} else {
-					break;
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}finally{
-			db.setTransactionSuccessful();
-			db.endTransaction();
-		}
-		return;
-	}
-
-	private static ContentValues putValues(String [] row, Book booka, Book bookb){
-		ContentValues values = new ContentValues();
-
-		int startingNum = 6;
-		int endingNum = 1;
-		//int whileLoopC = 0;
-		while(row[startingNum - booka.textDepth + 1].equals("0")){
-			//return values; //return emtpy thing.
-			for(int i = startingNum; i> endingNum ; i-- ){
-				row[i - 1] = row[i];
-			}
-			row[startingNum] = "0";
-			//Log.d("sql_link_values", "preforming fix row[x] A-" + booka.title + " " + whileLoopC++);
-		}
-
-
-		startingNum = 13;
-		endingNum = 8;
-		//whileLoopC = 0;
-		while(row[startingNum - bookb.textDepth + 1].equals("0")){
-			for(int i = startingNum; i> endingNum ; i-- ){
-				row[i - 1] = row[i];
-			}
-			row[startingNum] = "0";
-			//Log.d("sql_link_values", "preforming fix row[x] B-" + bookb.title+ " " + whileLoopC++ );
-		}
-
-		values.put(KconnType, row[14]);
-
-		values.put(Kbida, booka.bid);
-
-
-		values.put(Klevel1a, row[6]);
-		values.put(Klevel2a, row[5]);
-		values.put(Klevel3a, row[4]);
-		values.put(Klevel4a, row[3]);
-		values.put(Klevel5a, row[2]);
-		values.put(Klevel6a, row[1]);
-
-
-		values.put(Kbidb, bookb.bid);
-		values.put(Klevel1b, row[13]);
-		values.put(Klevel2b, row[12]);
-		values.put(Klevel3b, row[11]);
-		values.put(Klevel4b, row[10]);
-		values.put(Klevel5b, row[9]);
-		values.put(Klevel6b, row[8]);
-
-		//Log.d("sql_links_putValues", row.toString());
-
-		return values;
-	}
-
-	 */
-
-
 
 }
 

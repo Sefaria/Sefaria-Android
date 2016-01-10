@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import org.sefaria.sefaria.database.API;
+import org.sefaria.sefaria.database.Book;
+import org.sefaria.sefaria.database.Link;
 import org.sefaria.sefaria.layouts.CustomActionbar;
 import org.sefaria.sefaria.DialogManager;
 import org.sefaria.sefaria.MyApp;
@@ -16,10 +18,14 @@ import org.sefaria.sefaria.menu.MenuGrid;
 import org.sefaria.sefaria.menu.MenuNode;
 import org.sefaria.sefaria.menu.MenuState;
 
+import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Toast;
+
+import java.util.List;
 
 public class HomeActivity extends Activity {
 
@@ -68,6 +74,20 @@ public class HomeActivity extends Activity {
                 menuLang,null,tempCloseClick,searchClick,null,menuClick,null);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(cab);
+
+        /*
+        This code doesn't belong here:
+         */
+        try {
+            Book book = (new Book("Genesis"));
+            Link.LinkCount linkCount = Link.LinkCount.getFromLinks_small(book.getTOCroots().get(0).getFirstDescendant().getTexts().get(0));
+            linkCount.getSlimmedTitle(book, menuLang);
+            linkCount.getCount();
+            linkCount.getChildren();
+            //see LinkCount.printTree() for recursive function using getChildren()
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
         if(API.useAPI()) { //TODO move
             Toast.makeText(this, "starting download", Toast.LENGTH_SHORT).show();
