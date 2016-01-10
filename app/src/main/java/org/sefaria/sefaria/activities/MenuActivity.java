@@ -49,7 +49,7 @@ public class MenuActivity extends Activity {
         Util.Lang menuLang = menuState.getLang();
         setTitle(menuState.getCurrNode().getTitle(menuLang));
         //this specifically comes before menugrid, b/c in tabs it menugrid does funny stuff to currnode
-        cab = new CustomActionbar(this, menuState.getCurrNode(),menuLang,homeClick,null,null,null,menuClick);
+        cab = new CustomActionbar(this, menuState.getCurrNode(),menuLang,homeClick,null,null,null,menuClick,backClick);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(cab);
 
@@ -115,6 +115,13 @@ public class MenuActivity extends Activity {
         @Override
         public void onClick(View v) {
            setLang(MyApp.switchMenuLang());
+        }
+    };
+
+    View.OnClickListener backClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            onBackPressed();
         }
     };
 

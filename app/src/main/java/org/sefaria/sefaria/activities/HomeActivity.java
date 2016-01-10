@@ -65,7 +65,7 @@ public class HomeActivity extends Activity {
         if (isPopup) tempCloseClick = closeClick;
 
         cab = new CustomActionbar(this,new MenuNode("Sefaria","ספאריה",null),
-                menuLang,null,tempCloseClick,null,null,menuClick);
+                menuLang,null,tempCloseClick,searchClick,null,menuClick,null);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(cab);
 
@@ -108,6 +108,12 @@ public class HomeActivity extends Activity {
         out.putParcelable("menuState", menuState);
     }
 
+    View.OnClickListener searchClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+        }
+    };
+
     View.OnClickListener closeClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -115,12 +121,12 @@ public class HomeActivity extends Activity {
         }
     };
 
-
-
     View.OnClickListener menuClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             setLang(MyApp.switchMenuLang());
         }
     };
+
+
 }
