@@ -1,13 +1,16 @@
 package org.sefaria.sefaria.activities;
 
 import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -27,7 +30,7 @@ import org.sefaria.sefaria.menu.MenuState;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SectionActivity extends SuperTextActivity implements AbsListView.OnScrollListener {
+public class SectionActivity extends SuperTextActivity implements AbsListView.OnScrollListener, LinkFragment.OnLinkFragInteractionListener {
     private ListView listView;
     private SectionAdapter sectionAdapter;
 
@@ -51,6 +54,8 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
         listView.setAdapter(sectionAdapter);
         listView.setOnScrollListener(this);
         listView.setDivider(null);
+
+        listView.setOnItemClickListener(onItemClickListener);
 
         if (!isLoadingSection) {
             AsyncLoadSection als = new AsyncLoadSection(TextEnums.NEXT_SECTION);
@@ -115,6 +120,26 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
     public void onScrollStateChanged(AbsListView view, int scrollState) {
         //blah...
     }
+
+    public void onLinkFragInteractionListener(Uri uri) {
+
+    }
+
+    ListView.OnItemClickListener onItemClickListener = new ListView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            LinkFragment linkFragment = new LinkFragment();
+            Bundle args = new Bundle();
+            args.putString("param1", "HIII");
+            args.putString("param2", "YOOOO");
+            linkFragment.setArguments(args);
+            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+            fragmentTransaction.add(R.id.linkRoot,linkFragment);
+            fragmentTransaction.commit();
+
+            findViewById(R.id.linkRoot).setVisibility(View.VISIBLE);
+        }
+    };
 
     public class AsyncLoadSection extends AsyncTask<Void,Void,List<Text>> {
 

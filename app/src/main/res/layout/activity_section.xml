@@ -34,5 +34,13 @@
         android:layout_height="wrap_content"
         android:layout_alignTop="@id/useless"/>
 
+    <RelativeLayout
+        android:visibility="gone"
+        android:id="@+id/linkRoot"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:background="@android:color/holo_red_light"
+        android:layout_alignParentBottom="true"/>
+
 
 </RelativeLayout>
