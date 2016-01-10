@@ -22,11 +22,13 @@ public class CustomActionbar extends MenuElement {
     private View tocBtn;
     private View colorBar;
     private View menuBtn;
+    private View backBtn;
+    private View invisableBtn;
     private TextView titleTV;
     private MenuNode node;
 
 
-    public CustomActionbar(Context context, MenuNode node, Util.Lang lang, OnClickListener homeClick, OnClickListener closeClick, OnClickListener searchClick, OnClickListener titleClick, OnClickListener menuClick) {
+    public CustomActionbar(Context context, MenuNode node, Util.Lang lang, OnClickListener homeClick, OnClickListener closeClick, OnClickListener searchClick, OnClickListener titleClick, OnClickListener menuClick, OnClickListener backClick) {
         super(context);
         inflate(context, R.layout.custom_actionbar, this);
 
@@ -37,6 +39,8 @@ public class CustomActionbar extends MenuElement {
         searchBtn = findViewById(R.id.search_btn);
         tocBtn = findViewById(R.id.toc_btn);
         menuBtn = findViewById(R.id.menu_btn);
+        backBtn = findViewById(R.id.back_btn);
+        invisableBtn = findViewById(R.id.invisable_btn);
         colorBar = findViewById(R.id.color_bar);
         titleTV = (TextView) findViewById(R.id.title);
 
@@ -47,7 +51,10 @@ public class CustomActionbar extends MenuElement {
         else colorBar.setBackgroundColor(getResources().getColor(topColor));
 
         if (homeClick != null) homeBtn.setOnClickListener(homeClick);
-        else homeBtn.setVisibility(View.INVISIBLE);
+        else{
+            homeBtn.setVisibility(View.GONE);
+            invisableBtn.setVisibility(View.GONE);
+        }
 
         if (closeClick != null)  closeBtn.setOnClickListener(closeClick);
         else closeBtn.setVisibility(View.GONE);
@@ -57,6 +64,9 @@ public class CustomActionbar extends MenuElement {
 
         if (menuClick != null) menuBtn.setOnClickListener(menuClick);
         else menuBtn.setVisibility(View.INVISIBLE);
+
+        if (backClick != null) backBtn.setOnClickListener(backClick);
+        else backBtn.setVisibility(View.INVISIBLE);
 
         if (titleClick != null ) { titleTV.setOnClickListener(titleClick); tocBtn.setOnClickListener(titleClick); }
         else tocBtn.setVisibility(View.GONE);
@@ -71,7 +81,18 @@ public class CustomActionbar extends MenuElement {
     }
 
     public void setLang(Util.Lang lang) {
-        setTitle(node.getTitle(lang));
+        /**
+         * This is a hack so that the resizing textbox thinks that the text is bigger so it's more likely to fit everything in.
+         * \u3000 is a type of space char
+         */
+        String title = node.getTitle(lang);
+        title = title + title + title + title ;
+        if(title.length() > 18)
+            titleTV.setTextSize(9);
+        if(title.length()< 19)
+            title = "\u3000\u3000" + title + "\u3000\u3000";
+
+        setTitle(title);
         if (lang == Util.Lang.HE) {
             titleTV.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
             //titleTV.setTextSize((getResources().getDimension(R.dimen.custom_actionbar_font_size) * Util.EN_HE_RATIO));
@@ -85,4 +106,5 @@ public class CustomActionbar extends MenuElement {
     public MenuNode getNode(){
         return node;
     }
+
 }

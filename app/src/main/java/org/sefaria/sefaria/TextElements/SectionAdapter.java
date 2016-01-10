@@ -89,8 +89,9 @@ public class SectionAdapter extends ArrayAdapter<Text> {
                 heTv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
                 heTv.setTextSize(context.getTextSize());
 
-                heNum.setText("" + segment.levels[0]);
-                heNum.setTypeface(MyApp.getFont(MyApp.MONTSERRAT_FONT));
+                heNum.setText("" + Util.int2heb(segment.levels[0]));
+                heNum.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
+                //heNum.setTypeface(MyApp.getFont(MyApp.MONTSERRAT_FONT));
                 enNum.setText(Util.VERSE_BULLET);
             }
 
