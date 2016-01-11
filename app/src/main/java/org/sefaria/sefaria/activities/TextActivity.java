@@ -1,35 +1,22 @@
 package org.sefaria.sefaria.activities;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
-import org.sefaria.sefaria.database.API;
-import org.sefaria.sefaria.database.Node;
-import org.sefaria.sefaria.layouts.CustomActionbar;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.layouts.PerekTextView;
 import org.sefaria.sefaria.layouts.ScrollViewExt;
 import org.sefaria.sefaria.layouts.ScrollViewListener;
 import org.sefaria.sefaria.TextElements.TextChapterHeader;
-import org.sefaria.sefaria.TextElements.TextMenuBar;
 import org.sefaria.sefaria.Util;
-import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Text;
-import org.sefaria.sefaria.menu.MenuNode;
-import org.sefaria.sefaria.menu.MenuState;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.LogRecord;
 
 public class TextActivity extends SuperTextActivity {
 

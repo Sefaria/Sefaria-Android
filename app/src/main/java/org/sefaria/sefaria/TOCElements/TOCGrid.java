@@ -20,7 +20,7 @@ import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Node;
 import org.sefaria.sefaria.activities.MenuActivity;
 import org.sefaria.sefaria.layouts.AutoResizeTextView;
-import org.sefaria.sefaria.menu.MenuButton;
+import org.sefaria.sefaria.MenuElements.MenuButton;
 
 import java.util.ArrayList;
 import java.util.List;

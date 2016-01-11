@@ -8,12 +8,7 @@ import android.widget.TextView;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
-import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Node;
-import org.sefaria.sefaria.menu.MenuElement;
-import org.sefaria.sefaria.menu.MenuNode;
-
-import java.util.List;
 
 
 /**

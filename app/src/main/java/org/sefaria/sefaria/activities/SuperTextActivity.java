@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -23,8 +22,7 @@ import org.sefaria.sefaria.database.Text;
 import org.sefaria.sefaria.layouts.CustomActionbar;
 import org.sefaria.sefaria.layouts.PerekTextView;
 import org.sefaria.sefaria.layouts.ScrollViewExt;
-import org.sefaria.sefaria.menu.MenuNode;
-import org.sefaria.sefaria.menu.MenuState;
+import org.sefaria.sefaria.MenuElements.MenuNode;
 
 import java.util.ArrayList;
 import java.util.Arrays;
