@@ -65,10 +65,9 @@
             android:id="@+id/cts_btn"
             android:layout_width="@dimen/text_menu_bar_box"
             android:layout_height="@dimen/text_menu_bar_box"
-            android:text="Cts"
             android:gravity="center"
-            android:background="@color/midrash"
-            android:padding="10dp"
+            android:background="@drawable/align14"
+            android:padding="0dp"
 
             android:layout_margin="@dimen/text_menu_bar_box_margin"
 
@@ -116,8 +115,9 @@
             android:layout_height="wrap_content"
             android:text="white"
             android:gravity="center"
-            android:background="@color/kabbalah"
-            android:padding="20dp"/>
+            android:background="@color/text_white_background"
+            android:padding="20dp"
+            />
 
         <TextView
             android:id="@+id/grey_btn"
@@ -126,7 +126,7 @@
             android:layout_height="wrap_content"
             android:text="grey"
             android:gravity="center"
-            android:background="@color/liturgy"
+            android:background="@color/menu_foreground"
             android:padding="20dp"/>
 
         <TextView
@@ -136,7 +136,7 @@
             android:layout_height="wrap_content"
             android:text="black"
             android:gravity="center"
-            android:background="@color/philosophy"
+            android:background="@color/toc_front"
             android:padding="20dp"/>
 
     </LinearLayout>

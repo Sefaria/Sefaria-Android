@@ -79,7 +79,7 @@ public class Link implements Parcelable {
     public String toString(){
         String str =  String.valueOf(lid) + " " + connType + " bid: " + String.valueOf(bid);
         for(int i=0;i<NUM_LEVELS;i++){
-            str += " "  + String.valueOf(levels[i]);
+            str += ","  + String.valueOf(levels[i]);
         }
         return str;
     }
@@ -132,13 +132,19 @@ public class Link implements Parcelable {
     public static class LinkCount {
         protected String enTitle;
         protected String heTitle;
+        protected DEPTH_TYPE depth_type;
         protected int count;
         protected List<LinkCount> children;
 
-        public LinkCount(String enTitle,int count,String heTitle){
+        private enum DEPTH_TYPE {
+            ALL,CAT,BOOK
+        }
+
+        public LinkCount(String enTitle,int count,String heTitle, DEPTH_TYPE depth_type){
             this.enTitle = enTitle;
             this.heTitle = heTitle;
             this.count = count;
+            this.depth_type = depth_type;
         }
 
         /**
@@ -198,8 +204,11 @@ public class Link implements Parcelable {
             return str;
         }
 
+        final private static String ALL_CONNECTIONS = "All Connections";
+        final private static String COMMENTARY = "Commentary";
+        final private static String QUOTING_COMMENTARY = "Quoting Commentary";
         public static LinkCount getFromLinks_small(Text text){
-            LinkCount allLinkCounts = new LinkCount("All Connections", 0, "All Connections (He)");
+            LinkCount allLinkCounts = new LinkCount(ALL_CONNECTIONS, 0, "All Connections (He)",DEPTH_TYPE.ALL);
             if(text.getNumLinks() == 0)  return allLinkCounts;
             Database2 dbHandler = Database2.getInstance();
             SQLiteDatabase db = dbHandler.getReadableDatabase();
@@ -211,7 +220,7 @@ public class Link implements Parcelable {
 
             Cursor cursor = db.rawQuery(sql, null);
 
-            LinkCount commentaryGroup = new LinkCount("Commentary",0, "מפרשים");
+            LinkCount commentaryGroup = new LinkCount(COMMENTARY,0, "מפרשים",DEPTH_TYPE.CAT);
             LinkCount countGroups = null;
             String lastCategory = "";
             if (cursor.moveToFirst()) {
@@ -226,12 +235,12 @@ public class Link implements Parcelable {
                         lastCategory = categories[0];
                         String category;
                         if(categories[0].equals("Commentary"))
-                            category = "Quoting Commentary";
+                            category = QUOTING_COMMENTARY;
                         else
                             category = categories[0];
-                        countGroups = new LinkCount(category,0, category + " (he)");
+                        countGroups = new LinkCount(category,0, category + " (he)",DEPTH_TYPE.CAT);
                     }
-                    LinkCount linkCount = new LinkCount(cursor.getString(0),cursor.getInt(1),cursor.getString(2));
+                    LinkCount linkCount = new LinkCount(cursor.getString(0),cursor.getInt(1),cursor.getString(2),DEPTH_TYPE.BOOK);
                     if(cursor.getInt(3) == text.bid){//Comments on this book
                         commentaryGroup.addChild(linkCount);
                     }else{
@@ -266,7 +275,7 @@ public class Link implements Parcelable {
      * @param linkFilter null if no filter or linkCount containing anything you want included in the filter (including LinkCount linkfiler's children)
      * @return List<Text> for texts links to the input text
      */
-    static List<Text> getLinkedTexts(Text text, LinkCount linkFilter) {
+    public static List<Text> getLinkedTexts(Text text, LinkCount linkFilter) {
         List<Text> linkList = new ArrayList<Text>();
         try{
             linkList = getLinkedTextsFromDB(text, linkFilter);
@@ -288,16 +297,43 @@ public class Link implements Parcelable {
         SQLiteDatabase db = dbHandler.getReadableDatabase();
         List<Text> linkList = new ArrayList<Text>();
 
+        Log.d("getLinksTextsFromDB", "Started ... linkFiler:" + linkFilter);
 
         String sql = "SELECT T.* FROM " + Text.TABLE_TEXTS + " T, Books B WHERE T.bid = B._id AND T._id"
                 + " IN ( SELECT L1.tid2 FROM Links_small L1 WHERE L1.tid1 = " + text.tid
                 + " UNION "
                 + " SELECT L2.tid1 FROM Links_small L2 WHERE L2.tid2 = " + text.tid
-                + ")"
-                + " ORDER BY (case when B.commentsOn=" + text.bid  + " then 0 else 1 end), T.bid"
-                ;
+                + ")";
 
-        Cursor cursor = db.rawQuery(sql, null);
+        String [] args = null;
+        if(linkFilter.depth_type == LinkCount.DEPTH_TYPE.CAT){
+            if(linkFilter.enTitle.equals(LinkCount.COMMENTARY)){
+                sql += " AND B.commentsOn = ? ";
+                args = new String[] {""+text.bid};
+            }else{
+                String category;
+                if(linkFilter.enTitle.equals(LinkCount.QUOTING_COMMENTARY)) {
+                    //the category in the database is simply "Commentary"
+                    category = "Commentary";
+                    //don't include the commentary that is directly for this book (like "Rashi on Genesis" for "Genesis")
+                    sql += " AND B.commentsOn <> " + text.bid;
+                }else {
+                    category = linkFilter.enTitle;
+                }
+                //get the string for categories start with the selected category
+                sql += " AND B.categories like printf('%s%s%s','[\"',?,'%') ";
+                args = new String[]{category};
+
+            }
+        }else if(linkFilter.depth_type == LinkCount.DEPTH_TYPE.BOOK){
+            sql += " AND B.title = ?";
+            args = new String[]{linkFilter.enTitle};
+        }
+
+        sql += " ORDER BY (case when B.commentsOn=" + text.bid  + " then 0 else 1 end), T.bid";
+
+
+        Cursor cursor = db.rawQuery(sql, args);
         if (cursor.moveToFirst()) {
             do {
                 // Adding  to list
@@ -305,7 +341,15 @@ public class Link implements Parcelable {
             } while (cursor.moveToNext());
         }
 
-
+        Log.d("getLinksTextsFromDB", "Finished ... linkList.size():" + linkList.size());
+        if(linkList.size()!= linkFilter.count && linkList.size() < 7){
+            for(LinkCount lc: linkFilter.getChildren()){
+                Log.d("Link", lc.toString());
+            }
+            for(Text link:linkList){
+                link.log();
+            }
+        }
         return linkList;
     }
 
