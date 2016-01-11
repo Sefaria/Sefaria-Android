@@ -1,8 +1,7 @@
-package org.sefaria.sefaria.menu;
+package org.sefaria.sefaria.MenuElements;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;

@@ -7,20 +7,13 @@ import android.content.res.Resources;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.activities.SectionActivity;
-import org.sefaria.sefaria.activities.TextActivity;
-import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.database.Node;
-import org.sefaria.sefaria.menu.MenuNode;
-import org.sefaria.sefaria.menu.MenuState;
 
 /**
  *

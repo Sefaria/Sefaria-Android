@@ -2,7 +2,6 @@ package org.sefaria.sefaria.TextElements;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.Menu;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -10,7 +9,6 @@ import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.Text;
-import org.sefaria.sefaria.menu.MenuNode;
 
 /**
  * Created by nss on 11/4/15.

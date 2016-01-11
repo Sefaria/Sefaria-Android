@@ -32,7 +32,7 @@ import org.sefaria.sefaria.activities.HomeActivity;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
-import org.sefaria.sefaria.menu.MenuState;
+import org.sefaria.sefaria.MenuElements.MenuState;
 
 public class UpdateService extends Service {
     public static final int UPDATE_STAGE_1_COMPLETE = 0;

@@ -1,10 +1,7 @@
-package org.sefaria.sefaria.menu;
+package org.sefaria.sefaria.MenuElements;
 
 import android.content.Context;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import org.sefaria.sefaria.Util;
 
