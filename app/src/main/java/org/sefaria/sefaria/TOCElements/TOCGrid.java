@@ -156,6 +156,7 @@ public class TOCGrid extends LinearLayout {
         gl.setRowCount((int) Math.ceil(gridNodes.size()/numColumns));
         gl.setColumnCount(numColumns);
         for (int j = 0; j <  gridNodes.size();  j++) {
+            //This operation of creating a new view lots of times (for example, in Araab Turim) is causing it to go really slow
             TOCNumBox tocNumBox = new TOCNumBox(context,gridNodes.get(j), lang);
             if(lang == Util.Lang.HE) {//same hack as above, such that the letters look normal
                 tocNumBox.setRotationY(180);

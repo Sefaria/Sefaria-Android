@@ -33,7 +33,7 @@ public class Book implements Parcelable {
 
     }
 
-    public Book(String title){
+    public Book(String title) throws BookNotFoundException {
         //Node root = Node.getTOC(116);
         wherePage = DEFAULT_WHERE_PAGE;
         get(title);
@@ -223,19 +223,23 @@ public class Book implements Parcelable {
 
     }
 
-    public void get(String title){
+
+    public class BookNotFoundException extends Exception{
+        public BookNotFoundException(){ super(); }
+        private static final long serialVersionUID = 1L;
+    }
+
+    public void get(String title)throws BookNotFoundException{
         Database2 dbHandler = Database2.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
         Cursor cursor = db.query(TABLE_BOOKS, null, Ktitle + "=?",
                 new String[] { title }, null, null, null, null);
 
-
-        if (cursor != null){
-            cursor.moveToFirst();
+        if (cursor != null && cursor.moveToFirst()){
             getFromCursor(cursor);
         }
         else
-            bid = 0;
+            throw new BookNotFoundException();
     }
 
     public void get(int bid){

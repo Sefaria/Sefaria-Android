@@ -736,12 +736,15 @@ public class Node{ //TODO implements  Parcelable
         }
 
         if(addMoreh && false){//TODO remove only for testing alt structures
-            root = getRoots(new Book("Orot"),false).get(0);
-            root.tocRootsNum = allRoots.size();
-            allRoots.add(root); //has complex texts
-            root = getRoots(new Book("Sefer Tomer Devorah"),false).get(0);//has textDepth == 3
-            //allRoots.add(root);
-
+            try {
+                root = getRoots(new Book("Orot"),false).get(0);
+                root.tocRootsNum = allRoots.size();
+                allRoots.add(root); //has complex texts
+                root = getRoots(new Book("Sefer Tomer Devorah"),false).get(0);//has textDepth == 3
+                //allRoots.add(root);
+            } catch (Book.BookNotFoundException e) {
+                e.printStackTrace();
+            }
         }
 
 
