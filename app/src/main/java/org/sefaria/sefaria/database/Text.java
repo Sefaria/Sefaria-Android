@@ -32,12 +32,12 @@ public class Text implements Parcelable {
     private static final String Kbid = "bid";
     private static final String KenText = "enText";
     private static final String KheText = "heText";
-    private static final String Klevel1 = "level1";
-    private static final String Klevel2 = "level2";
-    private static final String Klevel3 = "level3";
-    private static final String Klevel4 = "level4";
-    private static final String Klevel5 = "level5";
-    private static final String Klevel6 = "level6";
+    protected static final String Klevel1 = "level1";
+    protected static final String Klevel2 = "level2";
+    protected static final String Klevel3 = "level3";
+    protected static final String Klevel4 = "level4";
+    protected static final String Klevel5 = "level5";
+    protected static final String Klevel6 = "level6";
     //public static final String Khid = Header.Khid;
 
 
@@ -48,7 +48,9 @@ public class Text implements Parcelable {
     public String enText;
     public String heText;
     public boolean isChapter; //for SectionAdapter. indicates that this obj is actually a placeholder for a perek title
-    public int numLinks = 0;
+    private int numLinks = 0;
+
+    public int getNumLinks(){ return numLinks;}
 
     /**
      * Little sections (like verse) to Big (like chap) and the rest zeros

@@ -319,7 +319,7 @@ public class API {
 
     }
 
-    public static List<Text> getLinks(Text text, int limit, int offset) {
+    public static List<Text> getLinks(Text text, Link.LinkCount linkFilter) {
         List<Text> texts = new ArrayList<Text>();
 
         return texts;

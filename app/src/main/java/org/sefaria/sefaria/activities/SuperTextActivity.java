@@ -64,17 +64,19 @@ public abstract class SuperTextActivity extends Activity {
     protected boolean isLinkOpen;
 
     @Override
-    protected void onCreate(Bundle in) {
-        super.onCreate(in);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
         Intent intent = getIntent();
-        Integer nodeHash = intent.getIntExtra("nodeHash", -1);
-        book = intent.getParcelableExtra("currBook");
-        menuLang = (Util.Lang) intent.getSerializableExtra("lang");
-        if (in != null) {
-            nodeHash = in.getInt("nodeHash", -1);
-            menuLang = (Util.Lang) in.getSerializable("lang");
-            book = in.getParcelable("currBook");
+        Integer nodeHash;
+        if (savedInstanceState != null) {//it's coming back after it cleared the activity from ram
+            nodeHash = savedInstanceState.getInt("nodeHash", -1);
+            menuLang = (Util.Lang) savedInstanceState.getSerializable("lang");
+            book = savedInstanceState.getParcelable("currBook");
+        }else{
+            nodeHash = intent.getIntExtra("nodeHash", -1);
+            menuLang = (Util.Lang) intent.getSerializableExtra("lang");
+            book = intent.getParcelableExtra("currBook");
         }
         if(book != null){ //||nodeHash == -1){// that means it came in from the menu or the TOC commentary tab
             try{
@@ -102,7 +104,7 @@ public abstract class SuperTextActivity extends Activity {
         //These vars are specifically initialized here and not in init() so that they don't get overidden when coming from TOC
         //defaults
         isCts = false;
-        textLang = MyApp.getDefaultLang(Util.SETTING_LANG_TYPE.TEXTS);
+        textLang = MyApp.getDefaultTextLang();
         textSize = getResources().getDimension(R.dimen.default_text_font_size);
         isLinkOpen = false;
         //end defaults
@@ -143,9 +145,17 @@ public abstract class SuperTextActivity extends Activity {
 
         //this specifically comes before menugrid, b/c in tabs it menugrid does funny stuff to currnode
         MenuNode menuNode = new MenuNode(book.getTitle(Util.Lang.EN),book.getTitle(Util.Lang.HE),null); //TODO possibly replace this object with a more general bilinual node
-        CustomActionbar cab = new CustomActionbar(this, menuNode, menuLang,homeClick,null,null,titleClick,menuClick); //TODO.. I'm not actually sure this should be lang.. instead it shuold be MENU_LANG from Util.S
+        CustomActionbar cab = new CustomActionbar(this, menuNode, menuLang,homeClick,null,null,titleClick,menuClick,backClick); //TODO.. I'm not actually sure this should be lang.. instead it shuold be MENU_LANG from Util.S
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(cab);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        //outState.putInt("nodeHash", nodeHash);
+        Log.d("SuperTextAct", "calling onSaveInstanceState");
+        //outState.putSerializable("lang",menuLang);
+        //outState.putParcelable("currBook", book);
     }
 
     @Override
@@ -200,7 +210,7 @@ public abstract class SuperTextActivity extends Activity {
         @Override
         public void onClick(View v) {
             Intent intent = TOCActivity.getStartTOCActivityIntent(SuperTextActivity.this, book,firstLoadedNode);
-            startActivityForResult(intent,TOC_CHAPTER_CLICKED_CODE);
+            startActivityForResult(intent, TOC_CHAPTER_CLICKED_CODE);
         }
     };
 
@@ -208,6 +218,13 @@ public abstract class SuperTextActivity extends Activity {
         @Override
         public void onClick(View v) {
             toggleTextMenu();
+        }
+    };
+
+    View.OnClickListener backClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            onBackPressed();
         }
     };
 

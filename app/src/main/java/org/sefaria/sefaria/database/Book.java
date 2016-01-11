@@ -326,7 +326,7 @@ public class Book implements Parcelable {
         String selectQuery = "SELECT  * FROM " + TABLE_BOOKS + " WHERE commentsOn = ?";
 
         SQLiteDatabase db = dbHandler.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, new String [] {""+this.bid});
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{"" + this.bid});
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
@@ -339,6 +339,17 @@ public class Book implements Parcelable {
         allCommentaries = bookList;
         Log.d("Book", "getAllCommentary returning .size():" + allCommentaries.size());
         return bookList;
+    }
+
+
+    /**
+     *
+     * @param commentaryTitle (for example Rashi on Genesis)
+     * @param mainBook the book that it is commenting on (for example, Genesis)
+     * @return the name of the commentary without the " on xyzBook" (for example, Rashi)
+     */
+    public static String removeOnMainBookFromTitle(String commentaryTitle, Book mainBook){
+        return commentaryTitle.replace(" on " + mainBook.title, "").replace(" על " + mainBook.heTitle, "");
     }
 
     public static List<Book> getAll() {

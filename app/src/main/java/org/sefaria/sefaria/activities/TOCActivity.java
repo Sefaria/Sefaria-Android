@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IInterface;
+import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -32,12 +33,14 @@ public class TOCActivity extends AppCompatActivity {
     private String pathDefiningNode;
     private Util.Lang lang;
     private Context context;
+    private TOCGrid tocGrid;
+    CustomActionbar cab;
 
     public static Intent getStartTOCActivityIntent(Context superTextActivityThis, Book book, Node currNode){
         Intent intent = new Intent(superTextActivityThis, TOCActivity.class);
-        intent.putExtra("currBook",book);
+        intent.putExtra("currBook", book);
         String pathDefiningNode = currNode.makePathDefiningNode();
-        intent.putExtra("pathDefiningNode",pathDefiningNode);
+        intent.putExtra("pathDefiningNode", pathDefiningNode);
         return intent;
     }
 
@@ -45,19 +48,30 @@ public class TOCActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_toc);
-        Log.d("TOCActivity","TOCActivity started");
+        Log.d("TOCActivity", "TOCActivity started");
 
-        Intent intent = getIntent();
-        book = intent.getParcelableExtra("currBook");
-        pathDefiningNode = intent.getStringExtra("pathDefiningNode");
-        lang = MyApp.getDefaultLang(Util.SETTING_LANG_TYPE.MENU);
+
+
+        if(savedInstanceState == null){//it's coming from a saved to ram state
+            Intent intent = getIntent();
+            book = intent.getParcelableExtra("currBook");
+            pathDefiningNode = intent.getStringExtra("pathDefiningNode");
+            Log.d("TOCActivity", "Coming with getIntent");
+        }else{
+            book = savedInstanceState.getParcelable("currBook");
+            pathDefiningNode = savedInstanceState.getString("pathDefiningNode");
+            String bookTitle = savedInstanceState.getString("bookTitle");
+            Log.d("TOCActivity", "Coming back with savedInstanceState. book:" + book + ". pathDefiningNode: " + pathDefiningNode + ". bookTitle:" + bookTitle);
+        }
+        lang = MyApp.getMenuLang();
         context = this;
+
         init();
     }
 
     private void init() {
         MenuNode titleNode = new MenuNode("Table of Contents","תוכן העניינים",null);
-        CustomActionbar cab = new CustomActionbar(this, titleNode, lang,homeClick,closeClick,null,null,null);
+        cab = new CustomActionbar(this, titleNode, lang,homeClick,closeClick,null,null,langClick,null);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(cab);
 
@@ -67,11 +81,19 @@ public class TOCActivity extends AppCompatActivity {
 
         ScrollView tocRoot = (ScrollView) findViewById(R.id.toc_root);
 
-        TOCGrid tocGrid = new TOCGrid(this,book, tocNodesRoots,false,lang,pathDefiningNode);
+        tocGrid = new TOCGrid(this,book, tocNodesRoots,false,lang,pathDefiningNode);
+
         tocRoot.addView(tocGrid);
 
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putParcelable("currBook", book);
+        outState.putString("pathDefiningNode", pathDefiningNode);
+        outState.putString("bookTitle", book.title);
+        Log.e("TOCActvivity", "onSaveInstanceState called (not error)");
+    }
 
 
     View.OnClickListener closeClick = new View.OnClickListener() {
@@ -90,6 +112,31 @@ public class TOCActivity extends AppCompatActivity {
             startActivity(intent);//TODO make this work with the proper stack order
 
             finish();
+        }
+    };
+
+    View.OnClickListener langClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            //TODO change icon
+            if(lang == Util.Lang.HE){
+                lang = Util.Lang.EN;
+            }else if(lang == Util.Lang.EN){
+                lang = Util.Lang.HE;
+            }else{// if(lang == Util.Lang.BI){
+                lang = Util.Lang.EN;
+            }
+            Log.d("TOCAct", "new lang is: " + lang);
+            tocGrid.setLang(lang);
+            cab.setLang(lang);
+        }
+
+    };
+
+    View.OnClickListener backClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            onBackPressed();
         }
     };
 
