@@ -133,4 +133,8 @@ public class SectionAdapter extends ArrayAdapter<Text> {
         }
         return view;
     }
+
+    public void updateFocusedSegment() {
+
+    }
 }

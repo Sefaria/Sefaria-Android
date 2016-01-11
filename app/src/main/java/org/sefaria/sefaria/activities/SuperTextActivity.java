@@ -59,6 +59,10 @@ public abstract class SuperTextActivity extends Activity {
     protected float textSize;
     protected boolean isLoadingSection; //to make sure multiple sections don't get loaded at once
 
+    //link vars
+    protected LinkFragment linkFragment;
+    protected boolean isLinkOpen;
+
     @Override
     protected void onCreate(Bundle in) {
         super.onCreate(in);
@@ -100,6 +104,7 @@ public abstract class SuperTextActivity extends Activity {
         isCts = false;
         textLang = MyApp.getDefaultLang(Util.SETTING_LANG_TYPE.TEXTS);
         textSize = getResources().getDimension(R.dimen.default_text_font_size);
+        isLinkOpen = false;
         //end defaults
         setTitle(book.getTitle(menuLang));
     }
