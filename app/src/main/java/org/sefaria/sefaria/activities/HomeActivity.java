@@ -81,7 +81,7 @@ public class HomeActivity extends Activity {
          */
         try {
             Book book = (new Book("Genesis"));
-            Text text = book.getTOCroots().get(0).getFirstDescendant().getTexts().get(0);   
+            Text text = book.getTOCroots().get(0).getFirstDescendant().getTexts().get(0);
             Link.LinkCount linkCount = Link.LinkCount.getFromLinks_small(text);
             linkCount.getSlimmedTitle(book, menuLang);
             linkCount.getCount();

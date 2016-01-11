@@ -73,7 +73,7 @@ public class CustomActionbar extends MenuElement {
 
 
         //TODO - make this look normal centered
-        tocBtn.setVisibility(View.GONE);
+        //tocBtn.setVisibility(View.GONE);
     }
 
     private void setTitle(String title) {

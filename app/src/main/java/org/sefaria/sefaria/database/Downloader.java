@@ -32,9 +32,9 @@ public class Downloader {
     public static final String CSV_DEBUG_URL = "http://torahsummary.com/other/app/ver1/dev/" + CSV_FILE_NAME; //developing version
     //public static final String CSV_REAL_URL = "http://www.torahsummary.com/other/app/ver1/" + CSV_FILE_NAME; //release Version
     public static final String CSV_REAL_URL = CSV_DEBUG_URL;
-    public static final String CSV_DOWNLOAD_TITLE = "BetaMidrash Pre Update";
-    public static final String DB_DOWNLOAD_TITLE = "BetaMidrash Library Update";
-    public static final String JSON_INDEX_TITLE = "BetaMidrash Index";
+    public static final String CSV_DOWNLOAD_TITLE = "Sefaria Pre Update";
+    public static final String DB_DOWNLOAD_TITLE = "Sefaria Library Update";
+    public static final String JSON_INDEX_TITLE = "Sefaria Index";
     public static final String DB_DOWNLOAD_PATH = ".betaMidTempDownld/" ; //Environment.DIRECTORY_DOWNLOADS + "/";
     public static final String FULL_DOWNLOAD_PATH = Environment.getExternalStorageDirectory() + "/" + DB_DOWNLOAD_PATH;
     public static final String INDEX_JSON_NAME = "sefaria_mobile_updating_index.json";
