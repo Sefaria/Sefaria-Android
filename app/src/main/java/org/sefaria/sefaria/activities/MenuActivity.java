@@ -57,6 +57,7 @@ public class MenuActivity extends Activity {
         ScrollView root = (ScrollView) findViewById(R.id.gridRoot);
         root.addView(menuGrid);
     }
+
     private void setLang(Util.Lang lang){
         if(lang == Util.Lang.BI) {
             lang = Util.Lang.EN;
@@ -90,7 +91,7 @@ public class MenuActivity extends Activity {
                 finish();
             }
         }
-        menuGrid.setLang(menuGrid.getLang());//TODO noah this line seems useless
+        //menuGrid.setLang(menuGrid.getLang());//TODO noah this line seems useless
     }
 
     @Override

@@ -82,9 +82,7 @@ public class API {
         public APIException(){
             super();
         }
-
         private static final long serialVersionUID = 1L;
-
     }
 
     /**

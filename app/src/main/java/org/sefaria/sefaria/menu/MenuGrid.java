@@ -9,6 +9,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.activities.SectionActivity;
@@ -295,18 +296,21 @@ public class MenuGrid extends LinearLayout {
             Intent intent;
             if (mb.isBook()) {
                 boolean goToTOC = false;
-                if(goToTOC){
-                    intent = new Intent(context, TOCActivity.class);
-                    Book book = new Book(newMenuState.getCurrNode().getTitle(Util.Lang.EN));
-                    intent.putExtra("currBook", book);
-                    intent.putExtra("lang", newMenuState.getLang());
-                    context.startActivity(intent);
-                }else {
-                    Book book = new Book(newMenuState.getCurrNode().getTitle(Util.Lang.EN));
-                    SuperTextActivity.startNewTextActivityIntent(context,book,getLang());
+                Book book = null;
+                try {
+                    book = new Book(newMenuState.getCurrNode().getTitle(Util.Lang.EN));
+                    if(goToTOC){
+                        intent = new Intent(context, TOCActivity.class);
+                        intent.putExtra("currBook", book);
+                        intent.putExtra("lang", newMenuState.getLang());
+                        context.startActivity(intent);
+                    }else {
+                        SuperTextActivity.startNewTextActivityIntent(context,book,getLang());
 
+                    }
+                } catch (Book.BookNotFoundException e) {
+                    Toast.makeText(context,"Sorry, book not found",Toast.LENGTH_SHORT).show();
                 }
-
 
             }else {
                 intent = new Intent(context, MenuActivity.class);
