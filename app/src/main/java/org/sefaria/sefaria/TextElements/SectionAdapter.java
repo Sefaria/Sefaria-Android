@@ -1,14 +1,11 @@
 package org.sefaria.sefaria.TextElements;
 
 import android.app.Activity;
-import android.content.Context;
 import android.graphics.Color;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
@@ -17,7 +14,6 @@ import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.activities.SectionActivity;
 import org.sefaria.sefaria.database.Text;
-import org.sefaria.sefaria.menu.MenuNode;
 
 import java.util.List;
 
@@ -141,5 +137,9 @@ public class SectionAdapter extends ArrayAdapter<Text> {
             }
         }
         return view;
+    }
+
+    public void updateFocusedSegment() {
+
     }
 }

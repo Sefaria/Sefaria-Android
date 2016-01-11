@@ -1,8 +1,6 @@
-package org.sefaria.sefaria.menu;
+package org.sefaria.sefaria.MenuElements;
 
 import android.content.Context;
-import android.util.Log;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.sefaria.sefaria.MyApp;

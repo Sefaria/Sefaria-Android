@@ -1,18 +1,13 @@
 package org.sefaria.sefaria.activities;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.IInterface;
-import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.TextView;
 
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
@@ -20,11 +15,9 @@ import org.sefaria.sefaria.TOCElements.TOCGrid;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Node;
-import org.sefaria.sefaria.layouts.AutoResizeTextView;
 import org.sefaria.sefaria.layouts.CustomActionbar;
-import org.sefaria.sefaria.menu.MenuNode;
+import org.sefaria.sefaria.MenuElements.MenuNode;
 
-import java.net.URI;
 import java.util.List;
 
 public class TOCActivity extends AppCompatActivity {

@@ -8,8 +8,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import org.sefaria.sefaria.R;
+import org.sefaria.sefaria.database.Text;
 
 public class LinkFragment extends Fragment {
 
@@ -17,6 +19,8 @@ public class LinkFragment extends Fragment {
 
     private String mParam1;
     private String mParam2;
+
+    private Text segment;
 
     public static LinkFragment newInstance(String param1, String param2) {
         LinkFragment fragment = new LinkFragment();
@@ -68,6 +72,12 @@ public class LinkFragment extends Fragment {
     public interface OnLinkFragInteractionListener {
         // TODO: Update argument type and name
         public void onLinkFragInteractionListener(Uri uri);
+    }
+
+    public void setCurrSegment(Text segment) {
+        this.segment = segment;
+        TextView tv = (TextView) getView().findViewById(R.id.tv);
+        tv.setText("THE CURRENT SEG IS " + segment.levels[0]);
     }
 
 }
