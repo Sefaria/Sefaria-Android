@@ -81,7 +81,11 @@ public class HomeActivity extends Activity {
             Link.LinkCount linkCount = Link.LinkCount.getFromLinks_small(text);
             linkCount.getSlimmedTitle(book, menuLang);
             linkCount.getCount();
-            linkCount.getChildren();
+            for(Link.LinkCount linkFilter : linkCount.getChildren()){
+                Link.getLinkedTexts(text,linkFilter);
+                Link.getLinkedTexts(text,linkFilter.getChildren().get(0));
+            }
+
             //see LinkCount.printTree() for recursive function using getChildren()
         }catch (Exception e){
             e.printStackTrace();
