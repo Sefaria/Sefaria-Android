@@ -58,21 +58,36 @@ public class MyApp extends Application {
     }
 
 
-    /**
-     * returns the default lang that should be used different types of things
-     * //TODO make this changable in some user level thing and save them in settings.
-     */
-    public static Util.Lang getDefaultLang(Util.SETTING_LANG_TYPE setting_lang_type){
-
-        if(setting_lang_type == Util.SETTING_LANG_TYPE.TEXTS){
-            return Util.Lang.HE; //TODO change to BI
-        }else if(setting_lang_type == Util.SETTING_LANG_TYPE.MENU){
-            return Util.Lang.EN;
-        }
-        else {//if(setting_lang_type == Util.SETTING_LANG_TYPE.SYSTEM) {
-            return Util.Lang.EN;//TODO check if it's a hebrew phone
-        }
+    private static Util.Lang menuLang = null;
+    public static Util.Lang getMenuLang(){
+        if(menuLang == null)
+            menuLang = Settings.getSavedMenuLang();
+        return menuLang;
     }
+
+    /**
+     * change the menuLang from hebrew to english or visa versa
+     *  it returns the new menuLang;
+     */
+    public static Util.Lang switchMenuLang(){
+        if(menuLang == Util.Lang.EN)
+            menuLang = Util.Lang.HE;
+        else menuLang = Util.Lang.EN;
+        Settings.setSavedMenuLang(menuLang);
+        return menuLang;
+    }
+
+    public static Util.Lang getSystemLang(){
+        if(Util.isSystemLangHe())
+            return Util.Lang.HE;
+        else
+            return Util.Lang.EN;
+    }
+
+    public static Util.Lang getDefaultTextLang(){
+        return Util.Lang.BI;
+    }
+
 
     public static Context getContext() { return context; }
     public static String getAppPackageName() { return appPackageName; }

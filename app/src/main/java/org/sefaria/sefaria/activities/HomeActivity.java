@@ -5,6 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import org.sefaria.sefaria.database.API;
+import org.sefaria.sefaria.database.Book;
+import org.sefaria.sefaria.database.Link;
+import org.sefaria.sefaria.database.Text;
 import org.sefaria.sefaria.layouts.CustomActionbar;
 import org.sefaria.sefaria.DialogManager;
 import org.sefaria.sefaria.MyApp;
@@ -16,10 +19,14 @@ import org.sefaria.sefaria.menu.MenuGrid;
 import org.sefaria.sefaria.menu.MenuNode;
 import org.sefaria.sefaria.menu.MenuState;
 
+import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Toast;
+
+import java.util.List;
 
 public class HomeActivity extends Activity {
 
@@ -29,6 +36,7 @@ public class HomeActivity extends Activity {
     private MenuGrid menuGrid;
     private MenuState menuState;
     private boolean isPopup;
+    private CustomActionbar cab;
 
     @Override
     protected void onCreate(Bundle in) {
@@ -54,7 +62,7 @@ public class HomeActivity extends Activity {
         if (menuState == null) {
             menuState = new MenuState();
         }
-        Util.Lang menuLang = MyApp.getDefaultLang(Util.SETTING_LANG_TYPE.MENU);
+        Util.Lang menuLang = MyApp.getMenuLang();
         menuGrid = new MenuGrid(this,NUM_COLUMNS, menuState,LIMIT_GRID_SIZE,menuLang);
         ScrollView gridRoot = (ScrollView) findViewById(R.id.gridRoot);
         gridRoot.addView(menuGrid);
@@ -63,18 +71,40 @@ public class HomeActivity extends Activity {
         View.OnClickListener tempCloseClick = null;
         if (isPopup) tempCloseClick = closeClick;
 
-        CustomActionbar cab = new CustomActionbar(this,new MenuNode("Sefaria","ספאריה",null),
-                menuLang,null,tempCloseClick,null,null,null);
+        cab = new CustomActionbar(this,new MenuNode("Sefaria","ספאריה",null),
+                menuLang,null,tempCloseClick,searchClick,null,menuClick,null);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(cab);
 
-        if(API.useAPI()) {
+        /*
+        This code doesn't belong here:
+         */
+        try {
+            Book book = (new Book("Genesis"));
+            Text text = book.getTOCroots().get(0).getFirstDescendant().getTexts().get(0);
+            Link.LinkCount linkCount = Link.LinkCount.getFromLinks_small(text);
+            linkCount.getSlimmedTitle(book, menuLang);
+            linkCount.getCount();
+            linkCount.getChildren();
+            //see LinkCount.printTree() for recursive function using getChildren()
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        if(API.useAPI()) { //TODO move
             Toast.makeText(this, "starting download", Toast.LENGTH_SHORT).show();
             updateLibrary();
         }
-        /*List<Book> bookList = Book.getAll();
-        for(int i = 0; i < bookList.size(); i++)
-            bookList.get(i).log();*/
+    }
+
+    private void setLang(Util.Lang lang){
+        if(lang == Util.Lang.BI) {
+            lang = Util.Lang.EN;
+        }
+        menuState.setLang(lang);
+        menuGrid.setLang(lang);
+        cab.setLang(lang);
+
     }
 
     //this is a click event listener
@@ -100,11 +130,25 @@ public class HomeActivity extends Activity {
         out.putParcelable("menuState", menuState);
     }
 
+    View.OnClickListener searchClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+        }
+    };
+
     View.OnClickListener closeClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             finish();
-
         }
     };
+
+    View.OnClickListener menuClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            setLang(MyApp.switchMenuLang());
+        }
+    };
+
+
 }

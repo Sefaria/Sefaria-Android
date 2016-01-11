@@ -88,9 +88,12 @@ public class SectionAdapter extends ArrayAdapter<Text> {
                 //heTv.setTextColor(Color.parseColor("#000000"));
                 heTv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
                 heTv.setTextSize(context.getTextSize());
-
-                heNum.setText("" + segment.levels[0]);
-                heNum.setTypeface(MyApp.getFont(MyApp.MONTSERRAT_FONT));
+                if(segment.displayNum)
+                    heNum.setText("" + Util.int2heb(segment.levels[0]));
+                else
+                    heNum.setText("");
+                heNum.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
+                //heNum.setTypeface(MyApp.getFont(MyApp.MONTSERRAT_FONT));
                 enNum.setText(Util.VERSE_BULLET);
             }
 
@@ -117,11 +120,17 @@ public class SectionAdapter extends ArrayAdapter<Text> {
                     tv.setText(Html.fromHtml(segment.heText));
                     enNum.setText(Util.VERSE_BULLET);
                     enNum.setTypeface(MyApp.getFont(MyApp.MONTSERRAT_FONT));
-                    heNum.setText(Util.int2heb(segment.levels[0]));
+                    if(segment.displayNum)
+                        heNum.setText(Util.int2heb(segment.levels[0]));
+                    else
+                        heNum.setText("");
                     heNum.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
                 } else /*if (context.getTextLang() == Util.Lang.EN)*/ {
                     tv.setText(Html.fromHtml(segment.enText));
-                    enNum.setText(""+segment.levels[0]);
+                    if(segment.displayNum)
+                        enNum.setText(""+segment.levels[0]);
+                    else
+                        enNum.setText("");
                     enNum.setTypeface(MyApp.getFont(MyApp.MONTSERRAT_FONT));
                     heNum.setText(Util.VERSE_BULLET);
                     heNum.setTypeface(MyApp.getFont(MyApp.MONTSERRAT_FONT));

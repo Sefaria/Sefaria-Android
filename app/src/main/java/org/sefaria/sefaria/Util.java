@@ -31,9 +31,6 @@ public class Util {
         HE,BI,EN
     }
 
-    public enum SETTING_LANG_TYPE{
-        TEXTS,MENU,SYSTEM
-    }
 
     public static final String VERSE_BULLET = "\u25CF";
     public static final float EN_HE_RATIO = 40f/35f; //universal constant
