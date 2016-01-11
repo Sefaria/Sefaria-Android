@@ -128,40 +128,6 @@ public class Link implements Parcelable {
         return str;
     }
 
-    private static List<Pair<String, Integer>> getCountsTitles(Text text){
-        Database2 dbHandler = Database2.getInstance();
-        SQLiteDatabase db = dbHandler.getReadableDatabase();
-
-        List<Pair<String, Integer>> countList = new ArrayList<Pair<String, Integer>>();
-
-        String select = "SELECT T.bid"
-                + " FROM " + TABLE_LINKS +" L, " + Text.TABLE_TEXTS + " T "
-                + " WHERE " + makeWhereStatement(text)
-                ;
-
-        String select2 = "SELECT T3.bid"
-                + " FROM " + TABLE_LINKS +" L2, " + Text.TABLE_TEXTS + " T3 "
-                + " WHERE " + makeWhereStatement2(text)
-                ;
-
-        String sql = "SELECT B.title, booksCount FROM Books B, (SELECT bid as linkBid, Count(*) as booksCount FROM (" + select + " UNION ALL " + select2 + ") GROUP BY bid) WHERE B._id = linkBid";
-
-        Cursor cursor = db.rawQuery(sql, null);
-
-        if (cursor.moveToFirst()) {
-            do {
-                // Adding  to list
-                countList.add(new Pair<String, Integer> (cursor.getString(0), cursor.getInt(1)));
-            } while (cursor.moveToNext());
-        }
-
-        //for(int i = 0; i < countList.size(); i++)
-        //	Log.d("SQL_linkcounts", " " + countList.get(i).first + " "+ countList.get(i).second);
-
-        return countList;
-    }
-
-
 
     public static class LinkCount {
         protected String enTitle;
@@ -183,7 +149,7 @@ public class Link implements Parcelable {
          * @return the name of the commentary without the " on xyzBook" (for example, Rashi)
          */
         public String getSlimmedTitle(Book book, Util.Lang menuLang){
-            return Book.removeOnMainBookFromTitle(this.getTitle(menuLang),book);
+            return Book.removeOnMainBookFromTitle(this.getRealTitle(menuLang),book);
         }
 
         /**
@@ -192,7 +158,7 @@ public class Link implements Parcelable {
          * @param lang
          * @return
          */
-        public String getTitle(Util.Lang lang){
+        public String getRealTitle(Util.Lang lang){
             if(lang == Util.Lang.HE)
                 return heTitle;
             else
@@ -285,40 +251,6 @@ public class Link implements Parcelable {
 
     }
 
-	/*
-	public static List<Pair<String, Integer>> getCountsConnType(Text text){
-		Database2 dbHandler = Database2.getInstance(MyApp.context);
-		SQLiteDatabase db = dbHandler.getReadableDatabase();
-
-		List<Pair<String, Integer>> countList = new ArrayList<Pair<String, Integer>>();
-
-		String select = "SELECT L.connType"
-				+ " FROM " + TABLE_LINKS +" L, " + Text.TABLE_TEXTS + " T "
-				+ " WHERE " + makeWhereStatement(text)
-				;
-
-		String select2 = "SELECT L2.connType"
-				+ " FROM " + TABLE_LINKS +" L2, " + Text.TABLE_TEXTS + " T3 "
-				+ " WHERE " + makeWhereStatement2(text)
-				;
-
-		String sql = "SElECT connType, Count(*) from (" + select + " UNION ALL " + select2 + ") GROUP BY connType";
-
-		Cursor cursor = db.rawQuery(sql, null);
-
-		if (cursor.moveToFirst()) {
-			do {
-				// Adding  to list
-				countList.add(new Pair<String, Integer> (cursor.getString(0), cursor.getInt(1)));
-			} while (cursor.moveToNext());
-		}
-
-		//for(int i = 0; i < countList.size(); i++)
-		//	Log.d("SQL_linkcounts", " " + countList.get(i).first + " "+ countList.get(i).second);
-
-		return countList;
-	}
-	 */
 
     /**
      * Get links for specific text (ex. verse).
@@ -327,15 +259,22 @@ public class Link implements Parcelable {
      * @param offset
      * @return linkList
      */
-    static List<Text> getLinkedTexts(Text text, int limit, int offset) {
+
+    /**
+     *
+     * @param text
+     * @param linkFilter null if no filter or linkCount containing anything you want included in the filter (including LinkCount linkfiler's children)
+     * @return List<Text> for texts links to the input text
+     */
+    static List<Text> getLinkedTexts(Text text, LinkCount linkFilter) {
         List<Text> linkList = new ArrayList<Text>();
         try{
-            linkList = getLinkedTextsFromDB(text, limit, offset);
+            linkList = getLinkedTextsFromDB(text, linkFilter);
         }catch(SQLiteException e){
             if(!e.toString().contains(API.NO_TEXT_MESSAGE)){
                 throw e; //don't know what the problem is so throw it back out
             }
-            linkList = API.getLinks(text,limit,offset);
+            linkList = API.getLinks(text,linkFilter);
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -344,7 +283,7 @@ public class Link implements Parcelable {
     }
 
 
-    private static List<Text> getLinkedTextsFromDB(Text text, int limit, int offset) {
+    private static List<Text> getLinkedTextsFromDB(Text text, LinkCount linkFilter) {
         Database2 dbHandler = Database2.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
         List<Text> linkList = new ArrayList<Text>();
@@ -356,8 +295,6 @@ public class Link implements Parcelable {
                 + " SELECT L2.tid1 FROM Links_small L2 WHERE L2.tid2 = " + text.tid
                 + ")"
                 + " ORDER BY (case when B.commentsOn=" + text.bid  + " then 0 else 1 end), T.bid"
-                + " LIMIT " + String.valueOf(limit)
-                + " OFFSET " + String.valueOf(offset)
                 ;
 
         Cursor cursor = db.rawQuery(sql, null);
