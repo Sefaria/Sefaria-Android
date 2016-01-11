@@ -1,37 +1,31 @@
 package org.sefaria.sefaria.activities;
 
-import android.app.Activity;
 import android.app.FragmentTransaction;
-import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.Transformation;
+import android.view.animation.TranslateAnimation;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.Toast;
+import android.widget.RelativeLayout;
 
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.TextElements.SectionAdapter;
-import org.sefaria.sefaria.TextElements.TextMenuBar;
 import org.sefaria.sefaria.Util;
-import org.sefaria.sefaria.database.API;
-import org.sefaria.sefaria.database.Book;
-import org.sefaria.sefaria.database.Node;
 import org.sefaria.sefaria.database.Text;
-import org.sefaria.sefaria.layouts.CustomActionbar;
-import org.sefaria.sefaria.menu.MenuNode;
-import org.sefaria.sefaria.menu.MenuState;
+import org.sefaria.sefaria.layouts.ListViewExt;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SectionActivity extends SuperTextActivity implements AbsListView.OnScrollListener, LinkFragment.OnLinkFragInteractionListener {
-    private ListView listView;
+    private ListViewExt listView;
     private SectionAdapter sectionAdapter;
 
     private int preLast;
@@ -48,7 +42,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
     protected void init() {
         super.init();
 
-        listView = (ListView) findViewById(R.id.listview);
+        listView = (ListViewExt) findViewById(R.id.listview);
         sectionAdapter = new SectionAdapter(this,R.layout.adapter_text_mono,new ArrayList<Text>());
 
         listView.setAdapter(sectionAdapter);
@@ -56,7 +50,13 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
         listView.setDivider(null);
 
         listView.setOnItemClickListener(onItemClickListener);
+        listView.setOnScrollStoppedListener(new ListViewExt.OnScrollStoppedListener() {
 
+            public void onScrollStopped() {
+                updateFocusedSegment();
+
+            }
+        });
         if (!isLoadingSection) {
             AsyncLoadSection als = new AsyncLoadSection(TextEnums.NEXT_SECTION);
             als.execute();
@@ -89,6 +89,27 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
         sectionAdapter.notifyDataSetChanged();
     }
 
+    private void updateFocusedSegment() {
+        float mid = ((float)listView.getHeight())/2;
+        int numChildren = listView.getChildCount();
+
+        for (int i = 0; i < numChildren; i++) {
+            View v = listView.getChildAt(i);
+            if (v.getTop() < mid && v.getBottom() > mid) {
+                if (linkFragment != null) {
+                    int currInd = i + listView.getFirstVisiblePosition();
+                    Text currSeg = sectionAdapter.getItem(currInd);
+                    if (currSeg.isChapter) //TODO maybe make this select the chapter links...but not actually
+                        currSeg = sectionAdapter.getItem(currInd + 1);
+
+                    linkFragment.setCurrSegment(currSeg);
+                }
+                break;
+            }
+        }
+
+    }
+
 
     @Override
     public void onScroll(AbsListView lw, final int firstVisibleItem,
@@ -105,7 +126,6 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
                 final int lastItem = firstVisibleItem + visibleItemCount;
                 if(lastItem == totalItemCount) {
                     if(preLast!=lastItem){ //to avoid multiple calls for last item
-                        Log.d("Last", "Last");
                         preLast = lastItem;
                         AsyncLoadSection als = new AsyncLoadSection(TextEnums.NEXT_SECTION);
                         als.execute();
@@ -128,16 +148,37 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
     ListView.OnItemClickListener onItemClickListener = new ListView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            LinkFragment linkFragment = new LinkFragment();
-            Bundle args = new Bundle();
-            args.putString("param1", "HIII");
-            args.putString("param2", "YOOOO");
-            linkFragment.setArguments(args);
-            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-            fragmentTransaction.add(R.id.linkRoot,linkFragment);
-            fragmentTransaction.commit();
 
-            findViewById(R.id.linkRoot).setVisibility(View.VISIBLE);
+            View linkRoot = findViewById(R.id.linkRoot);
+
+            if (isLinkOpen) {
+                isLinkOpen = false;
+                //linkRoot.setVisibility(View.GONE);
+                SlideToDown(linkRoot);
+
+            } else {
+                isLinkOpen = true;
+                if (linkFragment == null) {
+                    linkFragment = new LinkFragment();
+                    Bundle args = new Bundle();
+                    args.putString("param1", "HIII");
+                    args.putString("param2", "YOOOO");
+                    linkFragment.setArguments(args);
+                    FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                    fragmentTransaction.add(R.id.linkRoot,linkFragment);
+                    fragmentTransaction.commit();
+
+
+                    linkRoot.setVisibility(View.VISIBLE);
+                } else {
+
+                    //linkRoot.setVisibility(View.VISIBLE);
+                    SlideToAbove(linkRoot);
+                }
+
+
+            }
+
         }
     };
 
@@ -179,6 +220,89 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
 
 
 
+
+
     }
+
+    //Thank you Farhan Shah! https://stackoverflow.com/questions/20323628/android-layout-animations-from-bottom-to-top-and-top-to-bottom-on-imageview-clic
+
+    public void SlideToAbove(final View v) {
+        Animation slide = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0.0f,
+                Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF,
+                1.0f, Animation.RELATIVE_TO_SELF, 0.0f);
+
+        slide.setDuration(500);
+        slide.setFillAfter(true);
+        slide.setFillEnabled(true);
+        v.startAnimation(slide);
+
+        slide.setAnimationListener(new Animation.AnimationListener() {
+
+            @Override
+            public void onAnimationStart(Animation animation) {
+                v.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+
+                v.clearAnimation();
+                RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                lp.addRule(RelativeLayout.ALIGN_TOP,R.id.useless);
+                lp.addRule(RelativeLayout.ABOVE,R.id.linkRoot);
+
+                listView.setLayoutParams(lp);
+
+            }
+
+        });
+
+    }
+
+    public void SlideToDown(final View v) {
+        Animation slide = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0.0f,
+                Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF,
+                0.0f, Animation.RELATIVE_TO_SELF, 1.0f);
+
+        slide.setDuration(500);
+        slide.setFillAfter(true);
+        slide.setFillEnabled(true);
+        v.startAnimation(slide);
+
+        slide.setAnimationListener(new Animation.AnimationListener() {
+
+            @Override
+            public void onAnimationStart(Animation animation) {
+                RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                lp.addRule(RelativeLayout.ALIGN_TOP,R.id.useless);
+                //lp.addRule(RelativeLayout.ABOVE,R.id.linkRoot);
+
+                listView.setLayoutParams(lp);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+
+                v.clearAnimation();
+
+                v.setVisibility(View.GONE);
+
+            }
+
+        });
+
+    }
+
+
 
 }

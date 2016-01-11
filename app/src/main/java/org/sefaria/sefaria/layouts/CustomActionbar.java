@@ -2,14 +2,13 @@ package org.sefaria.sefaria.layouts;
 
 import android.content.Context;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
-import org.sefaria.sefaria.menu.MenuElement;
-import org.sefaria.sefaria.menu.MenuNode;
+import org.sefaria.sefaria.MenuElements.MenuElement;
+import org.sefaria.sefaria.MenuElements.MenuNode;
 
 /**
  * Created by nss on 10/4/15.

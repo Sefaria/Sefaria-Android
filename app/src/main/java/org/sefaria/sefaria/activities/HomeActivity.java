@@ -15,18 +15,14 @@ import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.UpdateReceiver;
 import org.sefaria.sefaria.database.UpdateService;
-import org.sefaria.sefaria.menu.MenuGrid;
-import org.sefaria.sefaria.menu.MenuNode;
-import org.sefaria.sefaria.menu.MenuState;
+import org.sefaria.sefaria.MenuElements.MenuGrid;
+import org.sefaria.sefaria.MenuElements.MenuNode;
+import org.sefaria.sefaria.MenuElements.MenuState;
 
-import android.util.Log;
-import android.util.Pair;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Toast;
-
-import java.util.List;
 
 public class HomeActivity extends Activity {
 

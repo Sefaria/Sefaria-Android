@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -23,8 +22,7 @@ import org.sefaria.sefaria.database.Text;
 import org.sefaria.sefaria.layouts.CustomActionbar;
 import org.sefaria.sefaria.layouts.PerekTextView;
 import org.sefaria.sefaria.layouts.ScrollViewExt;
-import org.sefaria.sefaria.menu.MenuNode;
-import org.sefaria.sefaria.menu.MenuState;
+import org.sefaria.sefaria.MenuElements.MenuNode;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -58,6 +56,10 @@ public abstract class SuperTextActivity extends Activity {
     protected boolean isCts;
     protected float textSize;
     protected boolean isLoadingSection; //to make sure multiple sections don't get loaded at once
+
+    //link vars
+    protected LinkFragment linkFragment;
+    protected boolean isLinkOpen;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +104,7 @@ public abstract class SuperTextActivity extends Activity {
         isCts = false;
         textLang = MyApp.getDefaultTextLang();
         textSize = getResources().getDimension(R.dimen.default_text_font_size);
+        isLinkOpen = false;
         //end defaults
         setTitle(book.getTitle(menuLang));
     }

@@ -28,18 +28,19 @@
         android:translationZ="100dp"
         android:background="@color/menu_background"
         android:layout_height="wrap_content"></LinearLayout>
-    <ListView
+    <org.sefaria.sefaria.layouts.ListViewExt
         android:id="@+id/listview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@id/useless"/>
+        android:layout_height="match_parent"
+
+        android:layout_alignTop="@id/useless"/><!--android:layout_above="@+id/linkRoot"-->
 
     <RelativeLayout
         android:visibility="gone"
         android:id="@+id/linkRoot"
         android:layout_width="match_parent"
         android:layout_height="300dp"
-        android:background="@android:color/holo_red_light"
+        android:background="@color/text_white_background"
         android:layout_alignParentBottom="true"/>
 
 

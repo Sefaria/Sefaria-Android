@@ -1,10 +1,9 @@
-package org.sefaria.sefaria.menu;
+package org.sefaria.sefaria.MenuElements;
 
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,16 +11,13 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import org.sefaria.sefaria.R;
-import org.sefaria.sefaria.activities.SectionActivity;
 import org.sefaria.sefaria.activities.MenuActivity;
 import org.sefaria.sefaria.activities.SuperTextActivity;
 import org.sefaria.sefaria.activities.TOCActivity;
 import org.sefaria.sefaria.Util;
-import org.sefaria.sefaria.activities.TextActivity;
 import org.sefaria.sefaria.database.Book;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**

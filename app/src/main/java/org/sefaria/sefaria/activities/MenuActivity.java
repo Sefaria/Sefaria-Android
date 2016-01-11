@@ -8,14 +8,13 @@ import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.layouts.CustomActionbar;
 import org.sefaria.sefaria.Util;
 
-import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
 import org.sefaria.sefaria.R;
-import org.sefaria.sefaria.menu.MenuGrid;
-import org.sefaria.sefaria.menu.MenuState;
+import org.sefaria.sefaria.MenuElements.MenuGrid;
+import org.sefaria.sefaria.MenuElements.MenuState;
 
 public class MenuActivity extends Activity {
 
