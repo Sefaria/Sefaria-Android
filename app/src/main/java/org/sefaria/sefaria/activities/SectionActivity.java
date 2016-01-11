@@ -8,7 +8,11 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.Transformation;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
@@ -24,6 +28,7 @@ import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Node;
 import org.sefaria.sefaria.database.Text;
 import org.sefaria.sefaria.layouts.CustomActionbar;
+import org.sefaria.sefaria.layouts.ListViewExt;
 import org.sefaria.sefaria.menu.MenuNode;
 import org.sefaria.sefaria.menu.MenuState;
 
@@ -31,7 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SectionActivity extends SuperTextActivity implements AbsListView.OnScrollListener, LinkFragment.OnLinkFragInteractionListener {
-    private ListView listView;
+    private ListViewExt listView;
     private SectionAdapter sectionAdapter;
 
     private int preLast;
@@ -48,7 +53,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
     protected void init() {
         super.init();
 
-        listView = (ListView) findViewById(R.id.listview);
+        listView = (ListViewExt) findViewById(R.id.listview);
         sectionAdapter = new SectionAdapter(this,R.layout.adapter_text_mono,new ArrayList<Text>());
 
         listView.setAdapter(sectionAdapter);
@@ -56,7 +61,13 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
         listView.setDivider(null);
 
         listView.setOnItemClickListener(onItemClickListener);
+        listView.setOnScrollStoppedListener(new ListViewExt.OnScrollStoppedListener() {
 
+            public void onScrollStopped() {
+                updateFocusedSegment();
+
+            }
+        });
         if (!isLoadingSection) {
             AsyncLoadSection als = new AsyncLoadSection(TextEnums.NEXT_SECTION);
             als.execute();
@@ -89,6 +100,27 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
         sectionAdapter.notifyDataSetChanged();
     }
 
+    private void updateFocusedSegment() {
+        float mid = ((float)listView.getHeight())/2;
+        int numChildren = listView.getChildCount();
+
+        for (int i = 0; i < numChildren; i++) {
+            View v = listView.getChildAt(i);
+            if (v.getTop() < mid && v.getBottom() > mid) {
+                if (linkFragment != null) {
+                    int currInd = i + listView.getFirstVisiblePosition();
+                    Text currSeg = sectionAdapter.getItem(currInd);
+                    if (currSeg.isChapter) //TODO maybe make this select the chapter links...but not actually
+                        currSeg = sectionAdapter.getItem(currInd + 1);
+
+                    linkFragment.setCurrSegment(currSeg);
+                }
+                break;
+            }
+        }
+
+    }
+
 
     @Override
     public void onScroll(AbsListView lw, final int firstVisibleItem,
@@ -105,7 +137,6 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
                 final int lastItem = firstVisibleItem + visibleItemCount;
                 if(lastItem == totalItemCount) {
                     if(preLast!=lastItem){ //to avoid multiple calls for last item
-                        Log.d("Last", "Last");
                         preLast = lastItem;
                         AsyncLoadSection als = new AsyncLoadSection(TextEnums.NEXT_SECTION);
                         als.execute();
@@ -128,16 +159,37 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
     ListView.OnItemClickListener onItemClickListener = new ListView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            LinkFragment linkFragment = new LinkFragment();
-            Bundle args = new Bundle();
-            args.putString("param1", "HIII");
-            args.putString("param2", "YOOOO");
-            linkFragment.setArguments(args);
-            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-            fragmentTransaction.add(R.id.linkRoot,linkFragment);
-            fragmentTransaction.commit();
 
-            findViewById(R.id.linkRoot).setVisibility(View.VISIBLE);
+            View linkRoot = findViewById(R.id.linkRoot);
+
+            if (isLinkOpen) {
+                isLinkOpen = false;
+                //linkRoot.setVisibility(View.GONE);
+                collapse(linkRoot);
+
+            } else {
+                isLinkOpen = true;
+                if (linkFragment == null) {
+                    linkFragment = new LinkFragment();
+                    Bundle args = new Bundle();
+                    args.putString("param1", "HIII");
+                    args.putString("param2", "YOOOO");
+                    linkFragment.setArguments(args);
+                    FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                    fragmentTransaction.add(R.id.linkRoot,linkFragment);
+                    fragmentTransaction.commit();
+
+
+                    linkRoot.setVisibility(View.VISIBLE);
+                } else {
+
+                    //linkRoot.setVisibility(View.VISIBLE);
+                    expand(linkRoot);
+                }
+
+
+            }
+
         }
     };
 
@@ -179,6 +231,65 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
 
 
 
+
+
+    }
+
+    public static void expand(final View v) {
+        v.measure(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        final int targetHeight = v.getMeasuredHeight();
+        Log.d("expand","TARGET H " + targetHeight);
+
+        // Older versions of android (pre API 21) cancel animations for views with a height of 0.
+        v.getLayoutParams().height = 1;
+        v.setVisibility(View.VISIBLE);
+        Animation a = new Animation()
+        {
+            @Override
+            protected void applyTransformation(float interpolatedTime, Transformation t) {
+                Log.d("expand","TIME " + interpolatedTime);
+                v.getLayoutParams().height = interpolatedTime == 1
+                        ? ViewGroup.LayoutParams.WRAP_CONTENT
+                        : (int)(targetHeight * interpolatedTime);
+                v.requestLayout();
+            }
+
+            @Override
+            public boolean willChangeBounds() {
+                return true;
+            }
+        };
+
+        // 1dp/ms
+        a.setDuration((int)(targetHeight / v.getContext().getResources().getDisplayMetrics().density));
+        v.startAnimation(a);
+    }
+
+    public static void collapse(final View v) {
+        final int initialHeight = v.getMeasuredHeight();
+        Log.d("expand","TARGET H " + initialHeight);
+
+        Animation a = new Animation()
+        {
+            @Override
+            protected void applyTransformation(float interpolatedTime, Transformation t) {
+                if(interpolatedTime == 1){
+                    v.setVisibility(View.GONE);
+                }else{
+                    v.getLayoutParams().height = initialHeight - (int)(initialHeight * interpolatedTime);
+                    v.requestLayout();
+                }
+            }
+
+            @Override
+            public boolean willChangeBounds() {
+                return true;
+            }
+        };
+
+        // 1dp/ms
+        a.setDuration((int)(initialHeight / v.getContext().getResources().getDisplayMetrics().density));
+        v.startAnimation(a);
     }
 
 }

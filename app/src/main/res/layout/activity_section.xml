@@ -28,10 +28,11 @@
         android:translationZ="100dp"
         android:background="@color/menu_background"
         android:layout_height="wrap_content"></LinearLayout>
-    <ListView
+    <org.sefaria.sefaria.layouts.ListViewExt
         android:id="@+id/listview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/linkRoot"
         android:layout_alignTop="@id/useless"/>
 
     <RelativeLayout
