@@ -1,11 +1,21 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/link_background"
     tools:context="org.sefaria.sefaria.activities.LinkFragment">
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:background="@color/menu_foreground"/>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:id="@+id/tv"
+            android:padding="10dp"
+            android:layout_width="match_parent" android:layout_height="match_parent"
+            android:text="Hello Sefaria World!!!" />
+    </ScrollView>
 
-    <TextView
-        android:id="@+id/tv"
-        android:layout_width="match_parent" android:layout_height="match_parent"
-        android:text="Hello Sefaria World!!!" />
 
 </FrameLayout>

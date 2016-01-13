@@ -36,4 +36,6 @@
 
     <color name="toc_curr_section_title">#AAA</color>
 
+    <color name="link_background">#F9F9F7</color>
+
 </resources>
