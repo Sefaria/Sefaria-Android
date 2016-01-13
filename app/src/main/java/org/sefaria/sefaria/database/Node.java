@@ -67,6 +67,8 @@ public class Node{ //TODO implements  Parcelable
     }
 
 
+    public static Map<String,List<Node>> allSavedBookTOCroots = new HashMap<>();
+    private static List<Node> getSavedBookTOCroots(Book book){ return allSavedBookTOCroots.get(book);}
     private static String NODE_TABLE = "Nodes";
 
 
@@ -648,8 +650,8 @@ public class Node{ //TODO implements  Parcelable
      * @return
      * @throws InvalidPathException
      */
-    static public Node getNodeFromPathStr(Book book, String path) throws InvalidPathException {
-        return getNodeFromPathStr(book.getTOCroots(),path);
+    static public Node getNodeFromPathStr(Book book, String path) throws InvalidPathException, API.APIException {
+        return getNodeFromPathStr(getRoots(book),path);
     }
 
 
@@ -690,6 +692,13 @@ public class Node{ //TODO implements  Parcelable
     }
 
     private static List<Node> getRoots(Book book, boolean addMoreh) throws API.APIException{
+        List<Node> allRoots = allSavedBookTOCroots.get(book.title);
+        if(allRoots != null){
+            return allRoots;
+        }
+
+        allRoots = new ArrayList<>();
+        Log.d("Node", "calling Node.getRoots()");
         Database2 dbHandler = Database2.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
         Cursor cursor = db.query(NODE_TABLE, null, "bid" + "=?",
@@ -711,7 +720,7 @@ public class Node{ //TODO implements  Parcelable
                 //nodes.add(node);
             } while (cursor.moveToNext());
         }
-        List<Node> allRoots = new ArrayList<>();
+
         /**
          * this is for the rigid structure
          */
@@ -747,7 +756,7 @@ public class Node{ //TODO implements  Parcelable
             }
         }
 
-
+        allSavedBookTOCroots.put(book.title,allRoots);
         return allRoots;
     }
 

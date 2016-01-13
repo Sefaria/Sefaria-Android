@@ -19,8 +19,25 @@ import android.util.Log;
 
 public class Book implements Parcelable {
 
-    private List<Node> TOCroots = null;
     private List<Book> allCommentaries = null;
+    public int bid;
+    public int commentsOn;
+    private String  [] sectionNames;
+    /**
+     * Little sections (like verse) to Big (like chap) just like Text.levels works
+     */
+    public String  [] sectionNamesL2B;
+    /**
+     * Little sections (like verse) to Big (like chap) just like Text.levels works
+     */
+    public String  [] heSectionNamesL2B;
+    public String [] categories;
+    public int textDepth;
+    public int wherePage;
+    public String title;
+    public String heTitle;
+    public int languages;
+
 
     private static final int DEFAULT_WHERE_PAGE = 2;
     public Book(){
@@ -49,22 +66,17 @@ public class Book implements Parcelable {
      * @return roots
      */
     public List<Node> getTOCroots(){
-        if(TOCroots != null)
-            return TOCroots;
-
-        if(roots == null){
-            try {
-                roots = Node.getRoots(this);
-            }catch (API.APIException e){
-                roots = new ArrayList<>();
-                Log.e("api", "api exception getting node TOC");
-            }
-            Log.d("Book.getTOCroots", roots.toString());
+        List<Node> TOCroots;
+        try {
+            TOCroots = Node.getRoots(this);
+        }catch (API.APIException e){
+            TOCroots = new ArrayList<>();
+            Log.e("api", "api exception getting node TOC");
         }
-        return roots;
+        return TOCroots;
     }
 
-    public Node getNodeFromPathStr(String path) throws Node.InvalidPathException {
+    public Node getNodeFromPathStr(String path) throws Node.InvalidPathException, API.APIException {
         return Node.getNodeFromPathStr(this,path);
     }
 
@@ -82,26 +94,6 @@ public class Book implements Parcelable {
         }
     }
 
-    public int bid;
-    public int commentsOn;
-    private String  [] sectionNames;
-    /**
-     * Little sections (like verse) to Big (like chap) just like Text.levels works
-     */
-    public String  [] sectionNamesL2B;
-    /**
-     * Little sections (like verse) to Big (like chap) just like Text.levels works
-     */
-    public String  [] heSectionNamesL2B;
-    public String [] categories;
-    public int textDepth;
-    public int wherePage;
-    public String title;
-    public String heTitle;
-    public int languages;
-
-
-    private List<Node> roots = null;
 
     @Override
     public String toString() {
@@ -472,7 +464,7 @@ public class Book implements Parcelable {
         title = in.readString();
         heTitle = in.readString();
         languages = in.readInt();
-        TOCroots =null;
+
 
     }
 

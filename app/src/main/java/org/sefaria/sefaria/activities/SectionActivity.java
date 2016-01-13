@@ -35,6 +35,10 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
     @Override
     protected void onCreate(Bundle in) {
         super.onCreate(in);
+        if(badOnCreate){
+            finish();
+            return;
+        }
         setContentView(R.layout.activity_section);
         init();
     }
