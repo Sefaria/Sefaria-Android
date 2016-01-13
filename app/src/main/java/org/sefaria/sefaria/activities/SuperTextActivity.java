@@ -60,6 +60,10 @@ public abstract class SuperTextActivity extends Activity {
     //link vars
     protected LinkFragment linkFragment;
     protected boolean isLinkOpen;
+    /**
+     * hacky boolean so that if there's a problem with the on create, the subclasses know not to continue with init (after they call super.onCreate)
+     */
+    protected boolean badOnCreate = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,10 +90,21 @@ public abstract class SuperTextActivity extends Activity {
                 Log.d("SuperTextAct", "bookSavedSettings... node:" + node);
                 node  = node.getFirstDescendant();//should be unneeded line, but in case there was a previous bug this shuold return a isTextSection() node to avoid bugs
                 firstLoadedNode = node;
-            }catch (Node.InvalidPathException e){
+            }catch (Node.InvalidPathException e){//couldn't get saved Node data (most likely you were never at the book, or possibly an error happened).
                 Log.e("SuperTextAct", "Problem gettting saved book data");
-                Node root = book.getTOCroots().get(0);
+                List<Node> TOCroots = book.getTOCroots();
+                if(TOCroots.size() == 0) {
+                    Log.d("SuperTextAct", "Unable to load Table of Contents for this book");
+                    Toast.makeText(this, "Unable to load Table of Contents for this book", Toast.LENGTH_SHORT).show();
+                    badOnCreate = true;
+                    return;
+                }
+                Node root = TOCroots.get(0);
                 firstLoadedNode = root.getFirstDescendant();
+            } catch (API.APIException e) {
+                Toast.makeText(this,"Problem getting data from internet", Toast.LENGTH_SHORT).show();
+                badOnCreate = true;
+                return;
             }
             //lastLoadedNode = firstLoadedNode; PURPOSEFULLY NOT INITIALLIZING TO INDICATE THAT NOTHING HAS BEEN LOADED YET
         }

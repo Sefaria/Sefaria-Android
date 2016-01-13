@@ -31,6 +31,10 @@ public class TextActivity extends SuperTextActivity {
     @Override
     protected void onCreate(Bundle in) {
         super.onCreate(in);
+        if(badOnCreate){
+            finish();
+            return;
+        }
         setContentView(R.layout.activity_text);
         justLoadedPrevChap = true;
         init();
