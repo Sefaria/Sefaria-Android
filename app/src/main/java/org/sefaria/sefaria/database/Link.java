@@ -186,14 +186,15 @@ public class Link implements Parcelable {
             children.add(child);
         }
 
-        public static void printTree(LinkCount lc,int tabs){
+        public static String getStringTree(LinkCount lc,int tabs){
             String tabStr = "";
             for(int i=0;i<tabs;i++)
-                tabStr += "\t";
-            Log.d("LinkCount", tabStr +   lc.toString());
+                tabStr += "-";
+            String str = tabStr + lc.toString() + '\n';
             for(int i=0;i<lc.getChildren().size();i++) {
-                printTree(lc.children.get(i),tabs + 1);
+                str += getStringTree(lc.children.get(i),tabs + 1);
             }
+            return str;
         }
 
 
@@ -212,7 +213,7 @@ public class Link implements Parcelable {
             if(text.getNumLinks() == 0)  return allLinkCounts;
             Database2 dbHandler = Database2.getInstance();
             SQLiteDatabase db = dbHandler.getReadableDatabase();
-            Log.d("Link", "starting getCountsTitlesFromLinks_small");
+            //Log.d("Link", "starting getCountsTitlesFromLinks_small");
             String sql = "SELECT B.title, Count(*) as booksCount, B.heTitle, B.commentsOn, B.categories FROM Books B, Links_small L, Texts T WHERE (" +
                     "(L.tid1 = " + text.tid + " AND L.tid2=T._id AND T.bid= B._id) OR " +
                     "(L.tid2 = " + text.tid + " AND L.tid1=T._id AND T.bid= B._id) ) GROUP BY B._id ORDER BY B.categories, B._id"
@@ -251,8 +252,8 @@ public class Link implements Parcelable {
             }
             allLinkCounts.addChild(countGroups);
             allLinkCounts.addChild(commentaryGroup);
-            Log.d("Link", "finished getCountsTitlesFromLinks_small");
-            printTree(allLinkCounts, 0);
+            //Log.d("Link", "finished getCountsTitlesFromLinks_small");
+            //getStringTree(allLinkCounts, 0);
 
             return allLinkCounts;
         }
