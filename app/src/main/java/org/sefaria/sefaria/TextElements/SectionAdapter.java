@@ -3,6 +3,7 @@ package org.sefaria.sefaria.TextElements;
 import android.app.Activity;
 import android.graphics.Color;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.activities.SectionActivity;
+import org.sefaria.sefaria.database.Link;
 import org.sefaria.sefaria.database.Text;
 
 import java.util.List;
@@ -22,8 +24,12 @@ import java.util.List;
  */
 public class SectionAdapter extends ArrayAdapter<Text> {
 
+    private static int LINK_ALPHA_GRANULARITY = 10; //how many different link alphas are possible
+
     private SectionActivity context;
     private List<Text> texts;
+
+    private int maxNumLinks;
     private int resourceId;
     private int preLast;
 
@@ -32,6 +38,7 @@ public class SectionAdapter extends ArrayAdapter<Text> {
         this.context = context;
         this.texts = objects;
         this.resourceId = resourceId;
+        this.maxNumLinks = 0;
 
 
     }
@@ -39,6 +46,14 @@ public class SectionAdapter extends ArrayAdapter<Text> {
     @Override
     public View getView(int position, View view, ViewGroup parent) {
         Text segment = texts.get(position);
+
+        float linkAlpha;
+        if (maxNumLinks != 0) {
+          linkAlpha  = (float) Math.ceil(LINK_ALPHA_GRANULARITY*(((float)segment.getNumLinks())/maxNumLinks))/LINK_ALPHA_GRANULARITY;
+        } else {
+            linkAlpha = 0f;
+        }
+
         Util.Lang lang = context.getTextLang();
         if (view == null || (view.findViewById(R.id.he) == null && lang == Util.Lang.BI)
                 || (view.findViewById(R.id.mono) == null && (lang == Util.Lang.HE || lang == Util.Lang.EN))) {
@@ -75,6 +90,7 @@ public class SectionAdapter extends ArrayAdapter<Text> {
                 heNum.setVisibility(View.VISIBLE);
 
                 enTv.setText(Html.fromHtml(segment.enText));
+                //enTv.setText(""+segment.getNumLinks() + " / " + maxNumLinks + "\nALPHA = " + linkAlpha);
                 heTv.setText(Html.fromHtml(segment.heText));
 
                 //enTv.setTextColor(Color.parseColor("#999999"));
@@ -88,9 +104,11 @@ public class SectionAdapter extends ArrayAdapter<Text> {
                     heNum.setText("" + Util.int2heb(segment.levels[0]));
                 else
                     heNum.setText("");
+                heNum.setAlpha(1);
                 heNum.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
                 //heNum.setTypeface(MyApp.getFont(MyApp.MONTSERRAT_FONT));
                 enNum.setText(Util.VERSE_BULLET);
+                enNum.setAlpha(linkAlpha);
             }
 
         } else { //Hebrew or English
@@ -115,11 +133,13 @@ public class SectionAdapter extends ArrayAdapter<Text> {
                 if (context.getTextLang() == Util.Lang.HE) {
                     tv.setText(Html.fromHtml(segment.heText));
                     enNum.setText(Util.VERSE_BULLET);
+                    enNum.setAlpha(linkAlpha);
                     enNum.setTypeface(MyApp.getFont(MyApp.MONTSERRAT_FONT));
                     if(segment.displayNum)
                         heNum.setText(Util.int2heb(segment.levels[0]));
                     else
                         heNum.setText("");
+                    heNum.setAlpha(1);
                     heNum.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
                 } else /*if (context.getTextLang() == Util.Lang.EN)*/ {
                     tv.setText(Html.fromHtml(segment.enText));
@@ -127,8 +147,11 @@ public class SectionAdapter extends ArrayAdapter<Text> {
                         enNum.setText(""+segment.levels[0]);
                     else
                         enNum.setText("");
+
                     enNum.setTypeface(MyApp.getFont(MyApp.MONTSERRAT_FONT));
+                    enNum.setAlpha(1);
                     heNum.setText(Util.VERSE_BULLET);
+                    heNum.setAlpha(linkAlpha);
                     heNum.setTypeface(MyApp.getFont(MyApp.MONTSERRAT_FONT));
                 }
                 tv.setTextColor(Color.parseColor("#000000"));
@@ -141,5 +164,19 @@ public class SectionAdapter extends ArrayAdapter<Text> {
 
     public void updateFocusedSegment() {
 
+    }
+
+    @Override
+    public void notifyDataSetChanged() {
+        super.notifyDataSetChanged();
+        maxNumLinks = 0;
+        for (Text segment : texts) {
+            int tempCount = segment.getNumLinks();
+            if (tempCount > maxNumLinks) {
+                maxNumLinks = tempCount;
+
+            }
+        }
+        Log.d("links","MAX NUM - " + maxNumLinks);
     }
 }
