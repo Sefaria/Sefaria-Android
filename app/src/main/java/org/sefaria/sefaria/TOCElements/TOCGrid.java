@@ -59,7 +59,6 @@ public class TOCGrid extends LinearLayout {
         this.book = book;
 
         init(pathDefiningNode);
-        setLang(lang);
     }
 
     private void init(String pathDefiningNode) {
@@ -112,10 +111,10 @@ public class TOCGrid extends LinearLayout {
         gridRoot.setOrientation(LinearLayout.VERTICAL);
         gridRoot.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         gridRoot.setGravity(Gravity.CENTER);
-        this.addView(gridRoot,3);
+        this.addView(gridRoot, 3);
 
-        activateTab(defaultTab);
-
+        TocTabList.get(defaultTab).setActive(true);//set it true, such that the setLang function will start the right tab
+        setLang(lang);
 
     }
 
@@ -198,12 +197,10 @@ public class TOCGrid extends LinearLayout {
     }
 
     private void activateTab(TOCTab tocTab) {
-        if(tocTab.getActive() && tocTab.getLang() == lang)
-            return;
         for (TOCTab tempTocTab : TocTabList) {
             tempTocTab.setActive(false);
         }
-
+        Log.d("TOCGrid","activating tab");
         tocTab.setActive(true);
 
         freshGridRoot();

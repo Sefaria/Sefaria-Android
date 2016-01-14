@@ -68,11 +68,7 @@ public class TOCNumBox extends TextView implements TOCElement {
 
     @Override
     public void setLang(Util.Lang lang) {
-        if(Util.Lang.HE == lang) {
-            setText(Util.int2heb(node.getGridNum()));
-        }else {
-            setText("" + node.getGridNum());
-        }
+        setText(node.getNiceGridNum(lang));
     }
 
 
@@ -81,7 +77,6 @@ public class TOCNumBox extends TextView implements TOCElement {
         @Override
         public void onClick(View v) {
             if(!node.isTextSection()) {
-                Log.e("TOCNumBox","TOCNumBox.clickListener isn't a textSection");
                 return;
             }
             gotoTextActivity(context,node,lang);

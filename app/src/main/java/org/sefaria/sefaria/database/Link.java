@@ -208,6 +208,7 @@ public class Link implements Parcelable {
         final private static String ALL_CONNECTIONS = "All Connections";
         final private static String COMMENTARY = "Commentary";
         final private static String QUOTING_COMMENTARY = "Quoting Commentary";
+
         public static LinkCount getFromLinks_small(Text text){
             LinkCount allLinkCounts = new LinkCount(ALL_CONNECTIONS, 0, "All Connections (He)",DEPTH_TYPE.ALL);
             if(text.getNumLinks() == 0)  return allLinkCounts;

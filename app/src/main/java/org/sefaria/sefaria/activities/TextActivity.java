@@ -188,7 +188,7 @@ public class TextActivity extends SuperTextActivity {
 
             TextChapterHeader tch;
             Text segment = getSectionHeaderText();
-            tch = new TextChapterHeader(TextActivity.this,segment,menuLang,textSize);
+            tch = new TextChapterHeader(TextActivity.this,segment,textSize);
             textChapterHeaders.add(tch);
 
             PerekTextView content;
