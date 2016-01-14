@@ -109,8 +109,11 @@ public class LinkFragment extends Fragment {
 
             Link.LinkCount linkCount = Link.LinkCount.getFromLinks_small(segment);
 
-            tv.setText("SEGMENT: " + segment.levels[0] + "\n\n" + Link.LinkCount.getStringTree(linkCount,0));
-
+            if(!segment.isChapter())
+                tv.setText("SEGMENT: " + segment.levels[0] + "\n\n" + Link.LinkCount.getStringTree(linkCount,0));
+            else{
+                tv.setText("chapter heading: " + segment.enText + " " + segment.heText + "\n\n" + Link.LinkCount.getStringTree(linkCount,0));
+            }
         }
     }
 

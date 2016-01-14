@@ -15,23 +15,23 @@ import org.sefaria.sefaria.database.Text;
  */
 public class TextChapterHeader extends LinearLayout {
 
-    private Util.Lang lang;
+    //private Util.Lang lang;
     private TextView tv;
     public String enText;
     public String heText;
 
-    public TextChapterHeader(Context context, Text segment, Util.Lang lang, float textSize) {
+    public TextChapterHeader(Context context, Text segment, float textSize) {
         super(context);
         enText = segment.enText;
         heText = segment.heText;
-        init(context,lang,textSize);
+        init(context,textSize);
     }
 
     public TextChapterHeader(Context context, AttributeSet attrSet) {
         super(context, attrSet);
         enText = "Section";
         heText = "Section";
-        init(context,lang,0f);
+        init(context,0f);
     }
 
     public TextChapterHeader(Context context, AttributeSet attrs, int defStyle)
@@ -39,14 +39,14 @@ public class TextChapterHeader extends LinearLayout {
         super(context, attrs, defStyle);
         enText = "Section";
         heText = "Section";
-        init(context,lang,0f);
+        init(context,0f);
     }
 
-    private void init(Context context,Util.Lang lang, float textSize) {
+    private void init(Context context, float textSize) {
         inflate(context, R.layout.text_chapter_header, this);
         tv = (TextView) findViewById(R.id.tv);
-        this.lang = lang;
 
+        Util.Lang lang = MyApp.getMenuLang();
         setLang(lang);
         setTextSize(textSize);
     }
@@ -68,7 +68,7 @@ public class TextChapterHeader extends LinearLayout {
     public void setSectionTitle(Text segment) {
         enText = segment.enText;
         heText = segment.heText;
-        setLang(lang);
+        setLang(MyApp.getMenuLang());
     }
 
     public void setTextSize(float textSize) {

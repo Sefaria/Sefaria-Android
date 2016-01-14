@@ -64,6 +64,7 @@ public abstract class SuperTextActivity extends Activity {
      * hacky boolean so that if there's a problem with the on create, the subclasses know not to continue with init (after they call super.onCreate)
      */
     protected boolean badOnCreate = false;
+    private CustomActionbar customActionbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,11 +74,9 @@ public abstract class SuperTextActivity extends Activity {
         Integer nodeHash;
         if (savedInstanceState != null) {//it's coming back after it cleared the activity from ram
             nodeHash = savedInstanceState.getInt("nodeHash", -1);
-            menuLang = (Util.Lang) savedInstanceState.getSerializable("lang");
             book = savedInstanceState.getParcelable("currBook");
         }else{
             nodeHash = intent.getIntExtra("nodeHash", -1);
-            menuLang = (Util.Lang) intent.getSerializableExtra("lang");
             book = intent.getParcelableExtra("currBook");
         }
         if(book != null){ //||nodeHash == -1){// that means it came in from the menu or the TOC commentary tab
@@ -88,13 +87,12 @@ public abstract class SuperTextActivity extends Activity {
                 String nodePathStr = stringThatRepsSavedSettings; //TODO  make based on split()
                 Node node = book.getNodeFromPathStr(nodePathStr);
                 Log.d("SuperTextAct", "bookSavedSettings... node:" + node);
-                node  = node.getFirstDescendant();//should be unneeded line, but in case there was a previous bug this shuold return a isTextSection() node to avoid bugs
+                node = node.getFirstDescendant();//should be unneeded line, but in case there was a previous bug this shuold return a isTextSection() node to avoid bugs
                 firstLoadedNode = node;
             }catch (Node.InvalidPathException e){//couldn't get saved Node data (most likely you were never at the book, or possibly an error happened).
                 Log.e("SuperTextAct", "Problem gettting saved book data");
                 List<Node> TOCroots = book.getTOCroots();
                 if(TOCroots.size() == 0) {
-                    Log.d("SuperTextAct", "Unable to load Table of Contents for this book");
                     Toast.makeText(this, "Unable to load Table of Contents for this book", Toast.LENGTH_SHORT).show();
                     badOnCreate = true;
                     return;
@@ -111,7 +109,7 @@ public abstract class SuperTextActivity extends Activity {
         else { // no book means it came in from TOC
             firstLoadedNode = Node.getSavedNode(nodeHash);
             //lastLoadedNode = firstLoadedNode;
-            Log.d("Section","firstLoadedChap init:" + firstLoadedNode.getGridNum());
+            Log.d("Section","firstLoadedChap init:" + firstLoadedNode.getNiceGridNum(menuLang));
             book = new Book(firstLoadedNode.getBid());
         }
         //These vars are specifically initialized here and not in init() so that they don't get overidden when coming from TOC
@@ -121,10 +119,13 @@ public abstract class SuperTextActivity extends Activity {
         textSize = getResources().getDimension(R.dimen.default_text_font_size);
         isLinkOpen = false;
         //end defaults
-        setTitle(book.getTitle(menuLang));
+
+        menuLang = MyApp.getMenuLang();
+        if(customActionbar != null)//it's already been set
+            customActionbar.setLang(menuLang);
     }
 
-    public static void startNewTextActivityIntent(Context context, Book book,Util.Lang menuLang){
+    public static void startNewTextActivityIntent(Context context, Book book){
         List<String> cats = Arrays.asList(book.categories);
         boolean isCtsText = false;
         final String[] CTS_TEXT_CATS = {"Talmud"};// {"Tanach","Talmud"};//
@@ -139,7 +140,9 @@ public abstract class SuperTextActivity extends Activity {
             intent = new Intent(context, SectionActivity.class);
         }
         intent.putExtra("currBook", book);
-        intent.putExtra("lang",menuLang);
+        //lang replaced by general MyApp.getMenuLang() function
+
+
         //trick to destroy all activities beforehand
         //ComponentName cn = intent.getComponent();
         //Intent mainIntent = IntentCompat.makeRestartActivityTask(cn);
@@ -157,10 +160,13 @@ public abstract class SuperTextActivity extends Activity {
         textScrollView = (ScrollViewExt) findViewById(R.id.textScrollView);
 
         //this specifically comes before menugrid, b/c in tabs it menugrid does funny stuff to currnode
-        MenuNode menuNode = new MenuNode(book.getTitle(Util.Lang.EN),book.getTitle(Util.Lang.HE),null); //TODO possibly replace this object with a more general bilinual node
-        CustomActionbar cab = new CustomActionbar(this, menuNode, menuLang,homeClick,null,null,titleClick,menuClick,backClick); //TODO.. I'm not actually sure this should be lang.. instead it shuold be MENU_LANG from Util.S
+        MenuNode menuNode = new MenuNode("a","b",null); //TODO possibly replace this object with a more general bilinual node
+        customActionbar = new CustomActionbar(this, menuNode, menuLang,homeClick,null,null,titleClick,menuClick,backClick); //TODO.. I'm not actually sure this should be lang.. instead it shuold be MENU_LANG from Util.S
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
-        abRoot.addView(cab);
+        abRoot.addView(customActionbar);
+        String title = firstLoadedNode.getMenuBarTitle(book, menuLang);
+        customActionbar.setTitleText(title, menuLang,true);
+        customActionbar.setLang(menuLang);
     }
 
     @Override
@@ -196,7 +202,7 @@ public abstract class SuperTextActivity extends Activity {
             Log.d("SuperTextAct","using firstLoadedNode for getSectionHeaderText()");
             node = firstLoadedNode;
         }
-        return new Text(true,node.getWholeTitle(Util.Lang.EN),node.getWholeTitle(Util.Lang.HE));
+        return new Text(node);
     }
 
     protected void toggleTextMenu() {
@@ -261,6 +267,7 @@ public abstract class SuperTextActivity extends Activity {
                     if (textLang != Util.Lang.BI) {
                         setIsCts(true);
                     }
+                    setIsCts(true);
                     break;
                 case R.id.sep_btn:
                     setIsCts(false);

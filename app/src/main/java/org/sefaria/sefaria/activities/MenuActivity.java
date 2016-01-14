@@ -45,7 +45,7 @@ public class MenuActivity extends Activity {
     }
 
     private void init() {
-        Util.Lang menuLang = menuState.getLang();
+        Util.Lang menuLang = MyApp.getMenuLang();//menuState.getLang();
         setTitle(menuState.getCurrNode().getTitle(menuLang));
         //this specifically comes before menugrid, b/c in tabs it menugrid does funny stuff to currnode
         cab = new CustomActionbar(this, menuState.getCurrNode(),menuLang,homeClick,null,null,null,menuClick,backClick);
@@ -55,6 +55,7 @@ public class MenuActivity extends Activity {
         menuGrid = new MenuGrid(this,NUM_COLUMNS, menuState,LIMIT_GRID_SIZE,menuLang);
         ScrollView root = (ScrollView) findViewById(R.id.gridRoot);
         root.addView(menuGrid);
+        setLang(menuLang);
     }
 
     private void setLang(Util.Lang lang){
@@ -114,7 +115,7 @@ public class MenuActivity extends Activity {
     View.OnClickListener menuClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-           setLang(MyApp.switchMenuLang());
+            setLang(MyApp.switchMenuLang());
         }
     };
 

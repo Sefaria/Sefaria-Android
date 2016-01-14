@@ -301,7 +301,7 @@ public class MenuGrid extends LinearLayout {
                         intent.putExtra("lang", newMenuState.getLang());
                         context.startActivity(intent);
                     }else {
-                        SuperTextActivity.startNewTextActivityIntent(context,book,getLang());
+                        SuperTextActivity.startNewTextActivityIntent(context,book);
 
                     }
                 } catch (Book.BookNotFoundException e) {

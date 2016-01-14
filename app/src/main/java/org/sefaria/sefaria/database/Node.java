@@ -99,39 +99,43 @@ public class Node{ //TODO implements  Parcelable
         getFromCursor(cursor);
     }
 
-    /***
-     *
-     *
-     *  //TODO actually create function (maybe use headers from beatmidrash)
+    public String getMenuBarTitle(Book book, Util.Lang menuLang){
+        String str = book.getTitle(menuLang);
+        str = str + " " + this.getWholeTitle(menuLang,false);
+        return str;
+    }
+
+    /**
      * @param lang
-     * @return full description of current text. For example, Genesis 2
+     * @return full description of current text. For example, Chelek 3 Siman 23
      */
     public String getWholeTitle(Util.Lang lang){
+        return getWholeTitle(lang,true);
+    }
+
+    private String getWholeTitle(Util.Lang lang, boolean doSectionName){
         String str = "";
         Node node = this;
         while(node.parent != null) {
             if (str.length() == 0){
-                str = node.getWholeTitleForOnly1Node(lang);
+                str = node.getWholeTitleForOnly1Node(lang,doSectionName);
             }else {
                 if (node.isComplex && !node.isGridItem)
-                    str = node.getWholeTitleForOnly1Node(lang) + ", " + str;
+                    str = node.getWholeTitleForOnly1Node(lang,doSectionName) + ", " + str;
                 else
-                    str = node.getWholeTitleForOnly1Node(lang) + " " + str;
+                    str = node.getWholeTitleForOnly1Node(lang,doSectionName) + " " + str;
             }
             node = node.parent;
         }
         return str;
     }
 
-    private String getWholeTitleForOnly1Node(Util.Lang lang){
-        String str;
+    private String getWholeTitleForOnly1Node(Util.Lang lang, boolean doSectionName){
+        String str = "";
         if(isGridItem || nid == NID_CHAP_NO_NID) {
-            str = getSectionName(lang);
-            if (lang == Util.Lang.EN) {
-                str += " " + getGridNum();
-            } else {
-                str += " " + Util.int2heb(getGridNum());
-            }
+            if(doSectionName)
+                str = getSectionName(lang);
+            str += " " + getNiceGridNum(lang);
         }
         else
             str = getTitle(lang);
@@ -154,7 +158,22 @@ public class Node{ //TODO implements  Parcelable
         return name;
     }
 
-    public int getGridNum(){ return gridNum;}
+    private int getGridNum(){ return gridNum;}
+
+    public String getNiceGridNum(Util.Lang lang){
+        if(isDaf()){
+            if(Util.Lang.HE == lang)
+                return Header.num2heDaf(gridNum);
+            else
+                return Header.num2enDaf(gridNum);
+        }else{
+            if(Util.Lang.HE == lang)
+                return Util.int2heb(gridNum);
+            else
+                return ""+ gridNum;
+        }
+    }
+
 
     /**
      * use lang from Util.HE or EN (maybe or BI)
@@ -291,9 +310,11 @@ public class Node{ //TODO implements  Parcelable
         node.gridNum = chapNum;
         //node.siblingNum = -1;
         node.enTitle = node.heTitle =  "";
-        node.heSectionNames = node.sectionNames = sectionNames;
-        node.parentNodeID = nid;
         node.textDepth = 2;
+        node.sectionNames = Arrays.copyOfRange(this.sectionNames,0,node.textDepth);
+        node.heSectionNames = Arrays.copyOfRange(this.heSectionNames,0,node.textDepth);
+        node.parentNodeID = nid;
+
         node.structNum = structNum;
         node.nid = NID_CHAP_NO_NID;
         node.parent = this;
@@ -446,13 +467,17 @@ public class Node{ //TODO implements  Parcelable
 
 
     private void setAllChaps(boolean useNID) throws API.APIException {
-        //if(true) return;
-        if(textDepth < 2){
+
+        if(textDepth == 1){
+            addChapChild(0);
+            return;
+        }else if(textDepth < 2){
             Log.e("Node", "called setAllChaps with too low texdepth" + this.toString());
             return;
         }
         Database2 dbHandler = Database2.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
+
 
         String levels = "";
         for(int i=textDepth;i>1;i--){
@@ -495,10 +520,10 @@ public class Node{ //TODO implements  Parcelable
                         if(level3 != lastLevel3 || tempNode == null){
                             lastLevel3 = level3;
                             tempNode = new Node();
-                            tempNode.enTitle = this.sectionNames[2] + " " + level3;
-                            tempNode.heTitle = this.heSectionNames[2] + " " + Util.int2heb(level3);
-                            tempNode.sectionNames = Arrays.copyOfRange(this.sectionNames,0,2);
-                            tempNode.heSectionNames = Arrays.copyOfRange(this.heSectionNames,0,2);
+                            tempNode.enTitle = this.sectionNames[textDepth -1] + " " + level3; //using textDepth value to get the last section name (3-1 = 2)
+                            tempNode.heTitle = this.heSectionNames[textDepth -1] + " " + Util.int2heb(level3);
+                            tempNode.sectionNames = Arrays.copyOfRange(this.sectionNames,0,textDepth);//using textDepth value to get the last 2 section names (3-2=1,3)
+                            tempNode.heSectionNames = Arrays.copyOfRange(this.heSectionNames,0,textDepth);
                             tempNode.textDepth = this.textDepth -1;
                             tempNode.isComplex = isComplex;
                             tempNode.isRef = false;
@@ -547,7 +572,8 @@ public class Node{ //TODO implements  Parcelable
             textList = new ArrayList<>();
             return textList;
         }else if(!isComplex && isGridItem && !isRef){
-            //TODO make work for more than 2 levels!!!!
+
+            Log.d("Node", "in (!isComplex && isGridItem && !isRef)");
             textList =  Text.get(getBid(),getLevels(),0);
         }else if(isRef()){
             if(!isComplex){
@@ -579,6 +605,14 @@ public class Node{ //TODO implements  Parcelable
         return textList;
     }
 
+    public boolean isDaf(){
+        try {
+            return (sectionNames[sectionNames.length - 1].equals("Daf"));
+        }catch (Exception e){
+            return false;
+        }
+    }
+
      /**
      * gets the NID of a parent that is actually in the database. So if it's 3 levels of text, it will be using a real nid
      * @return ancestorNID
@@ -601,11 +635,11 @@ public class Node{ //TODO implements  Parcelable
         List<Integer> levels = new ArrayList<>();
         levels.add(0);
         if(isGridItem) {
-            levels.add(getGridNum());
+            levels.add(gridNum);
         }
         Node parent = this.parent;
         while(parent.nid == NID_CHAP_NO_NID) {
-            levels.add(parent.getGridNum());
+            levels.add(parent.gridNum);
             parent = parent.parent;
         }
 
@@ -796,7 +830,7 @@ public class Node{ //TODO implements  Parcelable
     @Override
     public String toString() {
         String str = "{"+  nid + ",bid:" + bid + ",titles:" + enTitle + " " + heTitle + ",sections:" + Util.array2str(sectionNames) + "," + Util.array2str(heSectionNames) + ",structN:" + structNum + ",textD:" + textDepth + ",tids:" + startTid + "-" + endTid + ",ref:" + extraTids;
-        str += ",gridN:" + getGridNum();
+        str += ",gridN:" + getNiceGridNum(Util.Lang.EN);
         //str +=  ",siblingN:" + siblingNum;
         str += getNodeTypeFlagsStr();
         str += "}";

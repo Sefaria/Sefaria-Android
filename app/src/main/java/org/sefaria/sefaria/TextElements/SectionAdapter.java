@@ -55,6 +55,7 @@ public class SectionAdapter extends ArrayAdapter<Text> {
         }
 
         Util.Lang lang = context.getTextLang();
+        boolean isCts = context.getIsCts();
         if (view == null || (view.findViewById(R.id.he) == null && lang == Util.Lang.BI)
                 || (view.findViewById(R.id.mono) == null && (lang == Util.Lang.HE || lang == Util.Lang.EN))) {
             LayoutInflater inflater = (LayoutInflater)
@@ -73,7 +74,7 @@ public class SectionAdapter extends ArrayAdapter<Text> {
             TextView enTv = (TextView) view.findViewById(R.id.en);
             TextView heTv = (TextView) view.findViewById(R.id.he);
 
-            if (segment.isChapter) {
+            if (segment.isChapter()) {
                 tch.setVisibility(View.VISIBLE);
                 enTv.setVisibility(View.GONE);
                 heTv.setVisibility(View.GONE);
@@ -89,9 +90,27 @@ public class SectionAdapter extends ArrayAdapter<Text> {
                 enNum.setVisibility(View.VISIBLE);
                 heNum.setVisibility(View.VISIBLE);
 
-                enTv.setText(Html.fromHtml(segment.enText));
+                if(segment.enText.length() > 0)
+                    enTv.setText(Html.fromHtml(segment.enText));
+                else
+                    enTv.setVisibility(View.GONE);
                 //enTv.setText(""+segment.getNumLinks() + " / " + maxNumLinks + "\nALPHA = " + linkAlpha);
-                heTv.setText(Html.fromHtml(segment.heText));
+                if(segment.heText.length() > 0)
+                    heTv.setText(Html.fromHtml(segment.heText));
+                else
+                    heTv.setVisibility(View.GONE);
+
+                /*
+                int padding;
+                if(isCts){
+                    padding = 1;
+
+                }else{
+                    padding = R.dimen.text_activtiy_numbering_padding;
+                }
+                enTv.setPadding(enTv.getPaddingLeft(),padding,enTv.getPaddingRight(),padding);
+                heTv.setPadding(heTv.getPaddingLeft(),padding,heTv.getPaddingRight(),padding);
+                */
 
                 //enTv.setTextColor(Color.parseColor("#999999"));
                 enTv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
@@ -114,7 +133,7 @@ public class SectionAdapter extends ArrayAdapter<Text> {
         } else { //Hebrew or English
             TextView tv = (TextView) view.findViewById(R.id.mono);
 
-            if (segment.isChapter) {
+            if (segment.isChapter()) {
 
                 tch.setVisibility(View.VISIBLE);
                 tv.setVisibility(View.GONE);
