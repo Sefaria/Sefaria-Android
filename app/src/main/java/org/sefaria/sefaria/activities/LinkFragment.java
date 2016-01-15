@@ -105,7 +105,7 @@ public class LinkFragment extends Fragment {
             else //the value of segment has already been set
                 clicked = false;
             TextView tv = (TextView) view.findViewById(R.id.tv);
-            //RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recview);
+            RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recview);
 
             Link.LinkCount linkCount = Link.LinkCount.getFromLinks_small(segment);
 

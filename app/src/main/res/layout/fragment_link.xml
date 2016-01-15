@@ -7,7 +7,19 @@
         android:layout_width="match_parent"
         android:layout_height="3dp"
         android:background="@color/menu_foreground"/>
-    <ScrollView
+    <TextView
+        android:id="@+id/tv"
+        android:padding="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <RecyclerView
+        android:id="@+id/recview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </RecyclerView>
+
+    <!--<ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <TextView
@@ -15,7 +27,7 @@
             android:padding="10dp"
             android:layout_width="match_parent" android:layout_height="match_parent"
             android:text="Hello Sefaria World!!!" />
-    </ScrollView>
+    </ScrollView>-->
 
 
 </FrameLayout>
