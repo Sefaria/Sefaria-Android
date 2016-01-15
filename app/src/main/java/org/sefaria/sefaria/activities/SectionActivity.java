@@ -36,6 +36,10 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
     @Override
     protected void onCreate(Bundle in) {
         super.onCreate(in);
+        if(badOnCreate){
+            finish();
+            return;
+        }
         setContentView(R.layout.activity_section);
         init();
     }
@@ -55,7 +59,6 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
 
             public void onScrollStopped() {
                 updateFocusedSegment();
-
             }
         });
         if (!isLoadingSection) {
@@ -78,8 +81,12 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
         //TODO change the menuItems' lang
     }
 
+    public boolean getIsCts(){ return isCts;}
+
     protected void setIsCts(boolean isCts) {
-        //TODO actually, this should never run
+        Log.d("sectionActi", "isCts called");
+        this.isCts = isCts;
+        sectionAdapter.notifyDataSetChanged();
     }
 
     protected void incrementTextSize(boolean isIncrement) {
@@ -100,7 +107,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
                 if (linkFragment != null) {
                     int currInd = i + listView.getFirstVisiblePosition();
                     Text currSeg = sectionAdapter.getItem(currInd);
-                    if (currSeg.isChapter) //TODO maybe make this select the chapter links...but not actually
+                    if (currSeg.isChapter()) //TODO maybe make this select the chapter links...but not actually
                         currSeg = sectionAdapter.getItem(currInd + 1);
 
                     linkFragment.updateFragment(currSeg);

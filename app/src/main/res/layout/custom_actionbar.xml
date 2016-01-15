@@ -115,6 +115,7 @@
             android:layout_margin="0dp"
             >
             <ImageView
+                android:id="@+id/lang_btn_img"
                 android:layout_width="@dimen/custom_action_bar_pic_size"
                 android:layout_height="@dimen/custom_action_bar_pic_size"
                 android:src="@drawable/bi_icon"
