@@ -63,8 +63,14 @@ public class TOCActivity extends AppCompatActivity {
     }
 
     private void init() {
-        MenuNode titleNode = new MenuNode("Table of Contents","תוכן העניינים",null);
-        cab = new CustomActionbar(this, titleNode, lang,homeClick,closeClick,null,null,langClick,null);
+        //TODO this should simply be done using values-iw
+        String title; //This is forcing "Table of Contents" to be based on System lang and not based on menuLang (it can easily be changed by inserting each value into the new MenuNode
+        if( MyApp.getSystemLang() == Util.Lang.EN)
+            title = "Table of Contents";
+        else
+            title = "תוכן העניינים";
+        MenuNode titleNode = new MenuNode(title,title,null);
+        cab = new CustomActionbar(this, titleNode, MyApp.getSystemLang(),homeClick,closeClick,null,null,langClick,null);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(cab);
 
@@ -111,15 +117,8 @@ public class TOCActivity extends AppCompatActivity {
     View.OnClickListener langClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            //TODO change icon
-            if(lang == Util.Lang.HE){
-                lang = Util.Lang.EN;
-            }else if(lang == Util.Lang.EN){
-                lang = Util.Lang.HE;
-            }else{// if(lang == Util.Lang.BI){
-                lang = Util.Lang.EN;
-            }
-            Log.d("TOCAct", "new lang is: " + lang);
+            //TODO change icon (maybe)
+            lang = MyApp.switchMenuLang();
             tocGrid.setLang(lang);
             cab.setLang(lang);
         }

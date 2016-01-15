@@ -12,10 +12,12 @@ import android.view.ViewGroup;
 import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.activities.TextActivity;
+import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Node;
 import org.sefaria.sefaria.activities.MenuActivity;
@@ -57,7 +59,6 @@ public class TOCGrid extends LinearLayout {
         this.book = book;
 
         init(pathDefiningNode);
-        setLang(lang);
     }
 
     private void init(String pathDefiningNode) {
@@ -97,6 +98,8 @@ public class TOCGrid extends LinearLayout {
             currSectionTitleView.setPadding(padding, padding, padding, padding);
         } catch (Node.InvalidPathException e) {
             currSectionTitleView.setHeight(0);
+        } catch (API.APIException e) {
+            Toast.makeText(context,"Problem getting data from internet", Toast.LENGTH_SHORT).show();
         }
         currSectionTitleView.setGravity(Gravity.CENTER);
         this.addView(currSectionTitleView, 1);
@@ -108,10 +111,10 @@ public class TOCGrid extends LinearLayout {
         gridRoot.setOrientation(LinearLayout.VERTICAL);
         gridRoot.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         gridRoot.setGravity(Gravity.CENTER);
-        this.addView(gridRoot,3);
+        this.addView(gridRoot, 3);
 
-        activateTab(defaultTab);
-
+        TocTabList.get(defaultTab).setActive(true);//set it true, such that the setLang function will start the right tab
+        setLang(lang);
 
     }
 
@@ -194,12 +197,10 @@ public class TOCGrid extends LinearLayout {
     }
 
     private void activateTab(TOCTab tocTab) {
-        if(tocTab.getActive() && tocTab.getLang() == lang)
-            return;
         for (TOCTab tempTocTab : TocTabList) {
             tempTocTab.setActive(false);
         }
-
+        Log.d("TOCGrid","activating tab");
         tocTab.setActive(true);
 
         freshGridRoot();

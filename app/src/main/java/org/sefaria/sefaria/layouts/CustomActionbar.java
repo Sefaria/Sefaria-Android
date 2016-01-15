@@ -1,6 +1,8 @@
 package org.sefaria.sefaria.layouts;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -24,14 +26,16 @@ public class CustomActionbar extends MenuElement {
     private View backBtn;
     private View invisableBtn;
     private TextView titleTV;
-    private MenuNode node;
+    private String heText = null;
+    private String enText = null;
+    private MenuNode menuNode;
 
 
-    public CustomActionbar(Context context, MenuNode node, Util.Lang lang, OnClickListener homeClick, OnClickListener closeClick, OnClickListener searchClick, OnClickListener titleClick, OnClickListener menuClick, OnClickListener backClick) {
+    public CustomActionbar(Context context, MenuNode menuNode, Util.Lang lang, OnClickListener homeClick, OnClickListener closeClick, OnClickListener searchClick, OnClickListener titleClick, OnClickListener menuClick, OnClickListener backClick) {
         super(context);
         inflate(context, R.layout.custom_actionbar, this);
 
-        this.node = node;
+        this.menuNode = menuNode;
 
         homeBtn = findViewById(R.id.home_btn);
         closeBtn = findViewById(R.id.close_btn);
@@ -45,7 +49,7 @@ public class CustomActionbar extends MenuElement {
 
 
         setLang(lang);
-        int topColor = node.getTopLevelColor();
+        int topColor = menuNode.getTopLevelColor();
         if (topColor == -1) colorBar.setVisibility(View.GONE);
         else colorBar.setBackgroundColor(getResources().getColor(topColor));
 
@@ -61,8 +65,18 @@ public class CustomActionbar extends MenuElement {
         if (searchClick != null)  searchBtn.setOnClickListener(searchClick);
         else searchBtn.setVisibility(View.GONE);
 
-        if (menuClick != null) menuBtn.setOnClickListener(menuClick);
+        if (menuClick != null) {
+            menuBtn.setOnClickListener(menuClick);
+            /*
+            if(lang == Util.Lang.HE)
+                findViewById(R.id.lang_btn_img).setBackgroundDrawable(getResources().getDrawable(R.drawable.he_icon2));
+            else if(lang == Util.Lang.EN)
+                findViewById(R.id.lang_btn_img).setBackgroundDrawable(getResources().getDrawable(R.drawable.en_icon2));
+             */
+        }
         else menuBtn.setVisibility(View.INVISIBLE);
+
+
 
         if (backClick != null) backBtn.setOnClickListener(backClick);
         else backBtn.setVisibility(View.INVISIBLE);
@@ -76,7 +90,21 @@ public class CustomActionbar extends MenuElement {
     }
 
     private void setTitle(String title) {
+        if(title.length() > 18)
+            titleTV.setTextSize(9);
+        if(title.length()< 19)
+            title = "\u3000\u3000" + title + "\u3000\u3000";
         titleTV.setText(title);
+    }
+
+    public void setTitleText(String title, Util.Lang lang, boolean forceRefresh){
+        Log.d("cab","title: "+  title);
+        if(lang == Util.Lang.HE)
+            heText = title;
+        else// if(lang == Util.Lang.HE || Lang.BI)
+            enText = title;
+        if(forceRefresh)
+            setLang(lang);
     }
 
     public void setLang(Util.Lang lang) {
@@ -84,11 +112,19 @@ public class CustomActionbar extends MenuElement {
          * This is a hack so that the resizing textbox thinks that the text is bigger so it's more likely to fit everything in.
          * \u3000 is a type of space char
          */
-        String title = node.getTitle(lang);
-        if(title.length() > 18)
-            titleTV.setTextSize(9);
-        if(title.length()< 19)
-            title = "\u3000\u3000" + title + "\u3000\u3000";
+        String title;
+
+        if(lang == Util.Lang.HE && heText != null){
+            title = heText;
+            Log.d("Cab", "here in hetext" + lang + " " + heText + "--" + enText);
+        } else if(lang == Util.Lang.EN && enText != null) {
+            title = enText;
+            Log.d("Cab", "here in entext" + lang + " " + heText + "--" + enText);
+        }else{
+            Log.d("Cab", "here in menunode" + lang + " " + heText + "--" + enText);
+            title = menuNode.getTitle(lang);
+        }
+
 
         setTitle(title);
         if (lang == Util.Lang.HE) {
@@ -102,7 +138,7 @@ public class CustomActionbar extends MenuElement {
     }
 
     public MenuNode getNode(){
-        return node;
+        return menuNode;
     }
 
 }

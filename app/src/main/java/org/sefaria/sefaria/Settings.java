@@ -20,8 +20,8 @@ public class Settings {
             langStr = "he";
         else if(lang == Util.Lang.EN)
             langStr = "en";
-        else//BI
-            langStr = "BI";
+        else //bi
+            langStr = "bi";
         editor.putString("menuLang",langStr);
         editor.commit();
     }
@@ -35,7 +35,7 @@ public class Settings {
             return Util.Lang.EN;
         else if(langStr.equals("bi"))
             return Util.Lang.BI;
-        else //if(langStr.equals("")) || anything else
+        else //if(langStr.equals("") || anything else)
             return MyApp.getSystemLang();
     }
 

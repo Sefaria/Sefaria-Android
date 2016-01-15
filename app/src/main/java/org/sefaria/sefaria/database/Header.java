@@ -221,7 +221,7 @@ public class Header implements Parcelable {
         return daf;
     }
 
-    private static String num2heDaf(int num){
+    public static String num2heDaf(int num){
         String daf = Util.int2heb(num2DafNum(num));
         if(num % 2 == 1)
             daf += ".";//"\u05f4\u05d0";

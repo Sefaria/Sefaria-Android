@@ -67,29 +67,16 @@ public class HomeActivity extends Activity {
         View.OnClickListener tempCloseClick = null;
         if (isPopup) tempCloseClick = closeClick;
 
-        cab = new CustomActionbar(this,new MenuNode("Sefaria","ספאריה",null),
+        String title; //This is forcing the word Sefaria to be based on System lang and not based on menuLang (it can easily be changed by inserting each value into the new MenuNode
+        if( MyApp.getSystemLang() == Util.Lang.EN)
+            title = "Sefaria";
+        else
+            title = "ספאריה";
+        cab = new CustomActionbar(this,new MenuNode(title,title,null),
                 menuLang,null,tempCloseClick,searchClick,null,menuClick,null);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(cab);
 
-        /*
-        This code doesn't belong here:
-         */
-        try {
-            Book book = (new Book("Genesis"));
-            Text text = book.getTOCroots().get(0).getFirstDescendant().getTexts().get(0);
-            Link.LinkCount linkCount = Link.LinkCount.getFromLinks_small(text);
-            linkCount.getSlimmedTitle(book, menuLang);
-            linkCount.getCount();
-            for(Link.LinkCount linkFilter : linkCount.getChildren()){
-                Link.getLinkedTexts(text,linkFilter);
-                Link.getLinkedTexts(text,linkFilter.getChildren().get(0));
-            }
-
-            //see LinkCount.printTree() for recursive function using getChildren()
-        }catch (Exception e){
-            e.printStackTrace();
-        }
 
         if(API.useAPI()) { //TODO move
             Toast.makeText(this, "starting download", Toast.LENGTH_SHORT).show();
