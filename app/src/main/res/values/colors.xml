@@ -17,6 +17,9 @@
     <color name="responsa">#803030</color>
     <color name="apocrypha">#90b0a0</color>
     <color name="other">#102040</color>
+    <color name="quoting_commentary">#cb6158</color>
+    <color name="modern_works">#7c406f</color>
+    <color name="commentary">#4871bf</color>
 
     <color name="menu_background">#F9F9F7</color>
     <color name="menu_foreground">#dddddd</color>

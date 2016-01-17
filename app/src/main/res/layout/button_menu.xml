@@ -9,7 +9,7 @@
     android:layout_weight="1"
     android:layout_margin="5dp"
     android:padding="12dp"
-    android:textSize="100sp"
+    android:textSize="20sp"
     android:background="@android:color/white"
     android:text="yoyo"
     android:textColor="@android:color/black"

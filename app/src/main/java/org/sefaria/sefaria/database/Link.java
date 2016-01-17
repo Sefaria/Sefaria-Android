@@ -136,7 +136,7 @@ public class Link implements Parcelable {
         protected int count;
         protected List<LinkCount> children;
 
-        private enum DEPTH_TYPE {
+        public enum DEPTH_TYPE {
             ALL,CAT,BOOK
         }
 
@@ -173,6 +173,8 @@ public class Link implements Parcelable {
 
         public int getCount(){ return count; }
 
+        public DEPTH_TYPE getDepthType() { return depth_type; }
+
         public List<LinkCount> getChildren(){
             if(children == null)
                 children = new ArrayList<>();
@@ -197,10 +199,26 @@ public class Link implements Parcelable {
             return str;
         }
 
+        public static List<LinkCount> getList(LinkCount lc) {
+            List<LinkCount> linkList = new ArrayList<>();
+
+            linkList.add(lc);
+            for (int i = 0; i < lc.getChildren().size(); i++) {
+                linkList.addAll(getList(lc.children.get(i)));
+            }
+            return linkList;
+        }
+
 
         @Override
         public String toString() {
-            String str = enTitle + " " + heTitle + " " + count +  "\n";
+            String type;
+            if (depth_type == DEPTH_TYPE.BOOK) type = "BOOK";
+            else if (depth_type == DEPTH_TYPE.CAT) type = "CAT";
+            else if (depth_type == DEPTH_TYPE.ALL) type = "ALL";
+            else type = "NONE";
+
+            String str = enTitle + " " + heTitle + " " + count + " " + type + "\n";
 
             return str;
         }
