@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,9 +13,13 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.TextView;
 
+import org.sefaria.sefaria.LinkElements.LinkAdapter;
 import org.sefaria.sefaria.R;
+import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.Link;
 import org.sefaria.sefaria.database.Text;
+
+import java.util.ArrayList;
 
 public class LinkFragment extends Fragment {
 
@@ -23,7 +28,8 @@ public class LinkFragment extends Fragment {
     private OnLinkFragInteractionListener mListener;
     private boolean dontUpdate; //if true, don't update the fragment
     private boolean clicked; //if true, segment has been updated when clicked and you should use that value when updating segment
-
+    private LinkAdapter linkAdapter;
+    private RecyclerView linkRecycler;
 
     private Text segment;
 
@@ -57,8 +63,17 @@ public class LinkFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        SuperTextActivity activity = (SuperTextActivity) getActivity();
 
         View view = inflater.inflate(R.layout.fragment_link, container, false);
+        linkRecycler = (RecyclerView) view.findViewById(R.id.recview);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(activity,2);
+        gridLayoutManager.setSpanSizeLookup(onSpanSizeLookup);
+
+        linkAdapter = new LinkAdapter(getActivity(),new ArrayList<Link.LinkCount>(),activity.getBook());
+
+        linkRecycler.setLayoutManager(gridLayoutManager);
+        linkRecycler.setAdapter(linkAdapter);
         Log.d("link", "VIEW == NULL " + (view));
 
         updateFragment((Text) getArguments().getParcelable(ARG_CURR_SECTION), view);
@@ -104,16 +119,14 @@ public class LinkFragment extends Fragment {
                 this.segment = segment;
             else //the value of segment has already been set
                 clicked = false;
-            TextView tv = (TextView) view.findViewById(R.id.tv);
-            RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recview);
+
 
             Link.LinkCount linkCount = Link.LinkCount.getFromLinks_small(segment);
 
-            if(!segment.isChapter())
-                tv.setText("SEGMENT: " + segment.levels[0] + "\n\n" + Link.LinkCount.getStringTree(linkCount,0));
-            else{
-                tv.setText("chapter heading: " + segment.enText + " " + segment.heText + "\n\n" + Link.LinkCount.getStringTree(linkCount,0));
-            }
+            linkAdapter.setItemList(Link.LinkCount.getList(linkCount));
+
+            linkRecycler.scrollToPosition(0); //reset scroll to top
+            Log.d("link","UPDATE");
         }
     }
 
@@ -123,5 +136,18 @@ public class LinkFragment extends Fragment {
 
     public void setDontUpdate(boolean dontUpdate) { this.dontUpdate = dontUpdate; }
     public void setArgCurrSection(boolean clicked) { this.clicked = clicked; }
+    public Text getSegment() { return segment; }
+
+    GridLayoutManager.SpanSizeLookup onSpanSizeLookup = new GridLayoutManager.SpanSizeLookup() {
+        @Override
+        public int getSpanSize(int position) {
+            Link.LinkCount linkCount = linkAdapter.getItem(position);
+            if (linkCount.getDepthType() != Link.LinkCount.DEPTH_TYPE.BOOK) {
+                return 2;
+            } else {
+                return 1;
+            }
+        }
+    };
 
 }

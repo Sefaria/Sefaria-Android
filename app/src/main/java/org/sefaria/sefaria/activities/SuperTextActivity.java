@@ -317,6 +317,8 @@ public abstract class SuperTextActivity extends Activity {
         this.textSize = textSize;
     }
 
+    public Book getBook() { return book; }
+
     protected abstract void setTextLang(Util.Lang textLang);
     protected abstract void setMenuLang(Util.Lang menuLang);
     protected abstract void setIsCts(boolean isCts);

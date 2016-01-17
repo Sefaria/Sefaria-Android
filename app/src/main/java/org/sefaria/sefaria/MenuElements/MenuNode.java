@@ -3,6 +3,7 @@ package org.sefaria.sefaria.MenuElements;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
 
@@ -17,16 +18,7 @@ import java.util.Queue;
  */
 public class MenuNode implements Parcelable {
 
-    private static final String[] HOME_BUTTON_NAMES = {"Tanach","Mishnah","Talmud",
-                                                    "Tosefta","Liturgy","Philosophy",
-                                                    "Chasidut","Musar","Other",
-                                                    "Halakhah","Midrash","Kabbalah",
-                                                    "Responsa","Parshanut","Apocrypha","More >"};
-    private static final int[] HOME_BUTTON_COLORS = {R.color.tanach, R.color.mishnah,R.color.talmud,
-                                                    R.color.tosefta,R.color.liturgy,R.color.philosophy,
-                                                    R.color.chasidut,R.color.musar,R.color.other,
-                                                    R.color.halkhah,R.color.midrash,R.color.kabbalah,
-                                                    R.color.responsa,R.color.parshanut,R.color.apocrypha,R.color.more};
+
 
     private String enTitle;
     private String heTitle;
@@ -58,11 +50,8 @@ public class MenuNode implements Parcelable {
         this.hePrettyTitle = makePrettyTitle(Util.Lang.HE);
 
         //set color
-        int homeInd = Arrays.asList(HOME_BUTTON_NAMES).indexOf(enTitle);
-        isHomeButton = homeInd != -1;
-
-        if (homeInd != -1) this.color = HOME_BUTTON_COLORS[homeInd];
-        else this.color = -1;
+        this.color = MyApp.getCatColor(enTitle);
+        this.isHomeButton = color != -1;
     }
 
     //as long as they have equal titles, they're equal.
@@ -145,9 +134,9 @@ public class MenuNode implements Parcelable {
 
     public int getTopLevelColor() {
         MenuNode topNode = getTopLevelNode();
-        int colorInd = Arrays.asList(HOME_BUTTON_NAMES).indexOf(topNode.getTitle(Util.Lang.EN));
+        int colorInd = Arrays.asList(MyApp.CAT_NAMES).indexOf(topNode.getTitle(Util.Lang.EN));
         if (colorInd == -1) return -1;
-        else return HOME_BUTTON_COLORS[colorInd];
+        else return MyApp.CAT_COLORS[colorInd];
     }
 
     //return top level node for this node

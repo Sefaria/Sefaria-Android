@@ -1,23 +1,22 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:orientation="vertical"
     android:layout_height="match_parent"
     android:background="@color/link_background"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp"
+    android:paddingBottom="20dp"
     tools:context="org.sefaria.sefaria.activities.LinkFragment">
     <View
         android:layout_width="match_parent"
         android:layout_height="3dp"
         android:background="@color/menu_foreground"/>
-    <TextView
-        android:id="@+id/tv"
-        android:padding="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-    <RecyclerView
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/recview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-    </RecyclerView>
+    </android.support.v7.widget.RecyclerView>
 
     <!--<ScrollView
         android:layout_width="match_parent"
@@ -30,4 +29,4 @@
     </ScrollView>-->
 
 
-</FrameLayout>
+</LinearLayout>
