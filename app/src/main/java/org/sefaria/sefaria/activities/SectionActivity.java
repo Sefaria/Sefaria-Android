@@ -24,14 +24,13 @@ import java.util.List;
 
 public class SectionActivity extends SuperTextActivity implements AbsListView.OnScrollListener, LinkFragment.OnLinkFragInteractionListener {
 
-    private static int LINK_FRAG_ANIM_TIME = 300; //ms
-
     private ListViewExt listView;
     private SectionAdapter sectionAdapter;
 
     private int preLast;
     //text formatting props
     private boolean isLoadingSection; //to make sure multiple sections don't get loaded at once
+
 
     @Override
     protected void onCreate(Bundle in) {
@@ -153,7 +152,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
     }
 
     public void onLinkFragAttached() {
-        SlideToAbove(findViewById(R.id.linkRoot));
+        AnimateLinkFragOpen(findViewById(R.id.linkRoot));
         Log.d("link","ATTACHED");
     }
 
@@ -161,15 +160,15 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-            View linkRoot = findViewById(R.id.linkRoot);
 
-            if (isLinkOpen) {
-                isLinkOpen = false;
+            View linkRoot = findViewById(R.id.linkRoot);
+            if (linkFragment != null && linkFragment.getIsOpen()) {
+
                 //linkRoot.setVisibility(View.GONE);
-                SlideToDown(linkRoot);
+                AnimateLinkFragClose(linkRoot);
 
             } else {
-                isLinkOpen = true;
+                listView.setSelection(position);
                 if (linkFragment == null) {
                     linkFragment = new LinkFragment();
                     Bundle args = new Bundle();
@@ -185,7 +184,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
                 } else {
 
                     //linkRoot.setVisibility(View.VISIBLE);
-                    SlideToAbove(linkRoot);
+                    AnimateLinkFragOpen(linkRoot);
                 }
 
 
@@ -231,92 +230,33 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
 
     }
 
-    //-----
-    //LINK FRAGMENT
-    //-----
+    /**
+     * LINK FRAGMENT
+     */
 
+    @Override
+    protected void onFinishLinkFragOpen() {
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        lp.addRule(RelativeLayout.ALIGN_TOP, R.id.useless);
+        lp.addRule(RelativeLayout.ABOVE,R.id.linkRoot);
 
-    //Thank you Farhan Shah! https://stackoverflow.com/questions/20323628/android-layout-animations-from-bottom-to-top-and-top-to-bottom-on-imageview-clic
+        listView.setLayoutParams(lp);
 
-    public void SlideToAbove(final View v) {
-        Animation slide = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0.0f,
-                Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF,
-                1.0f, Animation.RELATIVE_TO_SELF, 0.0f);
-
-        slide.setDuration(LINK_FRAG_ANIM_TIME);
-        slide.setFillAfter(true);
-        slide.setFillEnabled(true);
-        v.startAnimation(slide);
-
-        slide.setAnimationListener(new Animation.AnimationListener() {
-
-            @Override
-            public void onAnimationStart(Animation animation) {
-                v.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-
-                v.clearAnimation();
-                RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-                lp.addRule(RelativeLayout.ALIGN_TOP,R.id.useless);
-                lp.addRule(RelativeLayout.ABOVE,R.id.linkRoot);
-
-                listView.setLayoutParams(lp);
-
-                linkFragment.setDontUpdate(false);
-            }
-
-        });
 
     }
 
-    public void SlideToDown(final View v) {
-        Animation slide = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0.0f,
-                Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF,
-                0.0f, Animation.RELATIVE_TO_SELF, 1.0f);
+    @Override
+    protected void onStartLinkFragClose() {
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        lp.addRule(RelativeLayout.ALIGN_TOP,R.id.useless);
+        //lp.addRule(RelativeLayout.ABOVE,R.id.linkRoot);
 
-        slide.setDuration(LINK_FRAG_ANIM_TIME);
-        slide.setFillAfter(true);
-        slide.setFillEnabled(true);
-        v.startAnimation(slide);
-
-        slide.setAnimationListener(new Animation.AnimationListener() {
-
-            @Override
-            public void onAnimationStart(Animation animation) {
-                linkFragment.setDontUpdate(true);
-
-                RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-                lp.addRule(RelativeLayout.ALIGN_TOP,R.id.useless);
-                //lp.addRule(RelativeLayout.ABOVE,R.id.linkRoot);
-
-                listView.setLayoutParams(lp);
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-
-                v.clearAnimation();
-
-                v.setVisibility(View.GONE);
-
-            }
-
-        });
-
+        listView.setLayoutParams(lp);
     }
+
+
 
 
 
