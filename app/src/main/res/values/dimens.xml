@@ -25,8 +25,12 @@
     <dimen name="custom_action_bar_button_frame_width">40dp</dimen>
     <dimen name="custom_action_bar_button_to_side_padding">5dp</dimen>
 
+    <dimen name="color_bar_height">5dp</dimen>
+
     <dimen name="text_activtiy_between_segment_padding">8dp</dimen>
     <dimen name="text_activtiy_numbering_padding">11dp</dimen>
+
+    <dimen name="link_main_padding">30dp</dimen>
 
 
 </resources>

@@ -135,16 +135,23 @@ public class Link implements Parcelable {
         protected DEPTH_TYPE depth_type;
         protected int count;
         protected List<LinkCount> children;
+        protected String category;
 
         public enum DEPTH_TYPE {
             ALL,CAT,BOOK
         }
 
         public LinkCount(String enTitle,int count,String heTitle, DEPTH_TYPE depth_type){
+            this(enTitle,count,heTitle,depth_type,"");
+        }
+
+        //category is passed in only if DEPTH_TYPE == DEPTH_TYPE.BOOK
+        public LinkCount(String enTitle,int count,String heTitle, DEPTH_TYPE depth_type, String category){
             this.enTitle = enTitle;
             this.heTitle = heTitle;
             this.count = count;
             this.depth_type = depth_type;
+            this.category = category;
         }
 
         /**
@@ -174,6 +181,8 @@ public class Link implements Parcelable {
         public int getCount(){ return count; }
 
         public DEPTH_TYPE getDepthType() { return depth_type; }
+
+        public String getCategory() { return category; }
 
         public List<LinkCount> getChildren(){
             if(children == null)
@@ -260,7 +269,7 @@ public class Link implements Parcelable {
                             category = categories[0];
                         countGroups = new LinkCount(category,0, category + " (he)",DEPTH_TYPE.CAT);
                     }
-                    LinkCount linkCount = new LinkCount(cursor.getString(0),cursor.getInt(1),cursor.getString(2),DEPTH_TYPE.BOOK);
+                    LinkCount linkCount = new LinkCount(cursor.getString(0),cursor.getInt(1),cursor.getString(2),DEPTH_TYPE.BOOK,categories[0]);
                     if(cursor.getInt(3) == text.bid){//Comments on this book
                         commentaryGroup.addChild(linkCount);
                     }else{
