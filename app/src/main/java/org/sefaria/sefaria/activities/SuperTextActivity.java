@@ -7,7 +7,11 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import org.sefaria.sefaria.MyApp;
@@ -35,6 +39,7 @@ public abstract class SuperTextActivity extends Activity {
     public enum TextEnums {
         NEXT_SECTION, PREV_SECTION
     }
+    private static int LINK_FRAG_ANIM_TIME = 300; //ms
     public static final int PREV_CHAP_DRAWN = 234234;
     public static final int TOC_CHAPTER_CLICKED_CODE = 3456;
     protected static final int WHERE_PAGE = 2;
@@ -59,7 +64,6 @@ public abstract class SuperTextActivity extends Activity {
 
     //link vars
     protected LinkFragment linkFragment;
-    protected boolean isLinkOpen;
     /**
      * hacky boolean so that if there's a problem with the on create, the subclasses know not to continue with init (after they call super.onCreate)
      */
@@ -117,7 +121,6 @@ public abstract class SuperTextActivity extends Activity {
         isCts = false;
         textLang = MyApp.getDefaultTextLang();
         textSize = getResources().getDimension(R.dimen.default_text_font_size);
-        isLinkOpen = false;
         //end defaults
 
         menuLang = MyApp.getMenuLang();
@@ -165,7 +168,7 @@ public abstract class SuperTextActivity extends Activity {
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(customActionbar);
         String title = firstLoadedNode.getMenuBarTitle(book, menuLang);
-        customActionbar.setTitleText(title, menuLang,true);
+        customActionbar.setTitleText(title, menuLang, true);
         customActionbar.setLang(menuLang);
     }
 
@@ -190,6 +193,20 @@ public abstract class SuperTextActivity extends Activity {
                 lastLoadedNode = null;
                 init();
             }
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (linkFragment != null && linkFragment.getIsOpen()) {
+            if (linkFragment.getCurrState() == LinkFragment.State.MAIN) {
+                View linkRoot = findViewById(R.id.linkRoot);
+                AnimateLinkFragClose(linkRoot);
+            } else { //In CAT or BOOK state
+                linkFragment.gotoState(LinkFragment.State.MAIN,linkFragment.getView(),null);
+            }
+        } else {
+            super.onBackPressed();
         }
     }
 
@@ -375,5 +392,86 @@ public abstract class SuperTextActivity extends Activity {
 
     static private SharedPreferences getBookSavedSettings(){
         return MyApp.getContext().getSharedPreferences("org.sefaria.sefaria.book_save_settings", Context.MODE_PRIVATE);
+    }
+
+    //-----
+    //LINK FRAGMENT
+    //-----
+
+    protected abstract void onFinishLinkFragOpen();
+    protected abstract void onStartLinkFragClose();
+
+    //Thank you Farhan Shah! https://stackoverflow.com/questions/20323628/android-layout-animations-from-bottom-to-top-and-top-to-bottom-on-imageview-clic
+
+    protected void AnimateLinkFragOpen(final View v) {
+        Animation slide = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0.0f,
+                Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF,
+                1.0f, Animation.RELATIVE_TO_SELF, 0.0f);
+
+        slide.setDuration(LINK_FRAG_ANIM_TIME);
+        slide.setFillAfter(true);
+        slide.setFillEnabled(true);
+        v.startAnimation(slide);
+
+        slide.setAnimationListener(new Animation.AnimationListener() {
+
+            @Override
+            public void onAnimationStart(Animation animation) {
+                v.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+
+                v.clearAnimation();
+
+                onFinishLinkFragOpen();
+                linkFragment.setDontUpdate(false);
+                linkFragment.setIsOpen(true);
+            }
+
+        });
+
+    }
+
+    protected void AnimateLinkFragClose(final View v) {
+        Animation slide = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0.0f,
+                Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF,
+                0.0f, Animation.RELATIVE_TO_SELF, 1.0f);
+
+        slide.setDuration(LINK_FRAG_ANIM_TIME);
+        slide.setFillAfter(true);
+        slide.setFillEnabled(true);
+        v.startAnimation(slide);
+
+        slide.setAnimationListener(new Animation.AnimationListener() {
+
+            @Override
+            public void onAnimationStart(Animation animation) {
+                linkFragment.setIsOpen(false);
+                linkFragment.setDontUpdate(true);
+
+                onStartLinkFragClose();
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+
+                v.clearAnimation();
+
+                v.setVisibility(View.GONE);
+
+            }
+
+        });
+
     }
 }

@@ -230,4 +230,17 @@ public class TextActivity extends SuperTextActivity {
         }
     };
 
+    /**
+     * LINK FRAGMENT
+     */
+
+    @Override
+    protected void onStartLinkFragClose() {
+
+    }
+
+    @Override
+    protected void onFinishLinkFragOpen() {
+
+    }
 }
