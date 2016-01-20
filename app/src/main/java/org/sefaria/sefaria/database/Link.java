@@ -188,13 +188,15 @@ public class Link implements Parcelable {
             children.add(child);
         }
 
-        public static String getStringTree(LinkCount lc,int tabs){
+        public static String getStringTree(LinkCount lc,int tabs, boolean printToLog){
             String tabStr = "";
             for(int i=0;i<tabs;i++)
                 tabStr += "-";
             String str = tabStr + lc.toString() + '\n';
+            if(printToLog)
+                Log.d("Link",str);
             for(int i=0;i<lc.getChildren().size();i++) {
-                str += getStringTree(lc.children.get(i),tabs + 1);
+                str += getStringTree(lc.children.get(i),tabs + 1, printToLog);
             }
             return str;
         }
@@ -227,12 +229,63 @@ public class Link implements Parcelable {
         final private static String COMMENTARY = "Commentary";
         final private static String QUOTING_COMMENTARY = "Quoting Commentary";
 
+        private static LinkCount getCommentaryOnChap(int chapStart, int chapEnd, int bid){
+            LinkCount commentaryGroup = new LinkCount(COMMENTARY,0, "מפרשים",DEPTH_TYPE.CAT);
+            Database2 dbHandler = Database2.getInstance();
+            SQLiteDatabase db = dbHandler.getReadableDatabase();
+            Log.d("Link", "starting getCommentaryOnChap");
+
+            String sql = "SELECT B.title, B.heTitle FROM Books B, Links_small L, Texts T WHERE (" +
+                    "((L.tid1 BETWEEN " + chapStart + " AND " + chapEnd +  ") AND L.tid2=T._id AND T.bid= B._id AND B.commentsOn=" + bid + ")"
+                    + " OR " +
+                    "((L.tid2 BETWEEN " + chapStart + " AND " + chapEnd +  ") AND L.tid1=T._id AND T.bid= B._id AND B.commentsOn=" + bid + ")"
+                    + ") GROUP BY B._id ORDER BY B._id"
+                    ;
+
+            Cursor cursor = db.rawQuery(sql, null);
+            if (cursor.moveToFirst()) {
+                do {
+                    LinkCount linkCount = new LinkCount(cursor.getString(0),0,cursor.getString(1),DEPTH_TYPE.BOOK);
+                    commentaryGroup.addChild(linkCount);
+                } while (cursor.moveToNext());
+            }
+            Log.d("Link", "finsihing getCommentaryOnChap");
+            return commentaryGroup;
+        }
+
+        /**
+         * linearly loop through all children (commentary books on the chapter), and update the count for the specific book (using the title as the key)
+         * @param title
+         * @param count
+         */
+        private void addCommentaryCount(String title, int count, String heTitle){
+            if(count == 0) return; //it's not worth trying to go through the whole list testing a match, if this is just zero anyways. (It should never happen that this is 0).
+            for(LinkCount child: children){
+                if(child.enTitle.equals(title)){
+                    child.count = count;
+                    this.count += count;
+                    return;
+                }
+            }
+            Log.e("LinkCount", "I couldn't find the book, even though the list is supposed to contain all books that comment on the chap... I'll create a new LinkCount if I hae to");
+            LinkCount linkCount = new LinkCount(title,count,heTitle,DEPTH_TYPE.BOOK);
+            this.addChild(linkCount);
+        }
+
+
         public static LinkCount getFromLinks_small(Text text){
             LinkCount allLinkCounts = new LinkCount(ALL_CONNECTIONS, 0, "All Connections (He)",DEPTH_TYPE.ALL);
             if(text.getNumLinks() == 0)  return allLinkCounts;
             Database2 dbHandler = Database2.getInstance();
             SQLiteDatabase db = dbHandler.getReadableDatabase();
-            //Log.d("Link", "starting getCountsTitlesFromLinks_small");
+            Log.d("Link", "starting getCountsTitlesFromLinks_small");
+
+            LinkCount commentaryGroup;
+            //commentaryGroup = new LinkCount(COMMENTARY,0, "מפרשים",DEPTH_TYPE.CAT);
+            commentaryGroup = getCommentaryOnChap(text.tid -10,text.tid +10,text.bid);//TODO this actually needs to get from begin and end of chap (not randomly)
+
+
+
             String sql = "SELECT B.title, Count(*) as booksCount, B.heTitle, B.commentsOn, B.categories FROM Books B, Links_small L, Texts T WHERE (" +
                     "(L.tid1 = " + text.tid + " AND L.tid2=T._id AND T.bid= B._id) OR " +
                     "(L.tid2 = " + text.tid + " AND L.tid1=T._id AND T.bid= B._id) ) GROUP BY B._id ORDER BY B.categories, B._id"
@@ -240,12 +293,12 @@ public class Link implements Parcelable {
 
             Cursor cursor = db.rawQuery(sql, null);
 
-            LinkCount commentaryGroup = new LinkCount(COMMENTARY,0, "מפרשים",DEPTH_TYPE.CAT);
+
             LinkCount countGroups = null;
             String lastCategory = "";
             if (cursor.moveToFirst()) {
                 do {
-                    // Adding  to list
+
                     String [] categories = Util.str2strArray(cursor.getString(4));
                     //TODO test length
                     if(countGroups == null || !categories[0].equals(lastCategory)){
@@ -260,19 +313,28 @@ public class Link implements Parcelable {
                             category = categories[0];
                         countGroups = new LinkCount(category,0, category + " (he)",DEPTH_TYPE.CAT);
                     }
-                    LinkCount linkCount = new LinkCount(cursor.getString(0),cursor.getInt(1),cursor.getString(2),DEPTH_TYPE.BOOK);
-                    if(cursor.getInt(3) == text.bid){//Comments on this book
-                        commentaryGroup.addChild(linkCount);
+                    String childEnTitle = cursor.getString(0);
+                    int childCount = cursor.getInt(1);
+                    String childHeTitle = cursor.getString(2);
+                    if(cursor.getInt(3) == text.bid) {//Comments on this book
+                        commentaryGroup.addCommentaryCount(childEnTitle,childCount,childHeTitle);
+                        //LinkCount linkCount = new LinkCount(childEnTitle,childCount,childHeTitle,DEPTH_TYPE.BOOK);
+                        //commentaryGroup.addChild(linkCount);
                     }else{
+                        LinkCount linkCount = new LinkCount(childEnTitle,childCount,childHeTitle,DEPTH_TYPE.BOOK);
                         countGroups.addChild(linkCount);
                     }
 
                 } while (cursor.moveToNext());
             }
-            allLinkCounts.addChild(countGroups);
-            allLinkCounts.addChild(commentaryGroup);
-            //Log.d("Link", "finished getCountsTitlesFromLinks_small");
-            //getStringTree(allLinkCounts, 0);
+            if(countGroups.count >0)
+                allLinkCounts.addChild(countGroups);
+            if(commentaryGroup.count >0)
+                allLinkCounts.addChild(commentaryGroup);
+            Log.d("Link", "finished getCountsTitlesFromLinks_small");
+
+            //getStringTree(allLinkCounts, 0, true);
+
 
             return allLinkCounts;
         }
