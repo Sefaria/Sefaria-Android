@@ -10,28 +10,42 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.TextView;
 
-import org.sefaria.sefaria.LinkElements.LinkAdapter;
+import org.sefaria.sefaria.LinkElements.LinkMainAdapter;
+import org.sefaria.sefaria.LinkElements.LinkTextAdapter;
+import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.Link;
 import org.sefaria.sefaria.database.Text;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 
 public class LinkFragment extends Fragment {
 
+    public enum State {
+        //main shows all linkcounts
+        //cat shows all links relevant to one cat - only on one segment
+        //book shows all links relevant to one book - on whole section
+        MAIN,CAT,BOOK
+    }
+    public static final int MAX_NUM_LINK_SELECTORS = 5;
     public static String ARG_CURR_SECTION = "currSection";
 
     private OnLinkFragInteractionListener mListener;
     private boolean dontUpdate; //if true, don't update the fragment
     private boolean clicked; //if true, segment has been updated when clicked and you should use that value when updating segment
-    private LinkAdapter linkAdapter;
+    private boolean isOpen; //true if fragment is open in activity
+    private LinkMainAdapter linkMainAdapter;
+    private LinkTextAdapter linkTextAdapter;
     private RecyclerView linkRecycler;
+    private Queue<Link.LinkCount> linkSelectorQueue; //holds the linkCounts that display the previously selected linkCounts
 
     private Text segment;
+    private State currState;
 
     public static LinkFragment newInstance(Text segment) {
         LinkFragment fragment = new LinkFragment();
@@ -45,7 +59,8 @@ public class LinkFragment extends Fragment {
     }
 
     public LinkFragment() {
-        // Required empty public constructor
+        currState = State.MAIN;
+        isOpen = false;
     }
 
     @Override
@@ -63,17 +78,11 @@ public class LinkFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        SuperTextActivity activity = (SuperTextActivity) getActivity();
+
 
         View view = inflater.inflate(R.layout.fragment_link, container, false);
         linkRecycler = (RecyclerView) view.findViewById(R.id.recview);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(activity,2);
-        gridLayoutManager.setSpanSizeLookup(onSpanSizeLookup);
-
-        linkAdapter = new LinkAdapter(getActivity(),new ArrayList<Link.LinkCount>(),activity.getBook());
-
-        linkRecycler.setLayoutManager(gridLayoutManager);
-        linkRecycler.setAdapter(linkAdapter);
+        gotoState(State.MAIN,view,null);
         Log.d("link", "VIEW == NULL " + (view));
 
         updateFragment((Text) getArguments().getParcelable(ARG_CURR_SECTION), view);
@@ -99,6 +108,53 @@ public class LinkFragment extends Fragment {
         mListener = null;
     }
 
+    public State getCurrState() { return currState; }
+
+    public void gotoState(State state,View view,Link.LinkCount linkCount) {
+        currState = state;
+        SuperTextActivity activity = (SuperTextActivity) getActivity();
+        View colorBar = view.findViewById(R.id.main_color_bar);
+        View linkSelectionBar = view.findViewById(R.id.link_selection_bar);
+        if (state == State.MAIN) {
+            colorBar.setVisibility(View.GONE);
+            linkSelectionBar.setVisibility(View.GONE);
+            GridLayoutManager gridLayoutManager = new GridLayoutManager(activity,2);
+            gridLayoutManager.setSpanSizeLookup(onSpanSizeLookup);
+
+            linkMainAdapter = new LinkMainAdapter(activity,new ArrayList<Link.LinkCount>(),activity.getBook(),this);
+
+            linkRecycler.setLayoutManager(gridLayoutManager);
+            linkRecycler.setAdapter(linkMainAdapter);
+            updateFragment(segment);
+
+        } else { //CAT and BOOK are very similar
+            //update linkSelectorQueue
+
+            if(true) return; //TODO remove this line
+            //if(linkSelectorQueue == null)  linkSelectorQueue = new LinkedList<>(); //TODO jh, this is a quick fix. might not make sense
+            if (linkSelectorQueue.size() >= MAX_NUM_LINK_SELECTORS) linkSelectorQueue.remove();
+            linkSelectorQueue.add(linkCount);
+
+
+            String cat;
+            if (linkCount.getDepthType() == Link.LinkCount.DEPTH_TYPE.BOOK) cat = linkCount.getCategory();
+            else cat = linkCount.getRealTitle(Util.Lang.EN); //CAT
+            colorBar.setVisibility(View.VISIBLE);
+            int color = MyApp.getCatColor(cat);
+            colorBar.setBackgroundColor(activity.getResources().getColor(color));
+            linkSelectionBar.setVisibility(View.VISIBLE);
+
+
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(activity,LinearLayoutManager.VERTICAL,false);
+
+            List<Text> linkList = Link.getLinkedTexts(segment,linkCount);
+
+            linkTextAdapter = new LinkTextAdapter(activity,linkList);
+            linkRecycler.setLayoutManager(linearLayoutManager);
+            linkRecycler.setAdapter(linkTextAdapter);
+        }
+    }
+
     public interface OnLinkFragInteractionListener {
         // TODO: Update argument type and name
         //public void onLinkFragInteractionListener(Uri uri);
@@ -120,11 +176,14 @@ public class LinkFragment extends Fragment {
             else //the value of segment has already been set
                 clicked = false;
 
+            if (currState == State.MAIN) { //load new linkCounts
+                Link.LinkCount linkCount = Link.LinkCount.getFromLinks_small(segment);
+                linkMainAdapter.setItemList(Link.LinkCount.getList(linkCount));
+            } else if (currState == State.BOOK) { //change visibilty of links
 
-            Link.LinkCount linkCount = Link.LinkCount.getFromLinks_small(segment);
+            } else { //CAT load new cat links
 
-            linkAdapter.setItemList(Link.LinkCount.getList(linkCount));
-
+            }
             linkRecycler.scrollToPosition(0); //reset scroll to top
             Log.d("link","UPDATE");
         }
@@ -135,13 +194,15 @@ public class LinkFragment extends Fragment {
     }
 
     public void setDontUpdate(boolean dontUpdate) { this.dontUpdate = dontUpdate; }
+    public void setIsOpen(boolean isOpen) { this.isOpen = isOpen; }
+    public boolean getIsOpen() { return isOpen; }
     public void setArgCurrSection(boolean clicked) { this.clicked = clicked; }
     public Text getSegment() { return segment; }
 
     GridLayoutManager.SpanSizeLookup onSpanSizeLookup = new GridLayoutManager.SpanSizeLookup() {
         @Override
         public int getSpanSize(int position) {
-            Link.LinkCount linkCount = linkAdapter.getItem(position);
+            Link.LinkCount linkCount = linkMainAdapter.getItem(position);
             if (linkCount.getDepthType() != Link.LinkCount.DEPTH_TYPE.BOOK) {
                 return 2;
             } else {

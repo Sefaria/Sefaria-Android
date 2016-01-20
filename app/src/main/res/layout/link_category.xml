@@ -2,11 +2,17 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="wrap_content">
+    <!--cat_padding is meant to add extra padding only for cats -->
+    <View
+        android:id="@+id/cat_padding"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/link_main_padding"
+        android:visibility="gone"/>
     <View
         android:visibility="gone"
         android:id="@+id/color_bar"
         android:layout_width="match_parent"
-        android:layout_height="5dp"
+        android:layout_height="@dimen/color_bar_height"
         android:background="@color/halkhah"/>
     <TextView
         android:id="@+id/tv"
@@ -15,7 +21,7 @@
         android:text="yoyo"
         android:padding="12dp"
         android:textSize="15sp"
-        android:textAllCaps="true"
+        android:textAllCaps="false"
         android:layout_margin="1dp"
         android:background="@android:color/white"
         android:gravity="center"/>

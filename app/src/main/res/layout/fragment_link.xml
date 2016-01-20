@@ -3,10 +3,44 @@
     android:orientation="vertical"
     android:layout_height="match_parent"
     android:background="@color/link_background"
-    android:paddingLeft="20dp"
-    android:paddingRight="20dp"
-    android:paddingBottom="20dp"
     tools:context="org.sefaria.sefaria.activities.LinkFragment">
+    <View
+        android:id="@+id/main_color_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/color_bar_height"
+        android:background="@color/talmud"
+        android:visibility="gone"/>
+    <LinearLayout
+        android:id="@+id/link_selection_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <HorizontalScrollView
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_toLeftOf="@+id/link_back_btn"
+            >
+            <LinearLayout
+                android:id="@+id/link_selection_bar_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:padding="10dp"
+                android:background="@color/link_background">
+
+
+            </LinearLayout>
+
+        </HorizontalScrollView>
+        <View
+            android:id="@+id/link_back_btn"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:background="@color/tanach"
+            android:layout_margin="10dp"
+            android:layout_gravity="center"/>
+    </LinearLayout>
     <View
         android:layout_width="match_parent"
         android:layout_height="3dp"
@@ -14,7 +48,9 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/link_main_padding"
+        android:paddingRight="@dimen/link_main_padding">
 
     </android.support.v7.widget.RecyclerView>
 

@@ -135,16 +135,23 @@ public class Link implements Parcelable {
         protected DEPTH_TYPE depth_type;
         protected int count;
         protected List<LinkCount> children;
+        protected String category;
 
         public enum DEPTH_TYPE {
             ALL,CAT,BOOK
         }
 
         public LinkCount(String enTitle,int count,String heTitle, DEPTH_TYPE depth_type){
+            this(enTitle,count,heTitle,depth_type,"");
+        }
+
+        //category is passed in only if DEPTH_TYPE == DEPTH_TYPE.BOOK
+        public LinkCount(String enTitle,int count,String heTitle, DEPTH_TYPE depth_type, String category){
             this.enTitle = enTitle;
             this.heTitle = heTitle;
             this.count = count;
             this.depth_type = depth_type;
+            this.category = category;
         }
 
         /**
@@ -174,6 +181,8 @@ public class Link implements Parcelable {
         public int getCount(){ return count; }
 
         public DEPTH_TYPE getDepthType() { return depth_type; }
+
+        public String getCategory() { return category; }
 
         public List<LinkCount> getChildren(){
             if(children == null)
