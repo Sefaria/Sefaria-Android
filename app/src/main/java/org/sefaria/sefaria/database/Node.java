@@ -101,7 +101,11 @@ public class Node{ //TODO implements  Parcelable
 
     public String getMenuBarTitle(Book book, Util.Lang menuLang){
         String str = book.getTitle(menuLang);
-        str = str + " " + this.getWholeTitle(menuLang,false);
+        if(isComplex)
+            str += ", ";
+        else
+            str += " ";
+        str += this.getWholeTitle(menuLang,false);
         return str;
     }
 
@@ -134,8 +138,8 @@ public class Node{ //TODO implements  Parcelable
         String str = "";
         if(isGridItem || nid == NID_CHAP_NO_NID) {
             if(doSectionName)
-                str = getSectionName(lang);
-            str += " " + getNiceGridNum(lang);
+                str = getSectionName(lang) + " ";
+            str += getNiceGridNum(lang);
         }
         else
             str = getTitle(lang);
@@ -158,8 +162,12 @@ public class Node{ //TODO implements  Parcelable
         return name;
     }
 
-    private int getGridNum(){ return gridNum;}
 
+    /**
+     * will get the grid number in the right language and all converted if it's a daf
+     * @param lang
+     * @return
+     */
     public String getNiceGridNum(Util.Lang lang){
         if(isDaf()){
             if(Util.Lang.HE == lang)

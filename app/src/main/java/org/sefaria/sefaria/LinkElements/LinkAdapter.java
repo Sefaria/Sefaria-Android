@@ -23,10 +23,13 @@ public class LinkAdapter extends RecyclerView.Adapter<LinkAdapter.LinkHolder> {
     public class LinkHolder extends RecyclerView.ViewHolder {
         public TextView tv;
         public View colorBar;
+        public View view;
         public LinkHolder(View v) {
             super(v);
             tv = (TextView) v.findViewById(R.id.tv);
             colorBar = v.findViewById(R.id.color_bar);
+            view = v;
+
         }
     }
 
@@ -53,6 +56,7 @@ public class LinkAdapter extends RecyclerView.Adapter<LinkAdapter.LinkHolder> {
 
         if (linkCount.getDepthType() == Link.LinkCount.DEPTH_TYPE.CAT) {
             holder.colorBar.setVisibility(View.VISIBLE);
+            //holder.view.setPadding(0, 40, 0, 0); //NS, I tries this, but it doesn't work quite right
             int color = MyApp.getCatColor(linkCount.getRealTitle(Util.Lang.EN));
             if (color != -1) {
                 holder.colorBar.setBackgroundColor(context.getResources().getColor(color));
