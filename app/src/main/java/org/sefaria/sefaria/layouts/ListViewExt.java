@@ -11,7 +11,7 @@ import android.widget.ListView;
  */
 public class ListViewExt extends ListView {
 
-    private static int SENSITIVITY = 100;
+    private static int SENSITIVITY = 0;
 
     private long lastScrollUpdate = -1;
 

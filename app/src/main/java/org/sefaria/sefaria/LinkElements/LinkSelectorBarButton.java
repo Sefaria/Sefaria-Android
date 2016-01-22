@@ -1,0 +1,38 @@
+package org.sefaria.sefaria.LinkElements;
+
+import android.content.Context;
+import android.util.AttributeSet;
+import android.view.Gravity;
+import android.view.View;
+import android.widget.TextView;
+
+import org.sefaria.sefaria.Util;
+import org.sefaria.sefaria.database.Book;
+import org.sefaria.sefaria.database.Link;
+
+/**
+ * Created by nss on 1/21/16.
+ */
+public class LinkSelectorBarButton extends TextView {
+
+    private Context context;
+    private Link.LinkCount linkCount;
+    private Book book;
+
+    public LinkSelectorBarButton(Context context, Link.LinkCount linkCount, Book book) {
+        super(context);
+        this.context = context;
+        this.linkCount = linkCount;
+        this.book = book;
+        setLang(Util.Lang.EN);
+
+        int padding = 15;
+        this.setPadding(padding,padding,padding,padding);
+    }
+
+    public void setLang(Util.Lang lang) {
+        setText(linkCount.getSlimmedTitle(book,lang));
+    }
+
+    public Link.LinkCount getLinkCount() { return linkCount; }
+}
