@@ -135,23 +135,18 @@ public class Link implements Parcelable {
         protected DEPTH_TYPE depth_type;
         protected int count;
         protected List<LinkCount> children;
-        protected String category;
+        protected LinkCount parent = null;
 
         public enum DEPTH_TYPE {
             ALL,CAT,BOOK
         }
 
-        public LinkCount(String enTitle,int count,String heTitle, DEPTH_TYPE depth_type){
-            this(enTitle,count,heTitle,depth_type,"");
-        }
-
         //category is passed in only if DEPTH_TYPE == DEPTH_TYPE.BOOK
-        public LinkCount(String enTitle,int count,String heTitle, DEPTH_TYPE depth_type, String category){
+        public LinkCount(String enTitle,int count,String heTitle, DEPTH_TYPE depth_type){
             this.enTitle = enTitle;
             this.heTitle = heTitle;
             this.count = count;
             this.depth_type = depth_type;
-            this.category = category;
         }
 
         /**
@@ -182,7 +177,15 @@ public class Link implements Parcelable {
 
         public DEPTH_TYPE getDepthType() { return depth_type; }
 
-        public String getCategory() { return category; }
+        public String getCategory(Book book) {
+            if(parent == null)
+                return "";
+            if(DEPTH_TYPE.BOOK == depth_type)
+                return parent.getSlimmedTitle(book, Util.Lang.EN);
+            else// if(DEPTH_TYPE.CAT == depth_type) || ALL
+                return getSlimmedTitle(book, Util.Lang.EN);
+
+        }
 
         public List<LinkCount> getChildren(){
             if(children == null)
@@ -195,6 +198,7 @@ public class Link implements Parcelable {
                 children = new ArrayList<>();
             count += child.count;
             children.add(child);
+            child.parent = this;
         }
 
         public static String getStringTree(LinkCount lc,int tabs, boolean printToLog){
