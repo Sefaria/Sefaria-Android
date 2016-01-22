@@ -50,7 +50,6 @@ public class HomeActivity extends Activity {
 
         init();
 
-
     }
 
     private void init() {
@@ -68,12 +67,9 @@ public class HomeActivity extends Activity {
         if (isPopup) tempCloseClick = closeClick;
 
         String title; //This is forcing the word Sefaria to be based on System lang and not based on menuLang (it can easily be changed by inserting each value into the new MenuNode
-        if( MyApp.getSystemLang() == Util.Lang.EN)
-            title = "Sefaria";
-        else
-            title = "ספאריה";
-        cab = new CustomActionbar(this,new MenuNode(title,title,null),
-                menuLang,null,tempCloseClick,searchClick,null,menuClick,null);
+
+        cab = new CustomActionbar(this,new MenuNode("Sefaria","ספאריה",null),
+                MyApp.getSystemLang(),null,tempCloseClick,searchClick,null,menuClick,null);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(cab);
 
@@ -90,7 +86,7 @@ public class HomeActivity extends Activity {
         }
         menuState.setLang(lang);
         menuGrid.setLang(lang);
-        cab.setLang(lang);
+        //not setting cab, b/c it should stay as the SystemLang
 
     }
 
