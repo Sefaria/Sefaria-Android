@@ -140,8 +140,9 @@ public class LinkFragment extends Fragment {
 
 
             String cat;
-            if (linkCount.getDepthType() == Link.LinkCount.DEPTH_TYPE.BOOK) cat = linkCount.getCategory();
+            if (linkCount.getDepthType() == Link.LinkCount.DEPTH_TYPE.BOOK) cat = linkCount.getCategory(activity.getBook());
             else cat = linkCount.getRealTitle(Util.Lang.EN); //CAT
+
             colorBar.setVisibility(View.VISIBLE);
             int color = MyApp.getCatColor(cat);
             colorBar.setBackgroundColor(activity.getResources().getColor(color));
