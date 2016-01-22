@@ -134,9 +134,7 @@ public class LinkFragment extends Fragment {
 
         } else { //CAT and BOOK are very similar
             //update linkSelectorQueue
-
-            if(true) return; //TODO remove this line
-            //if(linkSelectorQueue == null)  linkSelectorQueue = new LinkedList<>(); //TODO jh, this is a quick fix. might not make sense
+            
             if (linkSelectorQueue.size() >= MAX_NUM_LINK_SELECTORS) linkSelectorQueue.remove();
             linkSelectorQueue.add(linkCount);
 
