@@ -10,8 +10,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import org.sefaria.sefaria.LinkElements.LinkMainAdapter;
+import org.sefaria.sefaria.LinkElements.LinkSelectorBarButton;
 import org.sefaria.sefaria.LinkElements.LinkTextAdapter;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
@@ -20,7 +22,10 @@ import org.sefaria.sefaria.database.Link;
 import org.sefaria.sefaria.database.Text;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Queue;
 
 public class LinkFragment extends Fragment {
@@ -41,7 +46,7 @@ public class LinkFragment extends Fragment {
     private LinkMainAdapter linkMainAdapter;
     private LinkTextAdapter linkTextAdapter;
     private RecyclerView linkRecycler;
-    private Queue<Link.LinkCount> linkSelectorQueue; //holds the linkCounts that display the previously selected linkCounts
+    private LinkedList<Link.LinkCount> linkSelectorQueue; //holds the linkCounts that display the previously selected linkCounts
 
     private Text segment;
     private State currState;
@@ -60,6 +65,7 @@ public class LinkFragment extends Fragment {
     public LinkFragment() {
         currState = State.MAIN;
         isOpen = false;
+        linkSelectorQueue = new LinkedList<>();
     }
 
     @Override
@@ -131,6 +137,9 @@ public class LinkFragment extends Fragment {
             if (linkSelectorQueue.size() >= MAX_NUM_LINK_SELECTORS) linkSelectorQueue.remove();
             linkSelectorQueue.add(linkCount);
 
+
+            Log.d("text", linkSelectorQueue.toString());
+
             String cat;
             if (linkCount.getDepthType() == Link.LinkCount.DEPTH_TYPE.BOOK) cat = linkCount.getCategory();
             else cat = linkCount.getRealTitle(Util.Lang.EN); //CAT
@@ -138,6 +147,18 @@ public class LinkFragment extends Fragment {
             int color = MyApp.getCatColor(cat);
             colorBar.setBackgroundColor(activity.getResources().getColor(color));
             linkSelectionBar.setVisibility(View.VISIBLE);
+
+            LinearLayout linkSelectionBarList = (LinearLayout) view.findViewById(R.id.link_selection_bar_list);
+            linkSelectionBarList.removeAllViews();
+
+            ListIterator<Link.LinkCount> linkIt = linkSelectorQueue.listIterator(linkSelectorQueue.size());
+            while(linkIt.hasPrevious()) {
+                //add children in reverse order
+                LinkSelectorBarButton lssb = new LinkSelectorBarButton(getActivity(),linkIt.previous(),activity.getBook());
+                lssb.setOnClickListener(linkSelectorBarButtonClick);
+                linkSelectionBarList.addView(lssb);
+
+            }
 
 
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(activity,LinearLayoutManager.VERTICAL,false);
@@ -147,6 +168,8 @@ public class LinkFragment extends Fragment {
             linkTextAdapter = new LinkTextAdapter(activity,linkList);
             linkRecycler.setLayoutManager(linearLayoutManager);
             linkRecycler.setAdapter(linkTextAdapter);
+            linkTextAdapter.setCurrLinkCount(linkCount,null);
+
         }
     }
 
@@ -175,12 +198,11 @@ public class LinkFragment extends Fragment {
                 Link.LinkCount linkCount = Link.LinkCount.getFromLinks_small(segment);
                 linkMainAdapter.setItemList(Link.LinkCount.getList(linkCount));
             } else if (currState == State.BOOK) { //change visibilty of links
-
+                linkTextAdapter.setItemList(Link.getLinkedTexts(segment,linkTextAdapter.getCurrLinkCount()));
             } else { //CAT load new cat links
 
             }
             linkRecycler.scrollToPosition(0); //reset scroll to top
-            Log.d("link","UPDATE");
         }
     }
 
@@ -203,6 +225,14 @@ public class LinkFragment extends Fragment {
             } else {
                 return 1;
             }
+        }
+    };
+
+    View.OnClickListener linkSelectorBarButtonClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            LinkSelectorBarButton lsbb = (LinkSelectorBarButton) v;
+            linkTextAdapter.setCurrLinkCount(lsbb.getLinkCount(),segment);
         }
     };
 

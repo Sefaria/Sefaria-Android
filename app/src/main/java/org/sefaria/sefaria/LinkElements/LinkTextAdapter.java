@@ -2,6 +2,7 @@ package org.sefaria.sefaria.LinkElements;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,7 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextAdapter.LinkTe
 
     private List<Text> itemList;
     private Context context;
+    private Link.LinkCount currLinkCount;
 
     public class LinkTextHolder extends RecyclerView.ViewHolder {
         public TextView tv;
@@ -54,8 +56,9 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextAdapter.LinkTe
     public void onBindViewHolder(LinkTextHolder holder, int position) {
         Text link = itemList.get(position);
         holder.verseNum.setText(""+link.levels[0]);
-        holder.tv.setText(link.heText);
+        holder.tv.setText(Html.fromHtml(link.heText));
         holder.tv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
+        holder.tv.setTextSize(20);
 
     }
 
@@ -63,5 +66,25 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextAdapter.LinkTe
     public int getItemCount() {
         return this.itemList.size();
     }
+
+    public void setItemList(List<Text> items) {
+        itemList = items;
+        notifyDataSetChanged();
+    }
+
+    public Text getItem(int position) {
+        return itemList.get(position);
+    }
+
+    //segment is used to update text list
+    public void setCurrLinkCount(Link.LinkCount linkCount, Text segment) {
+        //try not to update too often
+        if (!linkCount.equals(currLinkCount)) {
+            currLinkCount = linkCount;
+            if (segment != null) //o/w no need to update itemList. You probably just initialized LinkTextAdapter
+                setItemList(Link.getLinkedTexts(segment, currLinkCount));
+        }
+    }
+    public Link.LinkCount getCurrLinkCount() { return currLinkCount; }
 
 }
