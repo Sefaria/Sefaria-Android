@@ -29,7 +29,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
 
     private int preLast;
     //text formatting props
-    private boolean isLoadingSection; //to make sure multiple sections don't get loaded at once
+    //private boolean isLoadingSection; //to make sure multiple sections don't get loaded at once
 
 
     @Override
@@ -45,7 +45,6 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
 
     protected void init() {
         super.init();
-
         listView = (ListViewExt) findViewById(R.id.listview);
         sectionAdapter = new SectionAdapter(this,R.layout.adapter_text_mono,new ArrayList<Text>());
 
@@ -60,10 +59,18 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
                 updateFocusedSegment();
             }
         });
-        if (!isLoadingSection) {
-            AsyncLoadSection als = new AsyncLoadSection(TextEnums.NEXT_SECTION);
-            als.execute();
-        }
+
+        AsyncLoadSection als = new AsyncLoadSection(TextEnums.NEXT_SECTION);
+        als.execute();
+
+        //LINK FRAGMENT
+        linkFragment = new LinkFragment();
+        //Bundle args = new Bundle();
+        //args.putParcelable(LinkFragment.ARG_CURR_SECTION, sectionAdapter.getItem(position));
+        //linkFragment.setArguments(args);
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        fragmentTransaction.add(R.id.linkRoot, linkFragment);
+        fragmentTransaction.commit();
 
 
     }
@@ -103,11 +110,10 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
         for (int i = 0; i < numChildren; i++) {
             View v = listView.getChildAt(i);
             if (v.getTop() < mid && v.getBottom() > mid) {
-                if (linkFragment != null) {
+                if (linkFragment.getIsOpen()) {
                     int currInd = i + listView.getFirstVisiblePosition();
                     Text currSeg = sectionAdapter.getItem(currInd);
                     if (currSeg.equals(linkFragment.getSegment())) return; //no need to update
-
 
                     if (currSeg.isChapter()) //TODO maybe make this select the chapter links...but not actually
                         currSeg = sectionAdapter.getItem(currInd + 1);
@@ -127,15 +133,14 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
 
         switch(lw.getId()) {
             case R.id.listview:
-
-                // Make your calculation stuff here. You have all your
-                // needed info from the parameters of this function.
-
-                // Sample calculation to determine if the last
-                // item is fully visible.
-                final int lastItem = firstVisibleItem + visibleItemCount;
-                if(lastItem == totalItemCount) {
-                    if(preLast!=lastItem){ //to avoid multiple calls for last item
+                if (!isLoadingSection && !isLoadingInit) {
+                    int lastItem = firstVisibleItem + visibleItemCount;
+                    if (firstVisibleItem == 0) {
+                        Log.d("sec", "TOOOOOOOOOOOEP");
+                        AsyncLoadSection als = new AsyncLoadSection(TextEnums.PREV_SECTION);
+                        als.execute();
+                    }
+                    if (lastItem == totalItemCount && preLast != lastItem) {
                         preLast = lastItem;
                         AsyncLoadSection als = new AsyncLoadSection(TextEnums.NEXT_SECTION);
                         als.execute();
@@ -151,41 +156,23 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
         //blah...
     }
 
-    public void onLinkFragAttached() {
-        AnimateLinkFragOpen(findViewById(R.id.linkRoot));
-        Log.d("link","ATTACHED");
-    }
-
     ListView.OnItemClickListener onItemClickListener = new ListView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
 
             View linkRoot = findViewById(R.id.linkRoot);
-            if (linkFragment != null && linkFragment.getIsOpen()) {
+            if (linkFragment.getIsOpen()) {
 
                 //linkRoot.setVisibility(View.GONE);
                 AnimateLinkFragClose(linkRoot);
 
             } else {
                 listView.setSelection(position);
-                if (linkFragment == null) {
-                    linkFragment = new LinkFragment();
-                    Bundle args = new Bundle();
-                    args.putParcelable(LinkFragment.ARG_CURR_SECTION, sectionAdapter.getItem(position));
-                    //args.putString("param1", "HIII");
-                    //args.putString("param2", "YOOOO");
-                    linkFragment.setArguments(args);
-                    FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                    fragmentTransaction.add(R.id.linkRoot,linkFragment);
-                    fragmentTransaction.commit();
-
-                    //SlideToAbove(linkRoot); //TODO make animation work when first clicked. problem is it's starting before linkRoot is filled
-                } else {
-
-                    //linkRoot.setVisibility(View.VISIBLE);
-                    AnimateLinkFragOpen(linkRoot);
-                }
+                linkFragment.setClicked(true);
+                linkFragment.updateFragment(sectionAdapter.getItem(position));
+                //linkRoot.setVisibility(View.VISIBLE);
+                AnimateLinkFragOpen(linkRoot);
 
 
 
@@ -216,12 +203,24 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
 
         @Override
         protected void onPostExecute(List<Text> textsList) {
+            Log.d("sec", "NUM TEXTS " + textsList.size());
+            isLoadingSection = false;
+            isLoadingInit = false;
             if (textsList.size() == 0) return;
 
-            Text sectionHeader = getSectionHeaderText();
-            sectionAdapter.add(sectionHeader);
-            sectionAdapter.addAll(textsList);
-            isLoadingSection = false;
+            Text sectionHeader = getSectionHeaderText(dir);
+            if (dir == TextEnums.NEXT_SECTION) {
+                Log.d("sec", "NEEXXXT");
+                sectionAdapter.add(sectionHeader);
+                sectionAdapter.addAll(textsList);
+
+            } else if (dir == TextEnums.PREV_SECTION) {
+                Log.d("sec", "PREEV");
+                sectionAdapter.addAll(0, textsList);
+                sectionAdapter.add(0, sectionHeader);
+                listView.setSelection(textsList.size()+1);
+            }
+
         }
 
 

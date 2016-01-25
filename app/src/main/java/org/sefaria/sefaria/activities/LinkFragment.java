@@ -51,13 +51,11 @@ public class LinkFragment extends Fragment {
     private Text segment;
     private State currState;
 
-    public static LinkFragment newInstance(Text segment) {
+    public static LinkFragment newInstance() {
         LinkFragment fragment = new LinkFragment();
-        Bundle args = new Bundle();
-        args.putParcelable(ARG_CURR_SECTION,segment);
-        //args.putString("param1", param1);
-        //args.putString("param2", param2);
-        fragment.setArguments(args);
+        //Bundle args = new Bundle();
+        //args.putParcelable(ARG_CURR_SECTION,segment);
+        //fragment.setArguments(args);
 
         return fragment;
     }
@@ -65,6 +63,8 @@ public class LinkFragment extends Fragment {
     public LinkFragment() {
         currState = State.MAIN;
         isOpen = false;
+        clicked = false;
+        dontUpdate = false;
         linkSelectorQueue = new LinkedList<>();
     }
 
@@ -87,10 +87,9 @@ public class LinkFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_link, container, false);
         linkRecycler = (RecyclerView) view.findViewById(R.id.recview);
-        gotoState(State.MAIN,view,null);
-        Log.d("link", "VIEW == NULL " + (view));
+        gotoState(State.MAIN, view, null);
 
-        updateFragment((Text) getArguments().getParcelable(ARG_CURR_SECTION), view);
+        //updateFragment((Text) getArguments().getParcelable(ARG_CURR_SECTION), view);
         return view;
     }
 
@@ -99,7 +98,7 @@ public class LinkFragment extends Fragment {
         super.onAttach(activity);
         try {
             mListener = (OnLinkFragInteractionListener) activity;
-            mListener.onLinkFragAttached();
+            //mListener.onLinkFragAttached();
 
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
@@ -176,24 +175,25 @@ public class LinkFragment extends Fragment {
     public interface OnLinkFragInteractionListener {
         // TODO: Update argument type and name
         //public void onLinkFragInteractionListener(Uri uri);
-        public void onLinkFragAttached();
+        //public void onLinkFragAttached();
     }
 
 
 
     /**
      *
-     * @param segment - used when main list is scrolled and new segment comes into view. NOT used when segment is clicked
+     * @param segment - used when main list is scrolled and new segment comes into view.
      * @param view - usually from getView() except on first load in which case it's passed in manually
      */
     public void updateFragment(Text segment, View view) {
-        if (view == null) return;
-        if (!dontUpdate) {
-            if (!clicked)
-                this.segment = segment;
-            else //the value of segment has already been set
-                clicked = false;
-
+        if (view == null) {
+            Log.d("frag","VIEW NULL ;(");
+            return;
+        }
+        if (!dontUpdate || clicked) {
+            this.segment = segment;
+            clicked = false;
+            Log.d("frag", "UPDATE FRAG TEXT " + segment.levels[0]);
             if (currState == State.MAIN) { //load new linkCounts
                 Link.LinkCount linkCount = Link.LinkCount.getFromLinks_small(segment);
                 linkMainAdapter.setItemList(Link.LinkCount.getList(linkCount));
@@ -203,7 +203,12 @@ public class LinkFragment extends Fragment {
 
             }
             linkRecycler.scrollToPosition(0); //reset scroll to top
+
+
+        } else {
+            Log.d("frag", "DONT UPDATE");
         }
+
     }
 
     public void updateFragment(Text segment) {
@@ -213,7 +218,11 @@ public class LinkFragment extends Fragment {
     public void setDontUpdate(boolean dontUpdate) { this.dontUpdate = dontUpdate; }
     public void setIsOpen(boolean isOpen) { this.isOpen = isOpen; }
     public boolean getIsOpen() { return isOpen; }
-    public void setArgCurrSection(boolean clicked) { this.clicked = clicked; }
+    public void setClicked (boolean clicked) { this.clicked = clicked; }
+    public void setSegment(Text segment) {
+        this.segment = segment;
+    }
+
     public Text getSegment() { return segment; }
 
     GridLayoutManager.SpanSizeLookup onSpanSizeLookup = new GridLayoutManager.SpanSizeLookup() {

@@ -17,6 +17,7 @@ import org.sefaria.sefaria.activities.SectionActivity;
 import org.sefaria.sefaria.database.Link;
 import org.sefaria.sefaria.database.Text;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -186,6 +187,28 @@ public class SectionAdapter extends ArrayAdapter<Text> {
     }
 
     @Override
+    public void add(Text object) {
+        add(texts.size(), object);
+
+    }
+
+    @Override
+    public void addAll(Collection<? extends Text> collection) {
+       addAll(texts.size(), collection);
+
+    }
+
+    public void add(int location, Text object) {
+        texts.add(location, object);
+        notifyDataSetChanged();
+    }
+
+    public void addAll(int location, Collection<? extends Text> collection) {
+        texts.addAll(location, collection);
+        notifyDataSetChanged();
+    }
+
+    @Override
     public void notifyDataSetChanged() {
         super.notifyDataSetChanged();
         maxNumLinks = 0;
@@ -196,6 +219,5 @@ public class SectionAdapter extends ArrayAdapter<Text> {
 
             }
         }
-        Log.d("links","MAX NUM - " + maxNumLinks);
     }
 }

@@ -1,6 +1,8 @@
 package org.sefaria.sefaria.LinkElements;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -11,6 +13,8 @@ import android.widget.TextView;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
+import org.sefaria.sefaria.activities.LinkFragment;
+import org.sefaria.sefaria.activities.SuperTextActivity;
 import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Link;
 import org.sefaria.sefaria.database.Text;
@@ -24,22 +28,29 @@ import java.util.List;
 public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextAdapter.LinkTextHolder> {
 
     private List<Text> itemList;
-    private Context context;
+    private SuperTextActivity context;
     private Link.LinkCount currLinkCount;
 
-    public class LinkTextHolder extends RecyclerView.ViewHolder {
+    public class LinkTextHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView tv;
         public TextView verseNum;
 
         public LinkTextHolder(View v) {
             super(v);
+            v.setOnClickListener(this);
             tv = (TextView) v.findViewById(R.id.tv);
             verseNum = (TextView) v.findViewById(R.id.verseNum);
+        }
+
+        @Override
+        public void onClick(View v) {
+            Text link = itemList.get(getAdapterPosition());
+            SuperTextActivity.startNewTextActivityIntent(context,new Book(link.bid));
         }
     }
 
 
-    public LinkTextAdapter(Context context, List<Text> itemList) {
+    public LinkTextAdapter(SuperTextActivity context, List<Text> itemList) {
         this.itemList = itemList;
         this.context = context;
     }
