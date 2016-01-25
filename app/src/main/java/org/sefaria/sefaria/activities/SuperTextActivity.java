@@ -61,6 +61,7 @@ public abstract class SuperTextActivity extends Activity {
     protected boolean isCts;
     protected float textSize;
     protected boolean isLoadingSection; //to make sure multiple sections don't get loaded at once
+    protected boolean isLoadingInit; //true while init is loading. previous loads should not take place until after isLoadingInit is false
 
     //link vars
     protected LinkFragment linkFragment;
@@ -122,7 +123,7 @@ public abstract class SuperTextActivity extends Activity {
         textLang = MyApp.getDefaultTextLang();
         textSize = getResources().getDimension(R.dimen.default_text_font_size);
         //end defaults
-
+        isLoadingInit = false;
         menuLang = MyApp.getMenuLang();
         if(customActionbar != null)//it's already been set
             customActionbar.setLang(menuLang);
@@ -154,6 +155,7 @@ public abstract class SuperTextActivity extends Activity {
     }
 
     protected void init() {
+        isLoadingInit = true;
         perekTextViews = new ArrayList<>();
         textChapterHeaders = new ArrayList<>();
 
@@ -184,6 +186,7 @@ public abstract class SuperTextActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (data != null) {
+
             //you're returning to text page b/c chapter was clicked in toc
             if (requestCode == TOC_CHAPTER_CLICKED_CODE) {
                 //lang = (Util.Lang) data.getSerializableExtra("lang"); TODO you might need to set lang here if user can change lang in TOC
@@ -210,12 +213,12 @@ public abstract class SuperTextActivity extends Activity {
         }
     }
 
-    protected Text getSectionHeaderText(){
+    protected Text getSectionHeaderText(TextEnums dir){
         Node node;
-        if(lastLoadedNode != null) {
+        if(dir == TextEnums.NEXT_SECTION) {
             Log.d("SuperTextAct","using lastLoadedNode for getSectionHeaderText()");
             node = lastLoadedNode;
-        } else{
+        } else if (dir == TextEnums.PREV_SECTION || true){
             Log.d("SuperTextAct","using firstLoadedNode for getSectionHeaderText()");
             node = firstLoadedNode;
         }
@@ -360,6 +363,7 @@ public abstract class SuperTextActivity extends Activity {
                 }else{
                     newNode = firstLoadedNode.getPrevTextNode();
                 }
+                firstLoadedNode = newNode;
             }
         } catch (Node.LastNodeException e) {
             return new ArrayList<>();
@@ -417,6 +421,7 @@ public abstract class SuperTextActivity extends Activity {
 
             @Override
             public void onAnimationStart(Animation animation) {
+
                 v.setVisibility(View.VISIBLE);
             }
 

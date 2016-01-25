@@ -187,7 +187,7 @@ public class TextActivity extends SuperTextActivity {
 
 
             TextChapterHeader tch;
-            Text segment = getSectionHeaderText();
+            Text segment = getSectionHeaderText(dir);
             tch = new TextChapterHeader(TextActivity.this,segment,textSize);
             textChapterHeaders.add(tch);
 
