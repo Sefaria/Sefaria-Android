@@ -375,9 +375,19 @@ public abstract class SuperTextActivity extends Activity {
     protected void setCurrNode(Node node){
         if(node == null) return;
         if(currNode == node) return;
-        Log.d("SuperTextAct", node.getWholeTitle(menuLang) + "__node;" + node + "lang:" + menuLang);
+
         currNode = node;
-        customActionbar.setTitleText(node.getWholeTitle(menuLang), menuLang, true,true);
+        customActionbar.setTitleText(currNode.getWholeTitle(menuLang), menuLang, true,true);
+
+        //update the place that the book will go to when returning to book
+        SharedPreferences bookSavedSettings = getBookSavedSettings();
+        SharedPreferences.Editor editor = bookSavedSettings.edit();
+        String strTreeAndNode = currNode.makePathDefiningNode();
+        //"<en|he|bi>.<cts|sep>.<white|grey|black>.10px:"+ <rootNum>.<Childnum>.<until>.<leaf>.<verseNum>"
+        editor.putString(book.title, strTreeAndNode);
+        editor.commit();
+
+
     }
     protected  void setCurrNode(Text text) {
         Node node = text.parentNode;
@@ -416,15 +426,6 @@ public abstract class SuperTextActivity extends Activity {
         List<Text> textsList;
         try {
             textsList = newNode.getTexts();
-            if(textsList.size()>0){
-
-                SharedPreferences bookSavedSettings = getBookSavedSettings();
-                SharedPreferences.Editor editor = bookSavedSettings.edit();
-                String strTreeAndNode = newNode.makePathDefiningNode();
-                //"<en|he|bi>.<cts|sep>.<white|grey|black>.10px:"+ <rootNum>.<Childnum>.<until>.<leaf>.<verseNum>"
-                editor.putString(book.title, strTreeAndNode);
-                editor.commit();
-            }
             return textsList;
         } catch (API.APIException e) {
             Toast.makeText(SuperTextActivity.this, "API Exception!!!", Toast.LENGTH_SHORT).show();
