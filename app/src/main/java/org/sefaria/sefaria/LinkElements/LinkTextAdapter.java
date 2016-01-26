@@ -70,7 +70,7 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextAdapter.LinkTe
     public void onBindViewHolder(LinkTextHolder holder, int position) {
         Text link = itemList.get(position);
         holder.verseNum.setText("");//+link.levels[0]);
-        holder.tv.setText(Html.fromHtml("<i>" + link.getLocationString(Settings.getSavedMenuLang()) + "</i><br>" + link.heText + "<br>" + link.enText));
+        holder.tv.setText(Html.fromHtml("<i>" + link.getLocationString(Settings.getMenuLang()) + "</i><br>" + link.heText + "<br>" + link.enText));
         holder.tv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
         holder.tv.setTextSize(20);
 
