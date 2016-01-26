@@ -136,7 +136,6 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
                 if (!isLoadingSection && !isLoadingInit) {
                     int lastItem = firstVisibleItem + visibleItemCount;
                     if (firstVisibleItem == 0) {
-                        Log.d("sec", "TOOOOOOOOOOOEP");
                         AsyncLoadSection als = new AsyncLoadSection(TextEnums.PREV_SECTION);
                         als.execute();
                     }
@@ -147,9 +146,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
                     }
 
                     Text topSegment = sectionAdapter.getItem(firstVisibleItem);
-                    if (topSegment.isChapter()) {
-                        setCurrNode(); //JOSH CHANGE THIS LINE
-                    }
+                    setCurrNode(topSegment);
                 }
         }
     }
