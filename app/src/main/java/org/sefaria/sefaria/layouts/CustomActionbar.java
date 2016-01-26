@@ -97,8 +97,10 @@ public class CustomActionbar extends MenuElement {
         titleTV.setText(title);
     }
 
-    public void setTitleText(String title, Util.Lang lang, boolean forceRefresh){
+    public void setTitleText(String title, Util.Lang lang, boolean forceRefresh, boolean forTOC){
         Log.d("cab","title: "+  title);
+        if(forTOC)
+            title = "\u25bc " + title;
         if(lang == Util.Lang.HE)
             heText = title;
         else// if(lang == Util.Lang.HE || Lang.BI)
