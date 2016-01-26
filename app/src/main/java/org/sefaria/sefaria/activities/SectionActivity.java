@@ -115,9 +115,9 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
                     Text currSeg = sectionAdapter.getItem(currInd);
                     if (currSeg.equals(linkFragment.getSegment())) return; //no need to update
 
-                    if (currSeg.isChapter()) //TODO maybe make this select the chapter links...but not actually
+                    if (currSeg.isChapter()) {//TODO maybe make this select the chapter links...but not actually
                         currSeg = sectionAdapter.getItem(currInd + 1);
-
+                    }
                     linkFragment.updateFragment(currSeg);
                 }
                 break;
@@ -144,6 +144,11 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
                         preLast = lastItem;
                         AsyncLoadSection als = new AsyncLoadSection(TextEnums.NEXT_SECTION);
                         als.execute();
+                    }
+
+                    Text topSegment = sectionAdapter.getItem(firstVisibleItem);
+                    if (topSegment.isChapter()) {
+                        setCurrNode(); //JOSH CHANGE THIS LINE
                     }
                 }
         }
