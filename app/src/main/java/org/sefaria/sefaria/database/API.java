@@ -317,7 +317,7 @@ public class API {
 
     }
 
-    public static List<Text> getLinks(Text text, Link.LinkCount linkFilter) {
+    public static List<Text> getLinks(Text text, LinkCount linkFilter) {
         List<Text> texts = new ArrayList<Text>();
 
         return texts;
