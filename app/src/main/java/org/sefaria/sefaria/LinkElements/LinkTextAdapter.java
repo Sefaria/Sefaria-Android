@@ -45,7 +45,7 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextAdapter.LinkTe
         @Override
         public void onClick(View v) {
             Text link = itemList.get(getAdapterPosition());
-            SuperTextActivity.startNewTextActivityIntent(context,new Book(link.bid));
+            SuperTextActivity.startNewTextActivityIntent(context,link);
         }
     }
 
