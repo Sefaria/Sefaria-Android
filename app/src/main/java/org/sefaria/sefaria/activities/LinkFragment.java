@@ -193,7 +193,8 @@ public class LinkFragment extends Fragment {
         if (!dontUpdate || clicked) {
             this.segment = segment;
             clicked = false;
-            Log.d("frag", "UPDATE FRAG TEXT " + segment.levels[0]);
+            if(!segment.isChapter()) Log.d("frag", "UPDATE FRAG TEXT " + segment.levels[0]);
+
             if (currState == State.MAIN) { //load new linkCounts
                 Link.LinkCount linkCount = Link.LinkCount.getFromLinks_small(segment);
                 linkMainAdapter.setItemList(Link.LinkCount.getList(linkCount));
