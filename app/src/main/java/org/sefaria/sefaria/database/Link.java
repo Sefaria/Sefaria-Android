@@ -13,6 +13,8 @@ import android.os.Parcelable;
 import android.util.Log;
 import android.util.Pair;
 
+import org.sefaria.sefaria.MenuElements.MenuNode;
+import org.sefaria.sefaria.MenuElements.MenuState;
 import org.sefaria.sefaria.Util;
 
 public class Link implements Parcelable {
@@ -58,23 +60,6 @@ public class Link implements Parcelable {
     private final static int NUM_LEVELS = 6;
     public int [] levels = new int [NUM_LEVELS];
 
-    /*
-    public int level1;
-    public int level2;
-    public int level3;
-    public int level4;
-    public int level5;
-    public int level6;
-
-    public int bidb;
-    public int level1b;
-    public int level2b;
-    public int level3b;
-    public int level4b;
-    public int level5b;
-    public int level6b;
-
-     */
     @Override
     public String toString(){
         String str =  String.valueOf(lid) + " " + connType + " bid: " + String.valueOf(bid);
@@ -194,10 +179,17 @@ public class Link implements Parcelable {
         }
 
         protected void addChild(LinkCount child){
+            addChild(child,false);
+        }
+
+        protected void addChild(LinkCount child, boolean front){
             if(children == null)
                 children = new ArrayList<>();
             count += child.count;
-            children.add(child);
+            if(front)
+                children.add(0,child);
+            else
+                children.add(child);
             child.parent = this;
         }
 
@@ -297,8 +289,6 @@ public class Link implements Parcelable {
             //commentaryGroup = new LinkCount(COMMENTARY,0, "מפרשים",DEPTH_TYPE.CAT);
             commentaryGroup = getCommentaryOnChap(text.tid -10,text.tid +10,text.bid);//TODO this actually needs to get from begin and end of chap (not randomly)
 
-
-
             String sql = "SELECT B.title, Count(*) as booksCount, B.heTitle, B.commentsOn, B.categories FROM Books B, Links_small L, Texts T WHERE (" +
                     "(L.tid1 = " + text.tid + " AND L.tid2=T._id AND T.bid= B._id) OR " +
                     "(L.tid2 = " + text.tid + " AND L.tid1=T._id AND T.bid= B._id) ) GROUP BY B._id ORDER BY B.categories, B._id"
@@ -342,8 +332,11 @@ public class Link implements Parcelable {
             }
             if(countGroups.count >0)
                 allLinkCounts.addChild(countGroups);
+
+            allLinkCounts = allLinkCounts.sortLinkCountCategories();
+
             if(commentaryGroup.count >0)
-                allLinkCounts.addChild(commentaryGroup);
+                allLinkCounts.addChild(commentaryGroup,true);
             Log.d("Link", "finished getCountsTitlesFromLinks_small");
 
             //getStringTree(allLinkCounts, 0, true);
@@ -352,6 +345,27 @@ public class Link implements Parcelable {
             return allLinkCounts;
         }
 
+        private LinkCount sortLinkCountCategories(){
+            LinkCount newLinkCount = new LinkCount(enTitle,0,heTitle,depth_type);
+            MenuNode menuNode = MenuState.getRootNode();
+            String [] titles = menuNode.getChildrenTitles(Util.Lang.EN);
+            for(String title: titles){
+                for(int j=0;j<getChildren().size();j++){
+                    LinkCount child = getChildren().get(j);
+                    if(child.enTitle.equals(title)){
+                        newLinkCount.addChild(child);
+                        getChildren().remove(j);
+                        break;
+                    }
+                }
+            }
+            //if there's any categories left out them back in
+            for(LinkCount child:getChildren()){
+                newLinkCount.addChild(child);
+            }
+
+            return newLinkCount;
+        }
 
     }
 

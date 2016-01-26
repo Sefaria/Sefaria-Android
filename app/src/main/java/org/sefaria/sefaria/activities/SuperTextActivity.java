@@ -345,7 +345,6 @@ public abstract class SuperTextActivity extends Activity {
         }
     };
 
-    public Util.Lang getMenuLang() { return menuLang; }
 
     public Util.Lang getTextLang() { return textLang; }
 
@@ -403,9 +402,6 @@ public abstract class SuperTextActivity extends Activity {
         } catch (Node.LastNodeException e) {
             return new ArrayList<>();
         }
-        Log.d("Section","firstLoadedChap in loadSection " + firstLoadedNode.getWholeTitle(Util.Lang.EN));
-
-
 
 
         List<Text> textsList;
@@ -419,8 +415,6 @@ public abstract class SuperTextActivity extends Activity {
 
 
     }
-
-
 
 
 
