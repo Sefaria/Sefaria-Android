@@ -154,8 +154,9 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
 
 
     @Override
-    protected void jumptToIncomingLink(Text incomingLink) {
-        int index = sectionAdapter.getPosition(incomingLink);
+    protected void jumpToText(Text text) {
+        Log.d("SectionAct", "calling jump to Text");
+        int index = sectionAdapter.getPosition(text);
         Log.d("sec","INDEX " + index);
         listView.setSelection(index);
     }
@@ -233,9 +234,9 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
                 listView.setSelection(textsList.size()+1);
             }
 
-            if (incomingLink != null) {
-                jumptToIncomingLink(incomingLink);
-                incomingLink = null;
+            if (openToText != null) {
+                jumpToText(openToText);
+                openToText = null;
             }
 
         }

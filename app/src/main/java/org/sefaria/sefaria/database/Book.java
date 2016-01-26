@@ -407,8 +407,6 @@ public class Book implements Parcelable {
         HashMap<String, Integer> secList = new HashMap<String, Integer>() ;
         for(int i = 0; i< bookList.size(); i++){
             for(int j = 0; j<bookList.get(i).sectionNames.length; j++){
-                if(bookList.get(i).sectionNames[j].equals("Sheilta")) //TODO what is this doing here?
-                    Log.i("sql_sectionList", "Sheilta: " + bookList.get(i).title);
                 secList.put(bookList.get(i).sectionNames[j], 1);
             }
 

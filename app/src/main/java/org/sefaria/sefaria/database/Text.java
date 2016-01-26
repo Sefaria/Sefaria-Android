@@ -48,6 +48,7 @@ public class Text implements Parcelable {
     public String enText;
     public String heText;
     private boolean isChapter = false;
+    private int parentNID;
 
 
     private int numLinks = 0;
@@ -134,7 +135,7 @@ public class Text implements Parcelable {
         }
         displayNum = (cursor.getInt(10) != 0);
         numLinks = cursor.getInt(11);
-
+        parentNID = cursor.getInt(12);
 
         if(enText== null)
             enText = "";
@@ -144,30 +145,35 @@ public class Text implements Parcelable {
 
     }
 
+    public String getLocationString(Util.Lang lang){
+        Book book = new Book(bid);
+        String str = book.getTitle(lang);
+        if(parentNID != 0){ //It's a regular non-Complex text
+            str += " <complex> ";
+        }
+        int sectionNum = book.sectionNamesL2B.length-1;
+        boolean useSpace = true; //starting true so has space after book.title
+        for(int i=levels.length-1;i>=0;i--){
+            int num = levels[i];
+            if(num == 0) continue;
+            boolean isDaf = false;
 
+            if(book.sectionNamesL2B.length > sectionNum && sectionNum >0) {
+                isDaf = (book.sectionNamesL2B[sectionNum].equals("Daf"));
+                //str += " " + book.sectionNamesL2B[sectionNum];
+            }
+            if(useSpace)
+                str +=  " " +  Header.getNiceGridNum(lang,num,isDaf);
+            else
+                str +=  ":" +  Header.getNiceGridNum(lang,num,isDaf);
 
-    static List<Text> getAll() {
-        Database2 dbHandler = Database2.getInstance();
-        List<Text> textList = new ArrayList<Text>();
-        // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE_TEXTS;
-
-        SQLiteDatabase db = dbHandler.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
-
-        // looping through all rows and adding to list
-        if (cursor.moveToFirst()) {
-            do {
-                // Adding  to list
-                textList.add(new Text(cursor));
-            } while (cursor.moveToNext());
+            sectionNum--;
+            useSpace = isDaf && (lang == Util.Lang.HE);
         }
 
-        //LOGING:
-        //for(int i = 0; i < textList.size(); i++)
-        //	textList.get(i).log();
 
-        return textList;
+
+        return str;
     }
 
     private static List<Text> get(Book book, int[] levels) throws API.APIException {
@@ -180,52 +186,6 @@ public class Text implements Parcelable {
         return get(book.bid, levels,0);
     }
 
-    //TODO remove this function...
-    private static List<Text> getAllTextsFromDB2() {
-        Database2 dbHandler = new Database2(MyApp.getContext());
-        List<Text> textList = new ArrayList<Text>();
-        // Select All Query
-        String selectQuery = "SELECT  * FROM " + "Texts";
-
-        SQLiteDatabase db = dbHandler.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
-
-        // looping through all rows and adding to list
-        if (cursor.moveToFirst()) {
-            do {
-                // Adding  to list
-                textList.add(new Text(cursor));
-            } while (cursor.moveToNext());
-        }
-
-        //LOGING:
-        //for(int i = 0; i < textList.size(); i++)
-        //	textList.get(i).log();
-
-        return textList;
-    }
-
-    /*
-    private static int max(int bid, int[] levels) {
-
-        Database2 dbHandler = Database2.getInstance();
-        SQLiteDatabase db = dbHandler.getReadableDatabase();
-        int nonZeroLevel;
-        for(nonZeroLevel = 0; nonZeroLevel < levels.length; nonZeroLevel++){
-            if(levels[nonZeroLevel] != 0)
-                break;
-        }
-        String sql = "SELECT MAX(level" + String.valueOf(nonZeroLevel) + ") FROM "+ TABLE_TEXTS + fullWhere(bid, levels);
-        //		String sql = "SELECT COUNT(DISTINCT level" + String.valueOf(nonZeroLevel) + ") FROM "+ TABLE_TEXTS + fullWhere(bid, levels);
-
-        Cursor cursor = db.rawQuery(sql, null);
-        if (cursor != null)
-            cursor.moveToFirst();
-
-        ////////TODO maybe compare max to count
-        return cursor.getInt(0);
-    }
-    */
 
 	/*
 	public static void removeFoundWordsColoring(List<Text> list){
@@ -320,14 +280,7 @@ public class Text implements Parcelable {
 
 
     public static Text makeDummyChapText(Text text){
-        return makeDummyChapText(text, (new Book(text.bid)).wherePage);
-    }
-
-    public static Text makeDummyChapText0(Text text){
-        return makeDummyChapText0(text, (new Book(text.bid)).wherePage);
-    }
-
-    public static Text makeDummyChapText(Text text, int wherePage){
+        int wherePage = (new Book(text.bid)).wherePage;
         Text dummyChapText = deepCopy(text);
         //dummyChapText.log();
 
