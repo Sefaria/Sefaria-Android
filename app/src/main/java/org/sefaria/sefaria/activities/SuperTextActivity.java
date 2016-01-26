@@ -42,7 +42,6 @@ public abstract class SuperTextActivity extends Activity {
     private static int LINK_FRAG_ANIM_TIME = 300; //ms
     public static final int PREV_CHAP_DRAWN = 234234;
     public static final int TOC_CHAPTER_CLICKED_CODE = 3456;
-    protected static final int WHERE_PAGE = 2;
     protected static final int LOAD_PIXEL_THRESHOLD = 500; //num pixels before the bottom (or top) of a segment after (before) which the next (previous) segment will be loaded
 
     protected boolean isTextMenuVisible;
@@ -192,13 +191,15 @@ public abstract class SuperTextActivity extends Activity {
         textScrollView = (ScrollViewExt) findViewById(R.id.textScrollView);
 
         //this specifically comes before menugrid, b/c in tabs it menugrid does funny stuff to currnode
-        MenuNode menuNode = new MenuNode("a","b",null); //TODO possibly replace this object with a more general bilinual node
-        customActionbar = new CustomActionbar(this, menuNode, menuLang,homeClick,null,null,titleClick,menuClick,backClick); //TODO.. I'm not actually sure this should be lang.. instead it shuold be MENU_LANG from Util.S
-        LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
-        abRoot.addView(customActionbar);
-        String title = firstLoadedNode.getMenuBarTitle(book, menuLang);
-        customActionbar.setTitleText(title, menuLang, true);
-        customActionbar.setLang(menuLang);
+        if (customActionbar == null) {
+            MenuNode menuNode = new MenuNode("a","b",null); //TODO possibly replace this object with a more general bilinual node
+            customActionbar = new CustomActionbar(this, menuNode, menuLang,homeClick,null,null,titleClick,menuClick,backClick); //TODO.. I'm not actually sure this should be lang.. instead it shuold be MENU_LANG from Util.S
+            LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
+            abRoot.addView(customActionbar);
+            customActionbar.setLang(menuLang);
+        }
+        setCurrNode(firstLoadedNode);
+
     }
 
     @Override
@@ -372,8 +373,26 @@ public abstract class SuperTextActivity extends Activity {
     protected abstract void incrementTextSize(boolean isIncrement);
     protected abstract void jumptToIncomingLink(Text incomingLink);
 
-    protected  void setCurrNode(/*Node node*/) {
-        //this.currNode = node;
+    protected void setCurrNode(Node node){
+        if(node == null) return;
+        if(currNode == node) return;
+
+        currNode = node;
+        customActionbar.setTitleText(currNode.getWholeTitle(menuLang), menuLang, true,true);
+
+        //update the place that the book will go to when returning to book
+        SharedPreferences bookSavedSettings = getBookSavedSettings();
+        SharedPreferences.Editor editor = bookSavedSettings.edit();
+        String strTreeAndNode = currNode.makePathDefiningNode();
+        //"<en|he|bi>.<cts|sep>.<white|grey|black>.10px:"+ <rootNum>.<Childnum>.<until>.<leaf>.<verseNum>"
+        editor.putString(book.title, strTreeAndNode);
+        editor.commit();
+
+
+    }
+    protected  void setCurrNode(Text text) {
+        Node node = text.parentNode;
+        setCurrNode(node);
     }
 
 
@@ -408,15 +427,6 @@ public abstract class SuperTextActivity extends Activity {
         List<Text> textsList;
         try {
             textsList = newNode.getTexts();
-            if(textsList.size()>0){
-
-                SharedPreferences bookSavedSettings = getBookSavedSettings();
-                SharedPreferences.Editor editor = bookSavedSettings.edit();
-                String strTreeAndNode = newNode.makePathDefiningNode();
-                //"<en|he|bi>.<cts|sep>.<white|grey|black>.10px:"+ <rootNum>.<Childnum>.<until>.<leaf>.<verseNum>"
-                editor.putString(book.title, strTreeAndNode);
-                editor.commit();
-            }
             return textsList;
         } catch (API.APIException e) {
             Toast.makeText(SuperTextActivity.this, "API Exception!!!", Toast.LENGTH_SHORT).show();

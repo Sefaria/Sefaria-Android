@@ -610,6 +610,9 @@ public class Node{ //TODO implements  Parcelable
             Log.e("Node", "In Node.getText() and I'm confused. NodeTypeFlags: " + getNodeTypeFlagsStr());
         }
         Log.d("Node", "finishing getTexts algo. textList.size():" + textList.size());
+        for(Text text:textList){
+            text.parentNode = this;
+        }
         return textList;
     }
 
