@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
+import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.activities.LinkFragment;
 import org.sefaria.sefaria.activities.SuperTextActivity;
@@ -21,6 +22,7 @@ import org.sefaria.sefaria.database.LinkCount;
 import org.sefaria.sefaria.database.Text;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by nss on 1/17/16.
@@ -67,8 +69,8 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextAdapter.LinkTe
     @Override
     public void onBindViewHolder(LinkTextHolder holder, int position) {
         Text link = itemList.get(position);
-        holder.verseNum.setText(""+link.levels[0]);
-        holder.tv.setText(Html.fromHtml(link.heText + "<br>" + link.enText));
+        holder.verseNum.setText("");//+link.levels[0]);
+        holder.tv.setText(Html.fromHtml("<i>" + link.getLocationString(Settings.getSavedMenuLang()) + "</i><br>" + link.heText + "<br>" + link.enText));
         holder.tv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
         holder.tv.setTextSize(20);
 

@@ -116,6 +116,26 @@ public class Header implements Parcelable {
         return new String [] {textLocationEn, textLocationHe, enChapNumTotal, heChapNumTotal};
     }
 
+
+    /**
+     * will get the grid number in the right language and all converted if it's a daf
+     * @param lang
+     * @return
+     */
+    public static String getNiceGridNum(Util.Lang lang, int num, boolean isDaf){
+        if(isDaf){
+            if(Util.Lang.HE == lang)
+                return Header.num2heDaf(num);
+            else
+                return Header.num2enDaf(num);
+        }else{
+            if(Util.Lang.HE == lang)
+                return Util.int2heb(num);
+            else
+                return ""+ num;
+        }
+    }
+
     /***
      *
      * levels should be as long as the full length of textDepth...

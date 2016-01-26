@@ -169,17 +169,7 @@ public class Node{ //TODO implements  Parcelable
      * @return
      */
     public String getNiceGridNum(Util.Lang lang){
-        if(isDaf()){
-            if(Util.Lang.HE == lang)
-                return Header.num2heDaf(gridNum);
-            else
-                return Header.num2enDaf(gridNum);
-        }else{
-            if(Util.Lang.HE == lang)
-                return Util.int2heb(gridNum);
-            else
-                return ""+ gridNum;
-        }
+        return Header.getNiceGridNum(lang,gridNum,isDaf());
     }
 
 
@@ -852,7 +842,7 @@ public class Node{ //TODO implements  Parcelable
         Log.d("Node", this.toString());
     }
 
-    public static Node getNodeFromLink(Text text, Book book) throws API.APIException {
+    public static Node getNodeFromText(Text text, Book book) throws API.APIException {
         List<Node> roots = getRoots(book);
         if(roots.size() == 0){
             return null; //TODO deal with if can't find TOCRoots
