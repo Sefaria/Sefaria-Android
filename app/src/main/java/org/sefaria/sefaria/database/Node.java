@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import org.sefaria.sefaria.MyApp;
+import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
 
 import java.sql.Array;
@@ -149,7 +150,7 @@ public class Node{ //TODO implements  Parcelable
     private String getSectionName(Util.Lang lang){
         String name = "";
         if(lang == Util.Lang.BI)
-            lang = MyApp.getMenuLang();
+            lang = Settings.getMenuLang();
 
         String [] names;
         if(lang == Util.Lang.EN){

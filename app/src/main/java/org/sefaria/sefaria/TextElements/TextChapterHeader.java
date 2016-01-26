@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
+import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.Text;
 
@@ -46,7 +47,7 @@ public class TextChapterHeader extends LinearLayout {
         inflate(context, R.layout.text_chapter_header, this);
         tv = (TextView) findViewById(R.id.tv);
 
-        Util.Lang lang = MyApp.getMenuLang();
+        Util.Lang lang = Settings.getMenuLang();
         setLang(lang);
         setTextSize(textSize);
     }
@@ -68,7 +69,7 @@ public class TextChapterHeader extends LinearLayout {
     public void setSectionTitle(Text segment) {
         enText = segment.enText;
         heText = segment.heText;
-        setLang(MyApp.getMenuLang());
+        setLang(Settings.getMenuLang());
     }
 
     public void setTextSize(float textSize) {

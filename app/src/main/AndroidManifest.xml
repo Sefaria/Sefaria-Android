@@ -57,6 +57,11 @@
             android:name=".activities.SectionActivity"
             android:label="@string/title_activity_section" >
         </activity>
+        <activity
+            android:name=".activities.AboutActivity"
+            android:label="@string/title_activity_about"
+            android:theme="@style/AppTheme" >
+        </activity>
     </application>
 
 </manifest>

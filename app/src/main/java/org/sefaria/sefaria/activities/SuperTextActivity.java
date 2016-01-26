@@ -126,11 +126,11 @@ public abstract class SuperTextActivity extends Activity {
         //These vars are specifically initialized here and not in init() so that they don't get overidden when coming from TOC
         //defaults
         isCts = false;
-        textLang = MyApp.getDefaultTextLang();
+        textLang = Settings.getDefaultTextLang();
         textSize = getResources().getDimension(R.dimen.default_text_font_size);
         //end defaults
         isLoadingInit = false;
-        menuLang = MyApp.getMenuLang();
+        menuLang = Settings.getMenuLang();
         if(customActionbar != null)//it's already been set
             customActionbar.setLang(menuLang);
     }
