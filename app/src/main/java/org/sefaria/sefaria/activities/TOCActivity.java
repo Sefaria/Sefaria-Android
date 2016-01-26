@@ -84,7 +84,6 @@ public class TOCActivity extends AppCompatActivity {
         outState.putParcelable("currBook", book);
         outState.putString("pathDefiningNode", pathDefiningNode);
         outState.putString("bookTitle", book.title);
-        Log.e("TOCActvivity", "onSaveInstanceState called (not error)");
     }
 
 
