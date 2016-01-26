@@ -178,7 +178,9 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
                 AnimateLinkFragClose(linkRoot);
 
             } else {
-                listView.setSelection(position);
+                Log.d("sec","TOP = " + view.getTop());
+                if (view.getTop() > 0) //don't auto-scroll if the text is super long.
+                    listView.smoothScrollToPositionFromTop(position,0,SuperTextActivity.LINK_FRAG_ANIM_TIME);
                 linkFragment.setClicked(true);
                 linkFragment.updateFragment(sectionAdapter.getItem(position));
                 //linkRoot.setVisibility(View.VISIBLE);

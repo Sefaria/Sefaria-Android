@@ -398,6 +398,9 @@ public class Book implements Parcelable {
         return bookNameList;
     }
 
+    public int getCatColor() {
+        return MyApp.getCatColor(categories[0]);
+    }
 
     public static void getAllSectionNames(){
         List<Book> bookList = getAll();
