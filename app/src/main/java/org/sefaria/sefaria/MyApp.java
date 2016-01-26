@@ -17,13 +17,16 @@ public class MyApp extends Application {
             "Chasidut","Musar","Other",
             "Halakhah","Midrash","Kabbalah",
             "Responsa","Parshanut","Apocrypha",
-            "More >","Quoting Commentary","Modern Works","Commentary"};
+            "More >","Quoting Commentary","Modern Works",
+            "Commentary","All Connections"
+                };
     public static final int[] CAT_COLORS = {R.color.tanach, R.color.mishnah,R.color.talmud,
             R.color.tosefta,R.color.liturgy,R.color.philosophy,
             R.color.chasidut,R.color.musar,R.color.other,
             R.color.halkhah,R.color.midrash,R.color.kabbalah,
             R.color.responsa,R.color.parshanut,R.color.apocrypha,
-            R.color.more,R.color.quoting_commentary,R.color.modern_works,R.color.commentary};
+            R.color.more,R.color.quoting_commentary,R.color.modern_works,
+            R.color.commentary, R.color.allConnections};
 
     public static final int MONTSERRAT_FONT = 123;
     public static final int TAAMEY_FRANK_FONT = 124;

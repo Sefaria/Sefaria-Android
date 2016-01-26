@@ -20,7 +20,6 @@ public class CustomActionbar extends MenuElement {
     private View homeBtn;
     private View closeBtn;
     private View searchBtn;
-    private View tocBtn;
     private View colorBar;
     private View menuBtn;
     private View backBtn;
@@ -40,7 +39,6 @@ public class CustomActionbar extends MenuElement {
         homeBtn = findViewById(R.id.home_btn);
         closeBtn = findViewById(R.id.close_btn);
         searchBtn = findViewById(R.id.search_btn);
-        tocBtn = findViewById(R.id.toc_btn);
         menuBtn = findViewById(R.id.menu_btn);
         backBtn = findViewById(R.id.back_btn);
         invisableBtn = findViewById(R.id.invisable_btn);
@@ -81,8 +79,12 @@ public class CustomActionbar extends MenuElement {
         if (backClick != null) backBtn.setOnClickListener(backClick);
         else backBtn.setVisibility(View.INVISIBLE);
 
-        if (titleClick != null ) { titleTV.setOnClickListener(titleClick); tocBtn.setOnClickListener(titleClick); }
-        else tocBtn.setVisibility(View.GONE);
+
+        if (titleClick != null ) {
+            titleTV.setOnClickListener(titleClick);
+            //tocBtn.setOnClickListener(titleClick);
+        }
+        //else{ tocBtn.setVisibility(View.GONE);
 
 
         //TODO - make this look normal centered
@@ -100,7 +102,7 @@ public class CustomActionbar extends MenuElement {
     public void setTitleText(String title, Util.Lang lang, boolean forceRefresh, boolean forTOC){
         Log.d("cab","title: "+  title);
         if(forTOC)
-            title = "\u25bc " + title;
+            title = "\u25be " + title; // "\u25bc "
         if(lang == Util.Lang.HE)
             heText = title;
         else// if(lang == Util.Lang.HE || Lang.BI)
