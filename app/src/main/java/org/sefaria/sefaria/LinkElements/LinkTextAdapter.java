@@ -17,6 +17,7 @@ import org.sefaria.sefaria.activities.LinkFragment;
 import org.sefaria.sefaria.activities.SuperTextActivity;
 import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Link;
+import org.sefaria.sefaria.database.LinkCount;
 import org.sefaria.sefaria.database.Text;
 
 import java.util.List;
@@ -29,7 +30,7 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextAdapter.LinkTe
 
     private List<Text> itemList;
     private SuperTextActivity context;
-    private Link.LinkCount currLinkCount;
+    private LinkCount currLinkCount;
 
     public class LinkTextHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView tv;
@@ -67,7 +68,7 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextAdapter.LinkTe
     public void onBindViewHolder(LinkTextHolder holder, int position) {
         Text link = itemList.get(position);
         holder.verseNum.setText(""+link.levels[0]);
-        holder.tv.setText(Html.fromHtml(link.heText));
+        holder.tv.setText(Html.fromHtml(link.heText + "<br>" + link.enText));
         holder.tv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
         holder.tv.setTextSize(20);
 
@@ -88,7 +89,7 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextAdapter.LinkTe
     }
 
     //segment is used to update text list
-    public void setCurrLinkCount(Link.LinkCount linkCount, Text segment) {
+    public void setCurrLinkCount(LinkCount linkCount, Text segment) {
         //try not to update too often
         if (!linkCount.equals(currLinkCount)) {
             currLinkCount = linkCount;
@@ -96,6 +97,6 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextAdapter.LinkTe
                 setItemList(Link.getLinkedTexts(segment, currLinkCount));
         }
     }
-    public Link.LinkCount getCurrLinkCount() { return currLinkCount; }
+    public LinkCount getCurrLinkCount() { return currLinkCount; }
 
 }

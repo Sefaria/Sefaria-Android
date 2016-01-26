@@ -19,6 +19,7 @@ import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.Link;
+import org.sefaria.sefaria.database.LinkCount;
 import org.sefaria.sefaria.database.Text;
 
 import java.util.ArrayList;
@@ -46,7 +47,7 @@ public class LinkFragment extends Fragment {
     private LinkMainAdapter linkMainAdapter;
     private LinkTextAdapter linkTextAdapter;
     private RecyclerView linkRecycler;
-    private LinkedList<Link.LinkCount> linkSelectorQueue; //holds the linkCounts that display the previously selected linkCounts
+    private LinkedList<LinkCount> linkSelectorQueue; //holds the linkCounts that display the previously selected linkCounts
 
     private Text segment;
     private State currState;
@@ -114,7 +115,7 @@ public class LinkFragment extends Fragment {
 
     public State getCurrState() { return currState; }
 
-    public void gotoState(State state,View view,Link.LinkCount linkCount) {
+    public void gotoState(State state,View view,LinkCount linkCount) {
         currState = state;
         SuperTextActivity activity = (SuperTextActivity) getActivity();
         View colorBar = view.findViewById(R.id.main_color_bar);
@@ -125,7 +126,7 @@ public class LinkFragment extends Fragment {
             GridLayoutManager gridLayoutManager = new GridLayoutManager(activity,2);
             gridLayoutManager.setSpanSizeLookup(onSpanSizeLookup);
 
-            linkMainAdapter = new LinkMainAdapter(activity,new ArrayList<Link.LinkCount>(),activity.getBook(),this);
+            linkMainAdapter = new LinkMainAdapter(activity,new ArrayList<LinkCount>(),activity.getBook(),this);
 
             linkRecycler.setLayoutManager(gridLayoutManager);
             linkRecycler.setAdapter(linkMainAdapter);
@@ -139,7 +140,7 @@ public class LinkFragment extends Fragment {
 
 
             String cat;
-            if (linkCount.getDepthType() == Link.LinkCount.DEPTH_TYPE.BOOK) cat = linkCount.getCategory(activity.getBook());
+            if (linkCount.getDepthType() == LinkCount.DEPTH_TYPE.BOOK) cat = linkCount.getCategory(activity.getBook());
             else cat = linkCount.getRealTitle(Util.Lang.EN); //CAT
 
             colorBar.setVisibility(View.VISIBLE);
@@ -150,7 +151,7 @@ public class LinkFragment extends Fragment {
             LinearLayout linkSelectionBarList = (LinearLayout) view.findViewById(R.id.link_selection_bar_list);
             linkSelectionBarList.removeAllViews();
 
-            ListIterator<Link.LinkCount> linkIt = linkSelectorQueue.listIterator(linkSelectorQueue.size());
+            ListIterator<LinkCount> linkIt = linkSelectorQueue.listIterator(linkSelectorQueue.size());
             while(linkIt.hasPrevious()) {
                 //add children in reverse order
                 LinkSelectorBarButton lssb = new LinkSelectorBarButton(getActivity(),linkIt.previous(),activity.getBook());
@@ -196,8 +197,8 @@ public class LinkFragment extends Fragment {
             if(!segment.isChapter()) Log.d("frag", "UPDATE FRAG TEXT " + segment.levels[0]);
 
             if (currState == State.MAIN) { //load new linkCounts
-                Link.LinkCount linkCount = Link.LinkCount.getFromLinks_small(segment);
-                linkMainAdapter.setItemList(Link.LinkCount.getList(linkCount));
+                LinkCount linkCount = LinkCount.getFromLinks_small(segment);
+                linkMainAdapter.setItemList(LinkCount.getList(linkCount));
             } else if (currState == State.BOOK || currState == State.CAT) { //change visibilty of links
                 linkTextAdapter.setItemList(Link.getLinkedTexts(segment,linkTextAdapter.getCurrLinkCount()));
             } else { //CAT load new cat links
@@ -229,8 +230,8 @@ public class LinkFragment extends Fragment {
     GridLayoutManager.SpanSizeLookup onSpanSizeLookup = new GridLayoutManager.SpanSizeLookup() {
         @Override
         public int getSpanSize(int position) {
-            Link.LinkCount linkCount = linkMainAdapter.getItem(position);
-            if (linkCount.getDepthType() != Link.LinkCount.DEPTH_TYPE.BOOK) {
+            LinkCount linkCount = linkMainAdapter.getItem(position);
+            if (linkCount.getDepthType() != LinkCount.DEPTH_TYPE.BOOK) {
                 return 2;
             } else {
                 return 1;
