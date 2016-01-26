@@ -48,7 +48,8 @@ public class MenuActivity extends Activity {
         Util.Lang menuLang = MyApp.getMenuLang();//menuState.getLang();
         setTitle(menuState.getCurrNode().getTitle(menuLang));
         //this specifically comes before menugrid, b/c in tabs it menugrid does funny stuff to currnode
-        cab = new CustomActionbar(this, menuState.getCurrNode(),menuLang,homeClick,null,null,null,menuClick,backClick);
+        int catColor = menuState.getCurrNode().getTopLevelColor();
+        cab = new CustomActionbar(this, menuState.getCurrNode(),menuLang,homeClick,null,null,null,menuClick,backClick,catColor);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(cab);
 

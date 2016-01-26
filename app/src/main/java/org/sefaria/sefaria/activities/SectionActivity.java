@@ -48,6 +48,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
         listView = (ListViewExt) findViewById(R.id.listview);
         sectionAdapter = new SectionAdapter(this,R.layout.adapter_text_mono,new ArrayList<Text>());
 
+
         listView.setAdapter(sectionAdapter);
         listView.setOnScrollListener(this);
         listView.setDivider(null);
@@ -152,6 +153,13 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
     }
 
 
+    @Override
+    protected void jumptToIncomingLink(Text incomingLink) {
+        int index = sectionAdapter.getPosition(incomingLink);
+        Log.d("sec","INDEX " + index);
+        listView.setSelection(index);
+    }
+
     //YOU actually need this function implemented because you're implementing AbsListView, but it's stupid...
     @Override
     public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -170,7 +178,9 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
                 AnimateLinkFragClose(linkRoot);
 
             } else {
-                listView.setSelection(position);
+                Log.d("sec","TOP = " + view.getTop());
+                if (view.getTop() > 0) //don't auto-scroll if the text is super long.
+                    listView.smoothScrollToPositionFromTop(position,0,SuperTextActivity.LINK_FRAG_ANIM_TIME);
                 linkFragment.setClicked(true);
                 linkFragment.updateFragment(sectionAdapter.getItem(position));
                 //linkRoot.setVisibility(View.VISIBLE);
@@ -221,6 +231,11 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
                 sectionAdapter.addAll(0, textsList);
                 sectionAdapter.add(0, sectionHeader);
                 listView.setSelection(textsList.size()+1);
+            }
+
+            if (incomingLink != null) {
+                jumptToIncomingLink(incomingLink);
+                incomingLink = null;
             }
 
         }
