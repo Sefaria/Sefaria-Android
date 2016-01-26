@@ -42,17 +42,19 @@ public class Text implements Parcelable {
 
 
     public static final String ORDER_BY_LEVELS = Klevel6 + ", " + Klevel5 + ", " + Klevel4 + ", " + Klevel3 + ", " + Klevel2 + ", " + Klevel1;
-    private Node segmentNode = null; //for SectionAdapter. not null indicates that this obj is actually a placeholder for a perek title (and the node represents that perek)
+    public Node parentNode = null; //for SectionAdapter. not null indicates that this obj is actually a placeholder for a perek title (and the node represents that perek)
     public int tid;
     public int bid;
     public String enText;
     public String heText;
+    private boolean isChapter = false;
+
 
     private int numLinks = 0;
 
     public int getNumLinks(){ return numLinks;}
 
-    public boolean isChapter() { return (segmentNode != null);}
+    public boolean isChapter() { return isChapter;}
     /**
      * Little sections (like verse) to Big (like chap) and the rest zeros
      * For ex. chapter 3, verse 8 would be {8,3,0,0,0,0}
@@ -75,7 +77,8 @@ public class Text implements Parcelable {
      * @param node
      */
     public Text(Node node) {
-        segmentNode = node;
+        isChapter = true;
+        parentNode = node;
         this.enText = node.getWholeTitle(Util.Lang.EN);
         this.heText = node.getWholeTitle(Util.Lang.HE);
     }
