@@ -9,6 +9,7 @@ import android.widget.TextView;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Link;
+import org.sefaria.sefaria.database.LinkCount;
 
 /**
  * Created by nss on 1/21/16.
@@ -16,10 +17,10 @@ import org.sefaria.sefaria.database.Link;
 public class LinkSelectorBarButton extends TextView {
 
     private Context context;
-    private Link.LinkCount linkCount;
+    private LinkCount linkCount;
     private Book book;
 
-    public LinkSelectorBarButton(Context context, Link.LinkCount linkCount, Book book) {
+    public LinkSelectorBarButton(Context context, LinkCount linkCount, Book book) {
         super(context);
         this.context = context;
         this.linkCount = linkCount;
@@ -34,5 +35,5 @@ public class LinkSelectorBarButton extends TextView {
         setText(linkCount.getSlimmedTitle(book,lang));
     }
 
-    public Link.LinkCount getLinkCount() { return linkCount; }
+    public LinkCount getLinkCount() { return linkCount; }
 }

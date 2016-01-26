@@ -13,6 +13,7 @@ import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.activities.LinkFragment;
 import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Link;
+import org.sefaria.sefaria.database.LinkCount;
 import org.sefaria.sefaria.database.Text;
 
 import java.util.List;
@@ -22,7 +23,7 @@ import java.util.List;
  */
 public class LinkMainAdapter extends RecyclerView.Adapter<LinkMainAdapter.LinkHolder> {
 
-    private List<Link.LinkCount> itemList;
+    private List<LinkCount> itemList;
     private Context context;
     private Book book;
     private LinkFragment fragment;
@@ -44,9 +45,9 @@ public class LinkMainAdapter extends RecyclerView.Adapter<LinkMainAdapter.LinkHo
 
         @Override
         public void onClick(View v) {
-            Link.LinkCount linkCount = itemList.get(getAdapterPosition());
+            LinkCount linkCount = itemList.get(getAdapterPosition());
             LinkFragment.State tempState;
-            if (linkCount.getDepthType() == Link.LinkCount.DEPTH_TYPE.BOOK) {
+            if (linkCount.getDepthType() == LinkCount.DEPTH_TYPE.BOOK) {
                 tempState = LinkFragment.State.BOOK;
             } else {
                 tempState = LinkFragment.State.CAT;
@@ -58,7 +59,7 @@ public class LinkMainAdapter extends RecyclerView.Adapter<LinkMainAdapter.LinkHo
     }
 
 
-    public LinkMainAdapter(Context context, List<Link.LinkCount> itemList, Book book, LinkFragment fragment) {
+    public LinkMainAdapter(Context context, List<LinkCount> itemList, Book book, LinkFragment fragment) {
         this.itemList = itemList;
         this.context = context;
         this.book = book;
@@ -75,11 +76,11 @@ public class LinkMainAdapter extends RecyclerView.Adapter<LinkMainAdapter.LinkHo
 
     @Override
     public void onBindViewHolder(LinkHolder holder, int position) {
-        Link.LinkCount linkCount = itemList.get(position);
+        LinkCount linkCount = itemList.get(position);
         String bookTitle = linkCount.getSlimmedTitle(book, Util.Lang.EN);
         holder.tv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
 
-        if (linkCount.getDepthType() == Link.LinkCount.DEPTH_TYPE.CAT) {
+        if (linkCount.getDepthType() == LinkCount.DEPTH_TYPE.CAT) {
             holder.tv.setText(bookTitle + " " + Util.LINK_CAT_VERICAL_LINE + " " + linkCount.getCount());
             holder.tv.setAllCaps(true);
             holder.colorBar.setVisibility(View.VISIBLE);
@@ -101,12 +102,12 @@ public class LinkMainAdapter extends RecyclerView.Adapter<LinkMainAdapter.LinkHo
         return this.itemList.size();
     }
 
-    public void setItemList(List<Link.LinkCount> items) {
+    public void setItemList(List<LinkCount> items) {
         itemList = items;
         notifyDataSetChanged();
     }
 
-    public Link.LinkCount getItem(int position) {
+    public LinkCount getItem(int position) {
         return itemList.get(position);
     }
 
