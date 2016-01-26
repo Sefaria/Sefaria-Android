@@ -54,6 +54,7 @@ public abstract class SuperTextActivity extends Activity {
     protected List<TextChapterHeader> textChapterHeaders;
 
     protected Node firstLoadedNode;
+    protected Node currNode; // Node which you're currently up to in scrollView
     protected Node lastLoadedNode;
 
     protected Util.Lang menuLang;
@@ -344,6 +345,10 @@ public abstract class SuperTextActivity extends Activity {
     protected abstract void setIsCts(boolean isCts);
     protected abstract void incrementTextSize(boolean isIncrement);
 
+    protected  void setCurrNode(/*Node node*/) {
+        //this.currNode = node;
+    }
+
 
     protected List<Text> loadSection(TextEnums dir) {
         Node newNode = null;
@@ -397,6 +402,8 @@ public abstract class SuperTextActivity extends Activity {
     static private SharedPreferences getBookSavedSettings(){
         return MyApp.getContext().getSharedPreferences("org.sefaria.sefaria.book_save_settings", Context.MODE_PRIVATE);
     }
+
+
 
     //-----
     //LINK FRAGMENT
