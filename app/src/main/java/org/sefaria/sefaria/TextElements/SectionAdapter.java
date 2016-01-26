@@ -220,4 +220,12 @@ public class SectionAdapter extends ArrayAdapter<Text> {
             }
         }
     }
+
+    @Override
+    public int getPosition(Text item) {
+        for (int i = 0; i < texts.size(); i++) {
+            if (texts.get(i).tid == item.tid) return i;
+        }
+        return -1;
+    }
 }
