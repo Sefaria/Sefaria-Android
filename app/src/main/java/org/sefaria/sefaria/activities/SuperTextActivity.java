@@ -78,20 +78,20 @@ public abstract class SuperTextActivity extends Activity {
 
         Intent intent = getIntent();
         Integer nodeHash;
-        Text incommingLink;
+        Text incomingLink;
         if (savedInstanceState != null) {//it's coming back after it cleared the activity from ram
             nodeHash = savedInstanceState.getInt("nodeHash", -1);
             book = savedInstanceState.getParcelable("currBook");
-            incommingLink = savedInstanceState.getParcelable("incomingLinkText");
+            incomingLink = savedInstanceState.getParcelable("incomingLinkText");
         }else{
             nodeHash = intent.getIntExtra("nodeHash", -1);
             book = intent.getParcelableExtra("currBook");
-            incommingLink = intent.getParcelableExtra("incomingLinkText");
+            incomingLink = intent.getParcelableExtra("incomingLinkText");
         }
         if(book != null){ //||nodeHash == -1){// that means it came in from the menu or the TOC commentary tab
             try {
-                if (incommingLink != null) {
-                    firstLoadedNode = Node.getNodeFromLink(incommingLink, book);
+                if (incomingLink != null) {
+                    firstLoadedNode = Node.getNodeFromLink(incomingLink, book);
                     //TODO make it jump also to the right text num (incomingLinkText.levels[0] == textInList.levels[0])
                     if(firstLoadedNode == null){
                         Log.e("SuperTextAct", "firstLoadedNode is null");
@@ -369,7 +369,7 @@ public abstract class SuperTextActivity extends Activity {
         if(currNode == node) return;
 
         currNode = node;
-        customActionbar.setTitleText(currNode.getWholeTitle(menuLang), menuLang, true, true);
+        customActionbar.setTitleText(currNode.getMenuBarTitle(book,menuLang), menuLang, true, true);
         Settings.setSavedBook(book,currNode);
 
 
