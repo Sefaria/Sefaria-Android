@@ -30,7 +30,7 @@ public class CustomActionbar extends MenuElement {
     private MenuNode menuNode;
 
 
-    public CustomActionbar(Context context, MenuNode menuNode, Util.Lang lang, OnClickListener homeClick, OnClickListener closeClick, OnClickListener searchClick, OnClickListener titleClick, OnClickListener menuClick, OnClickListener backClick) {
+    public CustomActionbar(Context context, MenuNode menuNode, Util.Lang lang, OnClickListener homeClick, OnClickListener closeClick, OnClickListener searchClick, OnClickListener titleClick, OnClickListener menuClick, OnClickListener backClick, int catColor) {
         super(context);
         inflate(context, R.layout.custom_actionbar, this);
 
@@ -47,9 +47,9 @@ public class CustomActionbar extends MenuElement {
 
 
         setLang(lang);
-        int topColor = menuNode.getTopLevelColor();
-        if (topColor == -1) colorBar.setVisibility(View.GONE);
-        else colorBar.setBackgroundColor(getResources().getColor(topColor));
+
+        if (catColor == -1) colorBar.setVisibility(View.GONE);
+        else colorBar.setBackgroundColor(getResources().getColor(catColor));
 
         if (homeClick != null) homeBtn.setOnClickListener(homeClick);
         else{

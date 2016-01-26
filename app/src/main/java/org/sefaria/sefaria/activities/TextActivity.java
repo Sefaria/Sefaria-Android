@@ -230,6 +230,12 @@ public class TextActivity extends SuperTextActivity {
         }
     };
 
+    //TODO fill in this function
+    @Override
+    protected void jumptToIncomingLink(Text incomingLink) {
+        //blah. this is actually going to be really annoying to do in cts texts...
+    }
+
     /**
      * LINK FRAGMENT
      */
