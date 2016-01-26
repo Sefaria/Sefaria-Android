@@ -56,6 +56,7 @@ public abstract class SuperTextActivity extends Activity {
     protected Node firstLoadedNode;
     protected Node currNode; // Node which you're currently up to in scrollView
     protected Node lastLoadedNode;
+    protected Text incomingLink;
 
     protected Util.Lang menuLang;
     protected Util.Lang textLang;
@@ -78,21 +79,20 @@ public abstract class SuperTextActivity extends Activity {
 
         Intent intent = getIntent();
         Integer nodeHash;
-        Text incommingLink;
         if (savedInstanceState != null) {//it's coming back after it cleared the activity from ram
             nodeHash = savedInstanceState.getInt("nodeHash", -1);
             book = savedInstanceState.getParcelable("currBook");
-            incommingLink = savedInstanceState.getParcelable("incomingLinkText");
+            incomingLink = savedInstanceState.getParcelable("incomingLinkText");
         }else{
             nodeHash = intent.getIntExtra("nodeHash", -1);
             book = intent.getParcelableExtra("currBook");
-            incommingLink = intent.getParcelableExtra("incomingLinkText");
+            incomingLink = intent.getParcelableExtra("incomingLinkText");
         }
         if(book != null){ //||nodeHash == -1){// that means it came in from the menu or the TOC commentary tab
             try {
-                if (incommingLink != null) {
-                    firstLoadedNode = Node.getNodeFromLink(incommingLink, book);
-                    //TODO make it jump also to the right text num (incomingLinkText.levels[0] == textInList.levels[0])
+                if (incomingLink != null) {
+                    firstLoadedNode = Node.getNodeFromLink(incomingLink, book);
+
                     if(firstLoadedNode == null){
                         Log.e("SuperTextAct", "firstLoadedNode is null");
                     }
@@ -370,6 +370,7 @@ public abstract class SuperTextActivity extends Activity {
     protected abstract void setMenuLang(Util.Lang menuLang);
     protected abstract void setIsCts(boolean isCts);
     protected abstract void incrementTextSize(boolean isIncrement);
+    protected abstract void jumptToIncomingLink(Text incomingLink);
 
     protected  void setCurrNode(/*Node node*/) {
         //this.currNode = node;

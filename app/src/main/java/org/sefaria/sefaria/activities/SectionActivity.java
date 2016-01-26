@@ -48,6 +48,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
         listView = (ListViewExt) findViewById(R.id.listview);
         sectionAdapter = new SectionAdapter(this,R.layout.adapter_text_mono,new ArrayList<Text>());
 
+
         listView.setAdapter(sectionAdapter);
         listView.setOnScrollListener(this);
         listView.setDivider(null);
@@ -155,6 +156,13 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
     }
 
 
+    @Override
+    protected void jumptToIncomingLink(Text incomingLink) {
+        int index = sectionAdapter.getPosition(incomingLink);
+        Log.d("sec","INDEX " + index);
+        listView.setSelection(index);
+    }
+
     //YOU actually need this function implemented because you're implementing AbsListView, but it's stupid...
     @Override
     public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -224,6 +232,11 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
                 sectionAdapter.addAll(0, textsList);
                 sectionAdapter.add(0, sectionHeader);
                 listView.setSelection(textsList.size()+1);
+            }
+
+            if (incomingLink != null) {
+                jumptToIncomingLink(incomingLink);
+                incomingLink = null;
             }
 
         }
