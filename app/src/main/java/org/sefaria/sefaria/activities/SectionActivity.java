@@ -74,6 +74,8 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
         fragmentTransaction.commit();
 
 
+
+
     }
 
 
@@ -91,7 +93,6 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
     public boolean getIsCts(){ return isCts;}
 
     protected void setIsCts(boolean isCts) {
-        Log.d("sectionActi", "isCts called");
         this.isCts = isCts;
         sectionAdapter.notifyDataSetChanged();
     }
@@ -156,7 +157,6 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
     @Override
     protected void jumptToIncomingLink(Text incomingLink) {
         int index = sectionAdapter.getPosition(incomingLink);
-        Log.d("sec","INDEX " + index);
         listView.setSelection(index);
     }
 
@@ -178,7 +178,6 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
                 AnimateLinkFragClose(linkRoot);
 
             } else {
-                Log.d("sec","TOP = " + view.getTop());
                 if (view.getTop() > 0) //don't auto-scroll if the text is super long.
                     listView.smoothScrollToPositionFromTop(position,0,SuperTextActivity.LINK_FRAG_ANIM_TIME);
                 linkFragment.setClicked(true);
@@ -215,19 +214,16 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
 
         @Override
         protected void onPostExecute(List<Text> textsList) {
-            Log.d("sec", "NUM TEXTS " + textsList.size());
             isLoadingSection = false;
             isLoadingInit = false;
             if (textsList.size() == 0) return;
 
             Text sectionHeader = getSectionHeaderText(dir);
             if (dir == TextEnums.NEXT_SECTION) {
-                Log.d("sec", "NEEXXXT");
                 sectionAdapter.add(sectionHeader);
                 sectionAdapter.addAll(textsList);
 
             } else if (dir == TextEnums.PREV_SECTION) {
-                Log.d("sec", "PREEV");
                 sectionAdapter.addAll(0, textsList);
                 sectionAdapter.add(0, sectionHeader);
                 listView.setSelection(textsList.size()+1);
