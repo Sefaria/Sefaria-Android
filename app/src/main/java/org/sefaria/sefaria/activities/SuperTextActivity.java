@@ -77,34 +77,47 @@ public abstract class SuperTextActivity extends Activity {
 
         Intent intent = getIntent();
         Integer nodeHash;
+        Text incommingLink;
         if (savedInstanceState != null) {//it's coming back after it cleared the activity from ram
             nodeHash = savedInstanceState.getInt("nodeHash", -1);
             book = savedInstanceState.getParcelable("currBook");
+            incommingLink = savedInstanceState.getParcelable("incomingLinkText");
         }else{
             nodeHash = intent.getIntExtra("nodeHash", -1);
             book = intent.getParcelableExtra("currBook");
+            incommingLink = intent.getParcelableExtra("incomingLinkText");
         }
         if(book != null){ //||nodeHash == -1){// that means it came in from the menu or the TOC commentary tab
-            try{
-                SharedPreferences bookSavedSettings = getBookSavedSettings();
-                String stringThatRepsSavedSettings = bookSavedSettings.getString(book.title, "");
-                Log.d("SuperTextAct", "bookSavedSettings:" + stringThatRepsSavedSettings);
-                String nodePathStr = stringThatRepsSavedSettings; //TODO  make based on split()
-                Node node = book.getNodeFromPathStr(nodePathStr);
-                Log.d("SuperTextAct", "bookSavedSettings... node:" + node);
-                node = node.getFirstDescendant();//should be unneeded line, but in case there was a previous bug this shuold return a isTextSection() node to avoid bugs
-                firstLoadedNode = node;
-            }catch (Node.InvalidPathException e){//couldn't get saved Node data (most likely you were never at the book, or possibly an error happened).
-                Log.e("SuperTextAct", "Problem gettting saved book data");
-                List<Node> TOCroots = book.getTOCroots();
-                if(TOCroots.size() == 0) {
-                    Toast.makeText(this, "Unable to load Table of Contents for this book", Toast.LENGTH_SHORT).show();
-                    badOnCreate = true;
-                    return;
+            try {
+                if (incommingLink != null) {
+                    firstLoadedNode = Node.getNodeFromLink(incommingLink, book);
+                    //TODO make it jump also to the right text num (incomingLinkText.levels[0] == textInList.levels[0])
+                    if(firstLoadedNode == null){
+                        Log.e("SuperTextAct", "firstLoadedNode is null");
+                    }
+                }else {
+                    try {
+                        SharedPreferences bookSavedSettings = getBookSavedSettings();
+                        String stringThatRepsSavedSettings = bookSavedSettings.getString(book.title, "");
+                        Log.d("SuperTextAct", "bookSavedSettings:" + stringThatRepsSavedSettings);
+                        String nodePathStr = stringThatRepsSavedSettings; //TODO  make based on split()
+                        Node node = book.getNodeFromPathStr(nodePathStr);
+                        Log.d("SuperTextAct", "bookSavedSettings... node:" + node);
+                        node = node.getFirstDescendant();//should be unneeded line, but in case there was a previous bug this shuold return a isTextSection() node to avoid bugs
+                        firstLoadedNode = node;
+                    } catch (Node.InvalidPathException e) {//couldn't get saved Node data (most likely you were never at the book, or possibly an error happened).
+                        Log.e("SuperTextAct", "Problem gettting saved book data");
+                        List<Node> TOCroots = book.getTOCroots();
+                        if (TOCroots.size() == 0) {
+                            Toast.makeText(this, "Unable to load Table of Contents for this book", Toast.LENGTH_SHORT).show();
+                            badOnCreate = true;
+                            return;
+                        }
+                        Node root = TOCroots.get(0);
+                        firstLoadedNode = root.getFirstDescendant();
+                    }
                 }
-                Node root = TOCroots.get(0);
-                firstLoadedNode = root.getFirstDescendant();
-            } catch (API.APIException e) {
+            }catch (API.APIException e) {
                 Toast.makeText(this,"Problem getting data from internet", Toast.LENGTH_SHORT).show();
                 badOnCreate = true;
                 return;
@@ -129,10 +142,19 @@ public abstract class SuperTextActivity extends Activity {
             customActionbar.setLang(menuLang);
     }
 
+    public static void startNewTextActivityIntent(Context context, Text text){
+        Book book = new Book(text.bid);
+        startNewTextActivityIntent(context,book,text);
+    }
+
     public static void startNewTextActivityIntent(Context context, Book book){
+        startNewTextActivityIntent(context,book,null);
+    }
+
+    private static void startNewTextActivityIntent(Context context, Book book, Text text){
         List<String> cats = Arrays.asList(book.categories);
         boolean isCtsText = false;
-        final String[] CTS_TEXT_CATS = {"Talmud"};// {"Tanach","Talmud"};//
+        final String[] CTS_TEXT_CATS = {};// {"Tanach","Talmud"};//
         for (String ctsText : CTS_TEXT_CATS) {
             isCtsText = cats.contains(ctsText);
             if (isCtsText) break;
@@ -143,7 +165,10 @@ public abstract class SuperTextActivity extends Activity {
         } else {
             intent = new Intent(context, SectionActivity.class);
         }
+
         intent.putExtra("currBook", book);
+        if(text != null)
+            intent.putExtra("incomingLinkText",text);
         //lang replaced by general MyApp.getMenuLang() function
 
 
@@ -153,6 +178,7 @@ public abstract class SuperTextActivity extends Activity {
         //intent.putExtra("menuState", newMenuState);
         context.startActivity(intent);
     }
+
 
     protected void init() {
         isLoadingInit = true;
