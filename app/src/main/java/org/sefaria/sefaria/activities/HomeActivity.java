@@ -64,7 +64,7 @@ public class HomeActivity extends Activity {
 
         //toggle closeClick, depending on if menu is popup or not
         View.OnClickListener tempCloseClick = null;
-        if (isPopup) tempCloseClick = closeClick;
+        //if (isPopup) tempCloseClick = closeClick; //Removing the close click for now to test without it
 
         String title; //This is forcing the word Sefaria to be based on System lang and not based on menuLang (it can easily be changed by inserting each value into the new MenuNode
 
