@@ -69,7 +69,7 @@ public class HomeActivity extends Activity {
         String title; //This is forcing the word Sefaria to be based on System lang and not based on menuLang (it can easily be changed by inserting each value into the new MenuNode
 
         cab = new CustomActionbar(this,new MenuNode("Sefaria","ספאריה",null),
-                MyApp.getSystemLang(),null,tempCloseClick,searchClick,null,menuClick,null);
+                MyApp.getSystemLang(),null,tempCloseClick,searchClick,null,menuClick,null,-1);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(cab);
 

@@ -63,7 +63,8 @@ public class TOCActivity extends AppCompatActivity {
 
     private void init() {
         MenuNode titleNode = new MenuNode("Table of Contents","תוכן העניינים",null);
-        CustomActionbar cab = new CustomActionbar(this, titleNode, MyApp.getSystemLang(),homeClick,closeClick,null,null,langClick,null);
+        int catColor = book.getCatColor();
+        CustomActionbar cab = new CustomActionbar(this, titleNode, MyApp.getSystemLang(),homeClick,closeClick,null,null,langClick,null,catColor);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(cab);
 
