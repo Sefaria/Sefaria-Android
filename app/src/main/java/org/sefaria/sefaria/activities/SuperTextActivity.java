@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
+import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.TextElements.TextChapterHeader;
 import org.sefaria.sefaria.TextElements.TextMenuBar;
 import org.sefaria.sefaria.Util;
@@ -78,6 +79,7 @@ public abstract class SuperTextActivity extends Activity {
 
         Intent intent = getIntent();
         Integer nodeHash;
+        Text incomingLink;
         if (savedInstanceState != null) {//it's coming back after it cleared the activity from ram
             nodeHash = savedInstanceState.getInt("nodeHash", -1);
             book = savedInstanceState.getParcelable("currBook");
@@ -91,20 +93,12 @@ public abstract class SuperTextActivity extends Activity {
             try {
                 if (incomingLink != null) {
                     firstLoadedNode = Node.getNodeFromLink(incomingLink, book);
-
                     if(firstLoadedNode == null){
                         Log.e("SuperTextAct", "firstLoadedNode is null");
                     }
                 }else {
                     try {
-                        SharedPreferences bookSavedSettings = getBookSavedSettings();
-                        String stringThatRepsSavedSettings = bookSavedSettings.getString(book.title, "");
-                        Log.d("SuperTextAct", "bookSavedSettings:" + stringThatRepsSavedSettings);
-                        String nodePathStr = stringThatRepsSavedSettings; //TODO  make based on split()
-                        Node node = book.getNodeFromPathStr(nodePathStr);
-                        Log.d("SuperTextAct", "bookSavedSettings... node:" + node);
-                        node = node.getFirstDescendant();//should be unneeded line, but in case there was a previous bug this shuold return a isTextSection() node to avoid bugs
-                        firstLoadedNode = node;
+                        firstLoadedNode = Settings.getSavedBook(book);
                     } catch (Node.InvalidPathException e) {//couldn't get saved Node data (most likely you were never at the book, or possibly an error happened).
                         Log.e("SuperTextAct", "Problem gettting saved book data");
                         List<Node> TOCroots = book.getTOCroots();
@@ -140,6 +134,11 @@ public abstract class SuperTextActivity extends Activity {
         menuLang = MyApp.getMenuLang();
         if(customActionbar != null)//it's already been set
             customActionbar.setLang(menuLang);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putParcelable("currBook", book);
     }
 
     public static void startNewTextActivityIntent(Context context, Text text){
@@ -203,13 +202,6 @@ public abstract class SuperTextActivity extends Activity {
 
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        //outState.putInt("nodeHash", nodeHash);
-        Log.d("SuperTextAct", "calling onSaveInstanceState");
-        //outState.putSerializable("lang",menuLang);
-        //outState.putParcelable("currBook", book);
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -354,7 +346,6 @@ public abstract class SuperTextActivity extends Activity {
         }
     };
 
-    public Util.Lang getMenuLang() { return menuLang; }
 
     public Util.Lang getTextLang() { return textLang; }
 
@@ -379,15 +370,8 @@ public abstract class SuperTextActivity extends Activity {
         if(currNode == node) return;
 
         currNode = node;
-        customActionbar.setTitleText(currNode.getWholeTitle(menuLang), menuLang, true,true);
-
-        //update the place that the book will go to when returning to book
-        SharedPreferences bookSavedSettings = getBookSavedSettings();
-        SharedPreferences.Editor editor = bookSavedSettings.edit();
-        String strTreeAndNode = currNode.makePathDefiningNode();
-        //"<en|he|bi>.<cts|sep>.<white|grey|black>.10px:"+ <rootNum>.<Childnum>.<until>.<leaf>.<verseNum>"
-        editor.putString(book.title, strTreeAndNode);
-        editor.commit();
+        customActionbar.setTitleText(currNode.getMenuBarTitle(book,menuLang), menuLang, true, true);
+        Settings.setSavedBook(book,currNode);
 
 
     }
@@ -420,9 +404,6 @@ public abstract class SuperTextActivity extends Activity {
         } catch (Node.LastNodeException e) {
             return new ArrayList<>();
         }
-        Log.d("Section","firstLoadedChap in loadSection " + firstLoadedNode.getWholeTitle(Util.Lang.EN));
-
-
 
 
         List<Text> textsList;
@@ -435,10 +416,6 @@ public abstract class SuperTextActivity extends Activity {
         }
 
 
-    }
-
-    static private SharedPreferences getBookSavedSettings(){
-        return MyApp.getContext().getSharedPreferences("org.sefaria.sefaria.book_save_settings", Context.MODE_PRIVATE);
     }
 
 

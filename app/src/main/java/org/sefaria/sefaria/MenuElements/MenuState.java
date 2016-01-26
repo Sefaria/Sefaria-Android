@@ -42,6 +42,11 @@ public class MenuState implements Parcelable {
         currPath.add(rootNode);
     }
 
+    public static MenuNode getRootNode(){
+        if (!isMenuInited()) initMenu();
+        return rootNode;
+    }
+
     public MenuState(List<MenuNode> currPath, Util.Lang lang) {
         this.currNode = currPath.get(currPath.size()-1);
         this.currPath = currPath;
