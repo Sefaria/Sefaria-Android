@@ -371,8 +371,11 @@ public abstract class SuperTextActivity extends Activity {
     protected abstract void setIsCts(boolean isCts);
     protected abstract void incrementTextSize(boolean isIncrement);
 
-    protected  void setCurrNode(/*Node node*/) {
-        //this.currNode = node;
+    protected  void setCurrText(Text text) {
+        if(!text.isChapter()) return;
+        Node node = text.getSegmentNode();
+        customActionbar.setTitleText(node.getWholeTitle(menuLang), menuLang, true);
+
     }
 
 
