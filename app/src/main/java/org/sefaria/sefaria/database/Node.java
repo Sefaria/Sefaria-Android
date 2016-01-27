@@ -558,6 +558,7 @@ public class Node{ //TODO implements  Parcelable
      * @throws API.APIException
      */
     public List<Text> getTexts() throws API.APIException{
+        Log.e("Node", "getTexts() called... " + this);
         if(textList != null) {
             return textList;
         }
@@ -722,12 +723,7 @@ public class Node{ //TODO implements  Parcelable
         private static final long serialVersionUID = 1L;
     }
 
-
-    public static List<Node> getRoots(Book book) throws API.APIException {
-        return getRoots(book,true);
-    }
-
-    private static List<Node> getRoots(Book book, boolean addMoreh) throws API.APIException{
+    public static List<Node> getRoots(Book book) throws API.APIException{
         List<Node> allRoots = allSavedBookTOCroots.get(book.title);
         if(allRoots != null){
             return allRoots;
@@ -777,20 +773,9 @@ public class Node{ //TODO implements  Parcelable
             }
             root.tocRootsNum = allRoots.size();
             allRoots.add(root);
-            //showTree(root);
+            showTree(root);
         }
 
-        if(addMoreh && false){//TODO remove only for testing alt structures
-            try {
-                root = getRoots(new Book("Orot"),false).get(0);
-                root.tocRootsNum = allRoots.size();
-                allRoots.add(root); //has complex texts
-                root = getRoots(new Book("Sefer Tomer Devorah"),false).get(0);//has textDepth == 3
-                //allRoots.add(root);
-            } catch (Book.BookNotFoundException e) {
-                e.printStackTrace();
-            }
-        }
 
         allSavedBookTOCroots.put(book.title,allRoots);
         return allRoots;
