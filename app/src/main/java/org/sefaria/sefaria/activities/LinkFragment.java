@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import org.sefaria.sefaria.LinkElements.LinkMainAdapter;
+import org.sefaria.sefaria.LinkElements.LinkSelectorBar;
 import org.sefaria.sefaria.LinkElements.LinkSelectorBarButton;
 import org.sefaria.sefaria.LinkElements.LinkTextAdapter;
 import org.sefaria.sefaria.MyApp;
@@ -37,7 +38,7 @@ public class LinkFragment extends Fragment {
         //book shows all links relevant to one book - on whole section
         MAIN,CAT,BOOK
     }
-    public static final int MAX_NUM_LINK_SELECTORS = 5;
+
     public static String ARG_CURR_SECTION = "currSection";
 
     private OnLinkFragInteractionListener mListener;
@@ -46,8 +47,9 @@ public class LinkFragment extends Fragment {
     private boolean isOpen; //true if fragment is open in activity
     private LinkMainAdapter linkMainAdapter;
     private LinkTextAdapter linkTextAdapter;
+    private LinkSelectorBar linkSelectorBar;
     private RecyclerView linkRecycler;
-    private LinkedList<LinkCount> linkSelectorQueue; //holds the linkCounts that display the previously selected linkCounts
+
 
     private Text segment;
     private State currState;
@@ -66,7 +68,7 @@ public class LinkFragment extends Fragment {
         isOpen = false;
         clicked = false;
         dontUpdate = false;
-        linkSelectorQueue = new LinkedList<>();
+
     }
 
     @Override
@@ -88,9 +90,16 @@ public class LinkFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_link, container, false);
         linkRecycler = (RecyclerView) view.findViewById(R.id.recview);
-        gotoState(State.MAIN, view, null);
+
+
+        LinearLayout linkSelectorBarRoot = (LinearLayout) view.findViewById(R.id.link_selector_bar_root);
+
+        SuperTextActivity activity = (SuperTextActivity) getActivity();
+        linkSelectorBar = new LinkSelectorBar(activity,linkSelectorBarButtonClick);
+        linkSelectorBarRoot.addView(linkSelectorBar);
 
         //updateFragment((Text) getArguments().getParcelable(ARG_CURR_SECTION), view);
+        gotoState(State.MAIN, view, null);
         return view;
     }
 
@@ -119,10 +128,9 @@ public class LinkFragment extends Fragment {
         currState = state;
         SuperTextActivity activity = (SuperTextActivity) getActivity();
         View colorBar = view.findViewById(R.id.main_color_bar);
-        View linkSelectionBar = view.findViewById(R.id.link_selection_bar);
         if (state == State.MAIN) {
             colorBar.setVisibility(View.GONE);
-            linkSelectionBar.setVisibility(View.GONE);
+            linkSelectorBar.setVisibility(View.GONE);
             GridLayoutManager gridLayoutManager = new GridLayoutManager(activity,2);
             gridLayoutManager.setSpanSizeLookup(onSpanSizeLookup);
 
@@ -134,9 +142,8 @@ public class LinkFragment extends Fragment {
 
         } else { //CAT and BOOK are very similar
             //update linkSelectorQueue
-            
-            if (linkSelectorQueue.size() >= MAX_NUM_LINK_SELECTORS) linkSelectorQueue.remove();
-            linkSelectorQueue.add(linkCount);
+            linkSelectorBar.add(linkCount);
+
 
 
             String cat;
@@ -146,20 +153,7 @@ public class LinkFragment extends Fragment {
             colorBar.setVisibility(View.VISIBLE);
             int color = MyApp.getCatColor(cat);
             colorBar.setBackgroundColor(activity.getResources().getColor(color));
-            linkSelectionBar.setVisibility(View.VISIBLE);
-
-            LinearLayout linkSelectionBarList = (LinearLayout) view.findViewById(R.id.link_selection_bar_list);
-            linkSelectionBarList.removeAllViews();
-
-            ListIterator<LinkCount> linkIt = linkSelectorQueue.listIterator(linkSelectorQueue.size());
-            while(linkIt.hasPrevious()) {
-                //add children in reverse order
-                LinkSelectorBarButton lssb = new LinkSelectorBarButton(getActivity(),linkIt.previous(),activity.getBook());
-                lssb.setOnClickListener(linkSelectorBarButtonClick);
-                linkSelectionBarList.addView(lssb);
-
-            }
-
+            linkSelectorBar.setVisibility(View.VISIBLE);
 
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(activity,LinearLayoutManager.VERTICAL,false);
 
@@ -244,6 +238,7 @@ public class LinkFragment extends Fragment {
         public void onClick(View v) {
             LinkSelectorBarButton lsbb = (LinkSelectorBarButton) v;
             linkTextAdapter.setCurrLinkCount(lsbb.getLinkCount(),segment);
+            linkSelectorBar.update(lsbb.getLinkCount());
         }
     };
 
