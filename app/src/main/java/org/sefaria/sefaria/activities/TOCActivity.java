@@ -11,6 +11,7 @@ import android.widget.ScrollView;
 
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
+import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.TOCElements.TOCGrid;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.Book;
@@ -55,7 +56,7 @@ public class TOCActivity extends AppCompatActivity {
             String bookTitle = savedInstanceState.getString("bookTitle");
             Log.d("TOCActivity", "Coming back with savedInstanceState. book:" + book + ". pathDefiningNode: " + pathDefiningNode + ". bookTitle:" + bookTitle);
         }
-        lang = MyApp.getMenuLang();
+        lang = Settings.getMenuLang();
         context = this;
 
         init();
@@ -64,7 +65,7 @@ public class TOCActivity extends AppCompatActivity {
     private void init() {
         MenuNode titleNode = new MenuNode("Table of Contents","תוכן העניינים",null);
         int catColor = book.getCatColor();
-        CustomActionbar cab = new CustomActionbar(this, titleNode, MyApp.getSystemLang(),homeClick,closeClick,null,null,langClick,null,catColor);
+        CustomActionbar cab = new CustomActionbar(this, titleNode, Settings.getSystemLang(),homeClick,null,null,null,langClick,backClick,catColor);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(cab);
 
@@ -88,12 +89,6 @@ public class TOCActivity extends AppCompatActivity {
     }
 
 
-    View.OnClickListener closeClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            finish();
-        }
-    };
 
     View.OnClickListener homeClick = new View.OnClickListener() {
         @Override
@@ -111,7 +106,7 @@ public class TOCActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             //TODO change icon (maybe)
-            lang = MyApp.switchMenuLang();
+            lang = Settings.switchMenuLang();
             tocGrid.setLang(lang);
             //cab not changed b/c it stays as the systemLang
         }

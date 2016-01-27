@@ -16,7 +16,14 @@ public class Settings {
         return MyApp.getContext().getSharedPreferences("org.sefaria.sefaria.general_settings", Context.MODE_PRIVATE);
     }
 
-    static public void setSavedMenuLang(Util.Lang lang){
+    /*
+    Lang stuff
+     */
+
+    private static Util.Lang menuLang = null;
+
+    static public void setMenuLang(Util.Lang lang){
+        menuLang = lang;
         SharedPreferences generalSettings = getGeneralSettings();
         SharedPreferences.Editor editor = generalSettings.edit();
         String langStr;
@@ -30,17 +37,54 @@ public class Settings {
         editor.commit();
     }
 
-    static public Util.Lang getSavedMenuLang(){
+
+    static public Util.Lang getMenuLang(){
+        if(menuLang != null) return menuLang;
+
         SharedPreferences generalSettings = getGeneralSettings();
         String langStr = generalSettings.getString("menuLang", "");
         if(langStr.equals("he"))
-            return Util.Lang.HE;
+            menuLang =  Util.Lang.HE;
         else if(langStr.equals("en"))
-            return Util.Lang.EN;
+            menuLang =  Util.Lang.EN;
         else if(langStr.equals("bi"))
-            return Util.Lang.BI;
+            menuLang =  Util.Lang.BI;
         else //if(langStr.equals("") || anything else)
-            return MyApp.getSystemLang();
+            menuLang = getSystemLang();
+        return menuLang;
+    }
+
+
+    /**
+     * change the menuLang from hebrew to english or visa versa
+     *  it returns the new menuLang;
+     */
+    public static Util.Lang switchMenuLang(){
+        if(menuLang == Util.Lang.EN)
+            menuLang = Util.Lang.HE;
+        else menuLang = Util.Lang.EN;
+        Settings.setMenuLang(menuLang);
+        return menuLang;
+    }
+
+    public static Util.Lang getSystemLang(){
+        if(Util.isSystemLangHe())
+            return Util.Lang.HE;
+        else
+            return Util.Lang.EN;
+    }
+
+    public static Util.Lang getDefaultTextLang(){
+        return Util.Lang.BI;
+    }
+
+
+    /*
+    Book stuff
+     */
+
+    static private SharedPreferences getBookSavedSettings(){
+        return MyApp.getContext().getSharedPreferences("org.sefaria.sefaria.book_save_settings", Context.MODE_PRIVATE);
     }
 
     static public Node getSavedBook(Book book) throws API.APIException, Node.InvalidPathException {
@@ -64,8 +108,6 @@ public class Settings {
         editor.commit();
     }
 
-    static private SharedPreferences getBookSavedSettings(){
-        return MyApp.getContext().getSharedPreferences("org.sefaria.sefaria.book_save_settings", Context.MODE_PRIVATE);
-    }
+
 
 }

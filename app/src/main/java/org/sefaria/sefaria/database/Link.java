@@ -115,6 +115,7 @@ public class Link implements Parcelable {
 
 
 
+
     /**
      * Get links for specific text (ex. verse).
      * @param text

@@ -85,37 +85,6 @@ public class MyApp extends Application {
     }
 
 
-    private static Util.Lang menuLang = null;
-    public static Util.Lang getMenuLang(){
-        if(menuLang == null)
-            menuLang = Settings.getSavedMenuLang();
-        return menuLang;
-    }
-
-    /**
-     * change the menuLang from hebrew to english or visa versa
-     *  it returns the new menuLang;
-     */
-    public static Util.Lang switchMenuLang(){
-        if(menuLang == Util.Lang.EN)
-            menuLang = Util.Lang.HE;
-        else menuLang = Util.Lang.EN;
-        Settings.setSavedMenuLang(menuLang);
-        return menuLang;
-    }
-
-    public static Util.Lang getSystemLang(){
-        if(Util.isSystemLangHe())
-            return Util.Lang.HE;
-        else
-            return Util.Lang.EN;
-    }
-
-    public static Util.Lang getDefaultTextLang(){
-        return Util.Lang.BI;
-    }
-
-
     public static Context getContext() { return context; }
     public static String getAppPackageName() { return appPackageName; }
 
