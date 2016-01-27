@@ -11,34 +11,10 @@
         android:background="@color/talmud"
         android:visibility="gone"/>
     <LinearLayout
-        android:id="@+id/link_selection_bar"
+        android:id="@+id/link_selector_bar_root"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <HorizontalScrollView
-            android:layout_weight="1"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_toLeftOf="@+id/link_back_btn"
-            >
-            <LinearLayout
-                android:id="@+id/link_selection_bar_list"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:background="@color/link_background">
-
-            </LinearLayout>
-
-        </HorizontalScrollView>
-        <View
-            android:id="@+id/link_back_btn"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:background="@color/tanach"
-            android:layout_margin="10dp"
-            android:layout_gravity="center"/>
-    </LinearLayout>
+        android:orientation="vertical"></LinearLayout>
     <View
         android:layout_width="match_parent"
         android:layout_height="3dp"

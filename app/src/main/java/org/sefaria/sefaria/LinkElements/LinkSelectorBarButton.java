@@ -1,6 +1,7 @@
 package org.sefaria.sefaria.LinkElements;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
@@ -29,6 +30,7 @@ public class LinkSelectorBarButton extends TextView {
 
         int padding = 15;
         this.setPadding(padding,padding,padding,padding);
+        this.setTextColor(Color.parseColor("#000000"));
     }
 
     public void setLang(Util.Lang lang) {

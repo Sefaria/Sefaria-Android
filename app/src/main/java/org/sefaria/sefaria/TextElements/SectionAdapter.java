@@ -25,12 +25,14 @@ import java.util.List;
  */
 public class SectionAdapter extends ArrayAdapter<Text> {
 
-    private static int LINK_ALPHA_GRANULARITY = 10; //how many different link alphas are possible
+    private static int MAX_ALPHA_NUM_LINKS = 70;
+    private static int MIN_ALPHA_NUM_LINKS = 20;
+    private static float MIN_ALPHA = 0.2f;
+    private static float MAX_ALPHA = 0.8f;
 
     private SectionActivity context;
     private List<Text> texts;
 
-    private int maxNumLinks;
     private int resourceId;
     private int preLast;
 
@@ -39,7 +41,6 @@ public class SectionAdapter extends ArrayAdapter<Text> {
         this.context = context;
         this.texts = objects;
         this.resourceId = resourceId;
-        this.maxNumLinks = 0;
 
 
     }
@@ -48,12 +49,9 @@ public class SectionAdapter extends ArrayAdapter<Text> {
     public View getView(int position, View view, ViewGroup parent) {
         Text segment = texts.get(position);
 
-        float linkAlpha;
-        if (maxNumLinks != 0) {
-          linkAlpha  = (float) Math.ceil(LINK_ALPHA_GRANULARITY*(((float)segment.getNumLinks())/maxNumLinks))/LINK_ALPHA_GRANULARITY;
-        } else {
-            linkAlpha = 0f;
-        }
+        float linkAlpha = ((float)segment.getNumLinks()-MIN_ALPHA_NUM_LINKS) / (MAX_ALPHA_NUM_LINKS-MIN_ALPHA_NUM_LINKS);
+        if (linkAlpha < MIN_ALPHA) linkAlpha = MIN_ALPHA;
+        else if (linkAlpha > MAX_ALPHA) linkAlpha = MAX_ALPHA;
 
         Util.Lang lang = context.getTextLang();
         boolean isCts = context.getIsCts();
@@ -211,14 +209,6 @@ public class SectionAdapter extends ArrayAdapter<Text> {
     @Override
     public void notifyDataSetChanged() {
         super.notifyDataSetChanged();
-        maxNumLinks = 0;
-        for (Text segment : texts) {
-            int tempCount = segment.getNumLinks();
-            if (tempCount > maxNumLinks) {
-                maxNumLinks = tempCount;
-
-            }
-        }
     }
 
     @Override
