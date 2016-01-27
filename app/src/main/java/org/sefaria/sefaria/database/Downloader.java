@@ -3,6 +3,7 @@ package org.sefaria.sefaria.database;
 
 import java.util.ArrayList;
 
+import android.app.Activity;
 import android.app.DownloadManager;
 import android.app.DownloadManager.Query;
 import android.app.ProgressDialog;
@@ -35,7 +36,7 @@ public class Downloader {
     public static final String CSV_DOWNLOAD_TITLE = "Sefaria Pre Update";
     public static final String DB_DOWNLOAD_TITLE = "Sefaria Library Update";
     public static final String JSON_INDEX_TITLE = "Sefaria Index";
-    public static final String DB_DOWNLOAD_PATH = ".betaMidTempDownld/" ; //Environment.DIRECTORY_DOWNLOADS + "/";
+    public static final String DB_DOWNLOAD_PATH = ".sefariaTempDownld/" ; //Environment.DIRECTORY_DOWNLOADS + "/";
     public static final String FULL_DOWNLOAD_PATH = Environment.getExternalStorageDirectory() + "/" + DB_DOWNLOAD_PATH;
     public static final String INDEX_JSON_NAME = "sefaria_mobile_updating_index.json";
 
@@ -59,6 +60,15 @@ public class Downloader {
     private static Context registeredContext;
 
     public static int downloadErrorNum;
+
+    public static void updateLibrary(Activity activity) {
+        UpdateService.lockOrientation(activity);
+        Intent intent = new Intent(activity,UpdateReceiver.class);
+        intent.putExtra("isPre",true);
+        intent.putExtra("userInit",true);
+        activity.sendBroadcast(intent);
+        DialogManager.showDialog(DialogManager.CHECKING_FOR_UPDATE);
+    }
 
     //even though this is really long, it's just a property of the SettingsActivity
     private static BroadcastReceiver downloadCompleteReceiver = new BroadcastReceiver() {
@@ -122,7 +132,7 @@ public class Downloader {
 
     };
 
-    public static void init(Context con) {
+    protected static void init(Context con) {
         context = con;
         context.registerReceiver(downloadCompleteReceiver, downloadCompleteIntentFilter);
         receiverRegistered = true;
@@ -131,7 +141,7 @@ public class Downloader {
         downloadIdList = new ArrayList<Long>();
     }
 
-    public static void download(String url, String description, String destPath, String destName, boolean isHidden) {
+    protected static void download(String url, String description, String destPath, String destName, boolean isHidden) {
         if (!receiverRegistered) {
             context.registerReceiver(downloadCompleteReceiver, downloadCompleteIntentFilter);
             receiverRegistered = true;
@@ -179,7 +189,7 @@ public class Downloader {
 
     }
 
-    public static int getNetworkStatus()
+    protected static int getNetworkStatus()
     {
         final ConnectivityManager connMgr = (ConnectivityManager)
                 MyApp.currActivityContext.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -194,7 +204,7 @@ public class Downloader {
         }
     }
 
-    public static void unregisterDownloader(Context context) {
+    protected static void unregisterDownloader(Context context) {
         if (receiverRegistered && registeredContext.equals(context) && downloadIdList.size() == 0) {
             context.unregisterReceiver(downloadCompleteReceiver);
             receiverRegistered = false;

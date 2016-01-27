@@ -1,6 +1,9 @@
 package org.sefaria.sefaria.activities;
 
 import android.app.FragmentTransaction;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +15,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.TextElements.SectionAdapter;
@@ -54,6 +58,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
         listView.setDivider(null);
 
         listView.setOnItemClickListener(onItemClickListener);
+        listView.setOnItemLongClickListener(onItemLongClickListener);
         listView.setOnScrollStoppedListener(new ListViewExt.OnScrollStoppedListener() {
 
             public void onScrollStopped() {
@@ -155,8 +160,10 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
 
 
     @Override
-    protected void jumptToIncomingLink(Text incomingLink) {
-        int index = sectionAdapter.getPosition(incomingLink);
+    protected void jumpToText(Text text) {
+        Log.d("SectionAct", "calling jump to Text");
+        int index = sectionAdapter.getPosition(text);
+        Log.d("sec","INDEX " + index);
         listView.setSelection(index);
     }
 
@@ -190,6 +197,30 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
 
             }
 
+        }
+    };
+
+    ListView.OnItemLongClickListener onItemLongClickListener = new AdapterView.OnItemLongClickListener() {
+        @Override
+        public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+            Log.d("SectionAct", "long click");
+            // Gets a handle to the clipboard service.
+            ClipboardManager clipboard = (ClipboardManager)
+                    getSystemService(Context.CLIPBOARD_SERVICE);
+            // Creates a new text clip to put on the clipboard
+            Text text = sectionAdapter.getItem(position);
+            String copiedText;
+            if(textLang == Util.Lang.BI)
+                copiedText = text.heText + "\n" + text.enText;
+            else if(textLang == Util.Lang.EN)
+                copiedText = text.enText;
+            else //textLang == HE
+                copiedText = text.heText;
+            ClipData clip = ClipData.newPlainText("Sefaria Text", copiedText);
+            // Set the clipboard's primary clip.
+            clipboard.setPrimaryClip(clip);
+            Toast.makeText(SectionActivity.this, "Copied to Clipboard", Toast.LENGTH_SHORT).show();
+            return true;
         }
     };
 
@@ -229,9 +260,9 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
                 listView.setSelection(textsList.size()+1);
             }
 
-            if (incomingLink != null) {
-                jumptToIncomingLink(incomingLink);
-                incomingLink = null;
+            if (openToText != null) {
+                jumpToText(openToText);
+                openToText = null;
             }
 
         }

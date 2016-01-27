@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import org.sefaria.sefaria.MyApp;
+import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.layouts.CustomActionbar;
 import org.sefaria.sefaria.Util;
 
@@ -45,7 +46,7 @@ public class MenuActivity extends Activity {
     }
 
     private void init() {
-        Util.Lang menuLang = MyApp.getMenuLang();//menuState.getLang();
+        Util.Lang menuLang = Settings.getMenuLang();//menuState.getLang();
         setTitle(menuState.getCurrNode().getTitle(menuLang));
         //this specifically comes before menugrid, b/c in tabs it menugrid does funny stuff to currnode
         int catColor = menuState.getCurrNode().getTopLevelColor();
@@ -116,7 +117,7 @@ public class MenuActivity extends Activity {
     View.OnClickListener menuClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            setLang(MyApp.switchMenuLang());
+            setLang(Settings.switchMenuLang());
         }
     };
 

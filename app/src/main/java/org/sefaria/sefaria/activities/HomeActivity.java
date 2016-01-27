@@ -1,11 +1,14 @@
 package org.sefaria.sefaria.activities;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.database.Book;
+import org.sefaria.sefaria.database.Downloader;
 import org.sefaria.sefaria.database.Link;
 import org.sefaria.sefaria.database.Text;
 import org.sefaria.sefaria.layouts.CustomActionbar;
@@ -57,26 +60,26 @@ public class HomeActivity extends Activity {
         if (menuState == null) {
             menuState = new MenuState();
         }
-        Util.Lang menuLang = MyApp.getMenuLang();
+        Util.Lang menuLang = Settings.getMenuLang();
         menuGrid = new MenuGrid(this,NUM_COLUMNS, menuState,LIMIT_GRID_SIZE,menuLang);
         ScrollView gridRoot = (ScrollView) findViewById(R.id.gridRoot);
         gridRoot.addView(menuGrid);
 
         //toggle closeClick, depending on if menu is popup or not
         View.OnClickListener tempCloseClick = null;
-        if (isPopup) tempCloseClick = closeClick;
+        //if (isPopup) tempCloseClick = closeClick; //Removing the close click for now to test without it
 
         String title; //This is forcing the word Sefaria to be based on System lang and not based on menuLang (it can easily be changed by inserting each value into the new MenuNode
 
         cab = new CustomActionbar(this,new MenuNode("Sefaria","ספאריה",null),
-                MyApp.getSystemLang(),null,tempCloseClick,searchClick,null,menuClick,null,-1);
+                Settings.getSystemLang(),null,tempCloseClick,searchClick,null,menuClick,null,-1);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(cab);
 
 
-        if(API.useAPI()) { //TODO move
+        if(API.useAPI()) {
             Toast.makeText(this, "starting download", Toast.LENGTH_SHORT).show();
-            updateLibrary();
+            Downloader.updateLibrary(this);
         }
     }
 
@@ -90,15 +93,7 @@ public class HomeActivity extends Activity {
 
     }
 
-    //this is a click event listener
-    public void updateLibrary() { //(View button)
-        UpdateService.lockOrientation(this);
-        Intent intent = new Intent(this,UpdateReceiver.class);
-        intent.putExtra("isPre",true);
-        intent.putExtra("userInit",true);
-        sendBroadcast(intent);
-        DialogManager.showDialog(DialogManager.CHECKING_FOR_UPDATE);
-    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -129,7 +124,7 @@ public class HomeActivity extends Activity {
     View.OnClickListener menuClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            setLang(MyApp.switchMenuLang());
+            setLang(Settings.switchMenuLang());
         }
     };
 

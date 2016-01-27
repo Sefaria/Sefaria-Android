@@ -56,7 +56,7 @@ public abstract class SuperTextActivity extends Activity {
     protected Node firstLoadedNode;
     protected Node currNode; // Node which you're currently up to in scrollView
     protected Node lastLoadedNode;
-    protected Text incomingLink;
+    protected Text openToText;
 
     protected Util.Lang menuLang;
     protected Util.Lang textLang;
@@ -79,20 +79,19 @@ public abstract class SuperTextActivity extends Activity {
 
         Intent intent = getIntent();
         Integer nodeHash;
-        Text incomingLink;
         if (savedInstanceState != null) {//it's coming back after it cleared the activity from ram
             nodeHash = savedInstanceState.getInt("nodeHash", -1);
             book = savedInstanceState.getParcelable("currBook");
-            incomingLink = savedInstanceState.getParcelable("incomingLinkText");
+            openToText = savedInstanceState.getParcelable("incomingLinkText");
         }else{
             nodeHash = intent.getIntExtra("nodeHash", -1);
             book = intent.getParcelableExtra("currBook");
-            incomingLink = intent.getParcelableExtra("incomingLinkText");
+            openToText = intent.getParcelableExtra("incomingLinkText");
         }
         if(book != null){ //||nodeHash == -1){// that means it came in from the menu or the TOC commentary tab
             try {
-                if (incomingLink != null) {
-                    firstLoadedNode = Node.getNodeFromLink(incomingLink, book);
+                if (openToText != null) {
+                    firstLoadedNode = Node.getNodeFromText(openToText, book);
                     if(firstLoadedNode == null){
                         Log.e("SuperTextAct", "firstLoadedNode is null");
                     }
@@ -127,11 +126,11 @@ public abstract class SuperTextActivity extends Activity {
         //These vars are specifically initialized here and not in init() so that they don't get overidden when coming from TOC
         //defaults
         isCts = false;
-        textLang = MyApp.getDefaultTextLang();
+        textLang = Settings.getDefaultTextLang();
         textSize = getResources().getDimension(R.dimen.default_text_font_size);
         //end defaults
         isLoadingInit = false;
-        menuLang = MyApp.getMenuLang();
+        menuLang = Settings.getMenuLang();
         if(customActionbar != null)//it's already been set
             customActionbar.setLang(menuLang);
     }
@@ -363,7 +362,7 @@ public abstract class SuperTextActivity extends Activity {
     protected abstract void setMenuLang(Util.Lang menuLang);
     protected abstract void setIsCts(boolean isCts);
     protected abstract void incrementTextSize(boolean isIncrement);
-    protected abstract void jumptToIncomingLink(Text incomingLink);
+    protected abstract void jumpToText(Text text);
 
     protected void setCurrNode(Node node){
         if(node == null) return;
