@@ -15,6 +15,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Environment;
 import android.util.Log;
 
 
@@ -25,13 +26,9 @@ public class Database2 extends SQLiteOpenHelper{
     //private static final String DATABASE_NAME = "BetaMidrashDB";
     private static Database2 sInstance;
 
-    public static int textsUploaded = 0;
-    public static int textsFailedToUpload = 0;
-    public static int totalBooksUpdated = 0;
-    public static int totalBooksFailedToUpdate = 0;
-
+    private static String INTERNAL_FOLDER = "/data/data/" + MyApp.getAppPackageName() + "/";
     //The Android's default system path of your application database.
-    public static String DB_PATH = MyApp.INTERNAL_FOLDER + "databases/";
+    public static String DB_PATH = getInternalFolder() + "databases/";
 
     public static String DB_NAME = "UpdateForSefariaMobileDatabase";
     static int DB_VERSION = 1;
@@ -48,6 +45,17 @@ public class Database2 extends SQLiteOpenHelper{
     public Database2(Context context) {
         super(context, DB_NAME + ".db", null, DB_VERSION);
         this.myContext = context;
+    }
+
+    static public String getInternalFolder(){
+        /*
+        String str = Environment.getExternalStorageDirectory() + "/" + INTERNAL_FOLDER;
+        File folder = new File(str);
+        folder.mkdirs();
+        Log.d("Database2",str);
+        return str;
+        */
+        return INTERNAL_FOLDER;
     }
 
     /**
