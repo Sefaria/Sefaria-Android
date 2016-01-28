@@ -7,6 +7,7 @@ import android.os.Environment;
 import android.text.TextUtils;
 import android.view.View;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -387,6 +388,17 @@ public class Util {
             Collections.addAll(rv, rawSecondaryStorages);
         }
         return rv.toArray(new String[rv.size()]);
+    }
+
+    public static JSONArray openJSONArrayFromAssets(String file) throws IOException, JSONException {
+        InputStream is = MyApp.getContext().getAssets().open(file);
+        int size = is.available();
+        byte[] buffer = new byte[size];
+        is.read(buffer);
+        is.close();
+        String bufferString = new String(buffer);
+        JSONArray jsonObject = new JSONArray(bufferString);
+        return jsonObject;
     }
 
 }

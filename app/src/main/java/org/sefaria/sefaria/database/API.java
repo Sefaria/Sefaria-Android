@@ -13,11 +13,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 public class API {
     final static String TEXT_URL = "http://www.sefaria.org/api/texts/";
@@ -46,6 +48,9 @@ public class API {
     //TODO determine good times
     private static int useAPI = -1;
 
+    public static void makeAPIErrorToast(Context context){
+        Toast.makeText(context, "Problem getting data from Internet",Toast.LENGTH_SHORT).show();
+    }
 
 
     //non-static methods

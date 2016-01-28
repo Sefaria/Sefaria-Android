@@ -1,33 +1,32 @@
 package org.sefaria.sefaria.activities;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 
+import org.sefaria.sefaria.MenuElements.MenuDirectRef;
 import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.database.API;
-import org.sefaria.sefaria.database.Book;
+import org.sefaria.sefaria.database.DailyLearning;
 import org.sefaria.sefaria.database.Downloader;
-import org.sefaria.sefaria.database.Link;
-import org.sefaria.sefaria.database.Text;
+import org.sefaria.sefaria.layouts.AutoResizeTextView;
 import org.sefaria.sefaria.layouts.CustomActionbar;
-import org.sefaria.sefaria.DialogManager;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
-import org.sefaria.sefaria.database.UpdateReceiver;
-import org.sefaria.sefaria.database.UpdateService;
 import org.sefaria.sefaria.MenuElements.MenuGrid;
 import org.sefaria.sefaria.MenuElements.MenuNode;
 import org.sefaria.sefaria.MenuElements.MenuState;
 
-import android.os.Environment;
-import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.List;
 
 public class HomeActivity extends Activity {
 
@@ -38,6 +37,7 @@ public class HomeActivity extends Activity {
     private MenuState menuState;
     private boolean isPopup;
     private CustomActionbar cab;
+    private List<MenuDirectRef> dailtylearnings;
 
     @Override
     protected void onCreate(Bundle in) {
@@ -62,10 +62,36 @@ public class HomeActivity extends Activity {
         if (menuState == null) {
             menuState = new MenuState();
         }
+
+        ScrollView gridRoot = (ScrollView) findViewById(R.id.gridRoot);
+        LinearLayout homeRoot = new LinearLayout(this);
+        homeRoot.setOrientation(LinearLayout.VERTICAL);
+        homeRoot.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+        homeRoot.setGravity(Gravity.CENTER);
+        gridRoot.addView(homeRoot);
+
+        TextView livingLibaryView = createTypeTitle("A Living Library of Jewish Texts");
+        livingLibaryView.setTextSize(20);
+        livingLibaryView.setPadding(3,30,3,30);
+        livingLibaryView.setTextColor(Color.parseColor("#000000"));
+        homeRoot.addView(livingLibaryView);
+
         Util.Lang menuLang = Settings.getMenuLang();
         menuGrid = new MenuGrid(this,NUM_COLUMNS, menuState,LIMIT_GRID_SIZE,menuLang);
-        ScrollView gridRoot = (ScrollView) findViewById(R.id.gridRoot);
-        gridRoot.addView(menuGrid);
+        homeRoot.addView(createTypeTitle("Browse Texts"));
+        homeRoot.addView(menuGrid);
+
+        LinearLayout calendarRoot = new LinearLayout(this);
+        calendarRoot.setOrientation(LinearLayout.HORIZONTAL);
+        calendarRoot.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+        homeRoot.addView(createTypeTitle("Calendar"));
+        homeRoot.addView(calendarRoot);
+
+        dailtylearnings = DailyLearning.getDailyLearnings(this);
+        for(MenuDirectRef menuDirectRef: dailtylearnings)
+            calendarRoot.addView(menuDirectRef);
+
+
 
         //toggle closeClick, depending on if menu is popup or not
         View.OnClickListener tempCloseClick = null;
@@ -74,9 +100,11 @@ public class HomeActivity extends Activity {
         String title; //This is forcing the word Sefaria to be based on System lang and not based on menuLang (it can easily be changed by inserting each value into the new MenuNode
 
         cab = new CustomActionbar(this,new MenuNode("Sefaria","ספאריה",null),
-                Settings.getSystemLang(),null,tempCloseClick,searchClick,null,menuClick,null,-1);
+                Settings.getSystemLang(),null,tempCloseClick,null,null,menuClick,null,-1);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(cab);
+
+
 
 
         if(API.useAPI()) {
@@ -93,9 +121,21 @@ public class HomeActivity extends Activity {
         menuState.setLang(lang);
         menuGrid.setLang(lang);
         //not setting cab, b/c it should stay as the SystemLang
+        for(MenuDirectRef menuDirectRef:dailtylearnings)
+            menuDirectRef.setLang(lang);
 
     }
 
+    private TextView createTypeTitle(String title){
+        TextView textView = new TextView(this);
+        textView.setText(title);
+        int padding = 3;
+        textView.setPadding(padding,20,padding,10);
+        textView.setTextSize(20);
+        textView.setGravity(Gravity.CENTER);
+
+        return textView;
+    }
 
 
     @Override
