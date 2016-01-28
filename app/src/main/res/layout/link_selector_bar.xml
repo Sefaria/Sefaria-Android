@@ -3,6 +3,7 @@
     android:id="@+id/link_selection_bar"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/link_background"
     android:orientation="horizontal">
     <HorizontalScrollView
         android:layout_weight="1"
@@ -14,8 +15,7 @@
             android:id="@+id/link_selection_bar_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:background="@color/link_background">
+            android:orientation="horizontal">
 
         </LinearLayout>
 

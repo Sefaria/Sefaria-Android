@@ -28,13 +28,14 @@ public class LinkSelectorBar extends LinearLayout {
     OnClickListener linkSelectorBarButtonClick;
     LinkCount currLinkCount;
 
-    public LinkSelectorBar(SuperTextActivity activity, OnClickListener linkSelectorBarButtonClick) {
+    public LinkSelectorBar(SuperTextActivity activity, OnClickListener linkSelectorBarButtonClick, OnClickListener linkSelectorBackClick) {
         super(activity);
         inflate(activity, R.layout.link_selector_bar, this);
         this.activity = activity;
         this.linkSelectorBarButtonClick = linkSelectorBarButtonClick;
         selectorListLayout = (LinearLayout) findViewById(R.id.link_selection_bar_list);
         backButton = findViewById(R.id.link_back_btn);
+        backButton.setOnClickListener(linkSelectorBackClick);
         linkSelectorQueue = new LinkedList<>();
     }
 
@@ -42,17 +43,14 @@ public class LinkSelectorBar extends LinearLayout {
 
         //make sure linkCount is unique. technically should be overriding equals() in LinkCount, but this actually isn't a strict definition right n
         boolean exists = false;
-        ListIterator<LinkCount> linkIt = linkSelectorQueue.listIterator(linkSelectorQueue.size());
+        ListIterator<LinkCount> linkIt = linkSelectorQueue.listIterator(0);
         while(linkIt.hasNext()) {
             LinkCount tempLC = linkIt.next();
-            if (tempLC.getRealTitle(Util.Lang.EN).equals(linkCount.getRealTitle(Util.Lang.EN)) &&
-                    tempLC.getDepthType() == linkCount.getDepthType()) {
+            if (LinkCount.pseudoEquals(tempLC,linkCount)) {
                 exists = true;
-                Log.d("sec","EXISTS");
                 break;
             }
         }
-
         if (!exists) {
             if (linkSelectorQueue.size() >= MAX_NUM_LINK_SELECTORS) linkSelectorQueue.remove();
             linkSelectorQueue.add(linkCount);
@@ -73,7 +71,7 @@ public class LinkSelectorBar extends LinearLayout {
             lssb.setOnClickListener(linkSelectorBarButtonClick);
             selectorListLayout.addView(lssb);
 
-            if (!tempLC.equals(currLinkCount)) {
+            if (!LinkCount.pseudoEquals(tempLC,currLinkCount)) {
                 lssb.setTextColor(Color.parseColor("#999999"));
             }
         }

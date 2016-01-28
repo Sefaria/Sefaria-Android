@@ -61,13 +61,15 @@ public class LinkCount {
 
     public DEPTH_TYPE getDepthType() { return depth_type; }
 
-    public String getCategory(Book book) {
+    public String getCategory() {
         if(parent == null)
             return "";
         if(DEPTH_TYPE.BOOK == depth_type)
-            return parent.getSlimmedTitle(book, Util.Lang.EN);
+            return parent.getRealTitle(Util.Lang.EN);
+            //return parent.getSlimmedTitle(book, Util.Lang.EN);
         else// if(DEPTH_TYPE.CAT == depth_type) || ALL
-            return getSlimmedTitle(book, Util.Lang.EN);
+            return getRealTitle(Util.Lang.EN);
+            //return getSlimmedTitle(book, Util.Lang.EN);
 
     }
 
@@ -266,5 +268,9 @@ public class LinkCount {
         return newLinkCount;
     }
 
-
+    //this is not a fool-proof equals() implementation. hence 'pseudo'
+    public static boolean pseudoEquals(LinkCount lc1, LinkCount lc2) {
+        return (lc1.getRealTitle(Util.Lang.EN).equals(lc2.getRealTitle(Util.Lang.EN)) &&
+                lc1.depth_type == lc2.depth_type);
+    }
 }
