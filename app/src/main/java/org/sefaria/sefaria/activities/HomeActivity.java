@@ -1,33 +1,29 @@
 package org.sefaria.sefaria.activities;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import org.sefaria.sefaria.MenuElements.MenuDirectRef;
 import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.database.API;
-import org.sefaria.sefaria.database.Book;
+import org.sefaria.sefaria.database.DailyLearning;
 import org.sefaria.sefaria.database.Downloader;
-import org.sefaria.sefaria.database.Link;
-import org.sefaria.sefaria.database.Text;
 import org.sefaria.sefaria.layouts.CustomActionbar;
-import org.sefaria.sefaria.DialogManager;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
-import org.sefaria.sefaria.database.UpdateReceiver;
-import org.sefaria.sefaria.database.UpdateService;
 import org.sefaria.sefaria.MenuElements.MenuGrid;
 import org.sefaria.sefaria.MenuElements.MenuNode;
 import org.sefaria.sefaria.MenuElements.MenuState;
 
-import android.os.Environment;
-import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Toast;
+
+import java.util.List;
 
 public class HomeActivity extends Activity {
 
@@ -62,10 +58,28 @@ public class HomeActivity extends Activity {
         if (menuState == null) {
             menuState = new MenuState();
         }
+
+        ScrollView gridRoot = (ScrollView) findViewById(R.id.gridRoot);
+        LinearLayout homeRoot = new LinearLayout(this);
+        homeRoot.setOrientation(LinearLayout.VERTICAL);
+        homeRoot.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+        homeRoot.setGravity(Gravity.CENTER);
+        gridRoot.addView(homeRoot);
+
         Util.Lang menuLang = Settings.getMenuLang();
         menuGrid = new MenuGrid(this,NUM_COLUMNS, menuState,LIMIT_GRID_SIZE,menuLang);
-        ScrollView gridRoot = (ScrollView) findViewById(R.id.gridRoot);
-        gridRoot.addView(menuGrid);
+        homeRoot.addView(menuGrid);
+
+        LinearLayout calendarRoot = new LinearLayout(this);
+        calendarRoot.setOrientation(LinearLayout.HORIZONTAL);
+        calendarRoot.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+        homeRoot.addView(calendarRoot);
+
+        List<MenuDirectRef> dailtylearnings = DailyLearning.getDailyLearnings(this);
+        for(MenuDirectRef menuDirectRef: dailtylearnings)
+            calendarRoot.addView(menuDirectRef);
+
+
 
         //toggle closeClick, depending on if menu is popup or not
         View.OnClickListener tempCloseClick = null;
@@ -74,9 +88,11 @@ public class HomeActivity extends Activity {
         String title; //This is forcing the word Sefaria to be based on System lang and not based on menuLang (it can easily be changed by inserting each value into the new MenuNode
 
         cab = new CustomActionbar(this,new MenuNode("Sefaria","ספאריה",null),
-                Settings.getSystemLang(),null,tempCloseClick,searchClick,null,menuClick,null,-1);
+                Settings.getSystemLang(),null,tempCloseClick,null,null,menuClick,null,-1);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(cab);
+
+
 
 
         if(API.useAPI()) {
