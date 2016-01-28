@@ -1,5 +1,6 @@
 package org.sefaria.sefaria.database;
 import org.sefaria.sefaria.MyApp;
+import org.sefaria.sefaria.Util;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -70,6 +71,11 @@ public class Database2 extends SQLiteOpenHelper{
         //old regular code
          path = "/data/data/" + MyApp.getAppPackageName() + "/";
          */
+
+        for (String dir: Util.getStorageDirectories()) {
+            Log.d("databasepath",dir);
+        }
+
         return path;
 
         //return INTERNAL_FOLDER;
