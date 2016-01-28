@@ -15,7 +15,7 @@ import org.sefaria.sefaria.Util;
 public class MenuButton extends MenuElement {
 
     private MenuNode sectionNode;
-    private MenuNode node;
+    private MenuNode menuNode;
     private TextView tv;
 
     public MenuButton(Context context) {
@@ -25,11 +25,11 @@ public class MenuButton extends MenuElement {
         this.setVisibility(View.INVISIBLE);
     }
 
-    public MenuButton(Context context, MenuNode node, MenuNode sectionNode,Util.Lang lang) {
+    public MenuButton(Context context, MenuNode menuNode, MenuNode sectionNode,Util.Lang lang) {
         super(context);
         //home and menu buttons are slightly different.
         //annoyingly, it's difficult to set margin dynamically, instead I'll just switch views
-        if (node.isHomeButton())
+        if (menuNode.isHomeButton())
             inflate(context, R.layout.button_home, this);
         else //menu
             inflate(context,R.layout.button_menu,this);
@@ -38,12 +38,16 @@ public class MenuButton extends MenuElement {
 
         this.tv = (TextView) this.findViewById(R.id.tv);
 
-        this.node = node;
+        this.menuNode = menuNode;
         this.sectionNode = sectionNode;
         this.setClickable(true);
         setLang(lang);
-        if (node.getColor() != -1) {
-            this.tv.setBackgroundColor(getResources().getColor(node.getColor()));
+        setColor(menuNode.getColor());
+    }
+
+    private void setColor(int colorInt){
+        if (colorInt != -1) {
+            this.tv.setBackgroundColor(getResources().getColor(colorInt));
             this.tv.setTextColor(Color.parseColor("#FFFFFF"));
             this.tv.setAllCaps(true); //only when there's color? (ie home page)
         }
@@ -61,12 +65,12 @@ public class MenuButton extends MenuElement {
 
     public MenuNode getSectionNode() { return sectionNode; }
 
-    public MenuNode getNode() { return node; }
+    public MenuNode getNode() { return menuNode; }
 
-    public boolean isBook() { return node.getNumChildren() == 0; }
+    public boolean isBook() { return menuNode.getNumChildren() == 0; }
 
     public void setLang(Util.Lang lang) {
-        tv.setText(node.getPrettyTitle(lang));
+        tv.setText(menuNode.getPrettyTitle(lang));
         if (lang == Util.Lang.HE) {
             tv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
             //tv.setTextSize((getResources().getDimension(R.dimen.button_menu_font_size) * Util.EN_HE_RATIO));

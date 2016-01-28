@@ -770,7 +770,7 @@ public class Node{ //TODO implements  Parcelable
             }
             root.tocRootsNum = allRoots.size();
             allRoots.add(root);
-            showTree(root);
+            //showTree(root);
         }
 
 
