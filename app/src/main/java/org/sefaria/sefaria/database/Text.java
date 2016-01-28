@@ -5,9 +5,6 @@ import org.sefaria.sefaria.MyApp;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.sefaria.sefaria.Util;
 
 
@@ -15,13 +12,9 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
-import android.database.sqlite.SQLiteStatement;
-import android.os.Handler;
-import android.os.Message;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
-import android.widget.Toast;
 
 public class Text implements Parcelable {
 
@@ -99,7 +92,7 @@ public class Text implements Parcelable {
     }
 
     public Text(int tid) {
-        Database2 dbHandler = Database2.getInstance();
+        Database dbHandler = Database.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
 
         try{
@@ -203,7 +196,7 @@ public class Text implements Parcelable {
 
     private static List<Text> getFromDB(int bid, int[] levels, int parentNID) {
         List<Text> textList = new ArrayList<Text>();
-        Database2 dbHandler = Database2.getInstance();
+        Database dbHandler = Database.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
 
         String sql = "SELECT DISTINCT * FROM "+ TABLE_TEXTS +" " + fullWhere(bid, levels, parentNID) + " ORDER BY " + orderBy(levels);
@@ -263,7 +256,7 @@ public class Text implements Parcelable {
 
     public static List<Text> getWithTids(int startTID,int endTID){
         List<Text> textList = new ArrayList<Text>();
-        Database2 dbHandler = Database2.getInstance();
+        Database dbHandler = Database.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
 
         String sql = "SELECT * FROM "+ TABLE_TEXTS +" where _id BETWEEN ? AND ? ORDER BY _id";
@@ -320,7 +313,7 @@ public class Text implements Parcelable {
             public void run() {
                 try {
                     int chunkSize = 5000;
-                    Database2 dbHandler = Database2.getInstance();
+                    Database dbHandler = Database.getInstance();
                     SQLiteDatabase db = dbHandler.getReadableDatabase();
 
                     List<Text> textList = new ArrayList<Text>();
@@ -400,7 +393,7 @@ public class Text implements Parcelable {
      * @throws API.APIException
      */
     public static ArrayList<Integer> getChaps(int bid, int[] levels) throws API.APIException {
-        Database2 dbHandler = Database2.getInstance();
+        Database dbHandler = Database.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
 
         ArrayList<Integer> chapList = new ArrayList<Integer>();
@@ -626,7 +619,7 @@ public class Text implements Parcelable {
                     return -1;
             }catch(Exception e){ //if there was a problem getting the text, then it probably wasn't text anyways so just leave the function.
                 Log.e("sql_adding_text", "Problem adding text " + book.title + " it[1] = " + it[1]);
-                Database2.textsFailedToUpload++;
+                Database.textsFailedToUpload++;
                 MyApp.sendException(e);
                 return -1;
             }
@@ -644,20 +637,20 @@ public class Text implements Parcelable {
                     //if(1 != db1.insertWithOnConflict(TABLE_TEXTS, null, values, SQLiteDatabase.CONFLICT_REPLACE)){ //
                     if(0 == db1.update(TABLE_TEXTS, values, whereClause(book.bid,levels), whereArgs(book.bid, levels))){ //it didn't update any texts (presumably b/c it didn't exist yet)
                         if(db1.insert(TABLE_TEXTS, null, values) == -1){//the insert was -1 means that it failed to insert.
-                            Database2.textsFailedToUpload++;
+                            Database.textsFailedToUpload++;
                             Log.e("sql_add_text", "Failed to updated verse" + langType + fullWhere(book.bid, levels));
                         }else
-                            Database2.textsUploaded++;
+                            Database.textsUploaded++;
                     }
                     else// it updated the text.
-                        Database2.textsUploaded++;
+                        Database.textsUploaded++;
                     return 0;
 
                 }else{
                     if(db1.insert(TABLE_TEXTS, null, values) == -1 )
-                        Database2.textsFailedToUpload++;
+                        Database.textsFailedToUpload++;
                     else
-                        Database2.textsUploaded++;
+                        Database.textsUploaded++;
                     return 0;
                 }
 

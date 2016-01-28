@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,11 +12,9 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.sefaria.sefaria.MyApp;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -242,16 +239,16 @@ public class API {
     public static boolean useAPI(){
         if(useAPI == 1) return true;
         if(useAPI == 0) return false;
-        Database2 dbHandler = Database2.getInstance();
-        SQLiteDatabase db = dbHandler.getReadableDatabase();
         //TODO maybe check the settings table instead (api should be 1)
         try{
+            Database dbHandler = Database.getInstance();
+            SQLiteDatabase db = dbHandler.getReadableDatabase();
             Cursor cursor = db.query(Text.TABLE_TEXTS, null, "_id" + "=?",
                     new String[] { String.valueOf(1) }, null, null, null, null);
             Log.d("api", "got here without problems" + cursor);
             useAPI = 0;
             return false;
-        }catch(SQLiteException e){
+        }catch(Exception e){
             useAPI = 1;
             return true;
         }

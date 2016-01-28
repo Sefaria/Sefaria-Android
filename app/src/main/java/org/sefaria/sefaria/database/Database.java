@@ -21,15 +21,9 @@ import android.util.Log;
 
 
 
-public class Database2 extends SQLiteOpenHelper{
+public class Database extends SQLiteOpenHelper{
 
-    //private static final int DATABASE_VERSION = 2;
-    //private static final String DATABASE_NAME = "BetaMidrashDB";
-    private static Database2 sInstance;
-
-
-
-
+    private static Database sInstance;
     public static String DB_NAME = "UpdateForSefariaMobileDatabase";
     static int DB_VERSION = 1;
 
@@ -42,7 +36,7 @@ public class Database2 extends SQLiteOpenHelper{
      * Takes and keeps a reference of the passed context in order to access to the application assets and resources.
      * @param context
      */
-    public Database2(Context context) {
+    public Database(Context context) {
         super(context, getDbPath() + DB_NAME + ".db", null, DB_VERSION);
         this.myContext = context;
     }
@@ -50,16 +44,17 @@ public class Database2 extends SQLiteOpenHelper{
     static public String getDbPath(){
         //The Android's default system path of your application database.
         String DB_PATH = getInternalFolder() + "databases/";
-        mkDirs(DB_PATH);
+        Log.d("databasepath", DB_PATH + " mkdirs: " + mkDirs(DB_PATH));
         return DB_PATH;
     }
-    static private void mkDirs(String path){
+    static private boolean mkDirs(String path){
         File folder = new File(path);
-        folder.mkdirs();
+        return (folder.mkdirs() || folder.isDirectory());
     }
 
 
     static public String getInternalFolder(){
+<<<<<<< HEAD:app/src/main/java/org/sefaria/sefaria/database/Database2.java
         String path = MyApp.getContext().getExternalFilesDir(null).toString() + "/";
         //String path = Environment.getExternalStorageDirectory() + "/" +  MyApp.getAppPackageName() + "/data/";
         Log.d("Database2", "State:" + Environment.getExternalStorageState());
@@ -76,9 +71,42 @@ public class Database2 extends SQLiteOpenHelper{
             Log.d("databasepath",dir);
         }
 
+=======
+        String path = getStorageDir(true);
+        Log.d("databasepath", path + " makdirs:" + mkDirs(path));
+>>>>>>> ae20f4f2b9d88b68c6fa55a615cc003647527b2c:app/src/main/java/org/sefaria/sefaria/database/Database.java
         return path;
+    }
 
-        //return INTERNAL_FOLDER;
+    static private String getStorageDir(boolean tryExternal){
+        String [] dirs = Util.getStorageDirectories();
+        final String androidPath = "/Android/data/" + MyApp.getAppPackageName() + "/files/";
+        final String regularPath = "/data/data/" + MyApp.getAppPackageName() + "/"; //this is the old way of doing it which worked fine for non-SD cards
+        if(!tryExternal)
+            return regularPath;
+
+        //trying to get SD card path
+        for(String dir:dirs){
+            if(dir.contains("ext")) {
+                String tempPath = dir + androidPath;
+                if(mkDirs(tempPath))
+                    return tempPath;
+            }
+        }
+        for(String dir:dirs){
+            if(!dir.contains("emulated")){
+                String tempPath = dir + androidPath;
+                if(mkDirs(tempPath))
+                    return tempPath;
+            }
+        }
+
+        if(dirs.length > 0){
+            String tempPath = dirs[0] + androidPath;
+            if(mkDirs(tempPath))
+                return tempPath;
+        }
+        return regularPath;
     }
 
     /**
@@ -107,13 +135,13 @@ public class Database2 extends SQLiteOpenHelper{
         }
     }
 
-    public static Database2 getInstance() {
+    public static Database getInstance() {
         Context context = MyApp.getContext();
         // Use the application context, which will ensure that you
         // don't accidentally leak an Activity's context.
         // See this article for more information: http://bit.ly/6LRzfx
         if (sInstance == null) {
-            sInstance = new Database2(context.getApplicationContext());
+            sInstance = new Database(context.getApplicationContext());
         }
         return sInstance;
     }
@@ -182,11 +210,11 @@ public class Database2 extends SQLiteOpenHelper{
     }
 
     public static void createAPIdb(){
-        Database2 myDbHelper = new Database2(MyApp.currActivityContext);
+        Database myDbHelper = new Database(MyApp.currActivityContext);
         Log.d("api", "trying to create db");
         myDbHelper.getReadableDatabase();
         try {
-            myDbHelper.unzipDatabase("UpdateForSefariaMobileDatabase.zip.jar", Database2.getDbPath(),true);
+            myDbHelper.unzipDatabase("UpdateForSefariaMobileDatabase.zip.jar", Database.getDbPath(),true);
         } catch (IOException e) {
             Log.e("api",e.toString());
         }
@@ -240,7 +268,7 @@ public class Database2 extends SQLiteOpenHelper{
     public static int getVersion(){
         int versionNum = -1;
         try{
-            Database2 dbHandler = Database2.getInstance();
+            Database dbHandler = Database.getInstance();
             SQLiteDatabase db = dbHandler.getReadableDatabase();
             Cursor cursor = db.query("Settings", null, "_id" + "=?",
                     new String[] { "version" }, null, null, null, null);
