@@ -109,6 +109,8 @@ public class Node implements  Parcelable{
         return str;
     }
 
+    public Node getParent(){return parent;}
+
     /**
      * @param lang
      * @return full description of current text. For example, Chelek 3 Siman 23
