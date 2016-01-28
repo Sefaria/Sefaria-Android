@@ -55,6 +55,12 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextAdapter.LinkTe
         this.itemList = itemList;
         this.activity = context;
         this.noLinksTV = noLinksTV;
+
+        if (itemList.size() == 0) {
+            noLinksTV.setVisibility(View.VISIBLE);
+        } else {
+            noLinksTV.setVisibility(View.GONE);
+        }
     }
 
     @Override
