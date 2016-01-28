@@ -2,7 +2,6 @@ package org.sefaria.sefaria.database;
 
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import android.database.Cursor;
@@ -11,11 +10,6 @@ import android.database.sqlite.SQLiteException;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
-import android.util.Pair;
-
-import org.sefaria.sefaria.MenuElements.MenuNode;
-import org.sefaria.sefaria.MenuElements.MenuState;
-import org.sefaria.sefaria.Util;
 
 public class Link implements Parcelable {
 
@@ -148,7 +142,7 @@ public class Link implements Parcelable {
 
 
     private static List<Text> getLinkedTextsFromDB(Text text, LinkCount linkFilter) {
-        Database2 dbHandler = Database2.getInstance();
+        Database dbHandler = Database.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
         List<Text> linkList = new ArrayList<Text>();
 
@@ -222,7 +216,7 @@ public class Link implements Parcelable {
     }
 
     public static List<Link> getLinks(Text text) {
-        Database2 dbHandler = Database2.getInstance();
+        Database dbHandler = Database.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
 
         List<Link> linkList = new ArrayList<Link>();
@@ -276,7 +270,7 @@ public class Link implements Parcelable {
 
 
     private static List<Text> getLinkedChapTextsFromDB(Text text, int limit, int offset) {
-        Database2 dbHandler = Database2.getInstance();
+        Database dbHandler = Database.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
 
         List<Text> linkList = new ArrayList<Text>();

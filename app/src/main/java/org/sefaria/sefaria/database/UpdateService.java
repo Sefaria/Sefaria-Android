@@ -41,7 +41,7 @@ public class UpdateService extends Service {
 
     public static final int NOTIFICATION_ID = 613267;
 
-    public static final String DATABASE_ZIP_DOWNLOAD_LOC = Downloader.FULL_DOWNLOAD_PATH + Database2.DB_NAME + ".zip";
+    public static final String DATABASE_ZIP_DOWNLOAD_LOC = Downloader.FULL_DOWNLOAD_PATH + Database.DB_NAME + ".zip";
     public static final String INDEX_DOWNLOAD_LOC = Downloader.FULL_DOWNLOAD_PATH + Downloader.INDEX_JSON_NAME;
 
     private static final String LAST_ASK_TO_UPGRADE_TIME = "LAST_ASK_TIME_UPGADE_TIME";
@@ -271,7 +271,7 @@ public class UpdateService extends Service {
         if (testIndexFile.exists()) testIndexFile.delete();
         Downloader.eitherDBorIndexFinished = false;
         Downloader.download(indexURL, Downloader.JSON_INDEX_TITLE, Downloader.DB_DOWNLOAD_PATH, Downloader.INDEX_JSON_NAME, false);
-        Downloader.download(zipUrl,Downloader.DB_DOWNLOAD_TITLE,Downloader.DB_DOWNLOAD_PATH,Database2.DB_NAME + ".zip",false);
+        Downloader.download(zipUrl,Downloader.DB_DOWNLOAD_TITLE,Downloader.DB_DOWNLOAD_PATH, Database.DB_NAME + ".zip",false);
         //this guy calls a complete handler in Downloader to inform us we're down and move on to stage2
     }
 
@@ -284,16 +284,16 @@ public class UpdateService extends Service {
             public void run() {
                 inUpdateStage3 = true;
                 try {
-                    Database2 myDbHelper;
-                    myDbHelper = new Database2(MyApp.currActivityContext);
+                    Database myDbHelper;
+                    myDbHelper = new Database(MyApp.currActivityContext);
 
                     myDbHelper.getReadableDatabase();
                     try {
-                        Database2.deleteDatabase();
-                        myDbHelper.unzipDatabase(DATABASE_ZIP_DOWNLOAD_LOC, Database2.getDbPath()   , false);
+                        Database.deleteDatabase();
+                        myDbHelper.unzipDatabase(DATABASE_ZIP_DOWNLOAD_LOC, Database.getDbPath()   , false);
 
                         //move index.json file into right location
-                        Util.moveFile(Downloader.FULL_DOWNLOAD_PATH, Downloader.INDEX_JSON_NAME, Database2.getInternalFolder(), MenuState.jsonIndexFileName);
+                        Util.moveFile(Downloader.FULL_DOWNLOAD_PATH, Downloader.INDEX_JSON_NAME, Database.getInternalFolder(), MenuState.jsonIndexFileName);
 
 
                         //success, set version num

@@ -137,7 +137,7 @@ public class LinkCount {
 
     private static LinkCount getCommentaryOnChap(int chapStart, int chapEnd, int bid){
         LinkCount commentaryGroup = new LinkCount(COMMENTARY,0, "מפרשים",DEPTH_TYPE.CAT);
-        Database2 dbHandler = Database2.getInstance();
+        Database dbHandler = Database.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
         Log.d("Link", "starting getCommentaryOnChap");
 
@@ -182,7 +182,7 @@ public class LinkCount {
     public static LinkCount getFromLinks_small(Text text){
         LinkCount allLinkCounts = new LinkCount(ALL_CONNECTIONS, 0, "All Connections (He)",DEPTH_TYPE.ALL);
         if(text.getNumLinks() == 0)  return allLinkCounts;
-        Database2 dbHandler = Database2.getInstance();
+        Database dbHandler = Database.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
         Log.d("Link", "starting getCountsTitlesFromLinks_small");
 

@@ -222,7 +222,7 @@ public class Book implements Parcelable {
     }
 
     public void get(String title)throws BookNotFoundException{
-        Database2 dbHandler = Database2.getInstance();
+        Database dbHandler = Database.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
         Cursor cursor = db.query(TABLE_BOOKS, null, Ktitle + "=?",
                 new String[] { title }, null, null, null, null);
@@ -235,7 +235,7 @@ public class Book implements Parcelable {
     }
 
     public void get(int bid){
-        Database2 dbHandler = Database2.getInstance();
+        Database dbHandler = Database.getInstance();
         SQLiteDatabase	db = dbHandler.getReadableDatabase();
         Cursor cursor = db.query(TABLE_BOOKS, null, "_id" + "=?",
                 new String[] { String.valueOf(bid) }, null, null, null, null);
@@ -251,7 +251,7 @@ public class Book implements Parcelable {
     }
 
     public static int getBid(String title){
-        Database2 dbHandler = Database2.getInstance();
+        Database dbHandler = Database.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
         return getBid(title, db);
     }
@@ -274,7 +274,7 @@ public class Book implements Parcelable {
     }
 
     public static String getTitle(int bid){
-        Database2 dbHandler = Database2.getInstance();
+        Database dbHandler = Database.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
         Cursor cursor = db.query(TABLE_BOOKS, new String[]{"title"}, "_id=?",
                 new String[]{String.valueOf(bid)}, null, null, null, null);
@@ -294,7 +294,7 @@ public class Book implements Parcelable {
 
     //I'm not sure if this function is ever used.
     private static int getNum(String title, String type){
-        Database2 dbHandler = Database2.getInstance();
+        Database dbHandler = Database.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_BOOKS, new String[]{type}, Ktitle + "=?",
@@ -317,7 +317,7 @@ public class Book implements Parcelable {
     public List<Book> getAllCommentaries(){
         if(allCommentaries != null)
             return allCommentaries;
-        Database2 dbHandler = Database2.getInstance();
+        Database dbHandler = Database.getInstance();
         List<Book> bookList = new ArrayList<Book>();
         String selectQuery = "SELECT  * FROM " + TABLE_BOOKS + " WHERE commentsOn = ?";
 
@@ -349,7 +349,7 @@ public class Book implements Parcelable {
     }
 
     public static List<Book> getAll() {
-        Database2 dbHandler = Database2.getInstance();
+        Database dbHandler = Database.getInstance();
         List<Book> bookList = new ArrayList<Book>();
         // Select All Query
         String selectQuery = "SELECT  * FROM " + TABLE_BOOKS;
@@ -372,7 +372,7 @@ public class Book implements Parcelable {
     }
 
     public static ArrayList<String> getAllBookNames(boolean isHebrew) {
-        Database2 dbHandler = Database2.getInstance();
+        Database dbHandler = Database.getInstance();
         // Select All Query
         String selectQuery = "SELECT  * FROM " + TABLE_BOOKS;
 
