@@ -293,7 +293,7 @@ public class UpdateService extends Service {
                         myDbHelper.unzipDatabase(DATABASE_ZIP_DOWNLOAD_LOC, Database2.DB_PATH, false);
 
                         //move index.json file into right location
-                        Util.moveFile(Downloader.FULL_DOWNLOAD_PATH, Downloader.INDEX_JSON_NAME, MyApp.INTERNAL_FOLDER, MenuState.jsonIndexFileName);
+                        Util.moveFile(Downloader.FULL_DOWNLOAD_PATH, Downloader.INDEX_JSON_NAME, Database2.getInternalFolder(), MenuState.jsonIndexFileName);
 
 
                         //success, set version num
