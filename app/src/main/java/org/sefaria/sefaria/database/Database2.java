@@ -26,9 +26,8 @@ public class Database2 extends SQLiteOpenHelper{
     //private static final String DATABASE_NAME = "BetaMidrashDB";
     private static Database2 sInstance;
 
-    private static String INTERNAL_FOLDER = "/data/data/" + MyApp.getAppPackageName() + "/";
-    //The Android's default system path of your application database.
-    public static String DB_PATH = getInternalFolder() + "databases/";
+
+
 
     public static String DB_NAME = "UpdateForSefariaMobileDatabase";
     static int DB_VERSION = 1;
@@ -43,19 +42,37 @@ public class Database2 extends SQLiteOpenHelper{
      * @param context
      */
     public Database2(Context context) {
-        super(context, DB_NAME + ".db", null, DB_VERSION);
+        super(context, getDbPath() + DB_NAME + ".db", null, DB_VERSION);
         this.myContext = context;
     }
 
-    static public String getInternalFolder(){
-        /*
-        String str = Environment.getExternalStorageDirectory() + "/" + INTERNAL_FOLDER;
-        File folder = new File(str);
+    static public String getDbPath(){
+        //The Android's default system path of your application database.
+        String DB_PATH = getInternalFolder() + "databases/";
+        mkDirs(DB_PATH);
+        return DB_PATH;
+    }
+    static private void mkDirs(String path){
+        File folder = new File(path);
         folder.mkdirs();
-        Log.d("Database2",str);
-        return str;
-        */
-        return INTERNAL_FOLDER;
+    }
+
+
+    static public String getInternalFolder(){
+        String path = MyApp.getContext().getExternalFilesDir(null).toString() + "/";
+        //String path = Environment.getExternalStorageDirectory() + "/" +  MyApp.getAppPackageName() + "/data/";
+        Log.d("Database2", "State:" + Environment.getExternalStorageState());
+        mkDirs(path);
+        Log.d("Database2", path);
+        Log.d("Database2", "_" + Environment.getExternalStorageDirectory().toString());
+        Log.d("Database2", "_" + Environment.getDataDirectory().toString());
+        /*
+        //old regular code
+         path = "/data/data/" + MyApp.getAppPackageName() + "/";
+         */
+        return path;
+
+        //return INTERNAL_FOLDER;
     }
 
     /**
@@ -77,7 +94,7 @@ public class Database2 extends SQLiteOpenHelper{
     }
 
     public static void deleteDatabase() {
-        File oldDB = new File(DB_PATH + DB_NAME + ".db");
+        File oldDB = new File(getDbPath() + DB_NAME + ".db");
         if (oldDB.exists()) {
             Log.d("db","deleting");
             oldDB.delete();
@@ -100,7 +117,7 @@ public class Database2 extends SQLiteOpenHelper{
         SQLiteDatabase checkDB = null;
 
         try{
-            String myPath = DB_PATH + DB_NAME + ".db";
+            String myPath = getDbPath() + DB_NAME + ".db";
             checkDB = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
         }catch(Exception e){
             MyApp.sendException(e, "database does't exist");
@@ -163,7 +180,7 @@ public class Database2 extends SQLiteOpenHelper{
         Log.d("api", "trying to create db");
         myDbHelper.getReadableDatabase();
         try {
-            myDbHelper.unzipDatabase("UpdateForSefariaMobileDatabase.zip.jar", Database2.DB_PATH,true);
+            myDbHelper.unzipDatabase("UpdateForSefariaMobileDatabase.zip.jar", Database2.getDbPath(),true);
         } catch (IOException e) {
             Log.e("api",e.toString());
         }
@@ -234,7 +251,7 @@ public class Database2 extends SQLiteOpenHelper{
     public void openDataBase() throws SQLException{
 
         //Open the database
-        String myPath = DB_PATH + DB_NAME + ".db";
+        String myPath = getDbPath() + DB_NAME + ".db";
         myDataBase = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
     }
 
