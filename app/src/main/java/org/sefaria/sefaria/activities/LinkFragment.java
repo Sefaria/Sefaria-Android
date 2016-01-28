@@ -1,6 +1,7 @@
 package org.sefaria.sefaria.activities;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -11,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import org.sefaria.sefaria.LinkElements.LinkMainAdapter;
 import org.sefaria.sefaria.LinkElements.LinkSelectorBar;
@@ -95,7 +97,7 @@ public class LinkFragment extends Fragment {
         LinearLayout linkSelectorBarRoot = (LinearLayout) view.findViewById(R.id.link_selector_bar_root);
 
         SuperTextActivity activity = (SuperTextActivity) getActivity();
-        linkSelectorBar = new LinkSelectorBar(activity,linkSelectorBarButtonClick);
+        linkSelectorBar = new LinkSelectorBar(activity,linkSelectorBarButtonClick,linkSelectorBackClick);
         linkSelectorBarRoot.addView(linkSelectorBar);
 
         //updateFragment((Text) getArguments().getParcelable(ARG_CURR_SECTION), view);
@@ -128,9 +130,13 @@ public class LinkFragment extends Fragment {
         currState = state;
         SuperTextActivity activity = (SuperTextActivity) getActivity();
         View colorBar = view.findViewById(R.id.main_color_bar);
+        TextView noLinksTV = (TextView) view.findViewById(R.id.no_links_tv);
         if (state == State.MAIN) {
+            view.setBackgroundColor(getResources().getColor(R.color.menu_background));
+
             colorBar.setVisibility(View.GONE);
             linkSelectorBar.setVisibility(View.GONE);
+            noLinksTV.setVisibility(View.GONE);
             GridLayoutManager gridLayoutManager = new GridLayoutManager(activity,2);
             gridLayoutManager.setSpanSizeLookup(onSpanSizeLookup);
 
@@ -141,25 +147,27 @@ public class LinkFragment extends Fragment {
             updateFragment(segment);
 
         } else { //CAT and BOOK are very similar
+            view.setBackgroundColor(Color.parseColor("#FFFFFF"));
+
             //update linkSelectorQueue
             linkSelectorBar.add(linkCount);
 
 
 
             String cat;
-            if (linkCount.getDepthType() == LinkCount.DEPTH_TYPE.BOOK) cat = linkCount.getCategory(activity.getBook());
+            if (linkCount.getDepthType() == LinkCount.DEPTH_TYPE.BOOK) cat = linkCount.getCategory();
             else cat = linkCount.getRealTitle(Util.Lang.EN); //CAT
 
             colorBar.setVisibility(View.VISIBLE);
             int color = MyApp.getCatColor(cat);
             colorBar.setBackgroundColor(activity.getResources().getColor(color));
             linkSelectorBar.setVisibility(View.VISIBLE);
-
+            noLinksTV.setVisibility(View.VISIBLE);
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(activity,LinearLayoutManager.VERTICAL,false);
 
             List<Text> linkList = Link.getLinkedTexts(segment,linkCount);
 
-            linkTextAdapter = new LinkTextAdapter(activity,linkList);
+            linkTextAdapter = new LinkTextAdapter(activity,linkList,noLinksTV);
             linkRecycler.setLayoutManager(linearLayoutManager);
             linkRecycler.setAdapter(linkTextAdapter);
             linkTextAdapter.setCurrLinkCount(linkCount,null);
@@ -237,8 +245,16 @@ public class LinkFragment extends Fragment {
         @Override
         public void onClick(View v) {
             LinkSelectorBarButton lsbb = (LinkSelectorBarButton) v;
-            linkTextAdapter.setCurrLinkCount(lsbb.getLinkCount(),segment);
+            linkTextAdapter.setCurrLinkCount(lsbb.getLinkCount(), segment);
             linkSelectorBar.update(lsbb.getLinkCount());
+        }
+    };
+
+
+    View.OnClickListener linkSelectorBackClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            gotoState(State.MAIN,getView(),null);
         }
     };
 

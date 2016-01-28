@@ -1,10 +1,8 @@
 package org.sefaria.sefaria.LinkElements;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,8 +11,6 @@ import android.widget.TextView;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Settings;
-import org.sefaria.sefaria.Util;
-import org.sefaria.sefaria.activities.LinkFragment;
 import org.sefaria.sefaria.activities.SuperTextActivity;
 import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Link;
@@ -22,7 +18,6 @@ import org.sefaria.sefaria.database.LinkCount;
 import org.sefaria.sefaria.database.Text;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by nss on 1/17/16.
@@ -31,31 +26,35 @@ import java.util.Set;
 public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextAdapter.LinkTextHolder> {
 
     private List<Text> itemList;
-    private SuperTextActivity context;
+    private SuperTextActivity activity;
     private LinkCount currLinkCount;
+    private TextView noLinksTV;
 
     public class LinkTextHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView tv;
         public TextView verseNum;
+        public TextView title;
 
         public LinkTextHolder(View v) {
             super(v);
             v.setOnClickListener(this);
             tv = (TextView) v.findViewById(R.id.tv);
             verseNum = (TextView) v.findViewById(R.id.verseNum);
+            title = (TextView) v.findViewById(R.id.title);
         }
 
         @Override
         public void onClick(View v) {
             Text link = itemList.get(getAdapterPosition());
-            SuperTextActivity.startNewTextActivityIntent(context,link);
+            SuperTextActivity.startNewTextActivityIntent(activity,link);
         }
     }
 
 
-    public LinkTextAdapter(SuperTextActivity context, List<Text> itemList) {
+    public LinkTextAdapter(SuperTextActivity context, List<Text> itemList, TextView noLinksTV) {
         this.itemList = itemList;
-        this.context = context;
+        this.activity = context;
+        this.noLinksTV = noLinksTV;
     }
 
     @Override
@@ -69,8 +68,19 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextAdapter.LinkTe
     @Override
     public void onBindViewHolder(LinkTextHolder holder, int position) {
         Text link = itemList.get(position);
-        holder.verseNum.setText("");//+link.levels[0]);
-        holder.tv.setText(Html.fromHtml("<i>" + link.getLocationString(Settings.getMenuLang()) + "</i><br>" + link.heText + "<br>" + link.enText));
+        if (currLinkCount.getCategory().equals("Commentary")) {
+            holder.title.setVisibility(View.GONE);
+            holder.verseNum.setVisibility(View.VISIBLE);
+            holder.verseNum.setText("" + link.levels[1]);
+            holder.verseNum.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
+        } else {
+            holder.verseNum.setVisibility(View.GONE);
+            holder.title.setVisibility(View.VISIBLE);
+            holder.title.setText(Html.fromHtml("<i>" + link.getLocationString(Settings.getMenuLang()) + "</i>"));
+            holder.title.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
+            holder.title.setTextSize(20);
+        }
+        holder.tv.setText(Html.fromHtml(link.heText + "<br>" + link.enText));
         holder.tv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
         holder.tv.setTextSize(20);
 
@@ -83,6 +93,11 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextAdapter.LinkTe
 
     public void setItemList(List<Text> items) {
         itemList = items;
+        if (itemList.size() == 0) {
+            noLinksTV.setVisibility(View.VISIBLE);
+        } else {
+            noLinksTV.setVisibility(View.GONE);
+        }
         notifyDataSetChanged();
     }
 

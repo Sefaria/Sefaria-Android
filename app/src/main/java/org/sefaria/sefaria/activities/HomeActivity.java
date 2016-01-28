@@ -22,6 +22,8 @@ import org.sefaria.sefaria.MenuElements.MenuGrid;
 import org.sefaria.sefaria.MenuElements.MenuNode;
 import org.sefaria.sefaria.MenuElements.MenuState;
 
+import android.os.Environment;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -81,6 +83,8 @@ public class HomeActivity extends Activity {
             Toast.makeText(this, "starting download", Toast.LENGTH_SHORT).show();
             Downloader.updateLibrary(this);
         }
+
+        Log.d("databasePath", Environment.getExternalStorageDirectory().toString());
     }
 
     private void setLang(Util.Lang lang){

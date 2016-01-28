@@ -382,19 +382,7 @@ public class DialogManager {
                                 try {
                                     dismissCurrentDialog();
                                     showDialog(ARE_YOU_SURE_CANCEL);
-								/*if (Downloader.downloadIdList.size() != 0) { //meaning the download is in progress (hopefully)
-									for (int i = 0; i < Downloader.downloadIdList.size(); i++) {
-										Downloader.manager.remove(Downloader.downloadIdList.get(i));
-									}
-									UpdateService.endService();
 
-									dismissCurrentDialog();
-									UpdateService.unlockOrientation(context);
-
-
-								} else {
-									Toast.makeText(context, context.getString(R.string.MESSAGE_CANT_STOP_NOW), Toast.LENGTH_SHORT).show();
-								}*/
                                 } catch (Exception e) {
                                     Toast.makeText(context, context.getString(R.string.update_preparing), Toast.LENGTH_SHORT).show();
                                 }

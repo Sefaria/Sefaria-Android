@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:orientation="vertical"
     android:layout_height="match_parent"
-    android:background="@color/link_background"
+    android:background="@android:color/white"
     tools:context="org.sefaria.sefaria.activities.LinkFragment">
     <View
         android:id="@+id/main_color_bar"
@@ -19,6 +19,16 @@
         android:layout_width="match_parent"
         android:layout_height="3dp"
         android:background="@color/menu_foreground"/>
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/no_links_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:gravity="center_horizontal"
+        android:textStyle="italic"
+        android:textSize="20dp"
+        android:text="@string/no_links" />
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recview"
         android:layout_width="match_parent"
