@@ -2,6 +2,7 @@ package org.sefaria.sefaria.activities;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import org.sefaria.sefaria.MenuElements.MenuDirectRef;
@@ -9,6 +10,7 @@ import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.database.DailyLearning;
 import org.sefaria.sefaria.database.Downloader;
+import org.sefaria.sefaria.layouts.AutoResizeTextView;
 import org.sefaria.sefaria.layouts.CustomActionbar;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
@@ -21,6 +23,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
@@ -67,13 +70,21 @@ public class HomeActivity extends Activity {
         homeRoot.setGravity(Gravity.CENTER);
         gridRoot.addView(homeRoot);
 
+        TextView livingLibaryView = createTypeTitle("A Living Library of Jewish Texts");
+        livingLibaryView.setTextSize(20);
+        livingLibaryView.setPadding(3,30,3,30);
+        livingLibaryView.setTextColor(Color.parseColor("#000000"));
+        homeRoot.addView(livingLibaryView);
+
         Util.Lang menuLang = Settings.getMenuLang();
         menuGrid = new MenuGrid(this,NUM_COLUMNS, menuState,LIMIT_GRID_SIZE,menuLang);
+        homeRoot.addView(createTypeTitle("Browse Texts"));
         homeRoot.addView(menuGrid);
 
         LinearLayout calendarRoot = new LinearLayout(this);
         calendarRoot.setOrientation(LinearLayout.HORIZONTAL);
         calendarRoot.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+        homeRoot.addView(createTypeTitle("Calendar"));
         homeRoot.addView(calendarRoot);
 
         dailtylearnings = DailyLearning.getDailyLearnings(this);
@@ -115,6 +126,16 @@ public class HomeActivity extends Activity {
 
     }
 
+    private TextView createTypeTitle(String title){
+        TextView textView = new TextView(this);
+        textView.setText(title);
+        int padding = 3;
+        textView.setPadding(padding,20,padding,10);
+        textView.setTextSize(20);
+        textView.setGravity(Gravity.CENTER);
+
+        return textView;
+    }
 
 
     @Override
