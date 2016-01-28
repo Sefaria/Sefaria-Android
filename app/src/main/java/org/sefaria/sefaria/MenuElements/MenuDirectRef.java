@@ -60,12 +60,12 @@ public class MenuDirectRef extends LinearLayout{
     public void setLang(Util.Lang lang) {
 
         if (lang == Util.Lang.HE) {
-            tv.setText(enTitle);
+            tv.setText(heTitle);
             tv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
             //tv.setTextSize((getResources().getDimension(R.dimen.button_menu_font_size) * Util.EN_HE_RATIO));
         }
         else {
-            tv.setText(heTitle);
+            tv.setText(enTitle);
             tv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT)); //actually, currently there's no nafka mina
             //tv.setTextSize(getResources().getDimension(R.dimen.button_menu_font_size));
         }
