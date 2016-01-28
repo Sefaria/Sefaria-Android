@@ -34,6 +34,7 @@ public class HomeActivity extends Activity {
     private MenuState menuState;
     private boolean isPopup;
     private CustomActionbar cab;
+    private List<MenuDirectRef> dailtylearnings;
 
     @Override
     protected void onCreate(Bundle in) {
@@ -75,7 +76,7 @@ public class HomeActivity extends Activity {
         calendarRoot.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
         homeRoot.addView(calendarRoot);
 
-        List<MenuDirectRef> dailtylearnings = DailyLearning.getDailyLearnings(this);
+        dailtylearnings = DailyLearning.getDailyLearnings(this);
         for(MenuDirectRef menuDirectRef: dailtylearnings)
             calendarRoot.addView(menuDirectRef);
 
@@ -109,6 +110,8 @@ public class HomeActivity extends Activity {
         menuState.setLang(lang);
         menuGrid.setLang(lang);
         //not setting cab, b/c it should stay as the SystemLang
+        for(MenuDirectRef menuDirectRef:dailtylearnings)
+            menuDirectRef.setLang(lang);
 
     }
 

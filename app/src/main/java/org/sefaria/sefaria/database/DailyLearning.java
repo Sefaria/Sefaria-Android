@@ -24,7 +24,7 @@ public class DailyLearning {
     public DailyLearning(){
     }
 
-    private static Node getDafYomi(){
+    private static MenuDirectRef getDafYomi(Context context){
         String today = getLongDate(0);
         try {
             JSONArray dafs = Util.openJSONArrayFromAssets("calendar/daf-yomi.json");
@@ -43,11 +43,13 @@ public class DailyLearning {
                     for(Node child: node.getChildren()){
                         if(child.getNiceGridNum(Util.Lang.EN).equals(dafNum + "a")){
                             node = child;
-                            return node;
+                            break;
 
                         }
                     }
-                    return node;
+                    node = node.getFirstDescendant();
+                    MenuDirectRef menuDirectRef = new MenuDirectRef(context,todayDaf,book.heTitle + " " + node.getNiceGridNum(Util.Lang.HE),node.makePathDefiningNode(),book);
+                    return menuDirectRef;
                 }
 
             }
@@ -55,7 +57,7 @@ public class DailyLearning {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return new Node();
+        return null;
     }
 
     public static MenuDirectRef [] getParsha(Context context){
@@ -83,9 +85,7 @@ public class DailyLearning {
                         }
                     }
                     node = node.getChildren().get(Calendar.getInstance().DAY_OF_WEEK -1);
-                    MenuDirectRef menuDirectRef = new MenuDirectRef(context,bookName,book.heTitle+"parshaHETODO",node.makePathDefiningNode(),book);
-                    if(true)
-                        return new MenuDirectRef [] {menuDirectRef};
+                    MenuDirectRef parshaMenu = new MenuDirectRef(context,node.getParent().getTitle(Util.Lang.EN),node.getParent().getTitle(Util.Lang.HE),node.makePathDefiningNode(),book);
 
                     String haftaraBookName = haftara.replaceFirst("\\s[0-9]*.*$","");
                     String haftaraNumber = haftara.replaceFirst("^[^0-9]*\\s","").replaceFirst("-[0-9]*.*$", "");
@@ -95,7 +95,8 @@ public class DailyLearning {
                     haftaraNode = haftaraNode.getChildren().get(haftraChap-1);
                     //TODO maybe check  that it's correct incase we're missing a chap (but that's unlikely to happen in Tanach).
 
-                    break;
+                    MenuDirectRef haftaraMenu = new MenuDirectRef(context,"Haftorah","Hatorah(HE)",haftaraNode.makePathDefiningNode(),haftaraBook);
+                    return new MenuDirectRef [] {parshaMenu,haftaraMenu};
                 }
 
 
@@ -108,9 +109,14 @@ public class DailyLearning {
 
     public static List<MenuDirectRef> getDailyLearnings(Context context){
         List<MenuDirectRef> dailyLearnings = new ArrayList<>();
-        getDafYomi().log();
+        MenuDirectRef dafMenu = getDafYomi(context);
+        if(dafMenu !=null){
+            dailyLearnings.add(dafMenu);
+        }
 
-        dailyLearnings.add(getParsha(context)[0]);
+        for(MenuDirectRef menuDirectRef:getParsha(context)) {
+            dailyLearnings.add(menuDirectRef);
+        }
 
 
         return dailyLearnings;
