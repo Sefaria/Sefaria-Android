@@ -136,7 +136,7 @@
             android:layout_height="wrap_content"
             android:text="black"
             android:gravity="center"
-            android:background="@color/toc_front"
+            android:background="#444"
             android:padding="20dp"/>
 
     </LinearLayout>

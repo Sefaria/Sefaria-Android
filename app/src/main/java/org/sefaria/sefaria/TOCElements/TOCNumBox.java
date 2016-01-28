@@ -7,6 +7,9 @@ import android.content.res.Resources;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.GridLayout;
+import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -36,14 +39,13 @@ public class TOCNumBox extends TextView implements TOCElement {
         //FORMATTING
         Resources r = getResources();
 
-        setBackgroundColor(r.getColor(R.color.menu_foreground));
-        setTextColor(r.getColor(R.color.toc_front));
+        setBackgroundColor(r.getColor(R.color.toc_num_box_background));
+        setTextColor(r.getColor(R.color.toc_num_box_font));
 
-
-        //TODO why doesn't margins work!??
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams((int) r.getDimension(R.dimen.toc_numbox),(int) r.getDimension(R.dimen.toc_numbox));
-        lp.setMargins(10,10,10,10);
-
+        GridLayout.LayoutParams lp = new GridLayout.LayoutParams(new ViewGroup.MarginLayoutParams(
+                (int) r.getDimension(R.dimen.toc_numbox),(int) r.getDimension(R.dimen.toc_numbox)));
+        int margin = 2;
+        lp.setMargins(margin,margin,margin,margin);
         setLayoutParams(lp);
 
         //setWidth((int) r.getDimension(R.dimen.toc_numbox));
