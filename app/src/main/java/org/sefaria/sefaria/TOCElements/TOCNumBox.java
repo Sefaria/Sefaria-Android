@@ -44,7 +44,7 @@ public class TOCNumBox extends TextView implements TOCElement {
 
         GridLayout.LayoutParams lp = new GridLayout.LayoutParams(new ViewGroup.MarginLayoutParams(
                 (int) r.getDimension(R.dimen.toc_numbox),(int) r.getDimension(R.dimen.toc_numbox)));
-        int margin = 2;
+        int margin = 3;
         lp.setMargins(margin,margin,margin,margin);
         setLayoutParams(lp);
 

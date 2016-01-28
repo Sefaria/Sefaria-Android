@@ -9,14 +9,11 @@ import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
 
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class Node{ //TODO implements  Parcelable
 
@@ -474,7 +471,7 @@ public class Node{ //TODO implements  Parcelable
             Log.e("Node", "called setAllChaps with too low texdepth" + this.toString());
             return;
         }
-        Database2 dbHandler = Database2.getInstance();
+        Database dbHandler = Database.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
 
 
@@ -731,7 +728,7 @@ public class Node{ //TODO implements  Parcelable
 
         allRoots = new ArrayList<>();
         Log.d("Node", "calling Node.getRoots()");
-        Database2 dbHandler = Database2.getInstance();
+        Database dbHandler = Database.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
         Cursor cursor = db.query(NODE_TABLE, null, "bid" + "=?",
                 new String[]{String.valueOf(book.bid)}, null, null, "structNum,_id", null); //structNum, parentNode, siblingNum
