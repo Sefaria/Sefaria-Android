@@ -87,11 +87,7 @@ public class MenuDirectRef extends LinearLayout{
     OnClickListener clickListener = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            try {
-                SuperTextActivity.startNewTextActivityIntent(context,getNode().getTexts().get(0));
-            } catch (API.APIException e) {
-                API.makeAPIErrorToast(context);
-            }
+            SuperTextActivity.startNewTextActivityIntent(context,book,getNode());
         }
     };
 }
