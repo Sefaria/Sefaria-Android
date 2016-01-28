@@ -3,6 +3,8 @@ package org.sefaria.sefaria.database;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import org.sefaria.sefaria.MyApp;
@@ -15,7 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Node{ //TODO implements  Parcelable
+public class Node implements  Parcelable{
 
 
     public final static int NODE_TYPE_BRANCH = 1;
@@ -106,6 +108,8 @@ public class Node{ //TODO implements  Parcelable
         str += this.getWholeTitle(menuLang,false);
         return str;
     }
+
+    public Node getParent(){return parent;}
 
     /**
      * @param lang
@@ -689,6 +693,7 @@ public class Node{ //TODO implements  Parcelable
     }
 
 
+
     static public Node getNodeFromPathStr(List<Node> tocRoots, String path) throws InvalidPathException {
         Node node;
         try {
@@ -770,7 +775,7 @@ public class Node{ //TODO implements  Parcelable
             }
             root.tocRootsNum = allRoots.size();
             allRoots.add(root);
-            showTree(root);
+            //showTree(root);
         }
 
 
@@ -865,7 +870,7 @@ public class Node{ //TODO implements  Parcelable
     }
 
 
-    /*
+
     //TODO
     //PARCELABLE------------------------------------------------------------------------
 
@@ -876,7 +881,7 @@ public class Node{ //TODO implements  Parcelable
         }
 
         public Node[] newArray(int size) {
-            return new Book[size];
+            return new Node[size];
         }
     };
 
@@ -888,32 +893,21 @@ public class Node{ //TODO implements  Parcelable
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(bid);
-        dest.writeInt(commentsOn);
-        dest.writeStringArray(sectionNames);
-        dest.writeStringArray(sectionNamesL2B);
-        dest.writeStringArray(heSectionNamesL2B);
-        dest.writeStringArray(categories);
-        dest.writeInt(textDepth);
-        dest.writeInt(wherePage);
-        dest.writeString(title);
-        dest.writeString(heTitle);
-        dest.writeInt(languages);
+        dest.writeString(makePathDefiningNode());
     }
 
-    private Book(Parcel in) {
+    private Node(Parcel in) {
         bid = in.readInt();
-        commentsOn = in.readInt();
-        sectionNames = in.createStringArray();
-        sectionNamesL2B = in.createStringArray();
-        heSectionNamesL2B = in.createStringArray();
-        categories = in.createStringArray();
+        String nodePath = in.readString();
+        try {
+            Node node =  Node.getNodeFromPathStr(new Book(bid),nodePath);
+            //TODO make this work correctly.
+            //this = node;
+        } catch (InvalidPathException e) {
 
-        textDepth = in.readInt();
-        wherePage = in.readInt();
-        title = in.readString();
-        heTitle = in.readString();
-        languages = in.readInt();
+        } catch (API.APIException e) {
+
+        }
     }
-    */
 
 }

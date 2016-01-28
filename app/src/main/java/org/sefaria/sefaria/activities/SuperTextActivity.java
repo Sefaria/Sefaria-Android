@@ -142,14 +142,17 @@ public abstract class SuperTextActivity extends Activity {
 
     public static void startNewTextActivityIntent(Context context, Text text){
         Book book = new Book(text.bid);
-        startNewTextActivityIntent(context,book,text);
+        startNewTextActivityIntent(context, book, text, null);
     }
 
     public static void startNewTextActivityIntent(Context context, Book book){
-        startNewTextActivityIntent(context,book,null);
+        startNewTextActivityIntent(context,book,null,null);
+    }
+    public static void startNewTextActivityIntent(Context context, Book book, Node node){
+        startNewTextActivityIntent(context,book,null,node);
     }
 
-    private static void startNewTextActivityIntent(Context context, Book book, Text text){
+    private static void startNewTextActivityIntent(Context context, Book book, Text text, Node node){
         List<String> cats = Arrays.asList(book.categories);
         boolean isCtsText = false;
         final String[] CTS_TEXT_CATS = {};// {"Tanach","Talmud"};//
@@ -164,9 +167,15 @@ public abstract class SuperTextActivity extends Activity {
             intent = new Intent(context, SectionActivity.class);
         }
 
-        intent.putExtra("currBook", book);
+        if(node == null)
+            intent.putExtra("currBook", book);
         if(text != null)
             intent.putExtra("incomingLinkText",text);
+        if(node != null){
+            node.log();
+            Node.saveNode(node);
+            intent.putExtra("nodeHash",node.hashCode());
+        }
         //lang replaced by general MyApp.getMenuLang() function
 
 
