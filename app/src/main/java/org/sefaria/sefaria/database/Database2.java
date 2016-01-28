@@ -67,10 +67,10 @@ public class Database2 extends SQLiteOpenHelper{
         Log.d("Database2", path);
         Log.d("Database2", "_" + Environment.getExternalStorageDirectory().toString());
         Log.d("Database2", "_" + Environment.getDataDirectory().toString());
-        /*
+
         //old regular code
          path = "/data/data/" + MyApp.getAppPackageName() + "/";
-         */
+
 
         for (String dir: Util.getStorageDirectories()) {
             Log.d("databasepath",dir);

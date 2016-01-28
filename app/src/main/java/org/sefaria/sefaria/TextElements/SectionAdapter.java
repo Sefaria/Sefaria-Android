@@ -53,6 +53,8 @@ public class SectionAdapter extends ArrayAdapter<Text> {
         if (linkAlpha < MIN_ALPHA) linkAlpha = MIN_ALPHA;
         else if (linkAlpha > MAX_ALPHA) linkAlpha = MAX_ALPHA;
 
+        if (segment.getNumLinks() == 0) linkAlpha = 0;
+
         Util.Lang lang = context.getTextLang();
         boolean isCts = context.getIsCts();
         if (view == null || (view.findViewById(R.id.he) == null && lang == Util.Lang.BI)

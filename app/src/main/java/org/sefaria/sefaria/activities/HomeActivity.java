@@ -84,7 +84,6 @@ public class HomeActivity extends Activity {
             Downloader.updateLibrary(this);
         }
 
-        Log.d("databasePath", Environment.getExternalStorageDirectory().toString());
     }
 
     private void setLang(Util.Lang lang){
