@@ -20,6 +20,7 @@ import org.sefaria.sefaria.MenuElements.MenuGrid;
 import org.sefaria.sefaria.MenuElements.MenuNode;
 import org.sefaria.sefaria.MenuElements.MenuState;
 
+import android.util.Pair;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.GridLayout;
@@ -137,7 +138,8 @@ public class HomeActivity extends Activity {
                 } catch (Book.BookNotFoundException e) {
                     e.printStackTrace();
                 }
-                MenuDirectRef menuDirectRef = new MenuDirectRef(this, bookTitle, book.heTitle, null, book);
+                Pair<String,String> pair = Settings.getSavedBookTitle(bookTitle);
+                MenuDirectRef menuDirectRef = new MenuDirectRef(this, pair.first, pair.second, null, book);
                 recentTexts.add(menuDirectRef);
                 recentRoot.addView(menuDirectRef);
             }
