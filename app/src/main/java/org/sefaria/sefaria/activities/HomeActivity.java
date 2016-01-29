@@ -8,6 +8,7 @@ import android.os.Bundle;
 import org.sefaria.sefaria.MenuElements.MenuDirectRef;
 import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.database.API;
+import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.DailyLearning;
 import org.sefaria.sefaria.database.Downloader;
 import org.sefaria.sefaria.layouts.AutoResizeTextView;
@@ -21,6 +22,7 @@ import org.sefaria.sefaria.MenuElements.MenuState;
 
 import android.view.Gravity;
 import android.view.View;
+import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -72,7 +74,8 @@ public class HomeActivity extends Activity {
 
         TextView livingLibaryView = createTypeTitle("A Living Library of Jewish Texts");
         livingLibaryView.setTextSize(20);
-        livingLibaryView.setPadding(3,30,3,30);
+        int livingPadding = 60;
+        livingLibaryView.setPadding(3, livingPadding, 3, livingPadding);
         livingLibaryView.setTextColor(Color.parseColor("#000000"));
         homeRoot.addView(livingLibaryView);
 
@@ -81,16 +84,48 @@ public class HomeActivity extends Activity {
         homeRoot.addView(createTypeTitle("Browse Texts"));
         homeRoot.addView(menuGrid);
 
+
+        /*
+        GridLayout gridLayout = new GridLayout(this);
+        gridLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+        final int numberOfRecentText = 6;
+        final int numColumns = 2;
+        gridLayout.setRowCount((int) Math.ceil(numberOfRecentText / numColumns));
+        gridLayout.setColumnCount(numColumns);
+        */
+
+        //homeRoot.addView(gridLayout);
+        LinearLayout recentRoot = new LinearLayout(this);
+        recentRoot.setOrientation(LinearLayout.HORIZONTAL);
+        recentRoot.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+
+        List<String> recentBooks = Settings.getRecentTexts();
+        if(recentBooks.size()>0) {
+            homeRoot.addView(createTypeTitle("Recent Texts"));
+            homeRoot.addView(recentRoot);
+            for (String bookTitle : recentBooks) {
+                Book book = null;
+                try {
+                    book = new Book(bookTitle);
+                } catch (Book.BookNotFoundException e) {
+                    e.printStackTrace();
+                }
+                MenuDirectRef menuDirectRef = new MenuDirectRef(this, bookTitle, book.heTitle, null, book);
+                recentRoot.addView(menuDirectRef);
+            }
+        }
+
+
+
+
         LinearLayout calendarRoot = new LinearLayout(this);
         calendarRoot.setOrientation(LinearLayout.HORIZONTAL);
         calendarRoot.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
         homeRoot.addView(createTypeTitle("Calendar"));
         homeRoot.addView(calendarRoot);
-
         dailtylearnings = DailyLearning.getDailyLearnings(this);
         for(MenuDirectRef menuDirectRef: dailtylearnings)
             calendarRoot.addView(menuDirectRef);
-
 
 
         //toggle closeClick, depending on if menu is popup or not
@@ -129,8 +164,9 @@ public class HomeActivity extends Activity {
     private TextView createTypeTitle(String title){
         TextView textView = new TextView(this);
         textView.setText(title);
-        int padding = 3;
-        textView.setPadding(padding,20,padding,10);
+        final int paddingSide= 3;
+        final int paddingTop = 20;
+        textView.setPadding(paddingSide,paddingTop*2,paddingSide,paddingTop);
         textView.setTextSize(20);
         textView.setGravity(Gravity.CENTER);
 

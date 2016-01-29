@@ -74,7 +74,10 @@ public class MenuDirectRef extends LinearLayout{
     private Node getNode() {
         if(node == null){
             try {
-                node = Node.getNodeFromPathStr(book,nodePath);
+                if(nodePath == null)
+                    node = Settings.getSavedBook(book);
+                else
+                    node = Node.getNodeFromPathStr(book,nodePath);
             } catch (Exception e) {
                 try {
                     node = book.getTOCroots().get(0).getFirstDescendant();
