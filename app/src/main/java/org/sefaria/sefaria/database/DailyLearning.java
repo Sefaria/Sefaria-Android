@@ -88,14 +88,16 @@ public class DailyLearning {
                     MenuDirectRef parshaMenu = new MenuDirectRef(context,node.getParent().getTitle(Util.Lang.EN),node.getParent().getTitle(Util.Lang.HE),node.makePathDefiningNode(),book);
 
                     String haftaraBookName = haftara.replaceFirst("\\s[0-9]*.*$","");
-                    String haftaraNumber = haftara.replaceFirst("^[^0-9]*\\s","").replaceFirst("-[0-9]*.*$", "");
+                    String haftaraFullNumber = haftara.replaceFirst("^[^0-9]*\\s","");
+                    String haftaraNumber = haftaraFullNumber.replaceFirst("-[0-9]*.*$", "");
                     Book haftaraBook = new Book(haftaraBookName);
                     Node haftaraNode = haftaraBook.getTOCroots().get(0);
                     int haftraChap = Integer.valueOf(haftaraNumber.split(":")[0]);
                     haftaraNode = haftaraNode.getChildren().get(haftraChap-1);
                     //TODO maybe check  that it's correct incase we're missing a chap (but that's unlikely to happen in Tanach).
 
-                    MenuDirectRef haftaraMenu = new MenuDirectRef(context,"Haftorah","Hatorah(HE)",haftaraNode.makePathDefiningNode(),haftaraBook);
+                    //Haftara"
+                    MenuDirectRef haftaraMenu = new MenuDirectRef(context,haftaraBookName + " " + haftaraFullNumber,haftaraBook.heTitle + " " + haftaraFullNumber,haftaraNode.makePathDefiningNode(),haftaraBook);
                     return new MenuDirectRef [] {parshaMenu,haftaraMenu};
                 }
 

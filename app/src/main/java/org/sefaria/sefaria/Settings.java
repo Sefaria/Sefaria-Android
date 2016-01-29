@@ -9,6 +9,9 @@ import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Node;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class Settings {
 
@@ -108,6 +111,36 @@ public class Settings {
         editor.commit();
     }
 
+
+    static private SharedPreferences getRecentSettings(){
+        return MyApp.getContext().getSharedPreferences("org.sefaria.sefaria.recent_texts_settings", Context.MODE_PRIVATE);
+    }
+    /*
+    recent texts
+     */
+
+    public  static List<String> getRecentTexts(){
+        List<String> books = new ArrayList<>(MAX_RECENT_TEXTS);
+        SharedPreferences recentSettings = getRecentSettings();
+        for(int i=0;i<MAX_RECENT_TEXTS;i++){
+            String bookTitle = recentSettings.getString(""+i,"");
+            if(bookTitle == "")
+                return books;
+            books.add(bookTitle);
+        }
+        return books;
+    }
+
+    private  final  static int MAX_RECENT_TEXTS = 3;
+    public static void addRecentText(String bookTitle){
+        List<String> books = getRecentTexts();
+        books.add(0,bookTitle);
+        SharedPreferences.Editor editor = getRecentSettings().edit();
+        for(int i=0;i<books.size() && i<MAX_RECENT_TEXTS;i++){
+            editor.putString(""+i,books.get(i));
+        }
+        editor.commit();
+    }
 
 
 }
