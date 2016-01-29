@@ -166,8 +166,12 @@ public class Settings {
         List<String> books = getRecentTexts();
         books.add(0,bookTitle);
         SharedPreferences.Editor editor = getRecentSettings().edit();
-        for(int i=0;i<books.size() && i<MAX_RECENT_TEXTS;i++){
-            editor.putString(""+i,books.get(i));
+        int addTextBcRepeat = 0;
+        for(int i=0;i<books.size() && i<MAX_RECENT_TEXTS + addTextBcRepeat;i++){
+            if(books.get(i).equals(bookTitle)){
+                addTextBcRepeat = 1;
+            }else
+                editor.putString(""+i,books.get(i));
         }
         editor.commit();
     }
