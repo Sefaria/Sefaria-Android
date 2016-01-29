@@ -28,6 +28,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class HomeActivity extends Activity {
@@ -38,8 +39,8 @@ public class HomeActivity extends Activity {
     private MenuGrid menuGrid;
     private MenuState menuState;
     private boolean isPopup;
-    private CustomActionbar cab;
     private List<MenuDirectRef> dailtylearnings;
+    private List<MenuDirectRef> recentTexts;
 
     @Override
     protected void onCreate(Bundle in) {
@@ -72,19 +73,45 @@ public class HomeActivity extends Activity {
         homeRoot.setGravity(Gravity.CENTER);
         gridRoot.addView(homeRoot);
 
+        addHeader(homeRoot);
+        addMenuGrid(homeRoot);
+        addRecentTexts(homeRoot);
+        addCalendar(homeRoot);
+
+
+
+        //toggle closeClick, depending on if menu is popup or not
+        View.OnClickListener tempCloseClick = null;
+        //if (isPopup) tempCloseClick = closeClick; //Removing the close click for now to test without it
+
+
+        LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
+        CustomActionbar cab = new CustomActionbar(this,new MenuNode("Sefaria","ספאריה",null),
+                Settings.getSystemLang(),null,tempCloseClick,null,null,menuClick,null,-1);
+        abRoot.addView(cab);
+
+
+
+
+        if(API.useAPI()) {
+            Toast.makeText(this, "Starting Download", Toast.LENGTH_SHORT).show();
+            Downloader.updateLibrary(this);
+        }
+
+    }
+
+    private void addHeader(LinearLayout homeRoot){
+        //Living Library
         TextView livingLibaryView = createTypeTitle("A Living Library of Jewish Texts");
         livingLibaryView.setTextSize(20);
         int livingPadding = 60;
         livingLibaryView.setPadding(3, livingPadding, 3, livingPadding);
         livingLibaryView.setTextColor(Color.parseColor("#000000"));
         homeRoot.addView(livingLibaryView);
+    }
 
-        Util.Lang menuLang = Settings.getMenuLang();
-        menuGrid = new MenuGrid(this,NUM_COLUMNS, menuState,LIMIT_GRID_SIZE,menuLang);
-        homeRoot.addView(createTypeTitle("Browse Texts"));
-        homeRoot.addView(menuGrid);
-
-
+    private void addRecentTexts(LinearLayout homeRoot){
+        //Recent Texts
         /*
         GridLayout gridLayout = new GridLayout(this);
         gridLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
@@ -98,8 +125,8 @@ public class HomeActivity extends Activity {
         LinearLayout recentRoot = new LinearLayout(this);
         recentRoot.setOrientation(LinearLayout.HORIZONTAL);
         recentRoot.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
-
         List<String> recentBooks = Settings.getRecentTexts();
+        recentTexts = new ArrayList<>();
         if(recentBooks.size()>0) {
             homeRoot.addView(createTypeTitle("Recent Texts"));
             homeRoot.addView(recentRoot);
@@ -111,42 +138,18 @@ public class HomeActivity extends Activity {
                     e.printStackTrace();
                 }
                 MenuDirectRef menuDirectRef = new MenuDirectRef(this, bookTitle, book.heTitle, null, book);
+                recentTexts.add(menuDirectRef);
                 recentRoot.addView(menuDirectRef);
             }
         }
+    }
 
-
-
-
-        LinearLayout calendarRoot = new LinearLayout(this);
-        calendarRoot.setOrientation(LinearLayout.HORIZONTAL);
-        calendarRoot.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
-        homeRoot.addView(createTypeTitle("Calendar"));
-        homeRoot.addView(calendarRoot);
-        dailtylearnings = DailyLearning.getDailyLearnings(this);
-        for(MenuDirectRef menuDirectRef: dailtylearnings)
-            calendarRoot.addView(menuDirectRef);
-
-
-        //toggle closeClick, depending on if menu is popup or not
-        View.OnClickListener tempCloseClick = null;
-        //if (isPopup) tempCloseClick = closeClick; //Removing the close click for now to test without it
-
-        String title; //This is forcing the word Sefaria to be based on System lang and not based on menuLang (it can easily be changed by inserting each value into the new MenuNode
-
-        cab = new CustomActionbar(this,new MenuNode("Sefaria","ספאריה",null),
-                Settings.getSystemLang(),null,tempCloseClick,null,null,menuClick,null,-1);
-        LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
-        abRoot.addView(cab);
-
-
-
-
-        if(API.useAPI()) {
-            Toast.makeText(this, "starting download", Toast.LENGTH_SHORT).show();
-            Downloader.updateLibrary(this);
-        }
-
+    private void addMenuGrid(LinearLayout homeRoot){
+        //Menu grid
+        Util.Lang menuLang = Settings.getMenuLang();
+        menuGrid = new MenuGrid(this,NUM_COLUMNS, menuState,LIMIT_GRID_SIZE,menuLang);
+        homeRoot.addView(createTypeTitle("Browse Texts"));
+        homeRoot.addView(menuGrid);
     }
 
     private void setLang(Util.Lang lang){
@@ -159,6 +162,22 @@ public class HomeActivity extends Activity {
         for(MenuDirectRef menuDirectRef:dailtylearnings)
             menuDirectRef.setLang(lang);
 
+        for(MenuDirectRef menuDirectRef:recentTexts){
+            menuDirectRef.setLang(lang);
+        }
+
+    }
+
+    private void addCalendar(LinearLayout homeRoot){
+        //Calendar
+        LinearLayout calendarRoot = new LinearLayout(this);
+        calendarRoot.setOrientation(LinearLayout.HORIZONTAL);
+        calendarRoot.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+        homeRoot.addView(createTypeTitle("Calendar"));
+        homeRoot.addView(calendarRoot);
+        dailtylearnings = DailyLearning.getDailyLearnings(this);
+        for(MenuDirectRef menuDirectRef: dailtylearnings)
+            calendarRoot.addView(menuDirectRef);
     }
 
     private TextView createTypeTitle(String title){
