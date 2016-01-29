@@ -2,12 +2,21 @@ package org.sefaria.sefaria;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
 import android.util.Log;
+import android.util.Pair;
 
 import org.sefaria.sefaria.activities.SuperTextActivity;
 import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Node;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 
 public class Settings {
@@ -87,6 +96,10 @@ public class Settings {
         return MyApp.getContext().getSharedPreferences("org.sefaria.sefaria.book_save_settings", Context.MODE_PRIVATE);
     }
 
+    static private SharedPreferences getBookSavedTitleSettings(){
+        return MyApp.getContext().getSharedPreferences("org.sefaria.sefaria.book_save_title_settings", Context.MODE_PRIVATE);
+    }
+
     static public Node getSavedBook(Book book) throws API.APIException, Node.InvalidPathException {
         SharedPreferences bookSavedSettings = getBookSavedSettings();
         String stringThatRepsSavedSettings = bookSavedSettings.getString(book.title, "");
@@ -98,16 +111,66 @@ public class Settings {
         return node;
     }
 
+    static public Pair<String,String> getSavedBookTitle(String title){
+        SharedPreferences bookSavedTitleSettings= getBookSavedTitleSettings();
+        Pair<String,String> pair = new Pair<>(
+        bookSavedTitleSettings.getString(EN_TITLE + title,""),
+        bookSavedTitleSettings.getString(HE_TITLE + title,"")
+        );
+        return pair;
+    }
+
+    final static private String EN_TITLE = "EN___";
+    final static private String HE_TITLE = "HE___";
     static public void setSavedBook(Book book, Node node){
         //update the place that the book will go to when returning to book
         SharedPreferences bookSavedSettings = getBookSavedSettings();
         SharedPreferences.Editor editor = bookSavedSettings.edit();
         String strTreeAndNode = node.makePathDefiningNode();
         //"<en|he|bi>.<cts|sep>.<white|grey|black>.10px:"+ <rootNum>.<Childnum>.<until>.<leaf>.<verseNum>"
+
         editor.putString(book.title, strTreeAndNode);
         editor.commit();
+
+        //now for titles
+        editor = getBookSavedTitleSettings().edit();
+        editor.putString(EN_TITLE + book.title,node.getMenuBarTitle(book, Util.Lang.EN));
+        editor.putString(HE_TITLE + book.title,node.getMenuBarTitle(book, Util.Lang.HE));
+        editor.commit();
+
+
     }
 
+
+    static private SharedPreferences getRecentSettings(){
+        return MyApp.getContext().getSharedPreferences("org.sefaria.sefaria.recent_texts_settings", Context.MODE_PRIVATE);
+    }
+    /*
+    recent texts
+     */
+
+    public  static List<String> getRecentTexts(){
+        List<String> books = new ArrayList<>(MAX_RECENT_TEXTS);
+        SharedPreferences recentSettings = getRecentSettings();
+        for(int i=0;i<MAX_RECENT_TEXTS;i++){
+            String bookTitle = recentSettings.getString(""+i,"");
+            if(bookTitle == "")
+                return books;
+            books.add(bookTitle);
+        }
+        return books;
+    }
+
+    private  final  static int MAX_RECENT_TEXTS = 3;
+    public static void addRecentText(String bookTitle){
+        List<String> books = getRecentTexts();
+        books.add(0,bookTitle);
+        SharedPreferences.Editor editor = getRecentSettings().edit();
+        for(int i=0;i<books.size() && i<MAX_RECENT_TEXTS;i++){
+            editor.putString(""+i,books.get(i));
+        }
+        editor.commit();
+    }
 
 
 }

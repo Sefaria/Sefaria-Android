@@ -8,6 +8,7 @@ import android.os.Bundle;
 import org.sefaria.sefaria.MenuElements.MenuDirectRef;
 import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.database.API;
+import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.DailyLearning;
 import org.sefaria.sefaria.database.Downloader;
 import org.sefaria.sefaria.layouts.AutoResizeTextView;
@@ -19,13 +20,16 @@ import org.sefaria.sefaria.MenuElements.MenuGrid;
 import org.sefaria.sefaria.MenuElements.MenuNode;
 import org.sefaria.sefaria.MenuElements.MenuState;
 
+import android.util.Pair;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class HomeActivity extends Activity {
@@ -36,8 +40,8 @@ public class HomeActivity extends Activity {
     private MenuGrid menuGrid;
     private MenuState menuState;
     private boolean isPopup;
-    private CustomActionbar cab;
     private List<MenuDirectRef> dailtylearnings;
+    private List<MenuDirectRef> recentTexts;
 
     @Override
     protected void onCreate(Bundle in) {
@@ -70,26 +74,10 @@ public class HomeActivity extends Activity {
         homeRoot.setGravity(Gravity.CENTER);
         gridRoot.addView(homeRoot);
 
-        TextView livingLibaryView = createTypeTitle("A Living Library of Jewish Texts");
-        livingLibaryView.setTextSize(20);
-        livingLibaryView.setPadding(3,30,3,30);
-        livingLibaryView.setTextColor(Color.parseColor("#000000"));
-        homeRoot.addView(livingLibaryView);
-
-        Util.Lang menuLang = Settings.getMenuLang();
-        menuGrid = new MenuGrid(this,NUM_COLUMNS, menuState,LIMIT_GRID_SIZE,menuLang);
-        homeRoot.addView(createTypeTitle("Browse Texts"));
-        homeRoot.addView(menuGrid);
-
-        LinearLayout calendarRoot = new LinearLayout(this);
-        calendarRoot.setOrientation(LinearLayout.HORIZONTAL);
-        calendarRoot.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
-        homeRoot.addView(createTypeTitle("Calendar"));
-        homeRoot.addView(calendarRoot);
-
-        dailtylearnings = DailyLearning.getDailyLearnings(this);
-        for(MenuDirectRef menuDirectRef: dailtylearnings)
-            calendarRoot.addView(menuDirectRef);
+        addHeader(homeRoot);
+        addMenuGrid(homeRoot);
+        addRecentTexts(homeRoot);
+        addCalendar(homeRoot);
 
 
 
@@ -97,21 +85,73 @@ public class HomeActivity extends Activity {
         View.OnClickListener tempCloseClick = null;
         //if (isPopup) tempCloseClick = closeClick; //Removing the close click for now to test without it
 
-        String title; //This is forcing the word Sefaria to be based on System lang and not based on menuLang (it can easily be changed by inserting each value into the new MenuNode
 
-        cab = new CustomActionbar(this,new MenuNode("Sefaria","ספאריה",null),
-                Settings.getSystemLang(),null,tempCloseClick,null,null,menuClick,null,-1);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
+        CustomActionbar cab = new CustomActionbar(this,new MenuNode("Sefaria","ספאריה",null),
+                Settings.getSystemLang(),null,tempCloseClick,null,null,menuClick,null,-1);
         abRoot.addView(cab);
 
 
 
 
         if(API.useAPI()) {
-            Toast.makeText(this, "starting download", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Starting Download", Toast.LENGTH_SHORT).show();
             Downloader.updateLibrary(this);
         }
 
+    }
+
+    private void addHeader(LinearLayout homeRoot){
+        //Living Library
+        TextView livingLibaryView = createTypeTitle("A Living Library of Jewish Texts");
+        livingLibaryView.setTextSize(20);
+        int livingPadding = 60;
+        livingLibaryView.setPadding(3, livingPadding, 3, livingPadding);
+        livingLibaryView.setTextColor(Color.parseColor("#000000"));
+        homeRoot.addView(livingLibaryView);
+    }
+
+    private void addRecentTexts(LinearLayout homeRoot){
+        //Recent Texts
+        /*
+        GridLayout gridLayout = new GridLayout(this);
+        gridLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+        final int numberOfRecentText = 6;
+        final int numColumns = 2;
+        gridLayout.setRowCount((int) Math.ceil(numberOfRecentText / numColumns));
+        gridLayout.setColumnCount(numColumns);
+        */
+
+        //homeRoot.addView(gridLayout);
+        LinearLayout recentRoot = new LinearLayout(this);
+        recentRoot.setOrientation(LinearLayout.HORIZONTAL);
+        recentRoot.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+        List<String> recentBooks = Settings.getRecentTexts();
+        recentTexts = new ArrayList<>();
+        if(recentBooks.size()>0) {
+            homeRoot.addView(createTypeTitle("Recent Texts"));
+            homeRoot.addView(recentRoot);
+            for (String bookTitle : recentBooks) {
+                Book book = null;
+                try {
+                    book = new Book(bookTitle);
+                } catch (Book.BookNotFoundException e) {
+                    e.printStackTrace();
+                }
+                Pair<String,String> pair = Settings.getSavedBookTitle(bookTitle);
+                MenuDirectRef menuDirectRef = new MenuDirectRef(this, pair.first, pair.second, null, book);
+                recentTexts.add(menuDirectRef);
+                recentRoot.addView(menuDirectRef);
+            }
+        }
+    }
+
+    private void addMenuGrid(LinearLayout homeRoot){
+        //Menu grid
+        Util.Lang menuLang = Settings.getMenuLang();
+        menuGrid = new MenuGrid(this,NUM_COLUMNS, menuState,LIMIT_GRID_SIZE,menuLang);
+        homeRoot.addView(createTypeTitle("Browse Texts"));
+        homeRoot.addView(menuGrid);
     }
 
     private void setLang(Util.Lang lang){
@@ -124,13 +164,30 @@ public class HomeActivity extends Activity {
         for(MenuDirectRef menuDirectRef:dailtylearnings)
             menuDirectRef.setLang(lang);
 
+        for(MenuDirectRef menuDirectRef:recentTexts){
+            menuDirectRef.setLang(lang);
+        }
+
+    }
+
+    private void addCalendar(LinearLayout homeRoot){
+        //Calendar
+        LinearLayout calendarRoot = new LinearLayout(this);
+        calendarRoot.setOrientation(LinearLayout.HORIZONTAL);
+        calendarRoot.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+        homeRoot.addView(createTypeTitle("Calendar"));
+        homeRoot.addView(calendarRoot);
+        dailtylearnings = DailyLearning.getDailyLearnings(this);
+        for(MenuDirectRef menuDirectRef: dailtylearnings)
+            calendarRoot.addView(menuDirectRef);
     }
 
     private TextView createTypeTitle(String title){
         TextView textView = new TextView(this);
         textView.setText(title);
-        int padding = 3;
-        textView.setPadding(padding,20,padding,10);
+        final int paddingSide= 3;
+        final int paddingTop = 20;
+        textView.setPadding(paddingSide,paddingTop*2,paddingSide,paddingTop);
         textView.setTextSize(20);
         textView.setGravity(Gravity.CENTER);
 
