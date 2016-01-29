@@ -32,6 +32,7 @@ import org.sefaria.sefaria.MenuElements.MenuNode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by nss on 1/5/16.
@@ -140,14 +141,32 @@ public abstract class SuperTextActivity extends Activity {
         outState.putParcelable("currBook", book);
     }
 
+    /**
+     * used for pressing on link
+     * @param context
+     * @param text
+     */
     public static void startNewTextActivityIntent(Context context, Text text){
         Book book = new Book(text.bid);
         startNewTextActivityIntent(context, book, text, null);
     }
 
+    /**
+     * used for coming in from Menu
+     * @param context
+     * @param book
+     */
     public static void startNewTextActivityIntent(Context context, Book book){
+        Settings.addRecentText(book.title);
         startNewTextActivityIntent(context,book,null,null);
     }
+
+    /**
+     * used for coming in from TOC (I think) and from DirectRefMenu
+     * @param context
+     * @param book
+     * @param node
+     */
     public static void startNewTextActivityIntent(Context context, Book book, Node node){
         startNewTextActivityIntent(context,book,null,node);
     }
