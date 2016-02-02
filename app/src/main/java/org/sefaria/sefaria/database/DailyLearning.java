@@ -48,7 +48,7 @@ public class DailyLearning {
                         }
                     }
                     node = node.getFirstDescendant();
-                    MenuDirectRef menuDirectRef = new MenuDirectRef(context,todayDaf,book.heTitle + " " + node.getNiceGridNum(Util.Lang.HE),node.makePathDefiningNode(),book);
+                    MenuDirectRef menuDirectRef = new MenuDirectRef(context,todayDaf,book.heTitle + " " + node.getNiceGridNum(Util.Lang.HE),node.makePathDefiningNode(),book, "Daf Yomi");
                     return menuDirectRef;
                 }
 
@@ -84,7 +84,7 @@ public class DailyLearning {
                         }
                     }
                     node = node.getFirstDescendant();//go to first aliyah
-                    MenuDirectRef parshaMenu = new MenuDirectRef(context,node.getParent().getTitle(Util.Lang.EN),node.getParent().getTitle(Util.Lang.HE),node.makePathDefiningNode(),book);
+                    MenuDirectRef parshaMenu = new MenuDirectRef(context,node.getParent().getTitle(Util.Lang.EN),node.getParent().getTitle(Util.Lang.HE),node.makePathDefiningNode(),book, "Parsha");
 
                     String haftaraBookName = haftara.replaceFirst("\\s[0-9]*.*$","");
                     String haftaraFullNumber = haftara.replaceFirst("^[^0-9]*\\s","");
@@ -96,7 +96,7 @@ public class DailyLearning {
                     //TODO maybe check  that it's correct incase we're missing a chap (but that's unlikely to happen in Tanach).
 
                     //Haftara"
-                    MenuDirectRef haftaraMenu = new MenuDirectRef(context,haftaraBookName + " " + haftaraFullNumber,haftaraBook.heTitle + " " + haftaraFullNumber,haftaraNode.makePathDefiningNode(),haftaraBook);
+                    MenuDirectRef haftaraMenu = new MenuDirectRef(context,haftaraBookName + " " + haftaraFullNumber,haftaraBook.heTitle + " " + haftaraFullNumber,haftaraNode.makePathDefiningNode(),haftaraBook,"Haftara");
                     return new MenuDirectRef [] {parshaMenu,haftaraMenu};
                 }
 

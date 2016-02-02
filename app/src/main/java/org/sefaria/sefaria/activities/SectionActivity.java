@@ -251,7 +251,8 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
 
             Text sectionHeader = getSectionHeaderText(dir);
             if (dir == TextEnums.NEXT_SECTION) {
-                sectionAdapter.add(sectionHeader);
+                if(sectionHeader.enText.length() > 0 || sectionHeader.heText.length() > 0)
+                    sectionAdapter.add(sectionHeader);
                 sectionAdapter.addAll(textsList);
 
             } else if (dir == TextEnums.PREV_SECTION) {
