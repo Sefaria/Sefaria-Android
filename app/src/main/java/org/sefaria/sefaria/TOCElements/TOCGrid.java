@@ -155,7 +155,7 @@ public class TOCGrid extends LinearLayout {
             gl.setRotationY(180);
             gl.setRotationY(180);
         }
-        
+
         gl.setRowCount((int) Math.ceil(gridNodes.size()/numColumns));
         gl.setColumnCount((int) numColumns);
         for (int j = 0; j <  gridNodes.size();  j++) {

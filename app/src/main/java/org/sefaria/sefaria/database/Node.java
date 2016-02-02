@@ -176,6 +176,8 @@ public class Node implements  Parcelable{
      * @return
      */
     public String getNiceGridNum(Util.Lang lang){
+        if(gridNum == 0)
+            return "";
         return Header.getNiceGridNum(lang,gridNum,isDaf());
     }
 

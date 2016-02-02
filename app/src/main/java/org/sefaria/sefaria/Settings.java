@@ -160,7 +160,7 @@ public class Settings {
             return books;
         }
 
-        private final static int MAX_RECENT_TEXTS = 3;
+        private final static int MAX_RECENT_TEXTS = 6;
 
         public static void addRecentText(String bookTitle) {
             List<String> books = getRecentTexts();

@@ -30,7 +30,7 @@ public class MenuDirectRef extends LinearLayout{
     private TextView tv;
     private View colorBar;
 
-    public MenuDirectRef(Context context, String enTitle, String heTitle, String nodePath, Book book){
+    public MenuDirectRef(Context context, String enTitle, String heTitle, String nodePath, Book book, String colorWording){
         super(context);
         inflate(context, R.layout.button_home, this);
 
@@ -46,6 +46,12 @@ public class MenuDirectRef extends LinearLayout{
 
         this.tv = (TextView) this.findViewById(R.id.tv);
         this.colorBar = this.findViewById(R.id.color_bar);
+
+        /*
+        if(colorWording != null) {
+            colorBar.setText(colorWording);
+            colorBar.setTextSize(20);
+        }*/
 
         this.setClickable(true);
         setLang(Settings.getMenuLang());

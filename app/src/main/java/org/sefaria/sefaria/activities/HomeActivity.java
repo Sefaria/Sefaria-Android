@@ -78,6 +78,8 @@ public class HomeActivity extends Activity {
         addMenuGrid(homeRoot);
         addRecentTexts(homeRoot);
         addCalendar(homeRoot);
+        //just extra spacing for the bottom
+        homeRoot.addView(createTypeTitle(""));
 
 
 
@@ -113,25 +115,25 @@ public class HomeActivity extends Activity {
 
     private void addRecentTexts(LinearLayout homeRoot){
         //Recent Texts
-        /*
-        GridLayout gridLayout = new GridLayout(this);
-        gridLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
-        final int numberOfRecentText = 6;
-        final int numColumns = 2;
-        gridLayout.setRowCount((int) Math.ceil(numberOfRecentText / numColumns));
-        gridLayout.setColumnCount(numColumns);
-        */
-
-        //homeRoot.addView(gridLayout);
         LinearLayout recentRoot = new LinearLayout(this);
-        recentRoot.setOrientation(LinearLayout.HORIZONTAL);
+        recentRoot.setOrientation(LinearLayout.VERTICAL);
         recentRoot.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+        final int columNum = 3;
         List<String> recentBooks = Settings.RecentTexts.getRecentTexts();
         recentTexts = new ArrayList<>();
         if(recentBooks.size()>0) {
             homeRoot.addView(createTypeTitle("Recent Texts"));
             homeRoot.addView(recentRoot);
-            for (String bookTitle : recentBooks) {
+            LinearLayout recentRow = null;
+            for (int i=0;i<recentBooks.size();i++){
+                if(i%columNum  == 0){
+                    recentRow = new LinearLayout(this);
+                    recentRow.setOrientation(LinearLayout.HORIZONTAL);
+                    recentRow.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+                    recentRoot.addView(recentRow);
+                }
+
+                String bookTitle = recentBooks.get(i);
                 Book book = null;
                 try {
                     book = new Book(bookTitle);
@@ -139,11 +141,17 @@ public class HomeActivity extends Activity {
                     e.printStackTrace();
                 }
                 Pair<String,String> pair = Settings.getSavedBookTitle(bookTitle);
-                MenuDirectRef menuDirectRef = new MenuDirectRef(this, pair.first, pair.second, null, book);
+                MenuDirectRef menuDirectRef = new MenuDirectRef(this, pair.first, pair.second, null, book, null);
                 recentTexts.add(menuDirectRef);
-                recentRoot.addView(menuDirectRef);
+                recentRow.addView(menuDirectRef);
             }
         }
+        /*
+                    //add 'more' button in the row which was overflowed
+            if (Math.floor(HOME_MENU_OVERFLOW_NUM/numColumns) == i+1 && limitGridSize)
+                addMoreButton(ll);
+         */
+
     }
 
     private void addMenuGrid(LinearLayout homeRoot){
@@ -178,8 +186,9 @@ public class HomeActivity extends Activity {
         homeRoot.addView(createTypeTitle("Calendar"));
         homeRoot.addView(calendarRoot);
         dailtylearnings = DailyLearning.getDailyLearnings(this);
-        for(MenuDirectRef menuDirectRef: dailtylearnings)
+        for(MenuDirectRef menuDirectRef: dailtylearnings) {
             calendarRoot.addView(menuDirectRef);
+        }
     }
 
     private TextView createTypeTitle(String title){
