@@ -49,32 +49,13 @@ public class Database extends SQLiteOpenHelper{
     }
     static private boolean mkDirs(String path){
         File folder = new File(path);
-        return (folder.mkdirs() || folder.isDirectory());
+        return (folder.mkdirs() || true || folder.isDirectory());
     }
 
 
     static public String getInternalFolder(){
-<<<<<<< HEAD:app/src/main/java/org/sefaria/sefaria/database/Database2.java
-        String path = MyApp.getContext().getExternalFilesDir(null).toString() + "/";
-        //String path = Environment.getExternalStorageDirectory() + "/" +  MyApp.getAppPackageName() + "/data/";
-        Log.d("Database2", "State:" + Environment.getExternalStorageState());
-        mkDirs(path);
-        Log.d("Database2", path);
-        Log.d("Database2", "_" + Environment.getExternalStorageDirectory().toString());
-        Log.d("Database2", "_" + Environment.getDataDirectory().toString());
-
-        //old regular code
-         path = "/data/data/" + MyApp.getAppPackageName() + "/";
-
-
-        for (String dir: Util.getStorageDirectories()) {
-            Log.d("databasepath",dir);
-        }
-
-=======
         String path = getStorageDir(true);
         Log.d("databasepath", path + " makdirs:" + mkDirs(path));
->>>>>>> ae20f4f2b9d88b68c6fa55a615cc003647527b2c:app/src/main/java/org/sefaria/sefaria/database/Database.java
         return path;
     }
 
