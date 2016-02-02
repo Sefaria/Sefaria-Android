@@ -78,6 +78,7 @@ public abstract class SuperTextActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Log.d("SuperTextAct","onCreate");
         Intent intent = getIntent();
         Integer nodeHash;
         if (savedInstanceState != null) {//it's coming back after it cleared the activity from ram
@@ -229,23 +230,48 @@ public abstract class SuperTextActivity extends Activity {
 
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        Log.d("SuperTextAct", "onNewIntent");
+        comingFromTOC(intent);
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d("SuperTextAct", "onResume");
+    }
+
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.d("SuperTextAct", "onRestart");
+    }
+
+    private void comingFromTOC(Intent intent){
+        //lang = (Util.Lang) data.getSerializableExtra("lang"); TODO you might need to set lang here if user can change lang in TOC
+        int nodeHash = intent.getIntExtra("nodeHash", -1);
+        //TODO it might want to try to keep the old loaded sections and just go scroll to it if the new section is already loaded
+        firstLoadedNode = Node.getSavedNode(nodeHash);
+        lastLoadedNode = null;
+        init();
+    }
+
+    /*
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Log.d("SuperTextAct", "onActivityResult");
         if (data != null) {
-
             //you're returning to text page b/c chapter was clicked in toc
             if (requestCode == TOC_CHAPTER_CLICKED_CODE) {
-                //lang = (Util.Lang) data.getSerializableExtra("lang"); TODO you might need to set lang here if user can change lang in TOC
-                int nodeHash = data.getIntExtra("nodeHash", -1);
-                //TODO it might want to try to keep the old loaded sections and just go scroll to it if the new section is already loaded
-                firstLoadedNode = Node.getSavedNode(nodeHash);
-                lastLoadedNode = null;
-                init();
+                comingFromTOC(data);
             }
         }
     }
+    */
 
     @Override
     public void onBackPressed() {
