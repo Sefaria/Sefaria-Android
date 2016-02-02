@@ -2,17 +2,17 @@
 
 
 
-<org.sefaria.sefaria.layouts.AutoResizeTextView xmlns:android="http://schemas.android.com/apk/res/android"
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/tv"
     android:layout_width="match_parent"
-    android:layout_height="50dp"
+    android:layout_height="wrap_content"
     android:layout_weight="1"
     android:layout_margin="5dp"
     android:padding="12dp"
-    android:textSize="20sp"
+    android:textSize="15sp"
     android:background="@android:color/white"
     android:text="yoyo"
     android:textColor="@android:color/black"
     android:gravity="center"
     >
-</org.sefaria.sefaria.layouts.AutoResizeTextView>
+</TextView>

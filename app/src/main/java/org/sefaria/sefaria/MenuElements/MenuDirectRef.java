@@ -28,6 +28,7 @@ public class MenuDirectRef extends LinearLayout{
     private Book book;
 
     private TextView tv;
+    private View colorBar;
 
     public MenuDirectRef(Context context, String enTitle, String heTitle, String nodePath, Book book){
         super(context);
@@ -44,15 +45,15 @@ public class MenuDirectRef extends LinearLayout{
         this.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, 1f));
 
         this.tv = (TextView) this.findViewById(R.id.tv);
+        this.colorBar = this.findViewById(R.id.color_bar);
 
         this.setClickable(true);
         setLang(Settings.getMenuLang());
 
         int colorInt = book.getCatColor();
         if (colorInt != -1) {
-            this.tv.setBackgroundColor(getResources().getColor(colorInt));
-            this.tv.setTextColor(Color.parseColor("#FFFFFF"));
             this.tv.setAllCaps(true); //only when there's color? (ie home page)
+            this.colorBar.setBackgroundColor(getResources().getColor(colorInt));
         }
         setOnClickListener(clickListener);
     }

@@ -13,40 +13,36 @@
         android:layout_gravity="center"
         >
 
-        <ImageButton
+        <TextView
             android:id="@+id/en_btn"
-            android:layout_width="@dimen/text_menu_bar_box"
-            android:layout_height="@dimen/text_menu_bar_box"
-            android:text=""
-            android:gravity="center"
-            android:src="@drawable/en_icon2"
-            android:padding="20dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="@dimen/text_menu_button_height"
+            android:layout_gravity="center_vertical"
+            android:text="A"
             android:textSize="20dp"
-            android:layout_margin="@dimen/text_menu_bar_box_margin"
-            />
-
-
+            android:gravity="center"
+            android:background="@drawable/text_menu_button_background_left" />
         <TextView
             android:id="@+id/bi_btn"
-            android:layout_width="@dimen/text_menu_bar_box"
-            android:layout_height="@dimen/text_menu_bar_box"
-            android:text=""
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="@dimen/text_menu_button_height"
+            android:layout_gravity="center_vertical"
+            android:text="Aא"
+            android:textSize="20dp"
             android:gravity="center"
-            android:background="@drawable/bi_icon2"
-            android:padding="20dp"
-            android:layout_margin="@dimen/text_menu_bar_box_margin"
-            />
-
+            android:background="@drawable/text_menu_button_background_center" />
         <TextView
             android:id="@+id/he_btn"
-            android:layout_width="@dimen/text_menu_bar_box"
-            android:layout_height="@dimen/text_menu_bar_box"
-            android:text=""
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="@dimen/text_menu_button_height"
+            android:layout_gravity="center_vertical"
+            android:text="א"
+            android:textSize="20dp"
             android:gravity="center"
-            android:background="@drawable/he_icon2"
-            android:padding="20dp"
-            android:layout_margin="@dimen/text_menu_bar_box_margin"
-            />
+            android:background="@drawable/text_menu_button_background_right" />
 
 
     </LinearLayout>
@@ -56,33 +52,38 @@
         android:layout_width="match_parent"
         android:orientation="horizontal"
         android:layout_height="wrap_content"
-        android:layout_margin="0dp"
-        android:layout_gravity="center"
-        android:gravity="center"
+        android:layout_margin="10dp"
         >
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="@dimen/text_menu_button_height"
+            android:background="@drawable/text_menu_button_background_left"
+            android:padding="10dp">
+            <View
+                android:id="@+id/cts_btn"
+                android:layout_width="@dimen/text_menu_bar_box"
+                android:layout_height="@dimen/text_menu_bar_box"
+                android:background="@drawable/continuous"
+                android:layout_margin="@dimen/text_menu_bar_box_margin"
+                android:layout_gravity="center" />
+        </FrameLayout>
 
-        <TextView
-            android:id="@+id/cts_btn"
-            android:layout_width="@dimen/text_menu_bar_box"
-            android:layout_height="@dimen/text_menu_bar_box"
-            android:gravity="center"
-            android:background="@drawable/align14"
-            android:padding="0dp"
-
-            android:layout_margin="@dimen/text_menu_bar_box_margin"
-
-            />
-
-        <TextView
-            android:id="@+id/sep_btn"
-            android:layout_width="@dimen/text_menu_bar_box"
-            android:layout_height="@dimen/text_menu_bar_box"
-            android:gravity="center"
-            android:background="@drawable/right115"
-            android:padding="0dp"
-            android:layout_margin="@dimen/text_menu_bar_box_margin"
-
-            />
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="@dimen/text_menu_button_height"
+            android:background="@drawable/text_menu_button_background_right"
+            android:padding="10dp">
+            <View
+                android:id="@+id/sep_btn"
+                android:layout_width="@dimen/text_menu_bar_box"
+                android:layout_height="@dimen/text_menu_bar_box"
+                android:background="@drawable/breaks"
+                android:layout_margin="@dimen/text_menu_bar_box_margin"
+                android:layout_gravity="center"
+                />
+        </FrameLayout>
 
     </LinearLayout>
 
@@ -108,36 +109,38 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp">
 
-        <TextView
+        <View
             android:id="@+id/white_btn"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:text="white"
+            android:layout_height="@dimen/text_menu_button_height"
+            android:layout_gravity="center_vertical"
             android:gravity="center"
-            android:background="@color/text_white_background"
-            android:padding="20dp"
-            />
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="0dp"
+            android:background="@drawable/text_menu_button_background_white" />
 
-        <TextView
+        <View
             android:id="@+id/grey_btn"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:text="grey"
+            android:layout_height="@dimen/text_menu_button_height"
+            android:layout_gravity="center_vertical"
             android:gravity="center"
-            android:background="@color/menu_foreground"
-            android:padding="20dp"/>
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/text_menu_button_background_grey" />
 
-        <TextView
+        <View
             android:id="@+id/black_btn"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:text="black"
+            android:layout_height="@dimen/text_menu_button_height"
+            android:layout_gravity="center_vertical"
             android:gravity="center"
-            android:background="#444"
-            android:padding="20dp"/>
+            android:layout_marginRight="0dp"
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/text_menu_button_background_black" />
 
     </LinearLayout>
 
@@ -152,20 +155,22 @@
             android:id="@+id/small_btn"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:text="smlr"
+            android:layout_height="@dimen/text_menu_button_height"
+            android:layout_gravity="center_vertical"
+            android:text="Aa"
+            android:textSize="15dp"
             android:gravity="center"
-            android:background="@color/chasidut"
-            android:padding="20dp"/>
+            android:background="@drawable/text_menu_button_background_left" />
         <TextView
             android:id="@+id/big_btn"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:text="bgr"
+            android:layout_height="@dimen/text_menu_button_height"
+            android:layout_gravity="center_vertical"
+            android:text="Aa"
+            android:textSize="20dp"
             android:gravity="center"
-            android:background="@color/musar"
-            android:padding="20dp"/>
+            android:background="@drawable/text_menu_button_background_right" />
 
     </LinearLayout>
 
