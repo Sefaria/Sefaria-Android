@@ -45,6 +45,9 @@ public class CustomActionbar extends MenuElement {
         colorBar = findViewById(R.id.color_bar);
         titleTV = (TextView) findViewById(R.id.title);
 
+        TextView langBtn = (TextView) menuBtn.findViewById(R.id.lang_btn);
+        langBtn.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
+
 
         setLang(lang);
 
