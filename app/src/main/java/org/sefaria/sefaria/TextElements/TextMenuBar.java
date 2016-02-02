@@ -3,7 +3,9 @@ package org.sefaria.sefaria.TextElements;
 import android.content.Context;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 
 /**
@@ -11,15 +13,16 @@ import org.sefaria.sefaria.R;
  */
 public class TextMenuBar extends LinearLayout {
 
-    private View enBtn,heBtn,biBtn,ctsBtn,sepBtn,whiteBtn,greyBtn,blackBtn,smallBtn,bigBtn;
+    private TextView enBtn,heBtn,biBtn;
+    private View ctsBtn,sepBtn,whiteBtn,greyBtn,blackBtn,smallBtn,bigBtn;
 
     public TextMenuBar(Context context, OnClickListener btnListener) {
         super(context);
-        inflate(context, R.layout.text_menu_bar,this);
+        inflate(context, R.layout.text_menu_bar, this);
 
-        enBtn = findViewById(R.id.en_btn);
-        heBtn = findViewById(R.id.he_btn);
-        biBtn = findViewById(R.id.bi_btn);
+        enBtn = (TextView) findViewById(R.id.en_btn);
+        heBtn = (TextView) findViewById(R.id.he_btn);
+        biBtn = (TextView) findViewById(R.id.bi_btn);
         ctsBtn = findViewById(R.id.cts_btn);
         sepBtn = findViewById(R.id.sep_btn);
         whiteBtn = findViewById(R.id.white_btn);
@@ -38,6 +41,10 @@ public class TextMenuBar extends LinearLayout {
         blackBtn.setOnClickListener(btnListener);
         smallBtn.setOnClickListener(btnListener);
         bigBtn.setOnClickListener(btnListener);
+
+        enBtn.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
+        biBtn.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
+        heBtn.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
 
     }
 }

@@ -25,6 +25,7 @@
             android:layout_height="match_parent"
             android:paddingLeft="@dimen/custom_action_bar_button_to_side_padding"
             android:layout_margin="0dp"
+            android:background="?selectableItemBackgroundBorderless"
             >
             <ImageView
                 android:layout_width="@dimen/custom_action_bar_pic_size"
@@ -32,6 +33,7 @@
                 android:src="@drawable/go10"
                 android:scaleType="fitCenter"
                 android:layout_gravity="center"
+
                 />
         </FrameLayout>
 
@@ -41,6 +43,7 @@
             android:layout_height="match_parent"
             android:paddingLeft="@dimen/custom_action_bar_button_to_side_padding"
             android:layout_margin="0dp"
+            android:background="?selectableItemBackgroundBorderless"
             >
             <ImageView
                 android:layout_width="@dimen/custom_action_bar_pic_size"
@@ -75,11 +78,13 @@
             android:layout_height="match_parent"
             android:paddingLeft="@dimen/custom_action_bar_button_to_side_padding"
             android:layout_margin="0dp"
+            android:background="?selectableItemBackgroundBorderless"
             >
             <ImageView
                 android:layout_width="@dimen/custom_action_bar_pic_size"
                 android:layout_height="@dimen/custom_action_bar_pic_size"
-                android:src="@drawable/home168"
+                android:src="@drawable/book"
+                android:alpha="0.5"
                 android:scaleType="fitCenter"
                 android:layout_gravity="center"
                 />
@@ -111,17 +116,17 @@
             android:layout_width="@dimen/custom_action_bar_button_frame_width"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
-            android:paddingRight="@dimen/custom_action_bar_button_to_side_padding"
+            android:padding="@dimen/custom_action_bar_button_to_side_padding"
             android:layout_margin="0dp"
+            android:background="?selectableItemBackgroundBorderless"
             >
-            <ImageView
-                android:id="@+id/lang_btn_img"
-                android:layout_width="@dimen/custom_action_bar_pic_size"
-                android:layout_height="@dimen/custom_action_bar_pic_size"
-                android:src="@drawable/bi_icon"
-                android:scaleType="fitCenter"
-                android:layout_gravity="center"
-                />
+            <TextView
+                android:id="@+id/lang_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="Aא"
+                android:textSize="22dp" />
         </FrameLayout>
         <FrameLayout
             android:id="@+id/invisable_btn"
@@ -150,6 +155,7 @@
 
             android:ellipsize="none"
             android:singleLine="true"
+            android:background="@drawable/button_ripple_rect"
             />
         <!--
         <FrameLayout
