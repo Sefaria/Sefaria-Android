@@ -8,6 +8,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.sefaria.sefaria.R;
@@ -205,11 +206,20 @@ public class MenuGrid extends LinearLayout {
         }
         //MenuNode otherNode = new MenuNode("Other", "עוד", null, null);
         //if (sections.size() == 0) otherNode = null;
-        addSubsection(null, nonSections, limitGridSize);
 
+        //thing that has subsections first (like Shulchan Arukh b/c the rest of Halacha
         for (int i = 0; i < sections.size(); i++) {
             addSubsection(sections.get(i),subsections.get(i),false);
         }
+
+        if(sections.size()>0){
+            MenuSubtitle ms = new MenuSubtitle(context,new MenuNode("","",null), Util.Lang.EN);
+            menuElementList.add(ms);
+
+            gridRoot.addView(ms);
+        }
+
+        addSubsection(null, nonSections, limitGridSize);
 
         if (getLang() == Util.Lang.HE) {
             flippedForHe = true;

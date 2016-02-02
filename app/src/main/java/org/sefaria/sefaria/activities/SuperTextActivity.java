@@ -158,12 +158,12 @@ public abstract class SuperTextActivity extends Activity {
      * @param book
      */
     public static void startNewTextActivityIntent(Context context, Book book){
-        Settings.addRecentText(book.title);
+        Settings.RecentTexts.addRecentText(book.title);
         startNewTextActivityIntent(context,book,null,null);
     }
 
     /**
-     * used for coming in from TOC (I think) and from DirectRefMenu
+     * used for coming in from DirectRefMenu
      * @param context
      * @param book
      * @param node
