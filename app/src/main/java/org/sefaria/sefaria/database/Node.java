@@ -139,8 +139,11 @@ public class Node implements  Parcelable{
     private String getWholeTitleForOnly1Node(Util.Lang lang, boolean doSectionName){
         String str = "";
         if(isGridItem || nid == NID_CHAP_NO_NID) {
-            if(doSectionName)
-                str = getSectionName(lang) + " ";
+            if(doSectionName) {
+                String sectionName = getSectionName(lang);
+                if(sectionName.length()>0)
+                    str = sectionName + " ";
+            }
             str += getNiceGridNum(lang);
         }
         else
@@ -161,6 +164,8 @@ public class Node implements  Parcelable{
         }
         if(names.length > 0)
             name = names[names.length-1];
+        if(name == null)
+            name = "";
         return name;
     }
 
