@@ -564,7 +564,6 @@ public class Node implements  Parcelable{
      * @throws API.APIException
      */
     public List<Text> getTexts() throws API.APIException{
-        Log.e("Node", "getTexts() called... " + this);
         if(textList != null) {
             return textList;
         }
