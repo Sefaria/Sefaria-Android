@@ -62,7 +62,6 @@ public class DailyLearning {
 
     public static MenuDirectRef [] getParsha(Context context){
         String todaysDate = getLongDate(1);
-        Log.d("date",todaysDate);
         JSONArray weeks = null;
         try {
             weeks = Util.openJSONArrayFromAssets("calendar/parshiot.json");
@@ -84,7 +83,7 @@ public class DailyLearning {
                             break;
                         }
                     }
-                    node = node.getChildren().get(Calendar.getInstance().DAY_OF_WEEK -1);
+                    node = node.getFirstDescendant();//go to first aliyah
                     MenuDirectRef parshaMenu = new MenuDirectRef(context,node.getParent().getTitle(Util.Lang.EN),node.getParent().getTitle(Util.Lang.HE),node.makePathDefiningNode(),book);
 
                     String haftaraBookName = haftara.replaceFirst("\\s[0-9]*.*$","");
@@ -133,6 +132,8 @@ public class DailyLearning {
         else { // if (type==1)
             c.add(Calendar.DAY_OF_MONTH,(7-c.get(Calendar.DAY_OF_WEEK)));
             date =  c.get(Calendar.DAY_OF_MONTH) + "-" + months[c.get(Calendar.MONTH)] + "" + "-" + c.get(Calendar.YEAR);
+            if(c.get(Calendar.DAY_OF_MONTH) <10)
+                date = "0" + date;
         }
         return date;
     }
