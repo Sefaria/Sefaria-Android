@@ -97,12 +97,14 @@ public class TOCNumBox extends TextView implements TOCElement {
         Intent intent = new Intent(context, SectionActivity.class);
         intent.putExtra("nodeHash", node.hashCode());
         intent.putExtra("lang", lang);
+        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         //TODO determine if SectionActivity was already open... Make sure to be careful of multi-tab stuff
         //TODO I think it should also actually have the back button work for going to the TOC from textActivity
-        //context.startActivity(intent);
+        context.startActivity(intent);
 
-        Activity act = (Activity) context; //stupid casting
-        act.setResult(Activity.RESULT_OK,intent);
-        act.finish();//close the TOC
+
+        //Activity act = (Activity) context; //stupid casting
+        //act.setResult(Activity.RESULT_OK,intent);
+        //act.finish();//close the TOC
     }
 }

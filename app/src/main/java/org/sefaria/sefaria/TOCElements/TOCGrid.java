@@ -48,7 +48,7 @@ public class TOCGrid extends LinearLayout {
     private Util.Lang lang;
     private TOCTab lastActivatedTab;
 
-    private int numColumns = 7;
+    private double numColumns = 7.0;
 
     public TOCGrid(Context context,Book book, List<Node> tocRoots, boolean limitGridSize, Util.Lang lang, String pathDefiningNode) {
         super(context);
@@ -155,9 +155,9 @@ public class TOCGrid extends LinearLayout {
             gl.setRotationY(180);
             gl.setRotationY(180);
         }
-
+        
         gl.setRowCount((int) Math.ceil(gridNodes.size()/numColumns));
-        gl.setColumnCount(numColumns);
+        gl.setColumnCount((int) numColumns);
         for (int j = 0; j <  gridNodes.size();  j++) {
             //This operation of creating a new view lots of times (for example, in Araab Turim) is causing it to go really slow
             TOCNumBox tocNumBox = new TOCNumBox(context,gridNodes.get(j), lang);

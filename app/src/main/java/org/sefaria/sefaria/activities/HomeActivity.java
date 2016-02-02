@@ -126,7 +126,7 @@ public class HomeActivity extends Activity {
         LinearLayout recentRoot = new LinearLayout(this);
         recentRoot.setOrientation(LinearLayout.HORIZONTAL);
         recentRoot.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
-        List<String> recentBooks = Settings.getRecentTexts();
+        List<String> recentBooks = Settings.RecentTexts.getRecentTexts();
         recentTexts = new ArrayList<>();
         if(recentBooks.size()>0) {
             homeRoot.addView(createTypeTitle("Recent Texts"));

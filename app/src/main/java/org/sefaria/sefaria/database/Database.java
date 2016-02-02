@@ -49,7 +49,7 @@ public class Database extends SQLiteOpenHelper{
     }
     static private boolean mkDirs(String path){
         File folder = new File(path);
-        return (folder.mkdirs() || true || folder.isDirectory());
+        return (folder.mkdirs() ||  folder.isDirectory());
     }
 
 

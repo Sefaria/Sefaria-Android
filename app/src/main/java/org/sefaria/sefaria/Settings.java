@@ -142,39 +142,39 @@ public class Settings {
     }
 
 
-    static private SharedPreferences getRecentSettings(){
-        return MyApp.getContext().getSharedPreferences("org.sefaria.sefaria.recent_texts_settings", Context.MODE_PRIVATE);
-    }
-    /*
-    recent texts
-     */
 
-    public  static List<String> getRecentTexts(){
-        List<String> books = new ArrayList<>(MAX_RECENT_TEXTS);
-        SharedPreferences recentSettings = getRecentSettings();
-        for(int i=0;i<MAX_RECENT_TEXTS;i++){
-            String bookTitle = recentSettings.getString(""+i,"");
-            if(bookTitle == "")
-                return books;
-            books.add(bookTitle);
+    public static class RecentTexts {
+        static private SharedPreferences getRecentSettings() {
+            return MyApp.getContext().getSharedPreferences("org.sefaria.sefaria.recent_texts_settings", Context.MODE_PRIVATE);
         }
-        return books;
-    }
 
-    private  final  static int MAX_RECENT_TEXTS = 3;
-    public static void addRecentText(String bookTitle){
-        List<String> books = getRecentTexts();
-        books.add(0,bookTitle);
-        SharedPreferences.Editor editor = getRecentSettings().edit();
-        int addTextBcRepeat = 0;
-        for(int i=0;i<books.size() && i<MAX_RECENT_TEXTS + addTextBcRepeat;i++){
-            if(books.get(i).equals(bookTitle)){
-                addTextBcRepeat = 1;
-            }else
-                editor.putString(""+i,books.get(i));
+        public static List<String> getRecentTexts() {
+            List<String> books = new ArrayList<>(MAX_RECENT_TEXTS);
+            SharedPreferences recentSettings = getRecentSettings();
+            for (int i = 0; i < MAX_RECENT_TEXTS; i++) {
+                String bookTitle = recentSettings.getString("" + i, "");
+                if (bookTitle == "")
+                    return books;
+                books.add(bookTitle);
+            }
+            return books;
         }
-        editor.commit();
-    }
 
+        private final static int MAX_RECENT_TEXTS = 3;
+
+        public static void addRecentText(String bookTitle) {
+            List<String> books = getRecentTexts();
+            for (int i = 0; i <books.size() && i<MAX_RECENT_TEXTS ; i++) {
+                if(books.get(i).equals(bookTitle))
+                    books.remove(i);
+            }
+            books.add(0, bookTitle);
+            SharedPreferences.Editor editor = getRecentSettings().edit();
+            for (int i = 0; i < books.size() && i < MAX_RECENT_TEXTS; i++) {
+                editor.putString("" + i, books.get(i));
+            }
+            editor.commit();
+        }
+    }
 
 }
