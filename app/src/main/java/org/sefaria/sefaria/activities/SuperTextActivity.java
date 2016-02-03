@@ -56,6 +56,7 @@ public abstract class SuperTextActivity extends Activity {
 
     protected Node firstLoadedNode;
     protected Node currNode; // Node which you're currently up to in scrollView
+    protected Text currText;
     protected Node lastLoadedNode;
     protected Text openToText;
 
@@ -99,7 +100,9 @@ public abstract class SuperTextActivity extends Activity {
                     }
                 }else {
                     try {
-                        firstLoadedNode = Settings.getSavedBook(book);
+                        Settings.BookSettings bookSettings = Settings.BookSettings.getSavedBook(book);
+                        openToText = new Text(bookSettings.tid);
+                        firstLoadedNode = bookSettings.node;
                     } catch (Node.InvalidPathException e) {//couldn't get saved Node data (most likely you were never at the book, or possibly an error happened).
                         Log.e("SuperTextAct", "Problem gettting saved book data");
                         List<Node> TOCroots = book.getTOCroots();
@@ -139,6 +142,7 @@ public abstract class SuperTextActivity extends Activity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+        Settings.BookSettings.setSavedBook(book, currNode, currText, textLang);
         outState.putParcelable("currBook", book);
     }
 
@@ -168,11 +172,8 @@ public abstract class SuperTextActivity extends Activity {
      * @param book
      * @param node
      */
-    public static void startNewTextActivityIntent(Context context, Book book, Node node){
-        startNewTextActivityIntent(context,book,null,node);
-    }
 
-    private static void startNewTextActivityIntent(Context context, Book book, Text text, Node node){
+    public static void startNewTextActivityIntent(Context context, Book book, Text text, Node node){
         List<String> cats = Arrays.asList(book.categories);
         boolean isCtsText = false;
         final String[] CTS_TEXT_CATS = {};// {"Tanach","Talmud"};//
@@ -237,19 +238,6 @@ public abstract class SuperTextActivity extends Activity {
         comingFromTOC(intent);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.d("SuperTextAct", "onResume");
-    }
-
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        Log.d("SuperTextAct", "onRestart");
-    }
-
     private void comingFromTOC(Intent intent){
         //lang = (Util.Lang) data.getSerializableExtra("lang"); TODO you might need to set lang here if user can change lang in TOC
         int nodeHash = intent.getIntExtra("nodeHash", -1);
@@ -275,6 +263,7 @@ public abstract class SuperTextActivity extends Activity {
 
     @Override
     public void onBackPressed() {
+        Settings.BookSettings.setSavedBook(book, currNode, currText, textLang);
         if (linkFragment != null && linkFragment.getIsOpen()) {
             if (linkFragment.getCurrState() == LinkFragment.State.MAIN) {
                 View linkRoot = findViewById(R.id.linkRoot);
@@ -419,18 +408,22 @@ public abstract class SuperTextActivity extends Activity {
     protected abstract void jumpToText(Text text);
 
     protected void setCurrNode(Node node){
-        if(node == null) return;
-        if(currNode == node) return;
-
-        currNode = node;
-        customActionbar.setTitleText(currNode.getMenuBarTitle(book,menuLang), menuLang, true, true);
-        Settings.setSavedBook(book,currNode);
-
-
+        setCurrNode(node,null);
     }
     protected  void setCurrNode(Text text) {
         Node node = text.parentNode;
-        setCurrNode(node);
+        setCurrNode(node,text);
+    }
+
+    private void setCurrNode(Node node, Text text){
+        //Log.d("setCurrNode", "stated");
+        currText = text;
+        if(node == null) return;
+        if(currNode != node){
+            currNode = node;
+            customActionbar.setTitleText(currNode.getMenuBarTitle(book, menuLang), menuLang, true, true);
+
+        }
     }
 
 

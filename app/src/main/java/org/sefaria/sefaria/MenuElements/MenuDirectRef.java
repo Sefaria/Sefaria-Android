@@ -16,6 +16,7 @@ import org.sefaria.sefaria.activities.SuperTextActivity;
 import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Node;
+import org.sefaria.sefaria.database.Text;
 
 
 public class MenuDirectRef extends LinearLayout{
@@ -36,8 +37,14 @@ public class MenuDirectRef extends LinearLayout{
 
 
         this.context = context;
-        this.enTitle = enTitle;
-        this.heTitle = heTitle;
+        if(enTitle.length()>0)
+            this.enTitle = enTitle;
+        else
+            this.enTitle = book.title;
+        if(heTitle.length() >0)
+            this.heTitle = heTitle;
+        else
+            this.heTitle = book.heTitle;
         this.nodePath = nodePath;
         this.book = book;
 
@@ -58,7 +65,6 @@ public class MenuDirectRef extends LinearLayout{
 
         int colorInt = book.getCatColor();
         if (colorInt != -1) {
-            this.tv.setAllCaps(true); //only when there's color? (ie home page)
             this.colorBar.setBackgroundColor(getResources().getColor(colorInt));
         }
         setOnClickListener(clickListener);
@@ -81,9 +87,10 @@ public class MenuDirectRef extends LinearLayout{
     private Node getNode() {
         if(node == null){
             try {
-                if(nodePath == null)
-                    node = Settings.getSavedBook(book);
-                else
+                if(nodePath == null) {
+                    Settings.BookSettings bookSettings = Settings.BookSettings.getSavedBook(book);
+                    node = bookSettings.node;
+                }else
                     node = Node.getNodeFromPathStr(book,nodePath);
             } catch (Exception e) {
                 try {
@@ -99,7 +106,15 @@ public class MenuDirectRef extends LinearLayout{
     OnClickListener clickListener = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            SuperTextActivity.startNewTextActivityIntent(context,book,getNode());
+            Text text = null;
+            try {
+                text = new Text(Settings.BookSettings.getSavedBook(book).tid);
+            } catch (API.APIException e) {
+                e.printStackTrace();
+            } catch (Node.InvalidPathException e) {
+                e.printStackTrace();
+            }
+            SuperTextActivity.startNewTextActivityIntent(context,book,text,getNode());
         }
     };
 }

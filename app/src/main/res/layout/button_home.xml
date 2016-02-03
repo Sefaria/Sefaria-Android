@@ -17,6 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="50dp"
+        android:maxHeight="65dp"
         android:padding="3dp"
         android:textSize="15sp"
         android:text="yoyo"

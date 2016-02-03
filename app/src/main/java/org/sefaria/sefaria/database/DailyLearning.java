@@ -8,6 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.sefaria.sefaria.MenuElements.MenuDirectRef;
+import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
 
 import java.io.IOException;
@@ -96,7 +97,7 @@ public class DailyLearning {
                     //TODO maybe check  that it's correct incase we're missing a chap (but that's unlikely to happen in Tanach).
 
                     //Haftara"
-                    MenuDirectRef haftaraMenu = new MenuDirectRef(context,haftaraBookName + " " + haftaraFullNumber,haftaraBook.heTitle + " " + haftaraFullNumber,haftaraNode.makePathDefiningNode(),haftaraBook,"Haftara");
+                    MenuDirectRef haftaraMenu = new MenuDirectRef(context, context.getString(R.string.haftara) + ": " + haftaraBookName + " " + haftaraFullNumber,context.getString(R.string.haftara) + ": " + haftaraBook.heTitle + " " + haftaraFullNumber,haftaraNode.makePathDefiningNode(),haftaraBook,"");
                     return new MenuDirectRef [] {parshaMenu,haftaraMenu};
                 }
 
