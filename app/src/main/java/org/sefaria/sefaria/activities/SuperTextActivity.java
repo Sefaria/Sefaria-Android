@@ -50,6 +50,7 @@ public abstract class SuperTextActivity extends Activity {
     protected LinearLayout textMenuRoot;
 
     protected ScrollViewExt textScrollView;
+    protected TextMenuBar textMenuBar;
     protected Book book;
     protected List<PerekTextView> perekTextViews;
     protected List<TextChapterHeader> textChapterHeaders;
@@ -63,6 +64,7 @@ public abstract class SuperTextActivity extends Activity {
     protected Util.Lang menuLang;
     protected Util.Lang textLang;
     protected boolean isCts;
+    protected Util.TextBG textBG;
     protected float textSize;
     protected boolean isLoadingSection; //to make sure multiple sections don't get loaded at once
     protected boolean isLoadingInit; //true while init is loading. previous loads should not take place until after isLoadingInit is false
@@ -130,6 +132,7 @@ public abstract class SuperTextActivity extends Activity {
         }
         //These vars are specifically initialized here and not in init() so that they don't get overidden when coming from TOC
         //defaults
+        textBG = Util.TextBG.WHITE;
         isCts = false;
         textLang = Settings.getDefaultTextLang();
         textSize = getResources().getDimension(R.dimen.default_text_font_size);
@@ -163,7 +166,7 @@ public abstract class SuperTextActivity extends Activity {
      */
     public static void startNewTextActivityIntent(Context context, Book book){
         Settings.RecentTexts.addRecentText(book.title);
-        startNewTextActivityIntent(context,book,null,null);
+        startNewTextActivityIntent(context, book, null, null);
     }
 
     /**
@@ -215,6 +218,10 @@ public abstract class SuperTextActivity extends Activity {
 
         isTextMenuVisible = false;
         textMenuRoot = (LinearLayout) findViewById(R.id.textMenuRoot);
+        textMenuBar = new TextMenuBar(SuperTextActivity.this,textMenuBtnClick);
+        textMenuBar.setState(textLang,isCts,textBG);
+        textMenuRoot.addView(textMenuBar);
+        textMenuRoot.setVisibility(View.GONE);
 
         textScrollView = (ScrollViewExt) findViewById(R.id.textScrollView);
 
@@ -290,10 +297,9 @@ public abstract class SuperTextActivity extends Activity {
 
     protected void toggleTextMenu() {
         if (isTextMenuVisible) {
-            textMenuRoot.removeAllViews();
+            AnimateLinkTMBClose(textMenuRoot);
         } else {
-            TextMenuBar tmb = new TextMenuBar(SuperTextActivity.this,textMenuBtnClick);
-            textMenuRoot.addView(tmb);
+            AnimateLinkTMBOpen(textMenuRoot);
         }
         isTextMenuVisible = !isTextMenuVisible;
     }
@@ -383,7 +389,7 @@ public abstract class SuperTextActivity extends Activity {
                     }
                     break;
             }
-
+            textMenuBar.setState(textLang,isCts,textBG);
             if (!updatedTextSize) toggleTextMenu();
         }
     };
@@ -412,7 +418,7 @@ public abstract class SuperTextActivity extends Activity {
     }
     protected  void setCurrNode(Text text) {
         Node node = text.parentNode;
-        setCurrNode(node,text);
+        setCurrNode(node, text);
     }
 
     private void setCurrNode(Node node, Text text){
@@ -437,12 +443,10 @@ public abstract class SuperTextActivity extends Activity {
                     newNode = lastLoadedNode.getNextTextNode();
                 }
                 lastLoadedNode = newNode;
-            }
-
-            else if (dir == TextEnums.PREV_SECTION) {
-                if(firstLoadedNode == null){
+            } else if (dir == TextEnums.PREV_SECTION) {
+                if (firstLoadedNode == null) {
                     newNode = lastLoadedNode;
-                }else{
+                } else {
                     newNode = firstLoadedNode.getPrevTextNode();
                 }
                 firstLoadedNode = newNode;
@@ -464,6 +468,64 @@ public abstract class SuperTextActivity extends Activity {
 
     }
 
+    //-----
+    //TEXT MENU BAR
+    //-----
+    protected void AnimateLinkTMBOpen(final View v) {
+        Animation slide = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0.0f,
+                Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF,
+                -1.0f, Animation.RELATIVE_TO_SELF, 0.0f);
+
+        slide.setDuration(LINK_FRAG_ANIM_TIME);
+        slide.setFillAfter(true);
+        slide.setFillEnabled(true);
+        v.startAnimation(slide);
+
+        slide.setAnimationListener(new Animation.AnimationListener() {
+
+            @Override
+            public void onAnimationStart(Animation animation) {v.setVisibility(View.VISIBLE);}
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {}
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                v.clearAnimation();
+                onFinishLinkFragOpen();
+            }
+
+        });
+
+    }
+
+    protected void AnimateLinkTMBClose(final View v) {
+        Animation slide = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0.0f,
+                Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF,
+                0.0f, Animation.RELATIVE_TO_SELF, -1.0f);
+
+        slide.setDuration(LINK_FRAG_ANIM_TIME);
+        slide.setFillAfter(true);
+        slide.setFillEnabled(true);
+        v.startAnimation(slide);
+
+        slide.setAnimationListener(new Animation.AnimationListener() {
+
+            @Override
+            public void onAnimationStart(Animation animation) {}
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {}
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                v.clearAnimation();
+                v.setVisibility(View.GONE);
+            }
+
+        });
+
+    }
 
 
     //-----

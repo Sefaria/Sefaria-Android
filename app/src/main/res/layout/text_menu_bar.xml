@@ -59,13 +59,13 @@
         android:layout_margin="10dp"
         >
         <FrameLayout
+            android:id="@+id/cts_btn"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="@dimen/text_menu_button_height"
             android:background="@drawable/text_menu_button_background_left"
             android:padding="10dp">
             <View
-                android:id="@+id/cts_btn"
                 android:layout_width="@dimen/text_menu_bar_box"
                 android:layout_height="@dimen/text_menu_bar_box"
                 android:background="@drawable/continuous"
@@ -74,13 +74,13 @@
         </FrameLayout>
 
         <FrameLayout
+            android:id="@+id/sep_btn"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="@dimen/text_menu_button_height"
             android:background="@drawable/text_menu_button_background_right"
             android:padding="10dp">
             <View
-                android:id="@+id/sep_btn"
                 android:layout_width="@dimen/text_menu_bar_box"
                 android:layout_height="@dimen/text_menu_bar_box"
                 android:background="@drawable/breaks"
