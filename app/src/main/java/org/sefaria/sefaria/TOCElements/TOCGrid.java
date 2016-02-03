@@ -209,28 +209,35 @@ public class TOCGrid extends LinearLayout {
             displayTree(root, gridRoot, false);
         }else{
             List<Book> commentaries = book.getAllCommentaries();
-            displayCommenaries(commentaries,gridRoot);
+            displayCommentaries(commentaries,gridRoot);
 
         }
     }
 
-    private void displayCommenaries(List<Book> commentaries, LinearLayout linearLayout){
-        LinearLayout rowLinearLayout = new LinearLayout(context);
+    private void displayCommentaries(List<Book> commentaries, LinearLayout linearLayout){
+        LinearLayout rowLinearLayout = null;
+        final int columnNum = 2;
         for(int i =0;i<commentaries.size();i++){
-            if((i%2) == 0){
+            if((i%columnNum) == 0){
                 rowLinearLayout = new LinearLayout(context);
                 rowLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
                 if(lang == Util.Lang.HE)
                     rowLinearLayout.setGravity(Gravity.RIGHT);
                 else
                     rowLinearLayout.setGravity(Gravity.LEFT);
-                rowLinearLayout.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+                //TODO make it such that the hebrew goes in the right side first
+                rowLinearLayout.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
                 linearLayout.addView(rowLinearLayout);
             }
             TOCCommentary tocCommentary = new TOCCommentary(context,commentaries.get(i),book,lang);
             rowLinearLayout.addView(tocCommentary);
-
         }
+        if(commentaries.size() %columnNum != 0){ //odd number of
+            TOCCommentary tocCommentary = new TOCCommentary(context,null,null,Util.Lang.EN);
+            tocCommentary.setVisibility(INVISIBLE);
+            rowLinearLayout.addView(tocCommentary);
+        }
+
         return;
     }
 

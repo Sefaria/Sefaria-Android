@@ -9,7 +9,7 @@
     android:layout_centerHorizontal="true"
     android:layout_centerVertical="true"
     android:textColor="@android:color/black"
-    android:background="@color/text_white_background"
+    android:background="@drawable/button_ripple_rect_white"
     android:layout_width="match_parent"
     android:layout_height="@dimen/toc_numbox"
     android:layout_weight="1"
