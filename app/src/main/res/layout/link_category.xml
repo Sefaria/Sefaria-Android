@@ -22,7 +22,7 @@
         android:padding="12dp"
         android:textSize="15sp"
         android:textAllCaps="false"
-        android:layout_margin="1dp"
-        android:background="@android:color/white"
-        android:gravity="center"/>
+        android:gravity="center"
+        android:background="@drawable/button_ripple_rect_white"
+        android:layout_margin="3dp"/>
 </LinearLayout>

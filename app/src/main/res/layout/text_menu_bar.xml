@@ -166,7 +166,7 @@
             android:textSize="15dp"
             android:textColor="@android:color/black"
             android:gravity="center"
-            android:background="@drawable/text_menu_button_background_left" />
+            android:background="@drawable/text_menu_button_background_left_ripple" />
         <TextView
             android:id="@+id/big_btn"
             android:layout_width="0dp"
@@ -177,7 +177,7 @@
             android:textSize="20dp"
             android:textColor="@android:color/black"
             android:gravity="center"
-            android:background="@drawable/text_menu_button_background_right" />
+            android:background="@drawable/text_menu_button_background_right_ripple" />
 
     </LinearLayout>
 

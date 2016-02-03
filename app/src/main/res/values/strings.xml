@@ -9,6 +9,7 @@
     <string name="title_activity_section">SectionActivity</string>
     <string name="title_activity_about">AboutActivity</string>
     <string name="no_links">No connections available. Use the ● next to each verse to check if that verse has connections. </string>
+    <string name="no_links_filtered">No connections available </string>
 
     <string name="action_bookmarks">Bookmarks</string>
     <string name="activity_filterlinks">Filter Sources</string>

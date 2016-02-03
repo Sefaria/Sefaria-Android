@@ -66,15 +66,15 @@ public class TextMenuBar extends LinearLayout {
         if (currLangViewId == R.id.en_btn)
            enBtn.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.text_menu_button_background_left_clicked));
         else
-            enBtn.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.text_menu_button_background_left));
+            enBtn.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.text_menu_button_background_left_ripple));
         if (currLangViewId == R.id.bi_btn)
             biBtn.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.text_menu_button_background_center_clicked));
         else
-            biBtn.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.text_menu_button_background_center));
+            biBtn.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.text_menu_button_background_center_ripple));
         if (currLangViewId == R.id.he_btn)
             heBtn.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.text_menu_button_background_right_clicked));
         else
-            heBtn.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.text_menu_button_background_right));
+            heBtn.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.text_menu_button_background_right_ripple));
 
 
         //LINE
@@ -85,7 +85,7 @@ public class TextMenuBar extends LinearLayout {
         if (currLineViewId == R.id.cts_btn)
             ctsBtn.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.text_menu_button_background_left_clicked));
         else
-            ctsBtn.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.text_menu_button_background_left));
+            ctsBtn.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.text_menu_button_background_left_ripple));
         if (currLineViewId == R.id.sep_btn)
             sepBtn.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.text_menu_button_background_right_clicked));
         else
