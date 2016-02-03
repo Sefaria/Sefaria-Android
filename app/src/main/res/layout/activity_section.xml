@@ -11,7 +11,8 @@
         android:orientation="horizontal"
         android:layout_alignParentTop="true"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"></LinearLayout>
+        android:layout_height="wrap_content"
+        android:translationZ="40dp"></LinearLayout>
 
     <!--funny story actually...I was on a reallly long flight from Israel and wanted to align the top of s/t to the bottom
     of s/t else...this is what I came up with -->
@@ -25,7 +26,7 @@
         android:orientation="horizontal"
         android:layout_alignTop="@id/useless"
         android:layout_width="match_parent"
-        android:translationZ="100dp"
+        android:translationZ="20dp"
         android:background="@color/menu_background"
         android:layout_height="wrap_content"></LinearLayout>
     <org.sefaria.sefaria.layouts.ListViewExt

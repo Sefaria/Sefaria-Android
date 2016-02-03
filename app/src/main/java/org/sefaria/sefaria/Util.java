@@ -38,6 +38,10 @@ public class Util {
         HE,BI,EN
     }
 
+    public enum TextBG {
+        WHITE, GREY, BLACK
+    }
+
 
     public static final String VERSE_BULLET = "\u25CF";
     public static final String LINK_CAT_VERICAL_LINE = "\u007C";
