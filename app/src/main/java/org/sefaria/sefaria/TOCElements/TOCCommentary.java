@@ -26,14 +26,16 @@ public class TOCCommentary extends LinearLayout implements TOCElement {
         super(context);
         Log.d("TOCCommentary", "TOCCommentary starting");
         inflate(context, R.layout.toc_commentary, this);
-        this.setOrientation(VERTICAL);
-        this.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-
+        this.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, 1f));
+        final int padding = 2;
+        this.setPadding(padding,padding,padding,padding);
 
         this.mainBook = mainBook;
         this.lang = lang;
         this.commentary = commentary;
         this.context = context;
+        if(commentary == null && mainBook == null) //it's only a dummy Commentary to take up space
+            return;
         init(lang);
     }
 
@@ -47,19 +49,8 @@ public class TOCCommentary extends LinearLayout implements TOCElement {
 
     @Override
     public void setLang(Util.Lang lang) {
-
-        final int padding = 12;
-        final int sidePadding = 50;
-        if(lang == Util.Lang.EN) {
-            this.setPadding(sidePadding, padding, 0, padding);
-            this.setGravity(Gravity.LEFT);
-        }else {
-            this.setPadding(0, padding, sidePadding, padding);
-            this.setGravity(Gravity.RIGHT);
-        }
         String text = Book.removeOnMainBookFromTitle(commentary.getTitle(lang),mainBook);
         content_root.setText(text);
-
     }
 
     OnClickListener clickListener = new OnClickListener() {

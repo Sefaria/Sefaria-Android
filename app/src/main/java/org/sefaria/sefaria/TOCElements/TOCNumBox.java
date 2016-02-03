@@ -39,7 +39,8 @@ public class TOCNumBox extends TextView implements TOCElement {
         //FORMATTING
         Resources r = getResources();
 
-        setBackgroundColor(r.getColor(R.color.toc_num_box_background));
+
+        setBackgroundDrawable(getResources().getDrawable(R.drawable.button_ripple_rect_white));
         setTextColor(r.getColor(R.color.toc_num_box_font));
 
         GridLayout.LayoutParams lp = new GridLayout.LayoutParams(new ViewGroup.MarginLayoutParams(
