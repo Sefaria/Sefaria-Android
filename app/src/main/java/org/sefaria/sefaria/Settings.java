@@ -174,6 +174,7 @@ public class Settings {
 
 
     public static class RecentTexts {
+
         static private SharedPreferences getRecentSettings() {
             return MyApp.getContext().getSharedPreferences("org.sefaria.sefaria.recent_texts_settings", Context.MODE_PRIVATE);
         }
@@ -190,7 +191,7 @@ public class Settings {
             return books;
         }
 
-        private final static int MAX_RECENT_TEXTS = 6;
+        private final static int MAX_RECENT_TEXTS = 3;
 
         public static void addRecentText(String bookTitle) {
             List<String> books = getRecentTexts();
