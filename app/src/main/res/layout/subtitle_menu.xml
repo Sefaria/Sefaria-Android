@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<org.sefaria.sefaria.layouts.AutoResizeTextView xmlns:android="http://schemas.android.com/apk/res/android"
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/tv"
     android:layout_width="match_parent"
     android:layout_height="70dp"
     android:gravity="center"
     android:text="yoyoyoy"
-    android:textSize="60dp"
+    android:textSize="20dp"
     android:padding="15dp"
     android:maxLines="1"
     android:textStyle="bold"
     android:textColor="@color/subtitle"
     android:textAllCaps="true">
 
-</org.sefaria.sefaria.layouts.AutoResizeTextView>
+</TextView>
