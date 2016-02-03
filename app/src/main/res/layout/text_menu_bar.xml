@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:background="@color/menu_background"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:clickable="true">
 
     <!-- Lang bar -->
     <LinearLayout
@@ -78,7 +79,7 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="@dimen/text_menu_button_height"
-            android:background="@drawable/text_menu_button_background_right"
+            android:background="@drawable/text_menu_button_background_right_ripple"
             android:padding="10dp">
             <View
                 android:layout_width="@dimen/text_menu_bar_box"
