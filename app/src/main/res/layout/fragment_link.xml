@@ -27,8 +27,8 @@
         android:padding="10dp"
         android:gravity="center_horizontal"
         android:textStyle="italic"
-        android:textSize="20dp"
-        android:text="@string/no_links" />
+        android:textSize="15dp"
+        android:text="@string/no_links_filtered" />
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recview"
         android:layout_width="match_parent"

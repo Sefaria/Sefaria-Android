@@ -143,6 +143,33 @@ public abstract class SuperTextActivity extends Activity {
             customActionbar.setLang(menuLang);
     }
 
+    protected void init() {
+        isLoadingInit = true;
+        perekTextViews = new ArrayList<>();
+        textChapterHeaders = new ArrayList<>();
+
+        isTextMenuVisible = false;
+        textMenuRoot = (LinearLayout) findViewById(R.id.textMenuRoot);
+        textMenuBar = new TextMenuBar(SuperTextActivity.this,textMenuBtnClick);
+        textMenuBar.setState(textLang,isCts,textBG);
+        textMenuRoot.addView(textMenuBar);
+        textMenuRoot.setVisibility(View.GONE);
+
+        textScrollView = (ScrollViewExt) findViewById(R.id.textScrollView);
+
+        //this specifically comes before menugrid, b/c in tabs it menugrid does funny stuff to currnode
+        if (customActionbar == null) {
+            MenuNode menuNode = new MenuNode("a","b",null); //TODO possibly replace this object with a more general bilinual node
+            int catColor = book.getCatColor();
+            customActionbar = new CustomActionbar(this, menuNode, menuLang,homeClick,null,null,titleClick,menuClick,backClick,catColor); //TODO.. I'm not actually sure this should be lang.. instead it shuold be MENU_LANG from Util.S
+            LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
+            abRoot.addView(customActionbar);
+            customActionbar.setLang(menuLang);
+        }
+        setCurrNode(firstLoadedNode);
+
+    }
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         Settings.BookSettings.setSavedBook(book, currNode, currText, textLang);
@@ -208,34 +235,6 @@ public abstract class SuperTextActivity extends Activity {
         //Intent mainIntent = IntentCompat.makeRestartActivityTask(cn);
         //intent.putExtra("menuState", newMenuState);
         context.startActivity(intent);
-    }
-
-
-    protected void init() {
-        isLoadingInit = true;
-        perekTextViews = new ArrayList<>();
-        textChapterHeaders = new ArrayList<>();
-
-        isTextMenuVisible = false;
-        textMenuRoot = (LinearLayout) findViewById(R.id.textMenuRoot);
-        textMenuBar = new TextMenuBar(SuperTextActivity.this,textMenuBtnClick);
-        textMenuBar.setState(textLang,isCts,textBG);
-        textMenuRoot.addView(textMenuBar);
-        textMenuRoot.setVisibility(View.GONE);
-
-        textScrollView = (ScrollViewExt) findViewById(R.id.textScrollView);
-
-        //this specifically comes before menugrid, b/c in tabs it menugrid does funny stuff to currnode
-        if (customActionbar == null) {
-            MenuNode menuNode = new MenuNode("a","b",null); //TODO possibly replace this object with a more general bilinual node
-            int catColor = book.getCatColor();
-            customActionbar = new CustomActionbar(this, menuNode, menuLang,homeClick,null,null,titleClick,menuClick,backClick,catColor); //TODO.. I'm not actually sure this should be lang.. instead it shuold be MENU_LANG from Util.S
-            LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
-            abRoot.addView(customActionbar);
-            customActionbar.setLang(menuLang);
-        }
-        setCurrNode(firstLoadedNode);
-
     }
 
     @Override
