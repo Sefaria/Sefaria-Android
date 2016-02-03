@@ -20,6 +20,7 @@ import org.sefaria.sefaria.MenuElements.MenuGrid;
 import org.sefaria.sefaria.MenuElements.MenuNode;
 import org.sefaria.sefaria.MenuElements.MenuState;
 
+import android.util.Log;
 import android.util.Pair;
 import android.view.Gravity;
 import android.view.View;
@@ -31,6 +32,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class HomeActivity extends Activity {
 
@@ -42,6 +44,7 @@ public class HomeActivity extends Activity {
     private boolean isPopup;
     private List<MenuDirectRef> dailtylearnings;
     private List<MenuDirectRef> recentTexts;
+    private LinearLayout recentRoot;
 
     @Override
     protected void onCreate(Bundle in) {
@@ -60,6 +63,19 @@ public class HomeActivity extends Activity {
         init();
 
     }
+
+    private boolean veryFirstTime = true;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(!veryFirstTime) {
+            addRecentTexts(null);
+            setLang(Settings.getMenuLang());
+        }else
+            veryFirstTime = false;
+    }
+
 
     private void init() {
 
@@ -115,15 +131,20 @@ public class HomeActivity extends Activity {
 
     private void addRecentTexts(LinearLayout homeRoot){
         //Recent Texts
-        LinearLayout recentRoot = new LinearLayout(this);
-        recentRoot.setOrientation(LinearLayout.VERTICAL);
-        recentRoot.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+        if(recentRoot == null) {
+            recentRoot = new LinearLayout(this);
+            recentRoot.setOrientation(LinearLayout.VERTICAL);
+            recentRoot.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+            homeRoot.addView(recentRoot);
+        }
+        else{
+            recentRoot.removeAllViews();
+        }
         final int columNum = 3;
         List<String> recentBooks = Settings.RecentTexts.getRecentTexts();
         recentTexts = new ArrayList<>();
         if(recentBooks.size()>0) {
-            homeRoot.addView(createTypeTitle("Recent Texts"));
-            homeRoot.addView(recentRoot);
+            recentRoot.addView(createTypeTitle("Recent Texts"));
             LinearLayout recentRow = null;
             for (int i=0;i<recentBooks.size();i++){
                 if(i%columNum  == 0){
@@ -140,7 +161,7 @@ public class HomeActivity extends Activity {
                 } catch (Book.BookNotFoundException e) {
                     e.printStackTrace();
                 }
-                Pair<String,String> pair = Settings.getSavedBookTitle(bookTitle);
+                Pair<String,String> pair = Settings.BookSettings.getSavedBookTitle(bookTitle);
                 MenuDirectRef menuDirectRef = new MenuDirectRef(this, pair.first, pair.second, null, book, null);
                 recentTexts.add(menuDirectRef);
                 recentRow.addView(menuDirectRef);
@@ -153,6 +174,9 @@ public class HomeActivity extends Activity {
          */
 
     }
+
+
+
 
     private void addMenuGrid(LinearLayout homeRoot){
         //Menu grid

@@ -10,6 +10,7 @@ import org.sefaria.sefaria.activities.SuperTextActivity;
 import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Node;
+import org.sefaria.sefaria.database.Text;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,13 +36,7 @@ public class Settings {
         menuLang = lang;
         SharedPreferences generalSettings = getGeneralSettings();
         SharedPreferences.Editor editor = generalSettings.edit();
-        String langStr;
-        if(lang == Util.Lang.HE)
-            langStr = "he";
-        else if(lang == Util.Lang.EN)
-            langStr = "en";
-        else //bi
-            langStr = "bi";
+        String langStr = lang2Str(lang);
         editor.putString("menuLang",langStr);
         editor.commit();
     }
@@ -49,20 +44,31 @@ public class Settings {
 
     static public Util.Lang getMenuLang(){
         if(menuLang != null) return menuLang;
-
         SharedPreferences generalSettings = getGeneralSettings();
         String langStr = generalSettings.getString("menuLang", "");
-        if(langStr.equals("he"))
-            menuLang =  Util.Lang.HE;
-        else if(langStr.equals("en"))
-            menuLang =  Util.Lang.EN;
-        else if(langStr.equals("bi"))
-            menuLang =  Util.Lang.BI;
-        else //if(langStr.equals("") || anything else)
-            menuLang = getSystemLang();
+        menuLang = str2Lang(langStr);
         return menuLang;
     }
 
+    private static String lang2Str(Util.Lang lang){
+        if(lang == Util.Lang.HE)
+            return "he";
+        else if(lang == Util.Lang.EN)
+            return "en";
+        else //bi
+            return  "bi";
+    }
+
+    private static Util.Lang str2Lang(String langStr){
+        if(langStr.equals("he"))
+            return Util.Lang.HE;
+        else if(langStr.equals("en"))
+            return Util.Lang.EN;
+        else if(langStr.equals("bi"))
+            return Util.Lang.BI;
+        else //if(langStr.equals("") || anything else)
+            return getSystemLang();
+    }
 
     /**
      * change the menuLang from hebrew to english or visa versa
@@ -88,59 +94,83 @@ public class Settings {
     }
 
 
-    /*
-    Book stuff
-     */
+    public static class BookSettings {
+        public Node node;
+        public int tid;
+        public Util.Lang lang;
 
-    static private SharedPreferences getBookSavedSettings(){
-        return MyApp.getContext().getSharedPreferences("org.sefaria.sefaria.book_save_settings", Context.MODE_PRIVATE);
+
+        BookSettings(Node node, int tid, Util.Lang lang){
+            this.node = node;
+            this.tid = tid;
+            this.lang = lang;
+        }
+
+        static private SharedPreferences getBookSavedSettings() {
+            return MyApp.getContext().getSharedPreferences("org.sefaria.sefaria.book_save_settings", Context.MODE_PRIVATE);
+        }
+
+        static private SharedPreferences getBookSavedTitleSettings() {
+            return MyApp.getContext().getSharedPreferences("org.sefaria.sefaria.book_save_title_settings", Context.MODE_PRIVATE);
+        }
+
+        static public BookSettings getSavedBook(Book book) throws API.APIException, Node.InvalidPathException {
+            SharedPreferences bookSavedSettings = getBookSavedSettings();
+            String stringThatRepsSavedSettings = bookSavedSettings.getString(book.title, "");
+            //Log.d("SuperTextAct", "bookSavedSettings:" + stringThatRepsSavedSettings);
+            String[] settings = stringThatRepsSavedSettings.split(SETTINGS_SPLITTER);
+            Log.d("Settings", "stringThatRepsSavedSettings:" + stringThatRepsSavedSettings);
+            String nodePathStr = settings[0];
+            int tid = 0;
+            try {
+                Log.d("Settings0", settings[0]);
+                Log.d("Settings1", settings[1]);
+                tid = Integer.valueOf(settings[1]);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            Node node = book.getNodeFromPathStr(nodePathStr);
+            node = node.getFirstDescendant();//should be unneeded line, but in case there was a previous bug this should return a isTextSection() node to avoid bugs
+            Log.d("Settings", "node:" + node);
+            BookSettings bookSettings = new BookSettings(node,tid, Util.Lang.BI);
+            return bookSettings;
+        }
+
+        final static private String SETTINGS_SPLITTER = "@";
+
+        static public void setSavedBook(Book book,Node node, Text text, Util.Lang lang){
+            SharedPreferences bookSavedSettings = getBookSavedSettings();
+            SharedPreferences.Editor editor = bookSavedSettings.edit();
+            //"<en|he|bi>.<cts|sep>.<white|grey|black>.10px:"+ <rootNum>.<Childnum>.<until>.<leaf>.<verseNum>"
+            String tid = "0";
+            if (text != null)
+                tid = "" + text.tid;
+            String settingStr = node.makePathDefiningNode() + SETTINGS_SPLITTER + tid + SETTINGS_SPLITTER + lang2Str(lang);
+            editor.putString(book.title, settingStr);
+            editor.commit();
+
+            //now for titles
+            editor = getBookSavedTitleSettings().edit();
+            editor.putString(EN_TITLE + book.title, node.getMenuBarTitle(book, Util.Lang.EN));
+            editor.putString(HE_TITLE + book.title, node.getMenuBarTitle(book, Util.Lang.HE));
+            editor.commit();
+
+        }
+
+
+
+        final static private String EN_TITLE = "EN___";
+        final static private String HE_TITLE = "HE___";
+
+        static public Pair<String, String> getSavedBookTitle(String title) {
+            SharedPreferences bookSavedTitleSettings = getBookSavedTitleSettings();
+            Pair<String, String> pair = new Pair<>(
+                    bookSavedTitleSettings.getString(EN_TITLE + title, ""),
+                    bookSavedTitleSettings.getString(HE_TITLE + title, "")
+            );
+            return pair;
+        }
     }
-
-    static private SharedPreferences getBookSavedTitleSettings(){
-        return MyApp.getContext().getSharedPreferences("org.sefaria.sefaria.book_save_title_settings", Context.MODE_PRIVATE);
-    }
-
-    static public Node getSavedBook(Book book) throws API.APIException, Node.InvalidPathException {
-        SharedPreferences bookSavedSettings = getBookSavedSettings();
-        String stringThatRepsSavedSettings = bookSavedSettings.getString(book.title, "");
-        Log.d("SuperTextAct", "bookSavedSettings:" + stringThatRepsSavedSettings);
-        String nodePathStr = stringThatRepsSavedSettings; //TODO  make based on split()
-        Node node = book.getNodeFromPathStr(nodePathStr);
-        Log.d("SuperTextAct", "bookSavedSettings... node:" + node);
-        node =  node.getFirstDescendant();//should be unneeded line, but in case there was a previous bug this should return a isTextSection() node to avoid bugs
-        return node;
-    }
-
-    static public Pair<String,String> getSavedBookTitle(String title){
-        SharedPreferences bookSavedTitleSettings= getBookSavedTitleSettings();
-        Pair<String,String> pair = new Pair<>(
-        bookSavedTitleSettings.getString(EN_TITLE + title,""),
-        bookSavedTitleSettings.getString(HE_TITLE + title,"")
-        );
-        return pair;
-    }
-
-    final static private String EN_TITLE = "EN___";
-    final static private String HE_TITLE = "HE___";
-    static public void setSavedBook(Book book, Node node){
-        //update the place that the book will go to when returning to book
-        SharedPreferences bookSavedSettings = getBookSavedSettings();
-        SharedPreferences.Editor editor = bookSavedSettings.edit();
-        String strTreeAndNode = node.makePathDefiningNode();
-        //"<en|he|bi>.<cts|sep>.<white|grey|black>.10px:"+ <rootNum>.<Childnum>.<until>.<leaf>.<verseNum>"
-
-        editor.putString(book.title, strTreeAndNode);
-        editor.commit();
-
-        //now for titles
-        editor = getBookSavedTitleSettings().edit();
-        editor.putString(EN_TITLE + book.title,node.getMenuBarTitle(book, Util.Lang.EN));
-        editor.putString(HE_TITLE + book.title,node.getMenuBarTitle(book, Util.Lang.HE));
-        editor.commit();
-
-
-    }
-
 
 
     public static class RecentTexts {
