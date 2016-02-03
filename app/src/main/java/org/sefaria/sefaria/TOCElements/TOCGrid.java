@@ -221,6 +221,8 @@ public class TOCGrid extends LinearLayout {
             if((i%columnNum) == 0){
                 rowLinearLayout = new LinearLayout(context);
                 rowLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
+                //final int padding = 4;
+                //rowLinearLayout.setPadding(padding,padding,padding,padding);
                 if(lang == Util.Lang.HE)
                     rowLinearLayout.setGravity(Gravity.RIGHT);
                 else

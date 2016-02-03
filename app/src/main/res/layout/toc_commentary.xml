@@ -13,10 +13,10 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/toc_numbox"
     android:layout_weight="1"
-    android:layout_margin="2dp"
+    android:layout_margin="1dp"
 
-    android:padding="5sp"
-    android:textSize="20sp"
+    android:padding="8dp"
+    android:textSize="20dp"
 
 
 
