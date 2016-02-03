@@ -16,7 +16,6 @@
     android:layout_weight="1"
     android:layout_margin="1dp"
     android:textSize="18sp"
-
     android:gravity="center"
 
 
