@@ -176,7 +176,8 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
     ListView.OnItemClickListener onItemClickListener = new ListView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+            //close textMenuBar if its open
+            if (isTextMenuVisible) toggleTextMenu();
 
             View linkRoot = findViewById(R.id.linkRoot);
             if (linkFragment.getIsOpen()) {

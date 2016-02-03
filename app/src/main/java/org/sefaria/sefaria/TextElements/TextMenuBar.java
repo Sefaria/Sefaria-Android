@@ -89,7 +89,7 @@ public class TextMenuBar extends LinearLayout {
         if (currLineViewId == R.id.sep_btn)
             sepBtn.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.text_menu_button_background_right_clicked));
         else
-            sepBtn.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.text_menu_button_background_right));
+            sepBtn.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.text_menu_button_background_right_ripple));
 
 
 
