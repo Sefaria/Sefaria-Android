@@ -1,4 +1,5 @@
 package org.sefaria.sefaria.database;
+import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.Util;
 
@@ -145,7 +146,7 @@ public class Book implements Parcelable {
         try{
             values.put(KheTitle,json.getString(KheTitle));
         }catch(JSONException e){
-            MyApp.sendException(e);
+            GoogleTracker.sendException(e);
             values.put(KheTitle,json.getString(Ktitle));
         }
 
@@ -208,7 +209,7 @@ public class Book implements Parcelable {
                 heSectionNamesL2B[i] = heSectionNamesTemp[heSectionNamesTemp.length - i -1];
         }
         catch(Exception e){
-            MyApp.sendException(e);
+            GoogleTracker.sendException(e);
             bid = 0;
             return;
         }
@@ -265,7 +266,7 @@ public class Book implements Parcelable {
             try{
                 return cursor.getInt(0);//the _id
             }catch(Exception e){
-                MyApp.sendException(e, title);
+                GoogleTracker.sendException(e, title);
                 return 0; //I'm having a problem... I assume it means that this book isn't in the database.
             }
 
@@ -284,7 +285,7 @@ public class Book implements Parcelable {
             try{
                 return cursor.getString(0);//the title
             }catch(Exception e){
-                MyApp.sendException(e, "" + bid);
+                GoogleTracker.sendException(e, "" + bid);
                 return ""; //I'm having a problem... I assume it means that this book isn't in the database.
             }
 
@@ -305,7 +306,7 @@ public class Book implements Parcelable {
             try{
                 return cursor.getInt(0);//the type you wanted
             }catch(Exception e){
-                MyApp.sendException(e, title);
+                GoogleTracker.sendException(e, title);
                 return 0; //I'm having a problem... I assume it means that this book isn't in the database.
             }
 

@@ -281,7 +281,7 @@ public class Util {
             // delete the original file
             new File(inputPath + inputFile).delete();
         } catch (Exception e) {
-            MyApp.sendException(e, "Moving file");
+            GoogleTracker.sendException(e, "Moving file");
         }
 
 
