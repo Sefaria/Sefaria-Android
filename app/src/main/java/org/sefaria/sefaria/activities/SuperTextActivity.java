@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Settings;
@@ -168,6 +169,13 @@ public abstract class SuperTextActivity extends Activity {
         }
         setCurrNode(firstLoadedNode);
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        GoogleTracker.sendScreen("SuperTextActivity");
+        GoogleTracker.sendEvent(GoogleTracker.CATEGORY_NEW_TEXT,book.title);
     }
 
     @Override

@@ -23,6 +23,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import org.sefaria.sefaria.DialogManager;
+import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 
@@ -98,7 +99,7 @@ public class Downloader {
             if (DownloadManager.STATUS_FAILED == status) {
 
                 int reason = cursor.getColumnIndex(DownloadManager.COLUMN_REASON);
-                MyApp.sendEvent("DOWNLOAD_ERROR", "Error : " + reason);
+                GoogleTracker.sendEvent("DOWNLOAD_ERROR", "Error : " + reason);
                 Log.d("status","Download Status " + status);
                 if (reason == DownloadManager.ERROR_CANNOT_RESUME) {
                     downloadErrorNum = DownloadManager.ERROR_CANNOT_RESUME;
@@ -164,10 +165,10 @@ public class Downloader {
             PackageInfo p = m.getPackageInfo(s, 0);
             s = p.applicationInfo.dataDir;
         } catch (NameNotFoundException e) {
-            MyApp.sendException(e);
+            GoogleTracker.sendException(e);
             Log.w("yourtag", "Error Package name not found ", e);
         }catch (Exception e1) { //JH added
-            MyApp.sendException(e1);
+            GoogleTracker.sendException(e1);
             Log.e("downloader","" + e1);
         }
 
