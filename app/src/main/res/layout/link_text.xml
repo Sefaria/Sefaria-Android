@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/button_ripple_rect">
+    android:background="@drawable/button_ripple_rect_border_top_bot">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -15,12 +15,12 @@
             android:text="this is a cool title"
             />
         <TextView
-            android:id="@+id/verseNum"
+            android:visibility="gone"
+            android:id="@+id/enVerseNum"
             android:textColor="@color/text_verse_num"
-            android:layout_width="40dp"
+            android:layout_width="30dp"
             android:layout_height="wrap_content"
             android:layout_below="@+id/title"
-            android:layout_alignTop="@+id/mono"
             android:layout_alignParentLeft="true"
             android:paddingRight="10dp"
             android:paddingTop="@dimen/text_activtiy_numbering_padding"
@@ -29,19 +29,28 @@
             android:text="26"/>
         <TextView
             android:id="@+id/tv"
-            android:paddingRight="10dp"
-            android:paddingLeft="10dp"
             android:paddingTop="@dimen/text_activtiy_between_segment_padding"
             android:paddingBottom="@dimen/text_activtiy_between_segment_padding"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/title"
-            android:layout_alignLeft="@+id/enVerseNum"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
+            android:layout_toRightOf="@+id/enVerseNum"
+            android:layout_toLeftOf="@+id/heVerseNum"
             android:textColor="@android:color/black"
             android:text="Now the earth was unformed and void, and darkness was upon the face of the deep; and the spirit of God hovered over the face of the waters."/>
-
+        <TextView
+            android:visibility="gone"
+            android:id="@+id/heVerseNum"
+            android:textColor="@color/text_verse_num"
+            android:layout_width="30dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/title"
+            android:paddingTop="@dimen/text_activtiy_numbering_padding"
+            android:paddingLeft="10dp"
+            android:textSize="15sp"
+            android:gravity="center"
+            android:text="26"/>
     </RelativeLayout>
 
 </LinearLayout>

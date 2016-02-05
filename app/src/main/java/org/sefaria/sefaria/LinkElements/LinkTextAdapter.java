@@ -32,14 +32,16 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextAdapter.LinkTe
 
     public class LinkTextHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView tv;
-        public TextView verseNum;
+        public TextView enVerseNum;
+        public TextView heVerseNum;
         public TextView title;
 
         public LinkTextHolder(View v) {
             super(v);
             v.setOnClickListener(this);
             tv = (TextView) v.findViewById(R.id.tv);
-            verseNum = (TextView) v.findViewById(R.id.verseNum);
+            enVerseNum = (TextView) v.findViewById(R.id.enVerseNum);
+            heVerseNum = (TextView) v.findViewById(R.id.heVerseNum);
             title = (TextView) v.findViewById(R.id.title);
         }
 
@@ -76,11 +78,11 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextAdapter.LinkTe
         Text link = itemList.get(position);
         if (currLinkCount.getCategory().equals("Commentary")) {
             holder.title.setVisibility(View.GONE);
-            holder.verseNum.setVisibility(View.VISIBLE);
-            holder.verseNum.setText("" + link.levels[1]);
-            holder.verseNum.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
+            holder.enVerseNum.setVisibility(View.VISIBLE);
+            holder.enVerseNum.setText("" + link.levels[1]);
+            holder.enVerseNum.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
         } else {
-            holder.verseNum.setVisibility(View.GONE);
+            holder.enVerseNum.setVisibility(View.GONE);
             holder.title.setVisibility(View.VISIBLE);
             holder.title.setText(Html.fromHtml("<i>" + link.getLocationString(Settings.getMenuLang()) + "</i>"));
             holder.title.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
