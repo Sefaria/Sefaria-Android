@@ -24,11 +24,13 @@ public class CustomActionbar extends MenuElement {
     private View menuBtn;
     private View backBtn;
     private View invisableBtn;
+    private View invisableBtnLeft;
     private TextView titleTV;
     private String heText = null;
     private String enText = null;
     private MenuNode menuNode;
 
+    private static final boolean noBackButton = true;
 
     public CustomActionbar(Context context, MenuNode menuNode, Util.Lang lang, OnClickListener homeClick, OnClickListener closeClick, OnClickListener searchClick, OnClickListener titleClick, OnClickListener menuClick, OnClickListener backClick, int catColor) {
         super(context);
@@ -42,6 +44,7 @@ public class CustomActionbar extends MenuElement {
         menuBtn = findViewById(R.id.menu_btn);
         backBtn = findViewById(R.id.back_btn);
         invisableBtn = findViewById(R.id.invisable_btn);
+        invisableBtnLeft = findViewById(R.id.invisable_btn_left);
         colorBar = findViewById(R.id.color_bar);
         titleTV = (TextView) findViewById(R.id.title);
 
@@ -58,10 +61,11 @@ public class CustomActionbar extends MenuElement {
         else{
             homeBtn.setVisibility(View.GONE);
             invisableBtn.setVisibility(View.GONE);
+            invisableBtnLeft.setVisibility(View.GONE);
         }
 
         if (closeClick != null)  closeBtn.setOnClickListener(closeClick);
-        else closeBtn.setVisibility(View.GONE);
+        else closeBtn.setVisibility(View.INVISIBLE);
 
         if (searchClick != null)  searchBtn.setOnClickListener(searchClick);
         else searchBtn.setVisibility(View.GONE);
@@ -80,7 +84,9 @@ public class CustomActionbar extends MenuElement {
 
 
         if (backClick != null) backBtn.setOnClickListener(backClick);
-        else backBtn.setVisibility(View.INVISIBLE);
+        else  backBtn.setVisibility(View.INVISIBLE);
+        if(noBackButton) backBtn.setVisibility(View.GONE);
+
 
 
         if (titleClick != null ) {

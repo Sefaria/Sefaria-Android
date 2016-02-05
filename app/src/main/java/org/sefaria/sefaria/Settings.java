@@ -173,6 +173,7 @@ public class Settings {
     }
 
 
+
     public static class RecentTexts {
 
         static private SharedPreferences getRecentSettings() {

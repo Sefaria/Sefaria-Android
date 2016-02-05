@@ -96,8 +96,8 @@ public class DailyLearning {
                     haftaraNode = haftaraNode.getChildren().get(haftraChap-1);
                     //TODO maybe check  that it's correct incase we're missing a chap (but that's unlikely to happen in Tanach).
 
-                    //Haftara"
-                    MenuDirectRef haftaraMenu = new MenuDirectRef(context, context.getString(R.string.haftara) + ": " + haftaraBookName + " " + haftaraFullNumber,context.getString(R.string.haftara) + ": " + haftaraBook.heTitle + " " + haftaraFullNumber,haftaraNode.makePathDefiningNode(),haftaraBook,"");
+                    //+ ": " + haftaraBookName + " " + haftaraFullNumber
+                    MenuDirectRef haftaraMenu = new MenuDirectRef(context,"Haftara","הפטרה",haftaraNode.makePathDefiningNode(),haftaraBook,"");
                     return new MenuDirectRef [] {parshaMenu,haftaraMenu};
                 }
 

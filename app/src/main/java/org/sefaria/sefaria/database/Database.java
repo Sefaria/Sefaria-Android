@@ -1,6 +1,7 @@
 package org.sefaria.sefaria.database;
 import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MyApp;
+import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
 
 import java.io.File;
@@ -13,6 +14,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -247,7 +249,7 @@ public class Database extends SQLiteOpenHelper{
         zis.close();
     }
 
-    public static int getVersion(){
+    public static int getVersionInDB(){
         int versionNum = -1;
         try{
             Database dbHandler = Database.getInstance();
@@ -262,6 +264,17 @@ public class Database extends SQLiteOpenHelper{
             versionNum = -1;
         }
         return versionNum;
+    }
+
+    public static int getDBDownloadVersion(){
+        SharedPreferences settings = Settings.getGeneralSettings();
+        return settings.getInt("versionNum", -1);
+    }
+    public static void setDBDownloadVersion(int updatedVersionNum){
+        SharedPreferences settings = Settings.getGeneralSettings();
+        SharedPreferences.Editor edit = settings.edit();
+        edit.putInt("versionNum", updatedVersionNum);
+        edit.apply();
     }
 
     public void openDataBase() throws SQLException{

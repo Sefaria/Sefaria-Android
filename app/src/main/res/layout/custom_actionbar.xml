@@ -90,6 +90,17 @@
                 />
         </FrameLayout>
 
+        <FrameLayout
+            android:id="@+id/invisable_btn_left"
+            android:layout_width="@dimen/custom_action_bar_button_frame_width"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@id/close_btn"
+            android:paddingRight="@dimen/custom_action_bar_button_to_side_padding"
+            android:layout_margin="0dp"
+            android:visibility="invisible"
+            >
+
+        </FrameLayout>
 
 
         <FrameLayout
@@ -142,7 +153,7 @@
         <org.sefaria.sefaria.layouts.AutoResizeTextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
-            android:layout_toRightOf="@id/home_btn"
+            android:layout_toRightOf="@id/invisable_btn_left"
             android:layout_toLeftOf="@id/invisable_btn"
             android:layout_height="32dp"
             android:text="Table of Contents"
