@@ -82,7 +82,9 @@ public class LinkMainAdapter extends RecyclerView.Adapter<LinkMainAdapter.LinkHo
 
         if (linkCount.getDepthType() == LinkCount.DEPTH_TYPE.CAT) {
             holder.tv.setText(bookTitle + " " + Util.LINK_CAT_VERICAL_LINE + " " + linkCount.getCount());
-            holder.tv.setAllCaps(true);
+            if (android.os.Build.VERSION.SDK_INT >= 14) {//for older things it just will by non-capped (even though we can make a function to fix it, it's not worth it).
+                holder.tv.setAllCaps(true);
+            }
             holder.colorBar.setVisibility(View.VISIBLE);
             holder.catPadding.setVisibility(View.INVISIBLE); //just so it takes up space
             int color = MyApp.getCatColor(linkCount.getRealTitle(Util.Lang.EN));
@@ -91,7 +93,9 @@ public class LinkMainAdapter extends RecyclerView.Adapter<LinkMainAdapter.LinkHo
             }
         } else {
             holder.tv.setText(bookTitle + " (" + linkCount.getCount() + ")");
-            holder.tv.setAllCaps(false);
+            if (android.os.Build.VERSION.SDK_INT >= 14) {
+                holder.tv.setAllCaps(false);
+            }
             holder.colorBar.setVisibility(View.GONE);
             holder.catPadding.setVisibility(View.GONE);
         }
