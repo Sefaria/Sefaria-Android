@@ -2,6 +2,7 @@ package org.sefaria.sefaria.MenuElements;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -35,6 +36,7 @@ public class MenuButton extends MenuElement {
             inflate(context, R.layout.button_home, this);
             this.tv = (TextView) this.findViewById(R.id.tv);
             this.colorBar = this.findViewById(R.id.color_bar);
+            //Log.d("color", "BTN " + menuNode.getTitle(Util.Lang.EN) + " " + Integer.toHexString(context.getResources().getColor(menuNode.getColor())));
             setColor(menuNode.getColor());
         } else {//menu
             inflate(context, R.layout.button_menu, this);

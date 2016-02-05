@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Queue;
 
-public class LinkFragment extends Fragment {
+public class LinkFragment extends android.support.v4.app.Fragment {
 
     public enum State {
         //main shows all linkcounts

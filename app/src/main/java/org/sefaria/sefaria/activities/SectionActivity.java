@@ -1,11 +1,11 @@
 package org.sefaria.sefaria.activities;
 
-import android.app.FragmentTransaction;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MotionEventCompat;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -76,7 +76,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
         //Bundle args = new Bundle();
         //args.putParcelable(LinkFragment.ARG_CURR_SECTION, sectionAdapter.getItem(position));
         //linkFragment.setArguments(args);
-        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.add(R.id.linkRoot, linkFragment);
         fragmentTransaction.commit();
 

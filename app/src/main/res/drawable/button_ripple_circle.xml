@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@color/button_clicked" android:state_pressed="true"/>
+    <item android:drawable="@color/button_clicked" android:state_focused="true"/>
+    <item android:drawable="@android:color/transparent"/>
+</selector>
+<!--<?xml version="1.0" encoding="utf-8"?>
 
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -9,4 +15,4 @@
             <solid android:color="#999" />
         </shape>
     </item>
-</ripple>
+</ripple>-->

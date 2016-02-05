@@ -1,17 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/text_menu_button_background_center_clicked" android:state_pressed="true"/>
-    <item android:drawable="@drawable/text_menu_button_background_center_clicked" android:state_focused="true"/>
-    <item android:drawable="@drawable/text_menu_button_background_center"/>
-</selector>
-<!--<?xml version="1.0" encoding="utf-8"?>
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:color="#BBB"
+    android:color="@color/button_clicked"
     tools:targetApi="lollipop">
     <item android:id="@android:id/mask">
         <shape android:shape="rectangle">
-            <solid android:color="#BBB" />
+            <solid android:color="@color/button_clicked" />
             <corners
                 android:topLeftRadius="0dp"
                 android:bottomLeftRadius="0dp"
@@ -20,4 +14,4 @@
         </shape>
     </item>
     <item android:drawable="@drawable/text_menu_button_background_center"/>
-</ripple>-->
+</ripple>
