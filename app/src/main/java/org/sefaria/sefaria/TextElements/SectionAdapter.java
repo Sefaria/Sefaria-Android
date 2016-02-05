@@ -1,5 +1,6 @@
 package org.sefaria.sefaria.TextElements;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.graphics.Color;
 import android.text.Html;
@@ -124,6 +125,7 @@ public class SectionAdapter extends ArrayAdapter<Text> {
                     heNum.setText("" + Util.int2heb(segment.levels[0]));
                 else
                     heNum.setText("");
+
                 heNum.setAlpha(1);
                 heNum.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
                 //heNum.setTypeface(MyApp.getFont(MyApp.MONTSERRAT_FONT));
