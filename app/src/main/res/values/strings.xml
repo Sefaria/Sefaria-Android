@@ -19,7 +19,7 @@
     <string name="activity_search">Search</string>
     <string name="activity_text">Text Activity</string>
     <string name="activity_main">Main Activity</string>
-    <string name="LIBRARY_EMPTY_MESSAGE" translatable="false">To use the app, you need to download the BetaMidrash library. Do you want to do this now?\nYou can always click \'Update Library\' in settings to update.</string>
+    <string name="LIBRARY_EMPTY_MESSAGE" translatable="false">To use the app, you need to download the Sefaria library. Do you want to do this now?\nYou can always click \'Update Library\' in settings to update.</string>
     <string name="NEW_UPDATE_MESSAGE" translatable="false">Do you want to download the new Sefaria library now?\nYou can always tap \'Update Library\' in settings to update.</string>
     <string name="NO_INTERNET_MESSAGE" translatable="false">You need internet in order to download the update. Try again later.</string>
     <string name="USING_DATA_MESSAGE">You are using mobile data (not WIFI). The update is about 100MB. Do you want to download it anyways?</string>
@@ -40,7 +40,7 @@
     <string name="UPDATE_STARTED_TITLE">Updating Library</string>
     <string name="MESSAGE_CANT_STOP_NOW" translatable="false">The update cannot be canceled at this point. Please wait for it to finish.</string>
     <string name="FIRST_TIME_TEXT_MESSAGE" translatable="false">Go through the help dialogs to learn about the app</string>
-    <string name="FIRST_TIME_TEXT_TITLE" translatable="false">Welcome to BetaMidrash!</string>
+    <string name="FIRST_TIME_TEXT_TITLE" translatable="false">Welcome to Sefaria!</string>
     <string name="DL_INTERNET_LOST_TITLE" translatable="false">Internet Lost</string>
     <string name="DL_INTERNET_LOST_MESSAGE" translatable="false">Please try to update again when you have internet</string>
     <string name="DL_NOT_ENOUGH_SPACE_TITLE" translatable="false">Not Enough Space</string>
@@ -62,11 +62,6 @@
     <string name="hebrew">Hebrew</string>
     <string name="english">English</string>
     <string name="update_preparing">Update is still setting up. Wait a moment to cancel.</string>
-    <string name="about_text_p1">BetaMidrash is created and owned by Josh Herzberg, &lt;a href=\'mailto:jherzberg@torahsummary.com\'&gt;jherzberg@torahsummary.com&lt;/a&gt;, and Noah Santacruz, &lt;a href=\'mailto:noahssantacruz@gmail.com\'&gt;noahssantacruz@gmail.com&lt;/a&gt;.</string>
-    <string name="about_text_p2">BetaMidrash is revolutionizing the mobile Torah learning experience and has one of largest libraries of Torah texts on a mobile device, with tens of thousands of English translations, and half a million connections between the texts. With a user friendly design, easy jumping between connected sources, and advanced searching to help you find what you\'re looking for quickly, it is one best places to study Torah on the go.</string>
-    <string name="about_text_p3">Our library is from &lt;a href=\'http://www.sefaria.org\'&gt;Sefaria.org&lt;/a&gt; , with slight modifications. Sefaria  is breaking grounds in the world of digitized Jewish texts. It is an open source library, so if you want to add translations or books, the power is in your hands. They check the accuracy of the content, making  have the most accurate Talmud text freely available on the internet, using the Vilna shas as the standard. One of the things that makes Sefaria so unique is that all their texts are copyright free and open for anyone to use for any purpose. BetaMidrash isn\'t part of the Sefaria project, but Sefaria\'s openness enables us to use the Torah.</string>
-    <string name="about_text_p4">For any bugs, problems, or suggestions please feel free to email us. If you enjoy BetaMidrash, don\'t forget to rate it on the play store.</string>
-    <string name="about_text_p5">Creating the world\'s most powerful mobile Torah App doesn\'t happen overnight. It takes lots of time and resources. You can find out more at &lt;a href=\'http://betamidrash.org\'&gt;BetaMidrash.org&lt;/a&gt;. Thank you so much and enjoy your torah.</string>
     <string name="error_parsing_query_n">Error Parsing Query - trying nikudah dependent search.</string>
     <string name="error_parsing_query">Error Parsing Query</string>
     <string name="kill_switch_message">I\'m sorry, but this version has been discontinued.</string>
@@ -124,7 +119,7 @@
     <string name="finish">Finish</string>
     <string name="mainMenuSearchHint">Search Texts or Book Titles</string>
 
-    <string name="haftara">Haftara</string>
+
 
 
 
