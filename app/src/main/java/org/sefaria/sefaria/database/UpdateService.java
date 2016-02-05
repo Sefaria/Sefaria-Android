@@ -29,6 +29,7 @@ import android.widget.Toast;
 
 import org.sefaria.sefaria.DialogManager;
 import org.sefaria.sefaria.GoogleTracker;
+import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.activities.HomeActivity;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
@@ -142,10 +143,10 @@ public class UpdateService extends Service {
 
         int SDK_INT = android.os.Build.VERSION.SDK_INT;
         Notification.Builder notBuild = new Notification.Builder(serviceYo)
-                .setTicker("Updating Beta Midrash")
+                .setTicker("Updating Sefaria")
     //            .setSmallIcon(R.drawable.beta_icon_noti) //TODO MAKE OTHER ICON!!!
                 .setWhen(System.currentTimeMillis())
-                .setContentTitle("Updating Beta Midrash")
+                .setContentTitle("Updating Sefaria")
                 .setContentText("Library downloading and installing");
 
 
@@ -158,14 +159,14 @@ public class UpdateService extends Service {
         serviceYo.startForeground(NOTIFICATION_ID, notification);
 
         //save last check time
-        SharedPreferences settings = context.getSharedPreferences("appSettings", Context.MODE_PRIVATE);
+        SharedPreferences settings = Settings.getGeneralSettings();
         Editor editor = settings.edit();
         editor.putLong("lastUpdateTime", System.currentTimeMillis());
         editor.apply();
 
         MyApp.currActivityContext = context;
         userInitiated = userInit;
-        currentVersionNum = settings.getInt("versionNum", -1);
+        currentVersionNum = Database.getDBDownloadVersion();
 
 
         new Thread(new Runnable() {
@@ -183,7 +184,7 @@ public class UpdateService extends Service {
         File csvFile = new File(Downloader.FULL_DOWNLOAD_PATH + Downloader.CSV_FILE_NAME);
         if (csvFile.exists()) csvFile.delete();
 
-        SharedPreferences settings = MyApp.currActivityContext.getSharedPreferences("appSettings", Context.MODE_PRIVATE);
+        SharedPreferences settings = Settings.getGeneralSettings();
         String csvURL = settings.getString("csvURL", Downloader.CSV_REAL_URL);
         Downloader.download(csvURL,Downloader.CSV_DOWNLOAD_TITLE,Downloader.DB_DOWNLOAD_PATH,Downloader.CSV_FILE_NAME,true);
     }
@@ -291,17 +292,14 @@ public class UpdateService extends Service {
                     myDbHelper.getReadableDatabase();
                     try {
                         Database.deleteDatabase();
-                        myDbHelper.unzipDatabase(DATABASE_ZIP_DOWNLOAD_LOC, Database.getDbPath()   , false);
+                        myDbHelper.unzipDatabase(DATABASE_ZIP_DOWNLOAD_LOC, Database.getDbPath(), false);
 
                         //move index.json file into right location
                         Util.moveFile(Downloader.FULL_DOWNLOAD_PATH, Downloader.INDEX_JSON_NAME, Database.getInternalFolder(), MenuState.jsonIndexFileName);
 
 
                         //success, set version num
-                        SharedPreferences settings = MyApp.currActivityContext.getSharedPreferences("appSettings", Context.MODE_PRIVATE);
-                        Editor edit = settings.edit();
-                        edit.putInt("versionNum", updatedVersionNum);
-                        edit.apply();
+                        Database.setDBDownloadVersion(updatedVersionNum);
 
                         Thread.sleep(200);
 

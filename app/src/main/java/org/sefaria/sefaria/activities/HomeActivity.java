@@ -3,14 +3,17 @@ package org.sefaria.sefaria.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 
+import org.sefaria.sefaria.BuildConfig;
 import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MenuElements.MenuDirectRef;
 import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.DailyLearning;
+import org.sefaria.sefaria.database.Database;
 import org.sefaria.sefaria.database.Downloader;
 import org.sefaria.sefaria.layouts.AutoResizeTextView;
 import org.sefaria.sefaria.layouts.CustomActionbar;
@@ -24,6 +27,7 @@ import org.sefaria.sefaria.MenuElements.MenuState;
 import android.util.Log;
 import android.util.Pair;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.GridLayout;
 import android.widget.LinearLayout;
@@ -96,9 +100,14 @@ public class HomeActivity extends Activity {
         addMenuGrid(homeRoot);
         addRecentTexts(homeRoot);
         addCalendar(homeRoot);
+
+
         //just extra spacing for the bottom
         homeRoot.addView(createTypeTitle(""));
 
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+        View homeFooter = inflater.inflate(R.layout.home_footer, null);
+        homeRoot.addView(homeFooter);
 
 
         //toggle closeClick, depending on if menu is popup or not
@@ -263,5 +272,36 @@ public class HomeActivity extends Activity {
         }
     };
 
+    public void settingsClick(View v) {
+        Toast.makeText(this,"You got me",Toast.LENGTH_SHORT).show();
+    }
+
+    public void aboutClick(View v) {
+        Intent intent = new Intent(HomeActivity.this, AboutActivity.class);
+        startActivity(intent);
+    }
+
+    public void feedbackClick(View v) {
+        String email = "dev@sefaria.org";
+        Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+                "mailto", email, null));
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Android App Feedback");
+        emailIntent.putExtra(Intent.EXTRA_TEXT,
+                "\n\n\n\n\nApp Version data:\n"
+                + BuildConfig.VERSION_NAME + " ("  + BuildConfig.VERSION_CODE + ")" + "\n"
+                + "Database Down Version:" + Database.getDBDownloadVersion() + "\n"
+                + "Database Internal Version:" + Database.getVersionInDB() + "\n"
+                + GoogleTracker.randomID
+
+        );
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, new String [] {email});
+        startActivity(Intent.createChooser(emailIntent, "Send email"));
+    }
+
+    public void siteClick(View v){
+        String url = "http://sefaria.org";
+        Intent intent = new Intent(Intent.ACTION_VIEW,Uri.parse(url));
+        startActivity(intent);
+    }
 
 }
