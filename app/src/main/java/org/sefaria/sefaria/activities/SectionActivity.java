@@ -6,7 +6,9 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.view.MotionEventCompat;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -300,9 +302,4 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
 
         listView.setLayoutParams(lp);
     }
-
-
-
-
-
 }
