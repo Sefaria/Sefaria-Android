@@ -64,7 +64,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
     protected Text openToText;
 
     protected Util.Lang menuLang;
-    protected Util.Lang textLang;
+    protected Util.Lang textLang = null;
     protected boolean isCts;
     protected Util.TextBG textBG;
     protected float textSize;
@@ -103,11 +103,12 @@ public abstract class SuperTextActivity extends FragmentActivity {
                         Log.e("SuperTextAct", "firstLoadedNode is null");
                     }
                 }else {
-                    try {
-                        Settings.BookSettings bookSettings = Settings.BookSettings.getSavedBook(book);
+                    Settings.BookSettings bookSettings = Settings.BookSettings.getSavedBook(book);
+                    textLang = bookSettings.lang;
+                    if(bookSettings.node != null) {
                         openToText = new Text(bookSettings.tid);
                         firstLoadedNode = bookSettings.node;
-                    } catch (Node.InvalidPathException e) {//couldn't get saved Node data (most likely you were never at the book, or possibly an error happened).
+                    }else {//couldn't get saved Node data (most likely you were never at the book, or possibly an error happened).
                         Log.e("SuperTextAct", "Problem gettting saved book data");
                         List<Node> TOCroots = book.getTOCroots();
                         if (TOCroots.size() == 0) {
@@ -136,7 +137,8 @@ public abstract class SuperTextActivity extends FragmentActivity {
         //defaults
         textBG = Util.TextBG.WHITE;
         isCts = false;
-        textLang = Settings.getDefaultTextLang();
+        if(textLang == null)
+            textLang = Settings.BookSettings.getSavedBook(book).lang;
         textSize = getResources().getDimension(R.dimen.default_text_font_size);
         //end defaults
         isLoadingInit = false;
