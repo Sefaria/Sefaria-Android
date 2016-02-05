@@ -136,10 +136,10 @@ public class MenuGrid extends LinearLayout {
         this.addView(tabRoot, 0); //make sure it's on top
 
         int count = 0;
-        for (MenuNode node : nodeList) {
+        for (MenuNode menuNode : nodeList) {
             //although generally this isn't necessary b/c the nodes come from menuState.getSections
             //this is used when rebuilding after memory dump and nodes come from setHasTabs()
-            if (node.getTitle(Util.Lang.EN).equals("Commentary")) {
+            if (menuNode.getTitle(Util.Lang.EN).equals("Commentary") || (menuNode.getTitle(Util.Lang.EN).equals("Rif"))) {
                 count++;
                 continue;
             }
@@ -150,7 +150,7 @@ public class MenuGrid extends LinearLayout {
                 inflater.inflate(R.layout.tab_divider_menu,tabRoot);
             }
 
-            MenuButtonTab mbt = new MenuButtonTab(context,node, menuState.getLang());
+            MenuButtonTab mbt = new MenuButtonTab(context,menuNode, menuState.getLang());
             mbt.setOnClickListener(tabButtonClick);
             tabRoot.addView(mbt);
             menuElementList.add(mbt);

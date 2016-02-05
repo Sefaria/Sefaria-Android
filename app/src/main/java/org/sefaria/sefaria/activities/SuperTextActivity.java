@@ -171,11 +171,18 @@ public abstract class SuperTextActivity extends Activity {
 
     }
 
+    protected boolean veryFirstTime = true;
     @Override
     protected void onResume() {
         super.onResume();
         GoogleTracker.sendScreen("SuperTextActivity");
         GoogleTracker.sendEvent(GoogleTracker.CATEGORY_NEW_TEXT,book.title);
+        if(!veryFirstTime) {
+            menuLang = Settings.getMenuLang();
+            customActionbar.setTitleText(currNode.getMenuBarTitle(book, menuLang), menuLang, true, true);
+        }else
+            veryFirstTime = false;
+
     }
 
     @Override
