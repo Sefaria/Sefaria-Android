@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.layouts.PerekTextView;
 import org.sefaria.sefaria.layouts.ScrollViewExt;
@@ -51,6 +52,7 @@ public class TextActivity extends SuperTextActivity {
             als.execute();
         }
     }
+
 
     @Override
     public void onSaveInstanceState(Bundle out) {

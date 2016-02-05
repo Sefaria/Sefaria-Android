@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 
+import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MenuElements.MenuDirectRef;
 import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.database.API;
@@ -74,6 +75,7 @@ public class HomeActivity extends Activity {
             setLang(Settings.getMenuLang());
         }else
             veryFirstTime = false;
+        GoogleTracker.sendScreen("HomeActivity");
     }
 
 

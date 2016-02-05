@@ -28,6 +28,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import org.sefaria.sefaria.DialogManager;
+import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.activities.HomeActivity;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
@@ -135,7 +136,7 @@ public class UpdateService extends Service {
 
         //Toast.makeText(context, "Start background update", Toast.LENGTH_SHORT).show();
         //Toast.makeText(context, "background update only headers.", Toast.LENGTH_SHORT).show();
-        MyApp.sendEvent("Download", "getting_update_csv");
+        GoogleTracker.sendEvent("Download", "getting_update_csv");
         startedUpdateTime = System.currentTimeMillis();
         lockOrientation(context);
 
@@ -250,18 +251,18 @@ public class UpdateService extends Service {
 
         } catch (IOException ioe) {
             ioe.printStackTrace();
-            MyApp.sendException(ioe, "postUpdateStage1_ioe");
+            GoogleTracker.sendException(ioe, "postUpdateStage1_ioe");
             return;
         }catch (Exception e){
             e.printStackTrace();
-            MyApp.sendException(e, "postUpdateStage1");
+            GoogleTracker.sendException(e, "postUpdateStage1");
             return;
         }
     }
 
     //...which uses it download the zip. Once done, it goes to updateStage3()
     public static void updateStage2(String zipUrl, String indexURL) {
-        MyApp.sendEvent("Download", "updateStage2 - Starting DB download");
+        GoogleTracker.sendEvent("Download", "updateStage2 - Starting DB download");
 
         //delete any file with the same name to avoid confusion
         File testFile = new File(DATABASE_ZIP_DOWNLOAD_LOC);
@@ -306,7 +307,7 @@ public class UpdateService extends Service {
 
 
                     } catch (IOException ioe) { //maybe add more exception handling
-                        MyApp.sendException(ioe, "updateStage3. THROWING");
+                        GoogleTracker.sendException(ioe, "updateStage3. THROWING");
                         throw ioe;
                     } /*catch (Exception	e){
 							Toast.makeText(contextYo,e.getMessage(),Toast.LENGTH_LONG).show();
@@ -324,13 +325,13 @@ public class UpdateService extends Service {
 
                     long timeToCompleteUpdate = System.currentTimeMillis() - startedUpdateTime;
                     if(startedUpdateTime != 0 && timeToCompleteUpdate > 0)
-                        MyApp.sendEvent("Download", "Update Finished",timeToCompleteUpdate);
+                        GoogleTracker.sendEvent("Download", "Update Finished",timeToCompleteUpdate);
 
                     handler.sendEmptyMessage(UPDATE_STAGE_3_COMPLETE);
 
 
                 } catch (Exception e) {
-                    MyApp.sendException(e,"updateStage3. THROWING");
+                    GoogleTracker.sendException(e,"updateStage3. THROWING");
                     throw new Error(e);
                 }
 

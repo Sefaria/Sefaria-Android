@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "org.sefaria.sefaria"
-        minSdkVersion 15
+        minSdkVersion 9
         targetSdkVersion 23
         versionCode 201
         versionName "2.01"
@@ -25,6 +25,7 @@ android {
         exclude 'META-INF/LICENSE'
         exclude 'META-INF/NOTICE'
     }
+
 }
 
 dependencies {
@@ -40,8 +41,10 @@ dependencies {
     compile 'com.android.support:design:23.1.1'
     compile 'com.android.support:recyclerview-v7:23.1.1'
     compile 'org.lucasr.twowayview:twowayview:0.1.4'
+    compile 'com.google.android.gms:play-services-analytics:8.4.0'
 }
 
+apply plugin: 'com.google.gms.google-services'
 
 
 

@@ -53,7 +53,7 @@ public class MenuButton extends MenuElement {
     private void setColor(int colorInt){
         if (colorInt != -1) {
             this.colorBar.setBackgroundColor(getResources().getColor(colorInt));
-            this.tv.setAllCaps(true); //only when there's color? (ie home page)
+            //this.tv.setAllCaps(true); //only when there's color? (ie home page)
         }
     }
 

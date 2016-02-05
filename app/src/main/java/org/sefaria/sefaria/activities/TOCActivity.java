@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
+import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Settings;
@@ -35,6 +36,12 @@ public class TOCActivity extends AppCompatActivity {
         String pathDefiningNode = currNode.makePathDefiningNode();
         intent.putExtra("pathDefiningNode", pathDefiningNode);
         return intent;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        GoogleTracker.sendScreen("TOCActivity");
     }
 
     @Override
