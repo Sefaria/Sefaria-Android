@@ -76,7 +76,7 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextAdapter.LinkTe
     @Override
     public void onBindViewHolder(LinkTextHolder holder, int position) {
         Text link = itemList.get(position);
-        if (currLinkCount.getCategory().equals("Commentary")) {
+        if (currLinkCount.getCategory().equals("Commentary") && currLinkCount.getDepthType() == LinkCount.DEPTH_TYPE.BOOK) {
             holder.title.setVisibility(View.GONE);
             holder.enVerseNum.setVisibility(View.VISIBLE);
             holder.enVerseNum.setText("" + link.levels[1]);
