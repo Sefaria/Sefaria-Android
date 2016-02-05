@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
+import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.layouts.CustomActionbar;
@@ -69,9 +70,16 @@ public class MenuActivity extends Activity {
         cab.setLang(lang);
     }
 
+    private boolean veryFirstTime = true;
     @Override
     protected void onResume() {
         super.onResume();
+        GoogleTracker.sendScreen("MenuActivity");
+        GoogleTracker.sendEvent(GoogleTracker.CATEGORY_OPEN_MENU,menuState.getCurrNode().getTitle(Util.Lang.EN));
+        if(!veryFirstTime) {
+            setLang(Settings.getMenuLang());
+        }else
+            veryFirstTime = false;
     }
 
     @Override

@@ -7,6 +7,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
@@ -300,7 +301,7 @@ public class Node implements  Parcelable{
             setFlagsFromNodeType(nodeType, siblingNum);
         }
         catch(Exception e){
-            MyApp.sendException(e);
+            GoogleTracker.sendException(e);
             Log.e("Node", e.toString());
             nid = 0;
             return;

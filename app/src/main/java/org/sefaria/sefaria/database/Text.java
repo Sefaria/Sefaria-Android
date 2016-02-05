@@ -1,4 +1,5 @@
 package org.sefaria.sefaria.database;
+import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MyApp;
 
 
@@ -358,7 +359,7 @@ public class Text implements Parcelable {
                     //for(int i = 0; i < textList.size(); i++)
                     //	textList.get(i).log();
                 }catch(Exception e){
-                    MyApp.sendException(e, "moving index.json");
+                    GoogleTracker.sendException(e, "moving index.json");
                 }
             }
         }).start();

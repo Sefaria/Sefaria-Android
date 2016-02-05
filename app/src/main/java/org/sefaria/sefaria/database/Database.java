@@ -1,4 +1,5 @@
 package org.sefaria.sefaria.database;
+import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.Util;
 
@@ -135,7 +136,7 @@ public class Database extends SQLiteOpenHelper{
             String myPath = getDbPath() + DB_NAME + ".db";
             checkDB = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
         }catch(Exception e){
-            MyApp.sendException(e, "database does't exist");
+            GoogleTracker.sendException(e, "database does't exist");
             //database does't exist yet.
 
         }
