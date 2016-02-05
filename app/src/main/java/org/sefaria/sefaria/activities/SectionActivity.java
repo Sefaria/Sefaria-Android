@@ -18,6 +18,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import org.sefaria.sefaria.R;
+import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.TextElements.SectionAdapter;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.Text;
@@ -83,7 +84,14 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
 
     }
 
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(!veryFirstTime) {
+            menuLang = Settings.getMenuLang();
+            sectionAdapter.notifyDataSetChanged();
+        }
+    }
 
     protected void setTextLang(Util.Lang textLang) {
         this.textLang = textLang;
