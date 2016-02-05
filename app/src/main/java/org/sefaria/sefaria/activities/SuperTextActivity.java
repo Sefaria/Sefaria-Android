@@ -286,7 +286,9 @@ public abstract class SuperTextActivity extends FragmentActivity {
     @Override
     public void onBackPressed() {
         Settings.BookSettings.setSavedBook(book, currNode, currText, textLang);
-        if (linkFragment != null && linkFragment.getIsOpen()) {
+        if(isTextMenuVisible)
+            toggleTextMenu();
+        else if (linkFragment != null && linkFragment.getIsOpen()) {
             if (linkFragment.getCurrState() == LinkFragment.State.MAIN) {
                 View linkRoot = findViewById(R.id.linkRoot);
                 AnimateLinkFragClose(linkRoot);
