@@ -5,8 +5,11 @@ import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.Book;
@@ -29,8 +32,15 @@ public class LinkSelectorBarButton extends TextView {
         this.book = book;
         setLang(Util.Lang.EN);
 
+
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        lp.gravity = Gravity.CENTER_VERTICAL;
+        lp.leftMargin = 10;
+        this.setLayoutParams(lp);
+
         int padding = 15;
         this.setPadding(padding,padding,padding,padding);
+        this.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
         this.setTextColor(Color.parseColor("#000000"));
         this.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.button_ripple_rect));
     }

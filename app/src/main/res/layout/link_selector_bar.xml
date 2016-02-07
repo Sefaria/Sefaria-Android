@@ -3,7 +3,6 @@
     android:id="@+id/link_selection_bar"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/link_background"
     android:orientation="horizontal">
     <HorizontalScrollView
         android:layout_weight="1"
@@ -17,15 +16,16 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal">
-
         </LinearLayout>
 
     </HorizontalScrollView>
-    <View
+    <ImageView
         android:id="@+id/link_back_btn"
         android:layout_width="20dp"
         android:layout_height="20dp"
-        android:background="@color/tanach"
+        android:src="@drawable/dots"
+        android:alpha="0.5"
         android:layout_margin="10dp"
-        android:layout_gravity="center"/>
+        android:layout_gravity="center"
+        android:background="?selectableItemBackgroundBorderless"/>
 </merge>
