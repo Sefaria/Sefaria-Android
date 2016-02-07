@@ -14,10 +14,11 @@
         android:id="@+id/link_selector_bar_root"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"></LinearLayout>
+        android:orientation="vertical"
+        android:background="#ededed"></LinearLayout>
     <View
         android:layout_width="match_parent"
-        android:layout_height="3dp"
+        android:layout_height="1dp"
         android:background="@color/menu_foreground"/>
     <TextView
         android:visibility="gone"
