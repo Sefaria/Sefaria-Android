@@ -106,14 +106,7 @@ public class MenuDirectRef extends LinearLayout{
     OnClickListener clickListener = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            Text text = null;
-            try {
-                text = new Text(Settings.BookSettings.getSavedBook(book).tid);
-            } catch (API.APIException e) {
-                e.printStackTrace();
-            } catch (Node.InvalidPathException e) {
-                e.printStackTrace();
-            }
+            Text text = new Text(Settings.BookSettings.getSavedBook(book).tid);
             SuperTextActivity.startNewTextActivityIntent(context,book,text,getNode());
         }
     };

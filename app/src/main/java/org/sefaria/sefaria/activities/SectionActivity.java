@@ -187,7 +187,10 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             //close textMenuBar if its open
-            if (isTextMenuVisible) toggleTextMenu();
+            if (isTextMenuVisible) {
+                toggleTextMenu();
+                return;
+            }
 
             View linkRoot = findViewById(R.id.linkRoot);
             if (linkFragment.getIsOpen()) {

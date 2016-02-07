@@ -104,6 +104,8 @@ public class Settings {
             this.node = node;
             this.tid = tid;
             this.lang = lang;
+            if(lang == null)
+                this.lang = getDefaultTextLang();
         }
 
         static private SharedPreferences getBookSavedSettings() {
@@ -114,7 +116,7 @@ public class Settings {
             return MyApp.getContext().getSharedPreferences("org.sefaria.sefaria.book_save_title_settings", Context.MODE_PRIVATE);
         }
 
-        static public BookSettings getSavedBook(Book book) throws API.APIException, Node.InvalidPathException {
+        static public BookSettings getSavedBook(Book book){
             SharedPreferences bookSavedSettings = getBookSavedSettings();
             String stringThatRepsSavedSettings = bookSavedSettings.getString(book.title, "");
             //Log.d("SuperTextAct", "bookSavedSettings:" + stringThatRepsSavedSettings);
@@ -122,17 +124,24 @@ public class Settings {
             Log.d("Settings", "stringThatRepsSavedSettings:" + stringThatRepsSavedSettings);
             String nodePathStr = settings[0];
             int tid = 0;
+            Util.Lang lang = null;
             try {
                 Log.d("Settings0", settings[0]);
                 Log.d("Settings1", settings[1]);
                 tid = Integer.valueOf(settings[1]);
+                lang = str2Lang(settings[2]);
             }catch (Exception e){
                 e.printStackTrace();
             }
-            Node node = book.getNodeFromPathStr(nodePathStr);
-            node = node.getFirstDescendant();//should be unneeded line, but in case there was a previous bug this should return a isTextSection() node to avoid bugs
-            Log.d("Settings", "node:" + node);
-            BookSettings bookSettings = new BookSettings(node,tid, Util.Lang.BI);
+            Node node = null;
+            try {
+                node = book.getNodeFromPathStr(nodePathStr);
+                node = node.getFirstDescendant();//should be unneeded line, but in case there was a previous bug this should return a isTextSection() node to avoid bugs
+            } catch (Exception e) {
+                ;
+            }
+
+            BookSettings bookSettings = new BookSettings(node,tid, lang);
             return bookSettings;
         }
 
