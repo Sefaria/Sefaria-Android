@@ -11,7 +11,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
-public class Link implements Parcelable {
+public class Link {//implements Parcelable {
 
     public Link(Cursor cursor){
         lid = cursor.getInt(0);
@@ -146,7 +146,7 @@ public class Link implements Parcelable {
         SQLiteDatabase db = dbHandler.getReadableDatabase();
         List<Text> linkList = new ArrayList<Text>();
 
-        Log.d("getLinksTextsFromDB", "Started ... linkFiler:" + linkFilter);
+        //Log.d("getLinksTextsFromDB", "Started ... linkFiler:" + linkFilter);
 
         String sql = "SELECT T.* FROM " + Text.TABLE_TEXTS + " T, Books B WHERE T.bid = B._id AND T._id"
                 + " IN ( SELECT L1.tid2 FROM Links_small L1 WHERE L1.tid1 = " + text.tid
@@ -190,7 +190,7 @@ public class Link implements Parcelable {
             } while (cursor.moveToNext());
         }
 
-        Log.d("getLinksTextsFromDB", "Finished ... linkList.size():" + linkList.size());
+        //Log.d("getLinksTextsFromDB", "Finished ... linkList.size():" + linkList.size());
         if(linkList.size()!= linkFilter.count && linkList.size() < 7){
             for(LinkCount lc: linkFilter.getChildren()){
                 Log.d("Link", lc.toString());
@@ -203,45 +203,6 @@ public class Link implements Parcelable {
     }
 
 
-    private static String createWhere3(Text text, String type){
-        String whereStatement =  " WHERE L.bid" + type + " = " + text.bid;
-        for(int i = 0; i < 6; i++){
-            if (text.levels[i] == 0)
-                return whereStatement;
-            whereStatement+= " AND L.level" + (i +1) + type + " = " + text.levels[i];
-        }
-        return whereStatement;
-
-
-    }
-
-    public static List<Link> getLinks(Text text) {
-        Database dbHandler = Database.getInstance();
-        SQLiteDatabase db = dbHandler.getReadableDatabase();
-
-        List<Link> linkList = new ArrayList<Link>();
-
-        String sql = "SELECT L._id, L.connType, L.bidb as bid, L.level1b, L.level2b, L.level3b, L.level4b, L.level5b, L.level6b FROM Links L"
-                + createWhere3(text,"a")
-                //+ " UNION"
-                //+ " SELECT L._id, L.connType, L.bida as bid, L.level1a, L.level2a, L.level3a, L.level4a, L.level5a, L.level6a FROM Links L"
-                //+  createWhere3(text,"b")
-                //+ " WHERE L.bidb = ? AND L.level1b = ? AND L.level2b = ? AND L.level3b = ? AND L.level4b = ?  AND L.level5b = ? AND L.level6b = ?"
-                + " ORDER BY bid";
-
-        Log.d("sql", sql);
-        Cursor cursor = db.rawQuery(sql, null);
-        if (cursor.moveToFirst()) {
-            do {
-                // Adding  to list
-                linkList.add(new Link(cursor));
-            } while (cursor.moveToNext());
-        }
-
-        return linkList;
-    }
-
-
 
     /**
      * gets links to a particular level other than the last level
@@ -250,6 +211,7 @@ public class Link implements Parcelable {
      * @param offset
      * @return
      */
+    /*
     public static List<Text> getLinkedChapTexts(Text text, int limit, int offset) {
         List<Text> texts = new ArrayList<Text>();
         Text dummyChapText = Text.makeDummyChapText(text);
@@ -305,8 +267,6 @@ public class Link implements Parcelable {
     }
 
 
-
-
     //PARCELABLE------------------------------------------------------------------------
 
     public static final Parcelable.Creator<Link> CREATOR
@@ -343,7 +303,7 @@ public class Link implements Parcelable {
         for(int i =0;i<NUM_LEVELS;i++)
             levels[i] = in.readInt();
     }
-
+    */
 }
 
 
