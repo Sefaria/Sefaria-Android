@@ -15,6 +15,7 @@ import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.DailyLearning;
 import org.sefaria.sefaria.database.Database;
 import org.sefaria.sefaria.database.Downloader;
+import org.sefaria.sefaria.database.Huffman;
 import org.sefaria.sefaria.layouts.AutoResizeTextView;
 import org.sefaria.sefaria.layouts.CustomActionbar;
 import org.sefaria.sefaria.MyApp;
@@ -169,13 +170,14 @@ public class HomeActivity extends Activity {
                 Book book = null;
                 try {
                     book = new Book(bookTitle);
+                    Pair<String,String> pair = Settings.BookSettings.getSavedBookTitle(bookTitle);
+                    MenuDirectRef menuDirectRef = new MenuDirectRef(this, pair.first, pair.second, null, book, null);
+                    recentTexts.add(menuDirectRef);
+                    recentRow.addView(menuDirectRef);
                 } catch (Book.BookNotFoundException e) {
                     e.printStackTrace();
                 }
-                Pair<String,String> pair = Settings.BookSettings.getSavedBookTitle(bookTitle);
-                MenuDirectRef menuDirectRef = new MenuDirectRef(this, pair.first, pair.second, null, book, null);
-                recentTexts.add(menuDirectRef);
-                recentRow.addView(menuDirectRef);
+
             }
         }
         /*

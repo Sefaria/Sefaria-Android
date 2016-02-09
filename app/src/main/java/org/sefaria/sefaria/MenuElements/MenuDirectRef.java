@@ -62,7 +62,6 @@ public class MenuDirectRef extends LinearLayout{
 
         this.setClickable(true);
         setLang(Settings.getMenuLang());
-
         int colorInt = book.getCatColor();
         if (colorInt != -1) {
             this.colorBar.setBackgroundColor(getResources().getColor(colorInt));
