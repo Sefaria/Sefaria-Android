@@ -6,7 +6,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.MotionEventCompat;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -27,6 +29,7 @@ import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Node;
 import org.sefaria.sefaria.database.Text;
 import org.sefaria.sefaria.layouts.CustomActionbar;
+import org.sefaria.sefaria.layouts.LinkDraggerView;
 import org.sefaria.sefaria.layouts.PerekTextView;
 import org.sefaria.sefaria.layouts.ScrollViewExt;
 import org.sefaria.sefaria.MenuElements.MenuNode;
@@ -73,6 +76,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
     //link vars
     protected LinkFragment linkFragment;
+    protected LinkDraggerView linkDraggerView;
     /**
      * hacky boolean so that if there's a problem with the on create, the subclasses know not to continue with init (after they call super.onCreate)
      */
@@ -160,6 +164,8 @@ public abstract class SuperTextActivity extends FragmentActivity {
         textMenuRoot.setVisibility(View.GONE);
 
         textScrollView = (ScrollViewExt) findViewById(R.id.textScrollView);
+
+        linkDraggerView = (LinkDraggerView) findViewById(R.id.link_dragger);
 
         //this specifically comes before menugrid, b/c in tabs it menugrid does funny stuff to currnode
         if (customActionbar == null) {
@@ -576,6 +582,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
             public void onAnimationStart(Animation animation) {
 
                 v.setVisibility(View.VISIBLE);
+
             }
 
             @Override
@@ -590,6 +597,8 @@ public abstract class SuperTextActivity extends FragmentActivity {
                 onFinishLinkFragOpen();
                 linkFragment.setDontUpdate(false);
                 linkFragment.setIsOpen(true);
+
+                linkDraggerView.setVisibility(View.VISIBLE);
             }
 
         });
@@ -610,6 +619,8 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
             @Override
             public void onAnimationStart(Animation animation) {
+                linkDraggerView.setVisibility(View.GONE);
+
                 linkFragment.setIsOpen(false);
                 linkFragment.setDontUpdate(true);
 
@@ -632,4 +643,5 @@ public abstract class SuperTextActivity extends FragmentActivity {
         });
 
     }
+
 }
