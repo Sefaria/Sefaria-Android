@@ -11,6 +11,7 @@ import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.activities.LinkFragment;
+import org.sefaria.sefaria.activities.SuperTextActivity;
 import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Link;
 import org.sefaria.sefaria.database.LinkCount;
@@ -24,7 +25,7 @@ import java.util.List;
 public class LinkMainAdapter extends RecyclerView.Adapter<LinkMainAdapter.LinkHolder> {
 
     private List<LinkCount> itemList;
-    private Context context;
+    private SuperTextActivity context;
     private Book book;
     private LinkFragment fragment;
 
@@ -33,7 +34,7 @@ public class LinkMainAdapter extends RecyclerView.Adapter<LinkMainAdapter.LinkHo
         public View colorBar;
         public View catPadding;
         private Context context;
-        public LinkHolder(View v,Context context) {
+        public LinkHolder(View v,SuperTextActivity context) {
             super(v);
             v.setClickable(true);
             v.setOnClickListener(this);
@@ -59,7 +60,7 @@ public class LinkMainAdapter extends RecyclerView.Adapter<LinkMainAdapter.LinkHo
     }
 
 
-    public LinkMainAdapter(Context context, List<LinkCount> itemList, Book book, LinkFragment fragment) {
+    public LinkMainAdapter(SuperTextActivity context, List<LinkCount> itemList, Book book, LinkFragment fragment) {
         this.itemList = itemList;
         this.context = context;
         this.book = book;
@@ -77,8 +78,11 @@ public class LinkMainAdapter extends RecyclerView.Adapter<LinkMainAdapter.LinkHo
     @Override
     public void onBindViewHolder(LinkHolder holder, int position) {
         LinkCount linkCount = itemList.get(position);
-        String bookTitle = linkCount.getSlimmedTitle(book, Util.Lang.EN);
+
         holder.tv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
+
+        Util.Lang lang = context.getTextLang();
+        String bookTitle = linkCount.getSlimmedTitle(book, lang);
 
         if (linkCount.getDepthType() == LinkCount.DEPTH_TYPE.CAT) {
             holder.tv.setText(bookTitle + " " + Util.LINK_CAT_VERICAL_LINE + " " + linkCount.getCount());

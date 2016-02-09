@@ -15,7 +15,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="#ededed"></LinearLayout>
+        android:background="#ededed"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"></LinearLayout>
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"

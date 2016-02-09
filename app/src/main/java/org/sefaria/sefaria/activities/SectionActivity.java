@@ -98,6 +98,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
     protected void setTextLang(Util.Lang textLang) {
         this.textLang = textLang;
         sectionAdapter.notifyDataSetChanged();
+        linkFragment.notifyDataSetChanged();
     }
 
     protected void setMenuLang(Util.Lang menuLang){
@@ -136,6 +137,8 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
                         currSeg = sectionAdapter.getItem(currInd + 1);
                     }
                     linkFragment.updateFragment(currSeg);
+                    sectionAdapter.notifyDataSetChanged(); //redraw visible views to make current segment view darker
+
                 }
                 break;
             }

@@ -36,6 +36,12 @@
 
         android:layout_alignTop="@id/useless"/><!--android:layout_above="@+id/linkRoot"-->
 
+    <View
+        android:id="@+id/link_dragger"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:background="#ff0000"
+        android:layout_above="@+id/linkRoot"/>
     <RelativeLayout
         android:visibility="gone"
         android:id="@+id/linkRoot"

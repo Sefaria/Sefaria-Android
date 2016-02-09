@@ -2,7 +2,6 @@ package org.sefaria.sefaria.LinkElements;
 
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +11,6 @@ import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.activities.SuperTextActivity;
-import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Link;
 import org.sefaria.sefaria.database.LinkCount;
 import org.sefaria.sefaria.database.Text;
@@ -68,7 +66,7 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextAdapter.LinkTe
     @Override
     public LinkTextHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        View layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.link_text, null);
+        View layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.link_text_mono, null);
         LinkTextHolder linkHolder = new LinkTextHolder(layoutView);
         return linkHolder;
     }

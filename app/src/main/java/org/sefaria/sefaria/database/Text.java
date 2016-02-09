@@ -490,53 +490,55 @@ public class Text implements Parcelable {
         return "";
     }
 
+    @Override
+    public int hashCode() {
+        return tid;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Text))
+            return false;
+
+        Text text = (Text) o;
+        return text.tid == this.tid;
+    }
+
     /*
-        public static int add(SQLiteDatabase db1, JSONObject json) throws JSONException {
-            return add(db1,json,false);
-        }
-        //public static int textsUpdatedCount = 0;
-
-
-        public static int add(SQLiteDatabase db1, JSONObject json, boolean shouldUpdate) throws JSONException {
-            //DatabaseHandler dbHandler = DatabaseHandler.getInstance(MyApp.context);
-            //DB = dbHandler.getWritableDatabase();
-            //SQLiteDatabase db1 = dbHandler.getWritableDatabase();
-
-            String langType = convertLangToLangText(json.getString("language"));
-            String title = json.getString("title");
-            Book book = new Book(title, db1);
-
-            if(book.bid == 0){
-                Log.e("sql_text_add" , "Don't have book: " + title);
-                //TODO try to add book first.
-                return -1; //fail
+            public static int add(SQLiteDatabase db1, JSONObject json) throws JSONException {
+                return add(db1,json,false);
             }
-            //Log.d("sql_text_add", "Adding " + title + " " + langType + " isUpdating?" + shouldUpdate + ".....");
+            //public static int textsUpdatedCount = 0;
 
 
-            int [] it = new int[MAX_LEVELS + 1];
-            int forLoopNum = 6;
-            if(forLoopNum != MAX_LEVELS)
-                Log.e("ERROR: ", "forLoopNum is not teh same as MAX_LEVELS");
-            boolean [] skipThisLoop = new boolean[forLoopNum + 1];
-            JSONArray [] jsonArray = new JSONArray[forLoopNum + 1];
-            textsUpdatedCount = 0;
+            public static int add(SQLiteDatabase db1, JSONObject json, boolean shouldUpdate) throws JSONException {
+                //DatabaseHandler dbHandler = DatabaseHandler.getInstance(MyApp.context);
+                //DB = dbHandler.getWritableDatabase();
+                //SQLiteDatabase db1 = dbHandler.getWritableDatabase();
 
-            jsonArray[forLoopNum] = (JSONArray) json.get("text");
+                String langType = convertLangToLangText(json.getString("language"));
+                String title = json.getString("title");
+                Book book = new Book(title, db1);
 
-
-            for(it[forLoopNum] = 0; !skipThisLoop[forLoopNum] && it[forLoopNum]<jsonArray[forLoopNum].length();it[forLoopNum]++){
-                if(book.textDepth >= forLoopNum)
-                    try{
-                        jsonArray[forLoopNum -1] = jsonArray[forLoopNum].getJSONArray(it[forLoopNum]);
-                    }catch(Exception e){//MOST LIKELY THIS IS B/C THERE IS A 0 and not another level of JSON there.
-                        continue;
-                    }
-                else{
-                    jsonArray[forLoopNum - 1] = jsonArray[forLoopNum];
-                    skipThisLoop[forLoopNum] = true;
+                if(book.bid == 0){
+                    Log.e("sql_text_add" , "Don't have book: " + title);
+                    //TODO try to add book first.
+                    return -1; //fail
                 }
-                forLoopNum = 5;
+                //Log.d("sql_text_add", "Adding " + title + " " + langType + " isUpdating?" + shouldUpdate + ".....");
+
+
+                int [] it = new int[MAX_LEVELS + 1];
+                int forLoopNum = 6;
+                if(forLoopNum != MAX_LEVELS)
+                    Log.e("ERROR: ", "forLoopNum is not teh same as MAX_LEVELS");
+                boolean [] skipThisLoop = new boolean[forLoopNum + 1];
+                JSONArray [] jsonArray = new JSONArray[forLoopNum + 1];
+                textsUpdatedCount = 0;
+
+                jsonArray[forLoopNum] = (JSONArray) json.get("text");
+
+
                 for(it[forLoopNum] = 0; !skipThisLoop[forLoopNum] && it[forLoopNum]<jsonArray[forLoopNum].length();it[forLoopNum]++){
                     if(book.textDepth >= forLoopNum)
                         try{
@@ -548,7 +550,7 @@ public class Text implements Parcelable {
                         jsonArray[forLoopNum - 1] = jsonArray[forLoopNum];
                         skipThisLoop[forLoopNum] = true;
                     }
-                    forLoopNum = 4;
+                    forLoopNum = 5;
                     for(it[forLoopNum] = 0; !skipThisLoop[forLoopNum] && it[forLoopNum]<jsonArray[forLoopNum].length();it[forLoopNum]++){
                         if(book.textDepth >= forLoopNum)
                             try{
@@ -560,21 +562,19 @@ public class Text implements Parcelable {
                             jsonArray[forLoopNum - 1] = jsonArray[forLoopNum];
                             skipThisLoop[forLoopNum] = true;
                         }
-                        forLoopNum = 3;
+                        forLoopNum = 4;
                         for(it[forLoopNum] = 0; !skipThisLoop[forLoopNum] && it[forLoopNum]<jsonArray[forLoopNum].length();it[forLoopNum]++){
-                            if(book.textDepth >= forLoopNum){
+                            if(book.textDepth >= forLoopNum)
                                 try{
                                     jsonArray[forLoopNum -1] = jsonArray[forLoopNum].getJSONArray(it[forLoopNum]);
                                 }catch(Exception e){//MOST LIKELY THIS IS B/C THERE IS A 0 and not another level of JSON there.
                                     continue;
                                 }
-
-                            }
                             else{
                                 jsonArray[forLoopNum - 1] = jsonArray[forLoopNum];
                                 skipThisLoop[forLoopNum] = true;
                             }
-                            forLoopNum = 2;
+                            forLoopNum = 3;
                             for(it[forLoopNum] = 0; !skipThisLoop[forLoopNum] && it[forLoopNum]<jsonArray[forLoopNum].length();it[forLoopNum]++){
                                 if(book.textDepth >= forLoopNum){
                                     try{
@@ -582,130 +582,144 @@ public class Text implements Parcelable {
                                     }catch(Exception e){//MOST LIKELY THIS IS B/C THERE IS A 0 and not another level of JSON there.
                                         continue;
                                     }
+
                                 }
                                 else{
                                     jsonArray[forLoopNum - 1] = jsonArray[forLoopNum];
                                     skipThisLoop[forLoopNum] = true;
                                 }
-                                forLoopNum = 1;
-                                for(it[forLoopNum] = 0; !skipThisLoop[forLoopNum] && it[forLoopNum]<jsonArray[forLoopNum].length();it[forLoopNum]++){
-                                    try{
-                                        insertValues(db1, book, jsonArray[forLoopNum], langType, it, shouldUpdate);
-                                    }catch(Exception e){//MOST LIKELY THIS IS B/C THERE IS A 0 and not another level of JSON there.
-                                        MyApp.sendException(e);
-                                        continue;
-                                    }
-                                }
                                 forLoopNum = 2;
+                                for(it[forLoopNum] = 0; !skipThisLoop[forLoopNum] && it[forLoopNum]<jsonArray[forLoopNum].length();it[forLoopNum]++){
+                                    if(book.textDepth >= forLoopNum){
+                                        try{
+                                            jsonArray[forLoopNum -1] = jsonArray[forLoopNum].getJSONArray(it[forLoopNum]);
+                                        }catch(Exception e){//MOST LIKELY THIS IS B/C THERE IS A 0 and not another level of JSON there.
+                                            continue;
+                                        }
+                                    }
+                                    else{
+                                        jsonArray[forLoopNum - 1] = jsonArray[forLoopNum];
+                                        skipThisLoop[forLoopNum] = true;
+                                    }
+                                    forLoopNum = 1;
+                                    for(it[forLoopNum] = 0; !skipThisLoop[forLoopNum] && it[forLoopNum]<jsonArray[forLoopNum].length();it[forLoopNum]++){
+                                        try{
+                                            insertValues(db1, book, jsonArray[forLoopNum], langType, it, shouldUpdate);
+                                        }catch(Exception e){//MOST LIKELY THIS IS B/C THERE IS A 0 and not another level of JSON there.
+                                            MyApp.sendException(e);
+                                            continue;
+                                        }
+                                    }
+                                    forLoopNum = 2;
+                                }
+                                forLoopNum = 3;
                             }
-                            forLoopNum = 3;
+                            forLoopNum = 4;
                         }
-                        forLoopNum = 4;
+                        forLoopNum = 5;
                     }
-                    forLoopNum = 5;
+                    forLoopNum = 6;
                 }
-                forLoopNum = 6;
+                return 1; //it worked
             }
-            return 1; //it worked
-        }
 
-        private static long  insertValues(SQLiteDatabase db1, Book book, JSONArray jsonLevel1, String langType, int [] it, boolean shouldUpdate) throws JSONException{
-            String theText;
-            try{
-                theText = jsonLevel1.getString(it[1]);
-                if(theText.length() < 1){ //this means that it's useless to try to add to the database.
+            private static long  insertValues(SQLiteDatabase db1, Book book, JSONArray jsonLevel1, String langType, int [] it, boolean shouldUpdate) throws JSONException{
+                String theText;
+                try{
+                    theText = jsonLevel1.getString(it[1]);
+                    if(theText.length() < 1){ //this means that it's useless to try to add to the database.
+                        return -1;
+                    }
+                    if(theText.equals("0") && !(jsonLevel1.get(it[1]) instanceof String)) //it's a 0, meaning no text
+                        return -1;
+                }catch(Exception e){ //if there was a problem getting the text, then it probably wasn't text anyways so just leave the function.
+                    Log.e("sql_adding_text", "Problem adding text " + book.title + " it[1] = " + it[1]);
+                    Database.textsFailedToUpload++;
+                    MyApp.sendException(e);
                     return -1;
                 }
-                if(theText.equals("0") && !(jsonLevel1.get(it[1]) instanceof String)) //it's a 0, meaning no text
-                    return -1;
-            }catch(Exception e){ //if there was a problem getting the text, then it probably wasn't text anyways so just leave the function.
-                Log.e("sql_adding_text", "Problem adding text " + book.title + " it[1] = " + it[1]);
-                Database.textsFailedToUpload++;
-                MyApp.sendException(e);
-                return -1;
-            }
-            try{
-                ContentValues values = new ContentValues();
+                try{
+                    ContentValues values = new ContentValues();
 
-                values.put(Kbid, book.bid);
-                values.put(langType,theText); //place the text
-                int [] levels = new int [book.textDepth];
-                for(int i = 1; i<= book.textDepth; i++){
-                    values.put("level" + String.valueOf(i), it[i] + 1 );
-                    levels[i-1] = it[i] + 1;
-                }
-                if(shouldUpdate){
-                    //if(1 != db1.insertWithOnConflict(TABLE_TEXTS, null, values, SQLiteDatabase.CONFLICT_REPLACE)){ //
-                    if(0 == db1.update(TABLE_TEXTS, values, whereClause(book.bid,levels), whereArgs(book.bid, levels))){ //it didn't update any texts (presumably b/c it didn't exist yet)
-                        if(db1.insert(TABLE_TEXTS, null, values) == -1){//the insert was -1 means that it failed to insert.
-                            Database.textsFailedToUpload++;
-                            Log.e("sql_add_text", "Failed to updated verse" + langType + fullWhere(book.bid, levels));
-                        }else
+                    values.put(Kbid, book.bid);
+                    values.put(langType,theText); //place the text
+                    int [] levels = new int [book.textDepth];
+                    for(int i = 1; i<= book.textDepth; i++){
+                        values.put("level" + String.valueOf(i), it[i] + 1 );
+                        levels[i-1] = it[i] + 1;
+                    }
+                    if(shouldUpdate){
+                        //if(1 != db1.insertWithOnConflict(TABLE_TEXTS, null, values, SQLiteDatabase.CONFLICT_REPLACE)){ //
+                        if(0 == db1.update(TABLE_TEXTS, values, whereClause(book.bid,levels), whereArgs(book.bid, levels))){ //it didn't update any texts (presumably b/c it didn't exist yet)
+                            if(db1.insert(TABLE_TEXTS, null, values) == -1){//the insert was -1 means that it failed to insert.
+                                Database.textsFailedToUpload++;
+                                Log.e("sql_add_text", "Failed to updated verse" + langType + fullWhere(book.bid, levels));
+                            }else
+                                Database.textsUploaded++;
+                        }
+                        else// it updated the text.
                             Database.textsUploaded++;
+                        return 0;
+
+                    }else{
+                        if(db1.insert(TABLE_TEXTS, null, values) == -1 )
+                            Database.textsFailedToUpload++;
+                        else
+                            Database.textsUploaded++;
+                        return 0;
                     }
-                    else// it updated the text.
-                        Database.textsUploaded++;
-                    return 0;
 
-                }else{
-                    if(db1.insert(TABLE_TEXTS, null, values) == -1 )
-                        Database.textsFailedToUpload++;
-                    else
-                        Database.textsUploaded++;
-                    return 0;
+                } catch (Exception e) {
+                    MyApp.sendException(e, "textInsertVal");
+                    String levels = new String();
+                    levels = "";
+                    for(int i = 1; i<= MAX_LEVELS; i++){
+                        levels += (it[i] + 1) + ".";
+                    }
+                    Log.e("sql_text_insertValues",book.title + " " + langType + " "+  levels + " failed to upload properly. " + e);
+                    //e.printStackTrace();
+                }
+                return 0;
+            }
+            //could be -1 in order to actually getMaxLang
+            public static Util.Lang getMaxLang(List<Text> texts, Util.Lang usersLang) {
+                Util.Lang minLang;
+                int numBi = 0; //num bilingual texts
+                int numEn = 0;
+                int numHe = 0;
+                for (Text t : texts) {
+                    if (t.enText != "" && t.heText != "") {
+                        numBi++;
+                    } else if (t.heText != "") {
+                        numHe++;
+                    } else if (t.enText != "") {
+                        numEn++;
+                    }
+                }
+                if (numBi/((double)texts.size()) > BILINGUAL_THRESHOLD) minLang = Util.Lang.BI;
+                else {
+                    if (numEn > numHe) minLang = Util.Lang.EN;
+                    else minLang = Util.Lang.HE;
                 }
 
-            } catch (Exception e) {
-                MyApp.sendException(e, "textInsertVal");
-                String levels = new String();
-                levels = "";
-                for(int i = 1; i<= MAX_LEVELS; i++){
-                    levels += (it[i] + 1) + ".";
+
+                //default to users lang if possible
+                if (minLang == Util.Lang.BI || minLang == usersLang) {
+                    //bc bilingual contains both langs
+                    return usersLang;
                 }
-                Log.e("sql_text_insertValues",book.title + " " + langType + " "+  levels + " failed to upload properly. " + e);
-                //e.printStackTrace();
-            }
-            return 0;
-        }
-        //could be -1 in order to actually getMaxLang
-        public static Util.Lang getMaxLang(List<Text> texts, Util.Lang usersLang) {
-            Util.Lang minLang;
-            int numBi = 0; //num bilingual texts
-            int numEn = 0;
-            int numHe = 0;
-            for (Text t : texts) {
-                if (t.enText != "" && t.heText != "") {
-                    numBi++;
-                } else if (t.heText != "") {
-                    numHe++;
-                } else if (t.enText != "") {
-                    numEn++;
-                }
-            }
-            if (numBi/((double)texts.size()) > BILINGUAL_THRESHOLD) minLang = Util.Lang.BI;
-            else {
-                if (numEn > numHe) minLang = Util.Lang.EN;
-                else minLang = Util.Lang.HE;
+
+                //otherwise, return the most prevalent lang in text
+                return minLang;
             }
 
-
-            //default to users lang if possible
-            if (minLang == Util.Lang.BI || minLang == usersLang) {
-                //bc bilingual contains both langs
-                return usersLang;
+            public static Util.Lang getMaxLang(Text text) {
+                if (text.enText != "" && text.heText != "") return Util.Lang.BI;
+                else if (text.enText != "") return Util.Lang.EN;
+                else if (text.heText != "") return Util.Lang.HE;
+                else return Util.Lang.HE; //default to HE when no text
             }
-
-            //otherwise, return the most prevalent lang in text
-            return minLang;
-        }
-
-        public static Util.Lang getMaxLang(Text text) {
-            if (text.enText != "" && text.heText != "") return Util.Lang.BI;
-            else if (text.enText != "") return Util.Lang.EN;
-            else if (text.heText != "") return Util.Lang.HE;
-            else return Util.Lang.HE; //default to HE when no text
-        }
-        */
+            */
     public static Text deepCopy(Text text) {
         Text newText = new Text();
         newText.bid = text.bid;

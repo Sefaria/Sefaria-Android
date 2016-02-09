@@ -424,6 +424,10 @@ public abstract class SuperTextActivity extends FragmentActivity {
         this.textSize = textSize;
     }
 
+    //return the currently selected text, as determined by the link fragment
+    public Text getCurrLinkSegment() { return linkFragment.getSegment(); }
+    public boolean getFragmentIsOpen() { return linkFragment.getIsOpen(); }
+
     public Book getBook() { return book; }
 
     protected abstract void setTextLang(Util.Lang textLang);

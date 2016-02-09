@@ -221,6 +221,9 @@ public class LinkFragment extends android.support.v4.app.Fragment {
         updateFragment(segment, getView());
     }
 
+    //independent of whether or not you're using linkMainAdapter or linkTextAdapter, notify
+    public void notifyDataSetChanged() { linkRecycler.getAdapter().notifyDataSetChanged(); }
+
     public void setDontUpdate(boolean dontUpdate) { this.dontUpdate = dontUpdate; }
     public void setIsOpen(boolean isOpen) { this.isOpen = isOpen; }
     public boolean getIsOpen() { return isOpen; }
