@@ -5,4 +5,9 @@
         <attr name="primaryContent" format="reference" />
         <attr name="secondaryContent" format="reference" />
     </declare-styleable>
+
+    <declare-styleable name="LinkDraggerView">
+        <attr name="dragView" format="reference"/>
+        <attr name="maxHeightView" format="reference"/>
+    </declare-styleable>
 </resources>

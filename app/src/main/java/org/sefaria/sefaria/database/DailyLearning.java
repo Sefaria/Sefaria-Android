@@ -69,13 +69,14 @@ public class DailyLearning {
 
             for (int i = 0; i < weeks.length(); i++) {
                 JSONObject week = weeks.getJSONObject(i);
+
                 if(week.getString("date").equals(todaysDate)){
                     String parsha = week.getString("parasha");
                     JSONArray haftaras = week.getJSONArray("haftara");
                     //TODO deal with multi part hafotra
                     String haftara = haftaras.getString(0);
                     String aliyah = week.getJSONArray("aliyot").getString(0);
-                    String bookName = aliyah.replaceFirst("\\s[0-9]*.*$", "");
+                    String bookName = aliyah.replaceFirst("\\s[0-9]+.*$", "");
                     Book book = new Book(bookName);
                     Node node = book.getTOCroots().get(1);
                     for(Node child:node.getChildren()){
@@ -87,9 +88,9 @@ public class DailyLearning {
                     node = node.getFirstDescendant();//go to first aliyah
                     MenuDirectRef parshaMenu = new MenuDirectRef(context,node.getParent().getTitle(Util.Lang.EN),node.getParent().getTitle(Util.Lang.HE),node.makePathDefiningNode(),book, "Parsha");
 
-                    String haftaraBookName = haftara.replaceFirst("\\s[0-9]*.*$","");
-                    String haftaraFullNumber = haftara.replaceFirst("^[^0-9]*\\s","");
-                    String haftaraNumber = haftaraFullNumber.replaceFirst("-[0-9]*.*$", "");
+                    String haftaraBookName = haftara.replaceFirst("\\s[0-9]+.*$","");
+                    String haftaraFullNumber = haftara.replaceFirst("^[^0-9]+\\s","");
+                    String haftaraNumber = haftaraFullNumber.replaceFirst("-[0-9]+.*$", "");
                     Book haftaraBook = new Book(haftaraBookName);
                     Node haftaraNode = haftaraBook.getTOCroots().get(0);
                     int haftraChap = Integer.valueOf(haftaraNumber.split(":")[0]);
