@@ -1,5 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -35,13 +37,23 @@
         android:layout_height="match_parent"
 
         android:layout_alignTop="@id/useless"/><!--android:layout_above="@+id/linkRoot"-->
-
-    <View
+    <org.sefaria.sefaria.layouts.LinkDraggerView
         android:id="@+id/link_dragger"
         android:layout_width="match_parent"
-        android:layout_height="10dp"
-        android:background="#ff0000"
-        android:layout_above="@+id/linkRoot"/>
+        android:layout_height="20dp"
+        android:orientation="vertical"
+        android:background="#ddd"
+        android:layout_above="@+id/linkRoot"
+        custom:maxHeightView="@+id/useless"
+        custom:dragView="@+id/linkRoot">
+        <ImageView
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:layout_centerInParent="true"
+            android:alpha="0.5"
+            android:src="@drawable/dots"/>
+
+    </org.sefaria.sefaria.layouts.LinkDraggerView>
     <RelativeLayout
         android:visibility="gone"
         android:id="@+id/linkRoot"
