@@ -68,6 +68,12 @@ public class SectionAdapter extends ArrayAdapter<Text> {
                 view = inflater.inflate(R.layout.adapter_text_mono,null);
             }
         }
+
+
+        boolean isCurrLinkSegment = segment.equals(context.getCurrLinkSegment());
+        if (isCurrLinkSegment && context.getFragmentIsOpen()) view.setBackgroundColor(context.getResources().getColor(R.color.text_selected));
+        else view.setBackgroundColor(context.getResources().getColor(android.R.color.transparent));
+
         TextChapterHeader tch = (TextChapterHeader) view.findViewById(R.id.chapHeader);
         TextView enNum = (TextView) view.findViewById(R.id.enVerseNum);
         TextView heNum = (TextView) view.findViewById(R.id.heVerseNum);
@@ -102,17 +108,7 @@ public class SectionAdapter extends ArrayAdapter<Text> {
                 else
                     heTv.setVisibility(View.GONE);
 
-                /*
-                int padding;
-                if(isCts){
-                    padding = 1;
 
-                }else{
-                    padding = R.dimen.text_activtiy_numbering_padding;
-                }
-                enTv.setPadding(enTv.getPaddingLeft(),padding,enTv.getPaddingRight(),padding);
-                heTv.setPadding(heTv.getPaddingLeft(),padding,heTv.getPaddingRight(),padding);
-                */
 
                 //enTv.setTextColor(Color.parseColor("#999999"));
                 enTv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
@@ -131,6 +127,7 @@ public class SectionAdapter extends ArrayAdapter<Text> {
                 //heNum.setTypeface(MyApp.getFont(MyApp.MONTSERRAT_FONT));
                 enNum.setText(Util.VERSE_BULLET);
                 enNum.setAlpha(linkAlpha);
+
             }
 
         } else { //Hebrew or English
