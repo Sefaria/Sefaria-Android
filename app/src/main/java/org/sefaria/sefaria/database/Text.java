@@ -22,6 +22,7 @@ public class Text implements Parcelable {
     public static final int MAX_LEVELS = 6;
     public static final double BILINGUAL_THRESHOLD = 0.05; //percentage of text that is bilingual for us to default to bilingual
 
+    private static boolean usingHuffman = false;
 
     private static final String Kbid = "bid";
     private static final String KenText = "enText";
@@ -39,11 +40,18 @@ public class Text implements Parcelable {
     public Node parentNode = null; //for SectionAdapter. not null indicates that this obj is actually a placeholder for a perek title (and the node represents that perek)
     public int tid;
     public int bid;
-    public String enText;
-    public String heText;
+    private String enText;
+    private String heText;
     private boolean isChapter = false;
     private int parentNID;
 
+    public String getEnText()
+    {
+        return enText;//"abc";
+    }
+    public String getHeText(){
+        return heText;//"abc";
+    }
 
     private int numLinks = 0;
 
@@ -121,8 +129,19 @@ public class Text implements Parcelable {
     private void getFromCursor(Cursor cursor){
         tid = cursor.getInt(0);
         bid = cursor.getInt(1);
-        enText = cursor.getString(2);
-        heText = cursor.getString(3);
+        if(!usingHuffman) {
+            enText = cursor.getString(2);
+            heText = cursor.getString(3);
+        }
+        else{
+            byte [] bytes = cursor.getBlob(2);
+            int bitLength =  cursor.getInt(13);
+            enText = Huffman.decode(bytes,bitLength);
+            heText = null;
+        }
+
+
+
         levels = new int []{0,0,0,0,0,0};
         for(int i=0;i<6;i++){
             levels[i] = cursor.getInt(i+4);
@@ -130,6 +149,7 @@ public class Text implements Parcelable {
         displayNum = (cursor.getInt(10) != 0);
         numLinks = cursor.getInt(11);
         parentNID = cursor.getInt(12);
+
 
         if(enText== null)
             enText = "";

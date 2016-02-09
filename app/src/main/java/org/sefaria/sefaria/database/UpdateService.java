@@ -185,7 +185,7 @@ public class UpdateService extends Service {
         if (csvFile.exists()) csvFile.delete();
 
         SharedPreferences settings = Settings.getGeneralSettings();
-        String csvURL = settings.getString("csvURL", Downloader.CSV_REAL_URL);
+        String csvURL = settings.getString("csvURL", Downloader.getCSV());
         Downloader.download(csvURL,Downloader.CSV_DOWNLOAD_TITLE,Downloader.DB_DOWNLOAD_PATH,Downloader.CSV_FILE_NAME,true);
     }
 

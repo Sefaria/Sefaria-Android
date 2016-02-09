@@ -86,7 +86,7 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextAdapter.LinkTe
             holder.title.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
             holder.title.setTextSize(20);
         }
-        holder.tv.setText(Html.fromHtml(link.heText + "<br>" + link.enText));
+        holder.tv.setText(Html.fromHtml(link.getHeText() + "<br>" + link.getEnText()));
         holder.tv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
         holder.tv.setTextSize(20);
 

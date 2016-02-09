@@ -98,13 +98,13 @@ public class SectionAdapter extends ArrayAdapter<Text> {
                 enNum.setVisibility(View.VISIBLE);
                 heNum.setVisibility(View.VISIBLE);
 
-                if(segment.enText.length() > 0)
-                    enTv.setText(Html.fromHtml(segment.enText));
+                if(segment.getEnText().length() > 0)
+                    enTv.setText(Html.fromHtml(segment.getEnText()));
                 else
                     enTv.setVisibility(View.GONE);
                 //enTv.setText(""+segment.getNumLinks() + " / " + maxNumLinks + "\nALPHA = " + linkAlpha);
-                if(segment.heText.length() > 0)
-                    heTv.setText(Html.fromHtml(segment.heText));
+                if(segment.getHeText().length() > 0)
+                    heTv.setText(Html.fromHtml(segment.getHeText()));
                 else
                     heTv.setVisibility(View.GONE);
 
@@ -150,7 +150,7 @@ public class SectionAdapter extends ArrayAdapter<Text> {
                 heNum.setVisibility(View.VISIBLE);
 
                 if (context.getTextLang() == Util.Lang.HE) {
-                    tv.setText(Html.fromHtml(segment.heText));
+                    tv.setText(Html.fromHtml(segment.getHeText()));
                     enNum.setText(Util.VERSE_BULLET);
                     enNum.setAlpha(linkAlpha);
                     enNum.setTypeface(MyApp.getFont(MyApp.MONTSERRAT_FONT));
@@ -161,7 +161,7 @@ public class SectionAdapter extends ArrayAdapter<Text> {
                     heNum.setAlpha(1);
                     heNum.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
                 } else /*if (context.getTextLang() == Util.Lang.EN)*/ {
-                    tv.setText(Html.fromHtml(segment.enText));
+                    tv.setText(Html.fromHtml(segment.getEnText()));
                     if(segment.displayNum)
                         enNum.setText(""+segment.levels[0]);
                     else
