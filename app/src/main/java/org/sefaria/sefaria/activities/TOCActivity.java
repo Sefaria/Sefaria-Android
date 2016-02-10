@@ -16,6 +16,7 @@ import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.TOCElements.TOCGrid;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.Book;
+import org.sefaria.sefaria.database.Huffman;
 import org.sefaria.sefaria.database.Node;
 import org.sefaria.sefaria.layouts.CustomActionbar;
 import org.sefaria.sefaria.MenuElements.MenuNode;
@@ -41,6 +42,7 @@ public class TOCActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        Huffman.makeTree(true);
         GoogleTracker.sendScreen("TOCActivity");
     }
 

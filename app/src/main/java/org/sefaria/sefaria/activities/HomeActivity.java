@@ -57,6 +57,7 @@ public class HomeActivity extends Activity {
         super.onCreate(in);
         MyApp.currActivityContext = this;
         setContentView(R.layout.activity_home);
+        Huffman.makeTree(true);
 
         Intent intent = getIntent();
         menuState = intent.getParcelableExtra("menuState");
@@ -76,6 +77,7 @@ public class HomeActivity extends Activity {
     protected void onResume() {
         super.onResume();
         if(!veryFirstTime) {
+            Huffman.makeTree(true);
             addRecentTexts(null);
             setLang(Settings.getMenuLang());
         }else
