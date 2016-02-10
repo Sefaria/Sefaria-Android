@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item>
-        <shape android:shape="rectangle" >
-            <solid android:color="#ddd" />
-        </shape>
-    </item>
-    <item>
-        <bitmap
-            android:src="@drawable/dots"
-            android:tileMode="disabled" />
-    </item>
-</layer-list>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@color/button_clicked" android:state_pressed="true"/>
+    <item android:drawable="@color/button_clicked" android:state_focused="true"/>
+    <item android:drawable="@color/menu_foreground"/>
+</selector>

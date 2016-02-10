@@ -1,5 +1,6 @@
 package org.sefaria.sefaria.LinkElements;
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -86,6 +87,7 @@ public class LinkMainAdapter extends RecyclerView.Adapter<LinkMainAdapter.LinkHo
 
         if (linkCount.getDepthType() == LinkCount.DEPTH_TYPE.CAT) {
             holder.tv.setText(bookTitle + " " + Util.LINK_CAT_VERICAL_LINE + " " + linkCount.getCount());
+            holder.tv.setTextColor(context.getResources().getColor(android.R.color.black));
             if (android.os.Build.VERSION.SDK_INT >= 14) {//for older things it just will by non-capped (even though we can make a function to fix it, it's not worth it).
                 holder.tv.setAllCaps(true);
             }
@@ -96,12 +98,21 @@ public class LinkMainAdapter extends RecyclerView.Adapter<LinkMainAdapter.LinkHo
                 holder.colorBar.setBackgroundColor(context.getResources().getColor(color));
             }
         } else {
-            holder.tv.setText(bookTitle + " (" + linkCount.getCount() + ")");
+            if (linkCount.getCount() == 0) {
+                holder.tv.setText(bookTitle);
+                holder.tv.setTextColor(Color.parseColor("#999999"));
+            } else {
+                holder.tv.setText(bookTitle + " (" + linkCount.getCount() + ")");
+                holder.tv.setTextColor(context.getResources().getColor(android.R.color.black));
+            }
+
             if (android.os.Build.VERSION.SDK_INT >= 14) {
                 holder.tv.setAllCaps(false);
             }
             holder.colorBar.setVisibility(View.GONE);
             holder.catPadding.setVisibility(View.GONE);
+
+
         }
     }
 
