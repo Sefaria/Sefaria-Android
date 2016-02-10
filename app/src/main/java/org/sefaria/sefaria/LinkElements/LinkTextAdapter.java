@@ -93,19 +93,38 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextHolder> {
             LinkMonoTextHolder monoHolder = (LinkMonoTextHolder) holder;
 
             String text;
-            if (lang == Util.Lang.HE) text = link.heText;
-            else /*if (lang == Util.Lang.EN)*/ text = link.enText;
+            if (lang == Util.Lang.HE) {
+                if (link.heText.length() == 0)
+                    text = activity.getResources().getString(R.string.no_text);
+                else
+                    text = link.heText;
+            } else /*if (lang == Util.Lang.EN)*/ {
+                if (link.enText.length() == 0)
+                    text = activity.getResources().getString(R.string.no_text);
+                else
+                    text = link.enText;
+            }
 
             monoHolder.monoTv.setText(Html.fromHtml(text));
             monoHolder.monoTv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
             monoHolder.monoTv.setTextSize(20);
         } else if (holder instanceof LinkBiTextHolder) {
             LinkBiTextHolder biHolder = (LinkBiTextHolder) holder;
-            biHolder.enTv.setText(Html.fromHtml(link.enText));
+
+            biHolder.enTv.setVisibility(View.VISIBLE);
+            biHolder.heTv.setVisibility(View.VISIBLE);
+
+            if (link.enText.length() == 0)
+                biHolder.enTv.setVisibility(View.GONE);
+            else
+                biHolder.enTv.setText(Html.fromHtml(link.enText));
             biHolder.enTv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
             biHolder.enTv.setTextSize(20);
 
-            biHolder.heTv.setText(Html.fromHtml(link.heText));
+            if (link.heText.length() == 0)
+                biHolder.heTv.setVisibility(View.GONE);
+            else
+                biHolder.heTv.setText(Html.fromHtml(link.heText));
             biHolder.heTv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
             biHolder.heTv.setTextSize(20);
         }

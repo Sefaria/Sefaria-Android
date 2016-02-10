@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 
 import org.sefaria.sefaria.R;
@@ -99,6 +100,7 @@ public class LinkDraggerView extends RelativeLayout {
         // handler always visible
         newHeight = Math.max(0, newHeight);
         newHeight = Math.min(newHeight,getRootView().findViewById(R.id.root).getHeight()-getRootView().findViewById(R.id.actionbarRoot).getHeight()-getHeight()); //dragView can't be taller than parentView
+
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) dragView.getLayoutParams();
         if (newHeight >= 0) {
             params.height = newHeight;
