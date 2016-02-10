@@ -4,17 +4,20 @@ import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -48,12 +51,15 @@ public class Database extends SQLiteOpenHelper{
         //The Android's default system path of your application database.
         String DB_PATH = getInternalFolder() + "databases/";
         Log.d("databasepath", DB_PATH + " mkdirs: " + mkDirs(DB_PATH));
+        File[] files = new File(DB_PATH).listFiles();
         return DB_PATH;
     }
     static private boolean mkDirs(String path){
         File folder = new File(path);
         return (folder.mkdirs() ||  folder.isDirectory());
     }
+
+
 
 
     static public String getInternalFolder(){

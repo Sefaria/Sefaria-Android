@@ -279,7 +279,9 @@ public class HomeActivity extends Activity {
     }
 
     public void aboutClick(View v) {
-        Intent intent = new Intent(HomeActivity.this, AboutActivity.class);
+        //Intent intent = new Intent(HomeActivity.this, AboutActivity.class);
+        String url = "http://sefaria.org/about";
+        Intent intent = new Intent(Intent.ACTION_VIEW,Uri.parse(url));
         startActivity(intent);
     }
 
