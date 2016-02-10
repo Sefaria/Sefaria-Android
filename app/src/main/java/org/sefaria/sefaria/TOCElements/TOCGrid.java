@@ -316,6 +316,9 @@ public class TOCGrid extends LinearLayout {
 
         }
 
+        if(numberOfTabs == 1){
+            tabs.setVisibility(View.INVISIBLE);
+        }
         Log.d("TOCGrid", "makeTabSections started");
         return tabs;
     }
