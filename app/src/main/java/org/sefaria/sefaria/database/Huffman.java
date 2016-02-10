@@ -1,31 +1,12 @@
 package org.sefaria.sefaria.database;
 
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.util.Log;
-
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
-/**
- * Created by LenJ on 2/8/2016.
- */
 public class Huffman {
-
-    /*
-    private String plainText;
-    private Huffman leftChild;
-    private Huffman rightChild;
-    private Huffman parent;
-    */
 
     private static String [] plainTexts;
     private static int [] leftChilds;
@@ -34,6 +15,7 @@ public class Huffman {
 
     private static int index = 1;
     private static boolean createdTree = false;
+    private static boolean startedTree = false;
 
     private static int getNew(){
         return index++;
@@ -71,12 +53,6 @@ public class Huffman {
         parents[index] = parent;
     }
 
-    private static Huffman huffmanRoot = null;
-    /*
-    public Huffman(String plainText){
-        this.plainText = plainText;
-    }
-    */
 
     private static void allocate(int size){
         plainTexts = new String[size];
@@ -89,29 +65,25 @@ public class Huffman {
     public Huffman(){
     }
 
-    /*
-    private static void printTree(Huffman node, String tabs){
-        if(node == null)
+
+    private static void printTree(int node, String tabs){
+        if(node == 0)
             return;
         Log.d("Huffman", tabs + node);
-        printTree(node.leftChild, tabs + "\t");
-        printTree(node.rightChild, tabs + "\t");
+        printTree(getLeft(node), tabs + "\t");
+        printTree(getRight(node), tabs + "\t");
     }
 
-    @Override
-    public String toString() {
+    public String makeString(int index) {
+        String plainText = getPlainText(index);
         if(plainText == null)
             return hashCode() + "_";
         return plainText + ":";
     }
-*/
-    //final private static byte [] MASKS = new byte[]{0x01,0x02,0x04,0x08,0x10};
 
     private static final int nodeRoot = 1;
     public static String decode(byte [] bytes, int size){
-        if(!createdTree)
-            getTree();
-        Log.d("Huffman", "started decode");
+        makeTree(false);
         StringBuilder decode = new StringBuilder();
         int node = nodeRoot;
         int byteNum = -1;
@@ -122,9 +94,9 @@ public class Huffman {
                     byteNum++;
                 int a = (bytes[byteNum] & 0x01<<(7-mod));
                 if(a != 0){
-                    node = getRight(node);//.rightChild;
+                    node = getRight(node);
                 }else{
-                    node = getLeft(node);//.leftChild;
+                    node = getLeft(node);
                 }
                 String text = getPlainText(node);
                 if(text != null){
@@ -136,121 +108,8 @@ public class Huffman {
            Log.e("Huffman", "Problem decoding text.");
             e.printStackTrace();
         }
-        Log.d("Huffman", "started decode");
         return decode.toString();
     }
-
-
-    /*
-     public static String decode(byte [] bytes, int size){
-        if(huffmanRoot == null)
-            getTree();
-        Log.d("Huffman", "started decode");
-        StringBuilder decode = new StringBuilder();
-        Huffman node = huffmanRoot;
-        int byteNum = -1;
-        try{
-            for(int i=0;i<size;i++){
-                int mod = i % 8;
-                if(mod == 0)
-                    byteNum++;
-                int a = (bytes[byteNum] & 0x01<<(7-mod));
-                if(a != 0){
-                    node = node.rightChild;
-                }else{
-                    node = node.leftChild;
-                }
-                if(node.plainText != null){
-                    decode.append(node.plainText);
-                    node = huffmanRoot;
-                }
-            }
-        }catch(Exception e){
-           Log.e("Huffman", "Problem decoding text.");
-            e.printStackTrace();
-        }
-        Log.d("Huffman", "started decode");
-        return decode.toString();
-    }
-
-    private static Huffman getPlacementNode(Huffman node, Huffman cameFrom){
-        if(node.leftChild == null || node.rightChild == null)
-            return node;
-        else if(node.leftChild.plainText == null && cameFrom != node.leftChild){
-            return getPlacementNode(node.leftChild, null);
-        }else{
-            return getPlacementNode(node.parent, node);
-        }
-    }
-
-   public static Huffman enflateTree(String deflated){
-        Log.d("Huffman", "starting enflate");
-        Huffman root = new Huffman();
-        Huffman node = root;
-        HuffmanPool pool = new HuffmanPool(500000);
-        Log.d("Huffman", "created pool");
-        for(int i=1;i<deflated.length();i++){
-            Character character = deflated.charAt(i);
-            if(character ==  ONE){
-                String tempText = null;
-                int startIndex = i+1;
-                while(i<deflated.length()-1){
-                    character = deflated.charAt(++i);
-                    if(character == ONE || character == ZERO){
-                        tempText = deflated.substring(startIndex, i--);
-                        break;
-                    }
-                }
-                //TODO deal with end of deflation!!!!!
-                if(tempText == null)
-                    tempText = "";
-                int tempNode = pool.getHuffman();//new Huffman(tempText);
-                getPlainText(tempNode) = tempText;
-                node = getPlacementNode(node, null);
-                if(node.leftChild == null){
-                    node.leftChild = tempNode;
-                }else{
-                    node.rightChild = tempNode;
-                }
-                tempNode.parent = node;
-            }else{// if(character == ZERO){
-                Huffman tempNode = pool.getHuffman();//new Huffman();
-                node = getPlacementNode(node,null);
-                if(node.leftChild == null){
-                    node.leftChild = tempNode;
-                }else{
-                    node.rightChild = tempNode;
-                }
-                tempNode.parent = node;
-                node = tempNode;
-            }
-        }
-        Log.d("Huffman", "finishing enflate");
-        return root;
-    }
-
-       public static class HuffmanPool{
-        private Huffman [] buffer;
-        private int index = 0;
-        private int cap;
-
-        HuffmanPool(int size){
-            buffer = new Huffman[size];
-            cap = size;
-        }
-
-        Huffman getHuffman(){
-            if(index >= cap){
-                buffer = new Huffman[cap];
-                index = 0;
-            }
-            return buffer[index++];
-        }
-
-    }
-
-
-     */
 
     private static final Character ZERO = '\u0000';
     private static final Character ONE = '\u0001';
@@ -269,13 +128,51 @@ public class Huffman {
         }
     }
 
-    public static boolean getTree() {
+    private static boolean makeTree(){
         Log.d("Huffman", "getTree started");
         try {
             String path = Database.getDbPath() + "/SefariaHuffmanDeflated.txt";
-            String compression = readFile(path);
-
-            enflateTree(compression);
+            String deflated = readFile(path);
+            Log.d("Huffman", "read file");
+            allocate(deflated.length()/2 + 1);
+            int node = getNew();
+            for(int i=1;i<deflated.length();i++){
+                Character character = deflated.charAt(i);
+                if(character ==  ONE){
+                    String tempText = null;
+                    int startIndex = i+1;
+                    while(i<deflated.length()-1){
+                        character = deflated.charAt(++i);
+                        if(character == ONE || character == ZERO){
+                            break;
+                        }
+                    }
+                    tempText = deflated.substring(startIndex, i--);
+                    if(tempText == null)
+                        tempText = "";
+                    int tempNode = getNew();
+                    setPlainText(tempNode,tempText);
+                    node = getPlacementNode(node, 0);
+                    int left = getLeft(node);
+                    if(left == 0){
+                        setleft(node,tempNode);
+                    }else{
+                        setRight(node,tempNode);
+                    }
+                    setParent(tempNode,node);
+                }else{// if(character == ZERO){
+                    int tempNode = getNew();
+                    node = getPlacementNode(node,0);
+                    int left = getLeft(node);
+                    if(left == 0){
+                        setleft(node,tempNode);
+                    }else{
+                        setRight(node,tempNode);
+                    }
+                    setParent(tempNode,node);
+                    node = tempNode;
+                }
+            }
             createdTree = true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -283,6 +180,30 @@ public class Huffman {
         }
         Log.d("Huffman", "getTree finished");
         return true;
+    }
+
+    public static boolean makeTree(boolean doAsync) {
+        if(createdTree)
+            return true;
+        else if (startedTree && doAsync) {
+            return false;
+        }else if(startedTree && !doAsync){
+            while(!createdTree && startedTree) {
+                try {
+                   Thread.sleep(20);
+                } catch (InterruptedException e) {
+                   e.printStackTrace();
+                }
+            }
+            return createdTree;
+        }else if(doAsync) { //&& !startedTree
+            Huffman huffman = new Huffman();
+            huffman.new makeTreeAsync().execute();
+            return false;
+        }else{ //(!doAsync && !startedTree)
+            return makeTree();
+        }
+
     }
 
     static String readFile(String path) throws IOException
@@ -296,54 +217,25 @@ public class Huffman {
         return str;
 
     }
-    public static void enflateTree(String deflated){
-        Log.d("Huffman", "starting enflate");
-        allocate(deflated.length()/2 + 10);
-        int node = getNew();
-        Log.d("Huffman", "created pool");
-        for(int i=1;i<deflated.length();i++){
-            Character character = deflated.charAt(i);
-            if(character ==  ONE){
-                String tempText = null;
-                int startIndex = i+1;
-                while(i<deflated.length()-1){
-                    character = deflated.charAt(++i);
-                    if(character == ONE || character == ZERO){
-                        tempText = deflated.substring(startIndex, i--);
-                        break;
-                    }
-                }
-                //TODO deal with end of deflation!!!!!
-                if(tempText == null)
-                    tempText = "";
-                int tempNode = getNew();//new Huffman(tempText);
-                setPlainText(tempNode,tempText);
-                node = getPlacementNode(node, 0);
-                int left = getLeft(node);
-                if(left == 0){
-                    setleft(node,tempNode);
-                }else{
-                    setRight(node,tempNode);
-                }
-                setParent(tempNode,node);
-            }else{// if(character == ZERO){
-                int tempNode = getNew();
-                node = getPlacementNode(node,0);
-                int left = getLeft(node);
-                if(left == 0){
-                    setleft(node,tempNode);
-                }else{
-                    setRight(node,tempNode);
-                }
-                setParent(tempNode,node);
-                node = tempNode;
-            }
+
+
+    private class makeTreeAsync extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            if(startedTree)
+                return null;
+            Log.d("Huffman", "Async task started");
+            startedTree = true;
+            makeTree();
+
+            return null;
         }
-        Log.d("Huffman", "finishing enflate");
-        return;
+
+        @Override
+        protected void onPostExecute(String result) {
+            startedTree = false;
+
+        }
     }
-
-
-
 
 }

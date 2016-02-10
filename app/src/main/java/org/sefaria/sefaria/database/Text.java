@@ -22,7 +22,7 @@ public class Text implements Parcelable {
     public static final int MAX_LEVELS = 6;
     public static final double BILINGUAL_THRESHOLD = 0.05; //percentage of text that is bilingual for us to default to bilingual
 
-    private static boolean usingHuffman = false;
+    private static boolean usingHuffman = true;
 
 
 
