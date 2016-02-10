@@ -15,6 +15,7 @@ import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.DailyLearning;
 import org.sefaria.sefaria.database.Database;
 import org.sefaria.sefaria.database.Downloader;
+import org.sefaria.sefaria.database.Huffman;
 import org.sefaria.sefaria.layouts.AutoResizeTextView;
 import org.sefaria.sefaria.layouts.CustomActionbar;
 import org.sefaria.sefaria.MyApp;
@@ -56,6 +57,7 @@ public class HomeActivity extends Activity {
         super.onCreate(in);
         MyApp.currActivityContext = this;
         setContentView(R.layout.activity_home);
+        Huffman.makeTree(true);
 
         Intent intent = getIntent();
         menuState = intent.getParcelableExtra("menuState");
@@ -75,6 +77,7 @@ public class HomeActivity extends Activity {
     protected void onResume() {
         super.onResume();
         if(!veryFirstTime) {
+            Huffman.makeTree(true);
             addRecentTexts(null);
             setLang(Settings.getMenuLang());
         }else
@@ -169,13 +172,14 @@ public class HomeActivity extends Activity {
                 Book book = null;
                 try {
                     book = new Book(bookTitle);
+                    Pair<String,String> pair = Settings.BookSettings.getSavedBookTitle(bookTitle);
+                    MenuDirectRef menuDirectRef = new MenuDirectRef(this, pair.first, pair.second, null, book, null);
+                    recentTexts.add(menuDirectRef);
+                    recentRow.addView(menuDirectRef);
                 } catch (Book.BookNotFoundException e) {
                     e.printStackTrace();
                 }
-                Pair<String,String> pair = Settings.BookSettings.getSavedBookTitle(bookTitle);
-                MenuDirectRef menuDirectRef = new MenuDirectRef(this, pair.first, pair.second, null, book, null);
-                recentTexts.add(menuDirectRef);
-                recentRow.addView(menuDirectRef);
+
             }
         }
         /*
@@ -277,7 +281,9 @@ public class HomeActivity extends Activity {
     }
 
     public void aboutClick(View v) {
-        Intent intent = new Intent(HomeActivity.this, AboutActivity.class);
+        //Intent intent = new Intent(HomeActivity.this, AboutActivity.class);
+        String url = "http://sefaria.org/about";
+        Intent intent = new Intent(Intent.ACTION_VIEW,Uri.parse(url));
         startActivity(intent);
     }
 

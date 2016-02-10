@@ -7,6 +7,7 @@ import android.os.Bundle;
 import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.Settings;
+import org.sefaria.sefaria.database.Huffman;
 import org.sefaria.sefaria.layouts.CustomActionbar;
 import org.sefaria.sefaria.Util;
 
@@ -74,6 +75,7 @@ public class MenuActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        Huffman.makeTree(true);
         GoogleTracker.sendScreen("MenuActivity");
         GoogleTracker.sendEvent(GoogleTracker.CATEGORY_OPEN_MENU,menuState.getCurrNode().getTitle(Util.Lang.EN));
         if(!veryFirstTime) {
