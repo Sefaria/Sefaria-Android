@@ -150,7 +150,10 @@ public class SectionAdapter extends ArrayAdapter<Text> {
                 heNum.setVisibility(View.VISIBLE);
 
                 if (context.getTextLang() == Util.Lang.HE) {
-                    tv.setText(Html.fromHtml(segment.heText));
+                    if (segment.enText.length() == 0)
+                        tv.setText(context.getResources().getString(R.string.no_text));
+                    else
+                        tv.setText(Html.fromHtml(segment.heText));
                     enNum.setText(Util.VERSE_BULLET);
                     enNum.setAlpha(linkAlpha);
                     enNum.setTypeface(MyApp.getFont(MyApp.MONTSERRAT_FONT));
@@ -161,7 +164,10 @@ public class SectionAdapter extends ArrayAdapter<Text> {
                     heNum.setAlpha(1);
                     heNum.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
                 } else /*if (context.getTextLang() == Util.Lang.EN)*/ {
-                    tv.setText(Html.fromHtml(segment.enText));
+                    if (segment.enText.length() == 0)
+                        tv.setText(context.getResources().getString(R.string.no_text));
+                    else
+                        tv.setText(Html.fromHtml(segment.enText));
                     if(segment.displayNum)
                         enNum.setText(""+segment.levels[0]);
                     else
