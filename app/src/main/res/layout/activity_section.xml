@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/text_white_background"
+    android:background="@color/text_background_light"
     tools:context="org.sefaria.sefaria.activities.TextActivity">
 
     <LinearLayout
@@ -59,7 +59,7 @@
         android:id="@+id/linkRoot"
         android:layout_width="match_parent"
         android:layout_height="300dp"
-        android:background="@color/text_white_background"
+        android:background="@color/text_background_light"
         android:layout_alignParentBottom="true"/>
 
 

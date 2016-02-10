@@ -57,7 +57,7 @@ public class JustifyTextView extends TextView {
     }
 
     protected void oldOnDraw(Canvas canvas) {
-        super.onDraw(canvas);
+        super.draw(canvas); //onDraw was used at some point
     }
 
     protected void drawScaledText(Canvas canvas, int lineStart, String line, float lineWidth) {
