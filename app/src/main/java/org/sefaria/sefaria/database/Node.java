@@ -570,6 +570,7 @@ public class Node implements  Parcelable{
         if(textList != null) {
             return textList;
         }
+        Log.d("GetText","Starting");
         if(!isTextSection){
             Log.e("Node", "getTexts() was called when it's not a textSection!");
             textList = new ArrayList<>();

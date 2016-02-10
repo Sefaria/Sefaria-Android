@@ -98,13 +98,13 @@ public class SectionAdapter extends ArrayAdapter<Text> {
                 enNum.setVisibility(View.VISIBLE);
                 heNum.setVisibility(View.VISIBLE);
 
-                if(segment.enText.length() > 0)
-                    enTv.setText(Html.fromHtml(segment.enText));
+                if(segment.getEnText().length() > 0)
+                    enTv.setText(Html.fromHtml(segment.getEnText()));
                 else
                     enTv.setVisibility(View.GONE);
                 //enTv.setText(""+segment.getNumLinks() + " / " + maxNumLinks + "\nALPHA = " + linkAlpha);
-                if(segment.heText.length() > 0)
-                    heTv.setText(Html.fromHtml(segment.heText));
+                if(segment.getHeText().length() > 0)
+                    heTv.setText(Html.fromHtml(segment.getHeText()));
                 else
                     heTv.setVisibility(View.GONE);
 

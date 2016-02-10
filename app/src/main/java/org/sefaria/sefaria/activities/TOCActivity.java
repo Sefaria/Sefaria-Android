@@ -16,6 +16,7 @@ import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.TOCElements.TOCGrid;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.Book;
+import org.sefaria.sefaria.database.Huffman;
 import org.sefaria.sefaria.database.Node;
 import org.sefaria.sefaria.layouts.CustomActionbar;
 import org.sefaria.sefaria.MenuElements.MenuNode;
@@ -41,6 +42,7 @@ public class TOCActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        Huffman.makeTree(true);
         GoogleTracker.sendScreen("TOCActivity");
     }
 
@@ -72,7 +74,8 @@ public class TOCActivity extends AppCompatActivity {
     private void init() {
         MenuNode titleNode = new MenuNode("Table of Contents","תוכן העניינים",null);
         int catColor = book.getCatColor();
-        CustomActionbar cab = new CustomActionbar(this, titleNode, Settings.getSystemLang(),homeClick,null,null,null,langClick,backClick,catColor);
+        //CustomActionbar cab = new CustomActionbar(this, titleNode, Settings.getSystemLang(),homeClick,null,null,null,langClick,backClick,catColor);
+        CustomActionbar cab = new CustomActionbar(this, titleNode, Settings.getSystemLang(),null,closeClick,null,null,langClick,backClick,catColor);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(cab);
 
@@ -96,6 +99,12 @@ public class TOCActivity extends AppCompatActivity {
     }
 
 
+    View.OnClickListener closeClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            finish();
+        }
+    };
 
     View.OnClickListener homeClick = new View.OnClickListener() {
         @Override
