@@ -277,11 +277,12 @@ public class HomeActivity extends Activity {
     };
 
     public void settingsClick(View v) {
-        Toast.makeText(this,"You got me",Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this,"You got me",Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(HomeActivity.this, AboutActivity.class);
+        startActivity(intent);
     }
 
     public void aboutClick(View v) {
-        //Intent intent = new Intent(HomeActivity.this, AboutActivity.class);
         String url = "http://sefaria.org/about";
         Intent intent = new Intent(Intent.ACTION_VIEW,Uri.parse(url));
         startActivity(intent);
