@@ -214,6 +214,15 @@ public class SectionAdapter extends ArrayAdapter<Text> {
     }
 
     @Override
+    public Text getItem(int position) {
+        try {
+            return super.getItem(position);
+        } catch (IndexOutOfBoundsException e) {
+            return null;
+        }
+    }
+
+    @Override
     public void notifyDataSetChanged() {
         super.notifyDataSetChanged();
     }

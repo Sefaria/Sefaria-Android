@@ -446,7 +446,9 @@ public abstract class SuperTextActivity extends FragmentActivity {
         setCurrNode(node,null);
     }
     protected  void setCurrNode(Text text) {
-        Node node = text.parentNode;
+        Node node;
+        if (text == null) node = null;
+        else node = text.parentNode;
         setCurrNode(node, text);
     }
 
