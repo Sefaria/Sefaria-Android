@@ -27,17 +27,41 @@
             android:gravity="center"
             android:textSize="15sp"
             android:text="26"/>
-        <TextView
-            android:id="@+id/monoTv"
-            android:paddingTop="@dimen/text_activtiy_between_segment_padding"
-            android:paddingBottom="@dimen/text_activtiy_between_segment_padding"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/title"
-            android:layout_toRightOf="@+id/enVerseNum"
-            android:layout_toLeftOf="@+id/heVerseNum"
-            android:textColor="@android:color/black"
-            android:text="Now the earth was unformed and void, and darkness was upon the face of the deep; and the spirit of God hovered over the face of the waters."/>
+            android:orientation="vertical">
+
+            <TextView
+                android:paddingTop="@dimen/text_activtiy_between_segment_padding"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="@dimen/text_activtiy_between_segment_padding"
+                android:id="@+id/he"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/enVerseNum"
+                android:layout_alignRight="@+id/heVerseNum"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:textColor="@color/text_verse_mono"
+                android:text="וְהָאָ֗רֶץ הָיְתָ֥ה תֹ֙הוּ֙ וָבֹ֔הוּ וְחֹ֖שֶׁךְ עַל־פְּנֵ֣י תְה֑וֹם וְר֣וּחַ אֱלֹהִ֔ים מְרַחֶ֖פֶת עַל־פְּנֵ֥י הַמָּֽיִם׃"/>
+            <TextView
+                android:paddingBottom="@dimen/text_activtiy_between_segment_padding"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="@dimen/text_activtiy_between_segment_padding"
+                android:id="@+id/en"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/enVerseNum"
+                android:layout_alignRight="@+id/heVerseNum"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="10dp"
+                android:textColor="@color/text_verse_en"
+                android:text="Now the earth was unformed and void, and darkness was upon the face of the deep; and the spirit of God hovered over the face of the waters."/>
+
+        </LinearLayout>
         <TextView
             android:visibility="gone"
             android:id="@+id/heVerseNum"

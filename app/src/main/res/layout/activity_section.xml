@@ -42,7 +42,7 @@
         android:layout_width="match_parent"
         android:layout_height="20dp"
         android:orientation="vertical"
-        android:background="#ddd"
+        android:background="@drawable/link_dragger_background"
         android:layout_above="@+id/linkRoot"
         custom:maxHeightView="@+id/useless"
         custom:dragView="@+id/linkRoot">

@@ -10,6 +10,7 @@ import android.widget.TextView;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Settings;
+import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.activities.SuperTextActivity;
 import org.sefaria.sefaria.database.Link;
 import org.sefaria.sefaria.database.LinkCount;
@@ -21,34 +22,17 @@ import java.util.List;
  * Created by nss on 1/17/16.
  */
 
-public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextAdapter.LinkTextHolder> {
+public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextHolder> {
+
+    private static final int BI_LINK_TEXT_VIEW_TYPE = 1;
+    private static final int MONO_LINK_TEXT_VIEW_TYPE = 0;
 
     private List<Text> itemList;
     private SuperTextActivity activity;
     private LinkCount currLinkCount;
     private TextView noLinksTV;
 
-    public class LinkTextHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public TextView tv;
-        public TextView enVerseNum;
-        public TextView heVerseNum;
-        public TextView title;
 
-        public LinkTextHolder(View v) {
-            super(v);
-            v.setOnClickListener(this);
-            tv = (TextView) v.findViewById(R.id.tv);
-            enVerseNum = (TextView) v.findViewById(R.id.enVerseNum);
-            heVerseNum = (TextView) v.findViewById(R.id.heVerseNum);
-            title = (TextView) v.findViewById(R.id.title);
-        }
-
-        @Override
-        public void onClick(View v) {
-            Text link = itemList.get(getAdapterPosition());
-            SuperTextActivity.startNewTextActivityIntent(activity,link);
-        }
-    }
 
 
     public LinkTextAdapter(SuperTextActivity context, List<Text> itemList, TextView noLinksTV) {
@@ -65,16 +49,34 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextAdapter.LinkTe
 
     @Override
     public LinkTextHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View layoutView;
+        LinkTextHolder linkHolder;
+        if (viewType == MONO_LINK_TEXT_VIEW_TYPE) {
+            layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.link_text_mono, null);
+            linkHolder = new LinkMonoTextHolder(layoutView,itemList,activity);
+        } else {
+            layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.link_text_bilingual, null);
+            linkHolder = new LinkBiTextHolder(layoutView,itemList,activity);
+        }
 
-        View layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.link_text_mono, null);
-        LinkTextHolder linkHolder = new LinkTextHolder(layoutView);
         return linkHolder;
     }
 
     @Override
+    public int getItemViewType(int position) {
+        Util.Lang lang = activity.getTextLang();
+        if (lang == Util.Lang.BI) return BI_LINK_TEXT_VIEW_TYPE;
+        else return MONO_LINK_TEXT_VIEW_TYPE;
+    }
+
+    @Override
     public void onBindViewHolder(LinkTextHolder holder, int position) {
+
+        Util.Lang lang = activity.getTextLang();
+
         Text link = itemList.get(position);
-        if (currLinkCount.getCategory().equals("Commentary") && currLinkCount.getDepthType() == LinkCount.DEPTH_TYPE.BOOK) {
+        boolean showFullTitle = currLinkCount.getCategory().equals("Commentary") && currLinkCount.getDepthType() == LinkCount.DEPTH_TYPE.BOOK;
+        if (showFullTitle) {
             holder.title.setVisibility(View.GONE);
             holder.enVerseNum.setVisibility(View.VISIBLE);
             holder.enVerseNum.setText("" + link.levels[1]);
@@ -86,9 +88,27 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextAdapter.LinkTe
             holder.title.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
             holder.title.setTextSize(20);
         }
-        holder.tv.setText(Html.fromHtml(link.heText + "<br>" + link.enText));
-        holder.tv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
-        holder.tv.setTextSize(20);
+
+        if (holder instanceof LinkMonoTextHolder) {
+            LinkMonoTextHolder monoHolder = (LinkMonoTextHolder) holder;
+
+            String text;
+            if (lang == Util.Lang.HE) text = link.heText;
+            else /*if (lang == Util.Lang.EN)*/ text = link.enText;
+
+            monoHolder.monoTv.setText(Html.fromHtml(text));
+            monoHolder.monoTv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
+            monoHolder.monoTv.setTextSize(20);
+        } else if (holder instanceof LinkBiTextHolder) {
+            LinkBiTextHolder biHolder = (LinkBiTextHolder) holder;
+            biHolder.enTv.setText(Html.fromHtml(link.enText));
+            biHolder.enTv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
+            biHolder.enTv.setTextSize(20);
+
+            biHolder.heTv.setText(Html.fromHtml(link.heText));
+            biHolder.heTv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
+            biHolder.heTv.setTextSize(20);
+        }
 
     }
 
