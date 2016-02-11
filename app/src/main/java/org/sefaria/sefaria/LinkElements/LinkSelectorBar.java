@@ -30,11 +30,6 @@ public class LinkSelectorBar extends LinearLayout {
     OnClickListener linkSelectorBarButtonClick;
     LinkCount currLinkCount;
 
-    //TouchEvent
-    private float lastTouchX,lastTouchY;
-    private int activePointerId;
-    private static final int INVALID_POINTER_ID = -1;
-
     public LinkSelectorBar(SuperTextActivity activity, OnClickListener linkSelectorBarButtonClick, OnClickListener linkSelectorBackClick) {
         super(activity);
         inflate(activity, R.layout.link_selector_bar, this);
@@ -85,78 +80,14 @@ public class LinkSelectorBar extends LinearLayout {
 
     }
 
-    @Override
-    public boolean onTouchEvent(MotionEvent ev) {
-        // Let the ScaleGestureDetector inspect all events.
-        //mScaleDetector.onTouchEvent(ev);
+    public void setLang(Util.Lang lang) {
+        if (lang == Util.Lang.EN) {
 
-        final int action = MotionEventCompat.getActionMasked(ev);
+        } else if (lang == Util.Lang.HE) {
 
-        switch (action) {
-            case MotionEvent.ACTION_DOWN: {
-                final int pointerIndex = MotionEventCompat.getActionIndex(ev);
-                final float x = MotionEventCompat.getX(ev, pointerIndex);
-                final float y = MotionEventCompat.getY(ev, pointerIndex);
-
-                // Remember where we started (for dragging)
-                lastTouchX = x;
-                lastTouchY = y;
-                // Save the ID of this pointer (for dragging)
-                activePointerId = MotionEventCompat.getPointerId(ev, 0);
-                break;
-            }
-
-            case MotionEvent.ACTION_MOVE: {
-                // Find the index of the active pointer and fetch its position
-                final int pointerIndex =
-                        MotionEventCompat.findPointerIndex(ev, activePointerId);
-
-                final float x = MotionEventCompat.getX(ev, pointerIndex);
-                final float y = MotionEventCompat.getY(ev, pointerIndex);
-
-                // Calculate the distance moved
-                final float dx = x - lastTouchX;
-                final float dy = y - lastTouchY;
-
-                //mPosX += dx;
-                //mPosY += dy;
-
-                invalidate();
-
-                // Remember this touch position for the next move event
-                lastTouchX = x;
-                lastTouchY = y;
-
-                break;
-            }
-
-            case MotionEvent.ACTION_UP: {
-                activePointerId = INVALID_POINTER_ID;
-                break;
-            }
-
-            case MotionEvent.ACTION_CANCEL: {
-                activePointerId = INVALID_POINTER_ID;
-                break;
-            }
-
-            case MotionEvent.ACTION_POINTER_UP: {
-
-                final int pointerIndex = MotionEventCompat.getActionIndex(ev);
-                final int pointerId = MotionEventCompat.getPointerId(ev, pointerIndex);
-
-                if (pointerId == activePointerId) {
-                    // This was our active pointer going up. Choose a new
-                    // active pointer and adjust accordingly.
-                    final int newPointerIndex = pointerIndex == 0 ? 1 : 0;
-                    lastTouchX = MotionEventCompat.getX(ev, newPointerIndex);
-                    lastTouchY = MotionEventCompat.getY(ev, newPointerIndex);
-                    activePointerId = MotionEventCompat.getPointerId(ev, newPointerIndex);
-                }
-                break;
-            }
+        } else {
+            //wrong lang
         }
-        return true;
     }
 
 }
