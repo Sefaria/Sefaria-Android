@@ -120,6 +120,8 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
         float mid = ((float)listView.getHeight())/2;
         int numChildren = listView.getChildCount();
 
+        
+
         for (int i = 0; i < numChildren; i++) {
             View v = listView.getChildAt(i);
             if (v.getTop() >= 0 /*v.getTop() < mid && v.getBottom() > mid*/) {

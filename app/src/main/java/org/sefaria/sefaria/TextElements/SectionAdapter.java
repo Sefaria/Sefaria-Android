@@ -83,7 +83,7 @@ public class SectionAdapter extends ArrayAdapter<Text> {
             TextView heTv = (TextView) view.findViewById(R.id.he);
 
             if (segment.isChapter()) {
-                view.setClickable(true);
+                view.setClickable(true); //TODO why is this so weird?! I'm literally setting this to the opposite of what I want and it works
 
                 tch.setVisibility(View.VISIBLE);
                 enTv.setVisibility(View.GONE);
