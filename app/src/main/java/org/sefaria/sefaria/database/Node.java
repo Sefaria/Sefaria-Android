@@ -415,13 +415,21 @@ public class Node implements  Parcelable{
      * @param node
      */
     private static void showTree(Node node){
-        node.log();
+        showTree(node,"");
+    }
+
+    /**
+     * Shows the TOC Node tree. This is only used for debugging.
+     * @param node
+     */
+    private static void showTree(Node node, String tabs){
+        Log.d("Node", tabs + node);
         if(node.getChildren().size() == 0) {
             return;
         }
         else{
             for(int i=0;i<node.getChildren().size();i++){
-                showTree(node.getChildren().get(i));
+                showTree(node.getChildren().get(i), tabs + "\t");
             }
         }
     }
@@ -463,7 +471,7 @@ public class Node implements  Parcelable{
                 }
 
                 // add chap count (if it's a leaf with 2 or more levels):
-                if(node.textDepth >= 2 && node.isTextSection) {
+                if(node.textDepth >= 2 && !node.isTextSection) {
                     node.setAllChaps(true);
                 }
             }
@@ -475,7 +483,6 @@ public class Node implements  Parcelable{
 
 
     private void setAllChaps(boolean useNID) throws API.APIException {
-
         if(textDepth == 1){
             addChapChild(0);
             return;
@@ -528,10 +535,17 @@ public class Node implements  Parcelable{
                         if(level3 != lastLevel3 || tempNode == null){
                             lastLevel3 = level3;
                             tempNode = new Node();
-                            tempNode.enTitle = this.sectionNames[textDepth -1] + " " + level3; //using textDepth value to get the last section name (3-1 = 2)
-                            tempNode.heTitle = this.heSectionNames[textDepth -1] + " " + Util.int2heb(level3);
-                            tempNode.sectionNames = Arrays.copyOfRange(this.sectionNames,0,textDepth);//using textDepth value to get the last 2 section names (3-2=1,3)
-                            tempNode.heSectionNames = Arrays.copyOfRange(this.heSectionNames,0,textDepth);
+                            try{
+                                tempNode.enTitle = this.sectionNames[textDepth -1] + " " + level3; //using textDepth value to get the last section name (3-1 = 2)
+                                tempNode.heTitle = this.heSectionNames[textDepth -1] + " " + Util.int2heb(level3);
+                                tempNode.sectionNames = Arrays.copyOfRange(this.sectionNames, 0, textDepth);//using textDepth value to get the last 2 section names (3-2=1,3)
+                                tempNode.heSectionNames = Arrays.copyOfRange(this.heSectionNames, 0, textDepth);
+                            }catch (Exception e){//This seems to happen with Complex texts with 3 levels (see Footnotes on Orot)
+                                e.printStackTrace();
+                                tempNode.sectionNames = tempNode.heSectionNames = new String []{"",""};//{"Section","Segment"};
+                                tempNode.enTitle = "" + level3;
+                                tempNode.heTitle = Util.int2heb(level3);
+                            }
                             tempNode.textDepth = this.textDepth -1;
                             tempNode.isComplex = isComplex;
                             tempNode.isRef = false;
@@ -554,6 +568,7 @@ public class Node implements  Parcelable{
             }
         }catch(Exception e){
             Log.e("Node", e.toString());
+            e.printStackTrace();
         }
 
         return;
@@ -736,7 +751,6 @@ public class Node implements  Parcelable{
     public static List<Node> getRoots(Book book) throws API.APIException{
         List<Node> allRoots = allSavedBookTOCroots.get(book.title);
         if(allRoots != null){
-            showTree(allRoots.get(0));
             return allRoots;
         }
 
