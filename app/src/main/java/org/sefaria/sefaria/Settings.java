@@ -194,7 +194,6 @@ public class Settings {
             SharedPreferences recentSettings = getRecentSettings();
             Set<String> pinnedTexts = getPinned();
             int recentTextCount = 3;
-            Log.d("settings",(pinnedTexts.size()/(recentTextCount*1.0)) + "_size");
             while(pinnedTexts.size()/(recentTextCount*1.0) > .6){
                 recentTextCount += 3;
             }
