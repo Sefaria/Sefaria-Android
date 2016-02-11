@@ -70,8 +70,9 @@ public class TextActivity extends SuperTextActivity {
         }
     }
 
-    protected void setMenuLang(Util.Lang menuLang){
-        this.menuLang = menuLang;
+    @Override
+    protected void setMenuLang(Util.Lang menuLang) {
+        super.setMenuLang(menuLang);
         for (TextChapterHeader tch : textChapterHeaders) {
             tch.setLang(menuLang);
         }

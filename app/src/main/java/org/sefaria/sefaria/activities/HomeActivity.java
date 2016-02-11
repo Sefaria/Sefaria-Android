@@ -240,6 +240,7 @@ public class HomeActivity extends Activity {
         final int paddingTop = 20;
         textView.setPadding(paddingSide,paddingTop*2,paddingSide,paddingTop);
         textView.setTextSize(20);
+        textView.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
         textView.setGravity(Gravity.CENTER);
 
         return textView;

@@ -101,11 +101,6 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
         linkFragment.notifyDataSetChanged();
     }
 
-    protected void setMenuLang(Util.Lang menuLang){
-        this.menuLang = menuLang;
-        //TODO change the menuItems' lang
-    }
-
     public boolean getIsCts(){ return isCts;}
 
     protected void setIsCts(boolean isCts) {
@@ -127,7 +122,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
 
         for (int i = 0; i < numChildren; i++) {
             View v = listView.getChildAt(i);
-            if (v.getTop() > 0 /*v.getTop() < mid && v.getBottom() > mid*/) {
+            if (v.getTop() >= 0 /*v.getTop() < mid && v.getBottom() > mid*/) {
                 if (linkFragment.getIsOpen()) {
                     int currInd = i + listView.getFirstVisiblePosition();
                     Text currSeg = sectionAdapter.getItem(currInd);

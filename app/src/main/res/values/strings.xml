@@ -7,6 +7,7 @@
     <string name="title_activity_toc">TOCActivity</string>
     <string name="title_activity_search">Search</string>
     <string name="title_activity_section">SectionActivity</string>
+    <string name="title_activity_settings">SettingsActivity</string>
     <string name="title_activity_about">AboutActivity</string>
     <string name="no_links">No connections available. Use the ● next to each verse to check if that verse has connections. </string>
     <string name="no_links_filtered">No connections available </string>
