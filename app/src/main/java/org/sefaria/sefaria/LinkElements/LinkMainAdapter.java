@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
+import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.activities.LinkFragment;
 import org.sefaria.sefaria.activities.SuperTextActivity;
@@ -82,7 +83,7 @@ public class LinkMainAdapter extends RecyclerView.Adapter<LinkMainAdapter.LinkHo
 
         holder.tv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
 
-        Util.Lang lang = context.getTextLang();
+        Util.Lang lang = Settings.getMenuLang();
         String bookTitle = linkCount.getSlimmedTitle(book, lang);
 
         if (linkCount.getDepthType() == LinkCount.DEPTH_TYPE.BOOK)  {
