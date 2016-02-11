@@ -9,12 +9,6 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/activity_about"
     tools:context="org.sefaria.sefaria.activities.AboutActivity">
-    <Button
-        android:id="@+id/update_library"
-        android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:text="Update Library"
-        android:onClick="updateLibrary"
-        />
+
 
 </RelativeLayout>

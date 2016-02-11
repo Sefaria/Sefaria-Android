@@ -190,18 +190,31 @@ public class Settings {
         }
 
         public static List<String> getRecentTexts() {
-            List<String> books = new ArrayList<>(MAX_RECENT_TEXTS);
+            List<String> books = new ArrayList<>();
             SharedPreferences recentSettings = getRecentSettings();
-            for (int i = 0; i < MAX_RECENT_TEXTS; i++) {
+            Set<String> pinnedTexts = getPinned();
+            int recentTextCount = 3;
+            Log.d("settings",(pinnedTexts.size()/(recentTextCount*1.0)) + "_size");
+            while(pinnedTexts.size()/(recentTextCount*1.0) > .6){
+                recentTextCount += 3;
+            }
+            for(String bookTitle:pinnedTexts){
+                books.add(bookTitle);
+            }
+            for (int i = 0; i < recentTextCount-pinnedTexts.size() && i<MAX_RECENT_TEXTS; i++) {
                 String bookTitle = recentSettings.getString("" + i, "");
                 if (bookTitle == "")
                     return books;
+                if(pinnedTexts.contains(bookTitle)) {
+                    recentTextCount++;
+                    continue;
+                }
                 books.add(bookTitle);
             }
             return books;
         }
 
-        private final static int MAX_RECENT_TEXTS = 3;
+        private final static int MAX_RECENT_TEXTS = 9;
 
         public static void addRecentText(String bookTitle) {
             List<String> books = getRecentTexts();
@@ -216,6 +229,36 @@ public class Settings {
             }
             editor.commit();
         }
+
+        public static boolean addPinned(String bookTitle){
+            Set<String> pinnedStringSet = getPinned();
+
+            boolean added;
+            if(pinnedStringSet.contains(bookTitle)){
+                pinnedStringSet.remove(bookTitle);
+                added = false;
+            } else {
+                pinnedStringSet.add(bookTitle);
+                added = true;
+            }
+
+            SharedPreferences.Editor editor = getRecentSettings().edit();
+            editor.putStringSet(PINNED_RECENT_TEXTS, pinnedStringSet);
+            editor.commit();
+            return  added;
+
+        }
+
+        private static String PINNED_RECENT_TEXTS = "pinned_recent_texts";
+        public static Set<String> getPinned(){
+            SharedPreferences pinned = getRecentSettings();
+            Set<String> pinnedStringSet = pinned.getStringSet(PINNED_RECENT_TEXTS, null);
+            if(pinnedStringSet == null){
+                pinnedStringSet = new HashSet<>();
+            }
+            return pinnedStringSet;
+        }
+
     }
 
 }

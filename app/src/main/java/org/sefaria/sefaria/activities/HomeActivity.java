@@ -174,6 +174,7 @@ public class HomeActivity extends Activity {
                     book = new Book(bookTitle);
                     Pair<String,String> pair = Settings.BookSettings.getSavedBookTitle(bookTitle);
                     MenuDirectRef menuDirectRef = new MenuDirectRef(this, pair.first, pair.second, null, book, null);
+                    menuDirectRef.setLongClickPinning();
                     recentTexts.add(menuDirectRef);
                     recentRow.addView(menuDirectRef);
                 } catch (Book.BookNotFoundException e) {
@@ -277,8 +278,7 @@ public class HomeActivity extends Activity {
     };
 
     public void settingsClick(View v) {
-        //Toast.makeText(this,"You got me",Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(HomeActivity.this, AboutActivity.class);
+        Intent intent = new Intent(HomeActivity.this, SettingsActivity.class);
         startActivity(intent);
     }
 
