@@ -12,6 +12,8 @@
     <string name="no_links">אין מקורות. שים לב לה-● ליד טקסטים לדעת אם יש לטקסט מקורות</string>
     <string name="no_links_filtered">אין מקורות</string>
     <string name="no_text">&lt;i&gt;(אין טקסט לפי השפה הזאת)&lt;/i&gt;</string>
+    <string name="pinned_item">Pinned Item (HE)</string>
+    <string name="remove_pinned_item">Removed Pinned Item (HE)</string>
 
     <string name="action_bookmarks">Bookmarks</string>
     <string name="activity_filterlinks">Filter Sources</string>
@@ -120,9 +122,6 @@
     <string name="CHECKING_FOR_UPDATE_TITLE" translatable="false">Checking for update</string>
     <string name="finish">Finish</string>
     <string name="mainMenuSearchHint">Search Texts or Book Titles</string>
-
-    <string name="pinned_item">Pinned Item (HE)</string>
-    <string name="remove_pinned_item">Removed Pinned Item (HE)</string>
 
 
 </resources>
