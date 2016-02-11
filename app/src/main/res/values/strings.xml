@@ -120,9 +120,8 @@
     <string name="finish">Finish</string>
     <string name="mainMenuSearchHint">Search Texts or Book Titles</string>
 
-
-
-
+    <string name="pinned_item">Pinned Item</string>
+    <string name="remove_pinned_item">Removed Pinned Item</string>
 
 
 </resources>

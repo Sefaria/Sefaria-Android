@@ -1,0 +1,61 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:orientation="vertical"
+    android:id="@+id/root"
+    android:layout_height="match_parent"
+    tools:context=".activities.SettingsActivity"
+    android:background="@color/menu_background">
+
+    <LinearLayout
+        android:id="@+id/actionbarRoot"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </LinearLayout>
+
+
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+        <LinearLayout
+            android:id="@+id/gridRoot"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="100dp"
+            >
+
+            <TextView
+                android:id="@+id/appInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="App Version:"
+                android:gravity="center"
+                android:padding="5dp"/>
+            <TextView
+                android:id="@+id/databaseInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Database info:"
+                android:gravity="center"
+                android:padding="5dp"/>
+
+            <Button
+                android:id="@+id/update_library"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:text="Update Library"
+                android:onClick="updateLibrary"
+                />
+        </LinearLayout>
+
+    </ScrollView>
+</LinearLayout>
