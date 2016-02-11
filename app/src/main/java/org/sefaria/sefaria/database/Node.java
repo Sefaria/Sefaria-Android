@@ -751,6 +751,7 @@ public class Node implements  Parcelable{
     public static List<Node> getRoots(Book book) throws API.APIException{
         List<Node> allRoots = allSavedBookTOCroots.get(book.title);
         if(allRoots != null){
+            showTree(allRoots.get(0));
             return allRoots;
         }
 
