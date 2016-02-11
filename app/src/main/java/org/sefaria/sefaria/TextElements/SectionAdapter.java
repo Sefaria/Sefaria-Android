@@ -98,13 +98,17 @@ public class SectionAdapter extends ArrayAdapter<Text> {
                 enNum.setVisibility(View.VISIBLE);
                 heNum.setVisibility(View.VISIBLE);
 
-                if(segment.getEnText().length() > 0)
-                    enTv.setText(Html.fromHtml(segment.getEnText()));
+
+                String enText = segment.getText(Util.Lang.EN);
+                String heText = segment.getText(Util.Lang.HE);
+
+                if(enText.length() > 0)
+                    enTv.setText(Html.fromHtml(enText));
                 else
                     enTv.setVisibility(View.GONE);
                 //enTv.setText(""+segment.getNumLinks() + " / " + maxNumLinks + "\nALPHA = " + linkAlpha);
-                if(segment.getHeText().length() > 0)
-                    heTv.setText(Html.fromHtml(segment.getHeText()));
+                if(heText.length() > 0)
+                    heTv.setText(Html.fromHtml(heText));
                 else
                     heTv.setVisibility(View.GONE);
 
@@ -149,11 +153,12 @@ public class SectionAdapter extends ArrayAdapter<Text> {
                 enNum.setVisibility(View.VISIBLE);
                 heNum.setVisibility(View.VISIBLE);
 
+                String monoText = segment.getText(lang);
+                if (monoText.length() == 0)
+                    context.getResources().getString(R.string.no_text);
+
                 if (context.getTextLang() == Util.Lang.HE) {
-                    if (segment.getHeText().length() == 0)
-                        tv.setText(context.getResources().getString(R.string.no_text));
-                    else
-                        tv.setText(Html.fromHtml(segment.getHeText()));
+                    tv.setText(Html.fromHtml(monoText));
                     enNum.setText(Util.VERSE_BULLET);
                     enNum.setAlpha(linkAlpha);
                     enNum.setTypeface(MyApp.getFont(MyApp.MONTSERRAT_FONT));
@@ -164,10 +169,7 @@ public class SectionAdapter extends ArrayAdapter<Text> {
                     heNum.setAlpha(1);
                     heNum.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
                 } else /*if (context.getTextLang() == Util.Lang.EN)*/ {
-                    if (segment.getEnText().length() == 0)
-                        tv.setText(context.getResources().getString(R.string.no_text));
-                    else
-                        tv.setText(Html.fromHtml(segment.getEnText()));
+                    tv.setText(Html.fromHtml(monoText));
                     if(segment.displayNum)
                         enNum.setText(""+segment.levels[0]);
                     else

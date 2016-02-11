@@ -99,7 +99,9 @@ public class HomeActivity extends Activity {
         homeRoot.setGravity(Gravity.CENTER);
         gridRoot.addView(homeRoot);
 
-        addHeader(homeRoot);
+        if (!isPopup) { //Don't mention the living library thing unless you're actually at the home screen
+            addHeader(homeRoot);
+        }
         addMenuGrid(homeRoot);
         addRecentTexts(homeRoot);
         addCalendar(homeRoot);

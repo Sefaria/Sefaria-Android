@@ -38,25 +38,30 @@ public class Text implements Parcelable {
     private boolean isChapter = false;
     private int parentNID;
 
-    public String getEnText()
+    public String getText(Util.Lang lang)
     {
-        if(enText == null){
-            if(enTextCompress == null)
-                enText = "";
-            else
-                enText = Huffman.decode(enTextCompress,enTextLength);
+        if (lang == Util.Lang.EN) {
+            if (enText == null) {
+                if (enTextCompress == null)
+                    enText = "";
+                else
+                    enText = Huffman.decode(enTextCompress, enTextLength);
+            }
+            return enText;
+        } else if (lang == Util.Lang.HE) {
+            if(heText == null){
+                if(heTextCompress == null)
+                    heText = "";
+                else
+                    heText = Huffman.decode(heTextCompress,heTextLength);
+            }
+            return heText;
+        } else {
+            Log.e("Text","Input wrong lang into Text.getText(Util.lang)");
+            return "";
         }
-        return enText;
     }
-    public String getHeText(){
-        if(heText == null){
-            if(heTextCompress == null)
-                heText = "";
-            else
-                heText = Huffman.decode(heTextCompress,heTextLength);
-        }
-        return heText;
-    }
+
 
     private int numLinks = 0;
 

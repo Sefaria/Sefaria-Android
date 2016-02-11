@@ -228,11 +228,9 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
             Text text = sectionAdapter.getItem(position);
             String copiedText;
             if(textLang == Util.Lang.BI)
-                copiedText = text.getHeText() + "\n" + text.getEnText();
-            else if(textLang == Util.Lang.EN)
-                copiedText = text.getEnText();
-            else //textLang == HE
-                copiedText = text.getHeText();
+                copiedText = text.getText(Util.Lang.HE) + "\n" + text.getText(Util.Lang.EN);
+            else /*if(textLang == Util.Lang.EN || textLang == Util.Lang.HE)*/
+                copiedText = text.getText(textLang);
             ClipData clip = ClipData.newPlainText("Sefaria Text", copiedText);
             // Set the clipboard's primary clip.
             clipboard.setPrimaryClip(clip);
@@ -268,7 +266,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
 
             Text sectionHeader = getSectionHeaderText(dir);
             if (dir == TextEnums.NEXT_SECTION) {
-                if(sectionHeader.getEnText().length() > 0 || sectionHeader.getHeText().length() > 0)
+                if(sectionHeader.getText(Util.Lang.EN).length() > 0 || sectionHeader.getText(Util.Lang.HE).length() > 0)
                     sectionAdapter.add(sectionHeader);
                 sectionAdapter.addAll(textsList);
 

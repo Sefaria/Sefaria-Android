@@ -23,8 +23,8 @@ public class TextChapterHeader extends LinearLayout {
 
     public TextChapterHeader(Context context, Text segment, float textSize) {
         super(context);
-        enText = segment.getEnText();
-        heText = segment.getHeText();
+        enText = segment.getText(Util.Lang.EN);
+        heText = segment.getText(Util.Lang.HE);
         init(context,textSize);
     }
 
@@ -67,8 +67,8 @@ public class TextChapterHeader extends LinearLayout {
     }
 
     public void setSectionTitle(Text segment) {
-        enText = segment.getEnText();
-        heText = segment.getHeText();
+        enText = segment.getText(Util.Lang.EN);
+        heText = segment.getText(Util.Lang.HE);
         setLang(Settings.getMenuLang());
     }
 

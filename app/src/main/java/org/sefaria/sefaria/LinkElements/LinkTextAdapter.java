@@ -93,17 +93,10 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextHolder> {
             LinkMonoTextHolder monoHolder = (LinkMonoTextHolder) holder;
 
             String text;
-            if (lang == Util.Lang.HE) {
-                if (link.getHeText().length() == 0)
-                    text = activity.getResources().getString(R.string.no_text);
-                else
-                    text = link.getHeText();
-            } else /*if (lang == Util.Lang.EN)*/ {
-                if (link.getEnText().length() == 0)
-                    text = activity.getResources().getString(R.string.no_text);
-                else
-                    text = link.getEnText();
-            }
+            if (link.getText(lang).length() == 0)
+                text = activity.getResources().getString(R.string.no_text);
+            else
+                text = link.getText(lang);
 
             monoHolder.monoTv.setText(Html.fromHtml(text));
             monoHolder.monoTv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
@@ -114,17 +107,20 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextHolder> {
             biHolder.enTv.setVisibility(View.VISIBLE);
             biHolder.heTv.setVisibility(View.VISIBLE);
 
-            if (link.getEnText().length() == 0)
+            String enText = link.getText(Util.Lang.EN);
+            String heText = link.getText(Util.Lang.HE);
+
+            if (enText.length() == 0)
                 biHolder.enTv.setVisibility(View.GONE);
             else
-                biHolder.enTv.setText(Html.fromHtml(link.getEnText()));
+                biHolder.enTv.setText(Html.fromHtml(enText));
             biHolder.enTv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
             biHolder.enTv.setTextSize(20);
 
-            if (link.getHeText().length() == 0)
+            if (heText.length() == 0)
                 biHolder.heTv.setVisibility(View.GONE);
             else
-                biHolder.heTv.setText(Html.fromHtml(link.getHeText()));
+                biHolder.heTv.setText(Html.fromHtml(heText));
             biHolder.heTv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
             biHolder.heTv.setTextSize(20);
         }
