@@ -33,6 +33,8 @@ public class Database extends SQLiteOpenHelper{
     public static String DB_NAME = "UpdateForSefariaMobileDatabase";
     static int DB_VERSION = 1;
 
+    private static final int MIN_DB_VERSION = 118;
+
     private SQLiteDatabase myDataBase;
 
     private final Context myContext;
@@ -59,7 +61,12 @@ public class Database extends SQLiteOpenHelper{
         return (folder.mkdirs() ||  folder.isDirectory());
     }
 
-
+    static public boolean isValidDB(){
+        if(getDBDownloadVersion() > 0)
+            return getVersionInDB()>= MIN_DB_VERSION && getDBDownloadVersion() >= MIN_DB_VERSION;
+        else
+            return  getVersionInDB()>= MIN_DB_VERSION;
+    }
 
 
     static public String getInternalFolder(){
