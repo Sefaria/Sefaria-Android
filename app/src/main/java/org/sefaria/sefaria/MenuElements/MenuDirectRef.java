@@ -69,6 +69,10 @@ public class MenuDirectRef extends LinearLayout{
         setOnClickListener(clickListener);
     }
 
+    public void setLongClickPinning(){
+        setOnLongClickListener(longClickListener);
+    }
+
     public void setLang(Util.Lang lang) {
 
         if (lang == Util.Lang.HE) {
@@ -107,6 +111,17 @@ public class MenuDirectRef extends LinearLayout{
         public void onClick(View v) {
             Text text = new Text(Settings.BookSettings.getSavedBook(book).tid);
             SuperTextActivity.startNewTextActivityIntent(context,book,text,getNode());
+        }
+    };
+
+    OnLongClickListener longClickListener = new OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+            if(Settings.RecentTexts.addPinned(book.title))
+                Toast.makeText(context, R.string.pinned_item,Toast.LENGTH_SHORT).show();
+            else
+                Toast.makeText(context, R.string.remove_pinned_item,Toast.LENGTH_SHORT).show();
+            return true;
         }
     };
 }
