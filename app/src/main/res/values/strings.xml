@@ -122,6 +122,7 @@
 
     <string name="pinned_item">Pinned Item</string>
     <string name="remove_pinned_item">Removed Pinned Item</string>
+    <string name="title_activity_settings">SettingsActivity</string>
 
 
 </resources>
