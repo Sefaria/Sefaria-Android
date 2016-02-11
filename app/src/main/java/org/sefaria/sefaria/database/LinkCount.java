@@ -250,10 +250,13 @@ public class LinkCount {
         LinkCount newLinkCount = new LinkCount(enTitle,0,heTitle,depth_type);
         MenuNode menuNode = MenuState.getRootNode();
         String [] titles = menuNode.getChildrenTitles(Util.Lang.EN);
-        for(String title: titles){
+        String [] heTitles = menuNode.getChildrenTitles(Util.Lang.HE);
+        for(int i=0;i<titles.length;i++){
+            String title = titles[i];
             for(int j=0;j<getChildren().size();j++){
                 LinkCount child = getChildren().get(j);
                 if(child.enTitle.equals(title)){
+                    child.heTitle = heTitles[i];
                     newLinkCount.addChild(child);
                     getChildren().remove(j);
                     break;
