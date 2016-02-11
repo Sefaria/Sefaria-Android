@@ -337,12 +337,12 @@ public class PerekTextView extends JustifyTextView {
         for (int i = 0; i < textList.size(); i++) {
             Text text = textList.get(i);
             String words;
-            if (lang == Util.Lang.EN) words = "(" + text.levels[0] + ") " + text.getEnText();
-            else if (lang == Util.Lang.HE)
-                words = "(" + Util.int2heb(text.levels[0]) + ") " + text.getHeText();
-            else { //bilingual
-                words = "(" + Util.int2heb(text.levels[0]) + ") " + text.getHeText()
-                        + "\n\n(" + text.levels[0] + ") " + text.getEnText();
+            if (lang == Util.Lang.BI)
+                words = "(" + Util.int2heb(text.levels[0]) + ") " + text.getText(Util.Lang.HE)
+                        + "\n\n(" + text.levels[0] + ") " + text.getText(Util.Lang.EN);
+
+            else { //mono lingual
+                words = "(" + Util.int2heb(text.levels[0]) + ") " + text.getText(lang);
             }
             if (!isFirst)
                 words = isCts ? " " + words : "\n\n" + words;

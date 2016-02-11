@@ -85,19 +85,7 @@ public class LinkMainAdapter extends RecyclerView.Adapter<LinkMainAdapter.LinkHo
         Util.Lang lang = context.getTextLang();
         String bookTitle = linkCount.getSlimmedTitle(book, lang);
 
-        if (linkCount.getDepthType() == LinkCount.DEPTH_TYPE.CAT) {
-            holder.tv.setText(bookTitle + " " + Util.LINK_CAT_VERICAL_LINE + " " + linkCount.getCount());
-            holder.tv.setTextColor(context.getResources().getColor(android.R.color.black));
-            if (android.os.Build.VERSION.SDK_INT >= 14) {//for older things it just will by non-capped (even though we can make a function to fix it, it's not worth it).
-                holder.tv.setAllCaps(true);
-            }
-            holder.colorBar.setVisibility(View.VISIBLE);
-            holder.catPadding.setVisibility(View.INVISIBLE); //just so it takes up space
-            int color = MyApp.getCatColor(linkCount.getRealTitle(Util.Lang.EN));
-            if (color != -1) {
-                holder.colorBar.setBackgroundColor(context.getResources().getColor(color));
-            }
-        } else {
+        if (linkCount.getDepthType() == LinkCount.DEPTH_TYPE.BOOK)  {
             if (linkCount.getCount() == 0) {
                 holder.tv.setText(bookTitle);
                 holder.tv.setTextColor(Color.parseColor("#999999"));
@@ -113,6 +101,18 @@ public class LinkMainAdapter extends RecyclerView.Adapter<LinkMainAdapter.LinkHo
             holder.catPadding.setVisibility(View.GONE);
 
 
+        } else { //ALL and CAT
+            holder.tv.setText(bookTitle + " " + Util.LINK_CAT_VERICAL_LINE + " " + linkCount.getCount());
+            holder.tv.setTextColor(context.getResources().getColor(android.R.color.black));
+            if (android.os.Build.VERSION.SDK_INT >= 14) {//for older things it just will by non-capped (even though we can make a function to fix it, it's not worth it).
+                holder.tv.setAllCaps(true);
+            }
+            holder.colorBar.setVisibility(View.VISIBLE);
+            holder.catPadding.setVisibility(View.INVISIBLE); //just so it takes up space
+            int color = MyApp.getCatColor(linkCount.getRealTitle(Util.Lang.EN));
+            if (color != -1) {
+                holder.colorBar.setBackgroundColor(context.getResources().getColor(color));
+            }
         }
     }
 

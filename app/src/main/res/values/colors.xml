@@ -2,25 +2,23 @@
 <resources>
     <!--HOME BUTTONS -->
     <color name="tanach">#005060</color>
-    <color name="mishnah">#5090b0</color>
-    <color name="talmud">#c0b080</color>
-    <color name="midrash">#709070</color>
-    <color name="halkhah">#c06060</color>
-    <color name="kabbalah">#b0b0e0</color>
-    <color name="liturgy">#403060</color>
-    <color name="philosophy">#90c0d0</color>
-    <color name="more">#102040</color>
-    <color name="tosefta">#508080</color>
-    <color name="parshanut">#004060</color>
+    <color name="mishnah">#5a99b7</color>
+    <color name="talmud">#ccb479</color>
+    <color name="midrash">#5d956f</color>
+    <color name="halkhah">#802f3e</color>
+    <color name="kabbalah">#594176</color>
+    <color name="liturgy">#ab4e66</color>
+    <color name="philosophy">#7f85a9</color>
+    <color name="system_color">#073570</color>
+    <color name="tosefta">#00827F</color>
+    <color name="parshanut">#9ab8cb</color>
     <color name="chasidut">#97b386</color>
-    <color name="musar">#c08050</color>
-    <color name="responsa">#803030</color>
+    <color name="musar">#7c406f</color>
+    <color name="responsa">#cb6158</color>
     <color name="apocrypha">#c7a7b4</color>
-    <color name="other">#102040</color>
     <color name="quoting_commentary">#cb6158</color>
     <color name="modern_works">#7c406f</color>
     <color name="commentary">#4871bf</color>
-    <color name="allConnections">#989898</color>
 
     <color name="menu_background">#F9F9F7</color>
     <color name="menu_foreground">#dddddd</color>
