@@ -187,8 +187,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
         GoogleTracker.sendScreen("SuperTextActivity");
         GoogleTracker.sendEvent(GoogleTracker.CATEGORY_NEW_TEXT,book.title);
         if(!veryFirstTime) {
-            menuLang = Settings.getMenuLang();
-            customActionbar.setTitleText(currNode.getMenuBarTitle(book, menuLang), menuLang, true, true);
+            setMenuLang(Settings.getMenuLang());
         }else
             veryFirstTime = false;
 
@@ -434,10 +433,15 @@ public abstract class SuperTextActivity extends FragmentActivity {
     public Text getCurrLinkSegment() { return linkFragment.getSegment(); }
     public boolean getFragmentIsOpen() { return linkFragment.getIsOpen(); }
 
+    protected void setMenuLang(Util.Lang menuLang){
+        this.menuLang = menuLang;
+        customActionbar.setTitleText(currNode.getMenuBarTitle(book, menuLang), menuLang, true, true);
+        linkFragment.notifyDataSetChanged();
+    }
+
     public Book getBook() { return book; }
 
     protected abstract void setTextLang(Util.Lang textLang);
-    protected abstract void setMenuLang(Util.Lang menuLang);
     protected abstract void setIsCts(boolean isCts);
     protected abstract void incrementTextSize(boolean isIncrement);
     protected abstract void jumpToText(Text text);

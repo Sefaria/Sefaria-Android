@@ -83,6 +83,8 @@ public class SectionAdapter extends ArrayAdapter<Text> {
             TextView heTv = (TextView) view.findViewById(R.id.he);
 
             if (segment.isChapter()) {
+                view.setClickable(true);
+
                 tch.setVisibility(View.VISIBLE);
                 enTv.setVisibility(View.GONE);
                 heTv.setVisibility(View.GONE);
@@ -92,6 +94,8 @@ public class SectionAdapter extends ArrayAdapter<Text> {
                 tch.setSectionTitle(segment);
                 tch.setTextSize(context.getTextSize());
             } else {
+                view.setClickable(false);
+
                 tch.setVisibility(View.GONE);
                 enTv.setVisibility(View.VISIBLE);
                 heTv.setVisibility(View.VISIBLE);
@@ -138,6 +142,7 @@ public class SectionAdapter extends ArrayAdapter<Text> {
             TextView tv = (TextView) view.findViewById(R.id.mono);
 
             if (segment.isChapter()) {
+                view.setClickable(true);
 
                 tch.setVisibility(View.VISIBLE);
                 tv.setVisibility(View.GONE);
@@ -148,6 +153,8 @@ public class SectionAdapter extends ArrayAdapter<Text> {
                 tch.setTextSize(context.getTextSize());
 
             } else {
+                view.setClickable(false);
+
                 tch.setVisibility(View.GONE);
                 tv.setVisibility(View.VISIBLE);
                 enNum.setVisibility(View.VISIBLE);
