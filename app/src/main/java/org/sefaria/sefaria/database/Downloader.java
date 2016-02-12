@@ -33,7 +33,7 @@ public class Downloader {
     public static final String CSV_FILE_NAME = "sefaria_mobile_updating_csv.csv";
     private static final String CSV_DEBUG_URL = "http://betamidrash.com/other/app/v2/dev/" + CSV_FILE_NAME; //developing version
     private static final String CSV_REAL_URL  = "http://betamidrash.com/other/app/v2/" + CSV_FILE_NAME;
-    private static boolean useDebugCSV = false;
+    private static boolean useDebugCSV = true;
     public static final String CSV_DOWNLOAD_TITLE = "Sefaria Pre Update";
     public static final String DB_DOWNLOAD_TITLE = "Sefaria Library Update";
     public static final String JSON_INDEX_TITLE = "Sefaria Index";
