@@ -4,13 +4,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.util.Log;
+
+import android.support.v7.widget.GridLayout;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.GridLayout;
-import android.widget.GridView;
-import android.widget.LinearLayout;
+
 import android.widget.TextView;
 
 import org.sefaria.sefaria.R;

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
+import android.support.v4.view.MarginLayoutParamsCompat;
 import android.support.v7.widget.GridLayout;
 import android.util.Log;
 import android.view.Gravity;
@@ -145,6 +146,7 @@ public class TOCGrid extends LinearLayout {
 
         GridLayout gl = new GridLayout(context);
         gl.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+
         /**
          * This is a hack to switch the order of boxes to go from right to left
          * as described in http://stackoverflow.com/questions/17830300/android-grid-view-place-items-from-right-to-left
