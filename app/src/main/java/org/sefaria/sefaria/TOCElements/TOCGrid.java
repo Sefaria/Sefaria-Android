@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -118,7 +119,7 @@ public class TOCGrid extends LinearLayout {
 
     }
 
-    /* saving method in case switch  back to non-grid item
+    /* saving method for SDK VERSION < 14 */
     private LinearLayout addRow(LinearLayout linearLayoutRoot) {
         LinearLayout ll = new LinearLayout(context);
         ll.setOrientation(LinearLayout.HORIZONTAL);
@@ -131,7 +132,7 @@ public class TOCGrid extends LinearLayout {
         linearLayoutRoot.addView(ll);
         return ll;
     }
-    */
+
 
     public void addNumGrid(List<Node> gridNodes,LinearLayout linearLayoutRoot) {
 
@@ -142,43 +143,48 @@ public class TOCGrid extends LinearLayout {
         }
 
 
-        //Log.d("grid", "NUM ROWS " + ((int) Math.ceil(gridNodes.size() / numColumns)));
-
-        GridLayout gl = new GridLayout(context);
-        gl.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-        /**
-         * This a hack to switch the order of boxes to go from right to left
-         * as described in http://stackoverflow.com/questions/17830300/android-grid-view-place-items-from-right-to-left
-         */
-        if(lang == Util.Lang.HE) {
-            //TODO make sure that this stuff still works (ei is called) when doing setLang()
-            gl.setRotationY(180);
-            gl.setRotationY(180);
-        }
-
-        gl.setRowCount((int) Math.ceil(gridNodes.size()/numColumns));
-        gl.setColumnCount((int) numColumns);
-        for (int j = 0; j <  gridNodes.size();  j++) {
-            //This operation of creating a new view lots of times (for example, in Araab Turim) is causing it to go really slow
-            TOCNumBox tocNumBox = new TOCNumBox(context,gridNodes.get(j), lang);
-            if(lang == Util.Lang.HE) {//same hack as above, such that the letters look normal
-                tocNumBox.setRotationY(180);
-                tocNumBox.setRotationY(180);
+        if(Build.VERSION.SDK_INT >=14) {
+            GridLayout gl = new GridLayout(context);
+            gl.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+            /**
+             * This is a hack to switch the order of boxes to go from right to left
+             * as described in http://stackoverflow.com/questions/17830300/android-grid-view-place-items-from-right-to-left
+             */
+            if (lang == Util.Lang.HE) {
+                //TODO make sure that this stuff still works (ei is called) when doing setLang()
+                gl.setRotationY(180);
+                gl.setRotationY(180);
             }
-            gl.addView(tocNumBox);
-        }
-        linearLayoutRoot.addView(gl);
 
-        /* saving method in case switch  back to non-grid item
-        for (int i = 0; i <= Math.ceil(chaps.size()/numColumns) && currNodeIndex < chaps.size(); i++) {
-            LinearLayout linearLayout = addRow(linearLayoutRoot);
-
-            for (int j = 0; j < numColumns && currNodeIndex < chaps.size();  j++) {
-                TOCNumBox tocNumBox = new TOCNumBox(context,chaps.get(currNodeIndex), node, lang);
-                linearLayout.addView(tocNumBox);
-                currNodeIndex++;
+            gl.setRowCount((int) Math.ceil(gridNodes.size() / numColumns));
+            gl.setColumnCount((int) numColumns);
+            for (int j = 0; j < gridNodes.size(); j++) {
+                //This operation of creating a new view lots of times (for example, in Araab Turim) is causing it to go really slow
+                TOCNumBox tocNumBox = new TOCNumBox(context, gridNodes.get(j), lang);
+                if (lang == Util.Lang.HE) {//same hack as above, such that the letters look normal
+                    tocNumBox.setRotationY(180);
+                    tocNumBox.setRotationY(180);
+                }
+                gl.addView(tocNumBox);
             }
-        }*/
+            linearLayoutRoot.addView(gl);
+        }else {
+            //Old SDK (looks not as good, but doesn't matter as much)
+            int currNodeIndex = 0;
+            for (int i = 0; i <= Math.ceil(gridNodes.size() / numColumns) && currNodeIndex < gridNodes.size(); i++) {
+                LinearLayout linearLayout = addRow(linearLayoutRoot);
+
+                for (int j = 0; j < numColumns && currNodeIndex < gridNodes.size(); j++) {
+                    TOCNumBox tocNumBox = new TOCNumBox(context, gridNodes.get(currNodeIndex), lang);
+                    final int padding = 3;
+                    linearLayout.setPadding(padding,padding,padding,padding);
+                    linearLayout.addView(tocNumBox);
+                    currNodeIndex++;
+                }
+            }
+
+
+        }
     }
 
 

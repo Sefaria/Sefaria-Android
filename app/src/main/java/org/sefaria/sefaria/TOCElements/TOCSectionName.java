@@ -27,18 +27,8 @@ public class TOCSectionName extends LinearLayout implements TOCElement {
     private Context context;
     private Node node;
     private boolean displayLevel;
-    private LinearLayout This = this;
     private Util.Lang lang;
 
-    /*
-    public  TOCSectionName(Context context){
-        super(context);
-        this.context = context;
-        this.setVisibility(View.INVISIBLE);
-        this.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-        this.setOrientation(VERTICAL);
-    }
-    */
     public TOCSectionName(Context context, Node node, Util.Lang lang, boolean displayLevel){
         super(context);
         inflate(context, R.layout.toc_sectionname, this);
@@ -80,10 +70,17 @@ public class TOCSectionName extends LinearLayout implements TOCElement {
         String text = node.getTitle(lang);
         if(node.isTextSection()) {
             text += " >";
-        }else {
-            ;//text += " " + "\u2228";
+        }else if(node.getChildren().size() == 0){//it has no children but it's not a section, so it should be greyed out
+            sectionroot.setTextColor(getResources().getColor(R.color.toc_greyed_out_section_name));
         }
+        //else    ;//text += " " + "\u2228";
         sectionroot.setText(text);
+        /*
+        This is for a case of a node that holds just a grid and is a sibling of a sectionName which istextSection()
+        Look at Ohr Hashem for an example.
+         */
+        if(text.length() ==0 && !node.isTextSection())
+            sectionroot.setVisibility(View.GONE);
 
     }
 
@@ -93,8 +90,8 @@ public class TOCSectionName extends LinearLayout implements TOCElement {
             //TODO go to intent of text page
             Log.d("toc", "sectionanem _ node:" + node);
             if(false && !node.isTextSection()){ //TODO maybe try to make this work at some point .. && get rid of false
-                for(int i=0;i<This.getChildCount();i++){
-                    View child = This.getChildAt(i);
+                for(int i=0;i<TOCSectionName.this.getChildCount();i++){
+                    View child = TOCSectionName.this.getChildAt(i);
                     if(child == sectionroot)
                         continue;
                     if(child.getVisibility() == View.INVISIBLE)

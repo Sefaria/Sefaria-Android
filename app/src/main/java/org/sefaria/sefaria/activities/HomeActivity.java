@@ -16,7 +16,6 @@ import org.sefaria.sefaria.database.DailyLearning;
 import org.sefaria.sefaria.database.Database;
 import org.sefaria.sefaria.database.Downloader;
 import org.sefaria.sefaria.database.Huffman;
-import org.sefaria.sefaria.layouts.AutoResizeTextView;
 import org.sefaria.sefaria.layouts.CustomActionbar;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
@@ -30,7 +29,6 @@ import android.util.Pair;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -38,7 +36,6 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class HomeActivity extends Activity {
 
