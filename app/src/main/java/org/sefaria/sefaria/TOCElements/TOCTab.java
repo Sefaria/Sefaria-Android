@@ -72,7 +72,7 @@ public class TOCTab extends LinearLayout implements TOCElement {
             //tv.setTextSize(getResources().getDimension(R.dimen.tab_menu_font_size));
         }
         if(node != null)//It's a regular TOC tab
-            newTvText = node.getTitle(lang);
+            newTvText = node.getTabName(lang);
         //else it will use one of the "Commentary"s
         tv.setText(newTvText);
 

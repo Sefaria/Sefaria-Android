@@ -593,7 +593,6 @@ public class Node implements  Parcelable{
         if(textList != null) {
             return textList;
         }
-        Log.d("GetText","Starting");
         if(!isTextSection){
             Log.e("Node", "getTexts() was called when it's not a textSection!");
             textList = new ArrayList<>();
@@ -604,8 +603,6 @@ public class Node implements  Parcelable{
             textList = new ArrayList<>();
             return textList;
         }else if(!isComplex && isGridItem && !isRef){
-
-            Log.d("Node", "in (!isComplex && isGridItem && !isRef)");
             textList =  Text.get(getBid(),getLevels(),0);
         }else if(isRef()){
             if(!isComplex){
@@ -633,7 +630,7 @@ public class Node implements  Parcelable{
         else{
             Log.e("Node", "In Node.getText() and I'm confused. NodeTypeFlags: " + getNodeTypeFlagsStr());
         }
-        Log.d("Node", "finishing getTexts algo. textList.size():" + textList.size());
+        //Log.d("Node", "finishing getTexts algo. textList.size():" + textList.size());
         for(Text text:textList){
             text.parentNode = this;
         }
@@ -707,7 +704,6 @@ public class Node implements  Parcelable{
         }
         str = index + "." + str;
         str = PATH_DEFINING_NODE_VERSION + str;
-        Log.d("Node", "makeStringDefiningTreeAndNode:" + str);
         return str;
     }
 
@@ -763,7 +759,6 @@ public class Node implements  Parcelable{
         }
 
         allRoots = new ArrayList<>();
-        Log.d("Node", "calling Node.getRoots()");
         Database dbHandler = Database.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
         Cursor cursor = db.query(NODE_TABLE, null, "bid" + "=?",
@@ -816,22 +811,20 @@ public class Node implements  Parcelable{
 
     public String getTabName(Util.Lang lang){
         String name = "";
+        Node root = getAncestorRoot();
         if (!isComplex || isRef) {
             try {
                 if (lang == Util.Lang.HE) {
-                    name = heSectionNames[heSectionNames.length - 1];
-                    return name;
+                    name = root.heSectionNames[root.heSectionNames.length - 1];
                 } else { //use EN for BI and EN
-                    name = sectionNames[sectionNames.length - 1];
-                    return name;
+                    name = root.sectionNames[root.sectionNames.length - 1];
                 }
             }catch (Exception e){
-                Log.d("Node.getTabName", e.toString());
+                e.printStackTrace();
             }
         }
-        //TODO I don't understand why this is causing me problems
-        //if (!name.equals("")) return name;
-        return getTitle(lang);
+        if (!name.equals("")) return name;
+        else return getTitle(lang);
     }
 
     private String getNodeTypeFlagsStr(){

@@ -90,7 +90,6 @@ public abstract class SuperTextActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Log.d("SuperTextAct","onCreate");
         Intent intent = getIntent();
         Integer nodeHash;
         if (savedInstanceState != null) {//it's coming back after it cleared the activity from ram
@@ -149,7 +148,6 @@ public abstract class SuperTextActivity extends FragmentActivity {
         else { // no book means it came in from TOC
             firstLoadedNode = Node.getSavedNode(nodeHash);
             //lastLoadedNode = firstLoadedNode;
-            Log.d("Section","firstLoadedChap init:" + firstLoadedNode.getNiceGridNum(menuLang));
             book = new Book(firstLoadedNode.getBid());
         }
         //These vars are specifically initialized here and not in init() so that they don't get overidden when coming from TOC
@@ -280,7 +278,6 @@ public abstract class SuperTextActivity extends FragmentActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        Log.d("SuperTextAct", "onNewIntent");
         comingFromTOC(intent);
     }
 
@@ -327,10 +324,8 @@ public abstract class SuperTextActivity extends FragmentActivity {
     protected Text getSectionHeaderText(TextEnums dir){
         Node node;
         if(dir == TextEnums.NEXT_SECTION) {
-            Log.d("SuperTextAct","using lastLoadedNode for getSectionHeaderText()");
             node = lastLoadedNode;
         } else if (dir == TextEnums.PREV_SECTION || true){
-            Log.d("SuperTextAct","using firstLoadedNode for getSectionHeaderText()");
             node = firstLoadedNode;
         }
         return new Text(node);
@@ -477,7 +472,6 @@ public abstract class SuperTextActivity extends FragmentActivity {
     }
 
     private void setCurrNode(Node node, Text text){
-        //Log.d("setCurrNode", "stated");
         currText = text;
         if(node == null) return;
         if(currNode != node){
