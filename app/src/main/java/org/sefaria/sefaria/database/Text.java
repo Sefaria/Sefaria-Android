@@ -266,17 +266,20 @@ public class Text implements Parcelable {
      * @throws API.APIException
      */
     public static List<Text> get(int bid, int[] levels, int parentNID) throws API.APIException {
-        List<Text> textList = new ArrayList<Text>();
+        Log.d("Text", "in get");
+        List<Text> textList = new ArrayList<>();
         try {
-            textList = getFromDB(bid,levels,parentNID);
-        }catch(SQLiteException e){
+            if(API.useAPI()){
+                //if(parentNID <=0) //TODO make it work for API with NID
+                    textList = API.getTextsFromAPI(Book.getTitle(bid), levels);
+            }else{
+                textList = getFromDB(bid,levels,parentNID);
+            }
+        }catch(Exception e){
+            e.printStackTrace();
             if(!e.toString().contains(API.NO_TEXT_MESSAGE)){
                 throw e; //don't know what the problem is so throw it back out
             }
-            if(parentNID <=0) //TODO make it work for API with NID
-                textList = API.getTextsFromAPI(Book.getTitle(bid), levels);
-        }catch(Exception e){
-            e.printStackTrace();
         }
 
         return textList;

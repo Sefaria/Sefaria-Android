@@ -109,7 +109,6 @@ public class CustomActionbar extends MenuElement {
     }
 
     public void setTitleText(String title, Util.Lang lang, boolean forceRefresh, boolean forTOC){
-        Log.d("cab","title: "+  title);
         if(forTOC) //Add down arrow
             title = title + " \u25be"; // "\u25bc " //"\u25be" 23F7 //http://unicode-search.net/unicode-namesearch.pl?term=triangle
         if(lang == Util.Lang.HE)
@@ -129,12 +128,9 @@ public class CustomActionbar extends MenuElement {
 
         if(lang == Util.Lang.HE && heText != null){
             title = heText;
-            Log.d("Cab", "here in hetext" + lang + " " + heText + "--" + enText);
         } else if(lang == Util.Lang.EN && enText != null) {
             title = enText;
-            Log.d("Cab", "here in entext" + lang + " " + heText + "--" + enText);
         }else{
-            Log.d("Cab", "here in menunode" + lang + " " + heText + "--" + enText);
             title = menuNode.getTitle(lang);
         }
 
