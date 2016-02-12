@@ -215,7 +215,7 @@ public class LinkCount {
                         category = QUOTING_COMMENTARY;
                     else
                         category = categories[0];
-                    countGroups = new LinkCount(category,0, category + " (he)",DEPTH_TYPE.CAT);
+                    countGroups = new LinkCount(category,0, "מפרשים מצטטים",DEPTH_TYPE.CAT); //this he is only deals with QUOTING_COMMENTARY, other titles will be dealt with later
                 }
                 String childEnTitle = cursor.getString(0);
                 int childCount = cursor.getInt(1);
