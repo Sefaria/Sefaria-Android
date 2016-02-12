@@ -54,6 +54,8 @@ public class LinkFragment extends android.support.v4.app.Fragment {
     private LinkSelectorBar linkSelectorBar;
     private RecyclerView linkRecycler;
 
+    private SuperTextActivity activity;
+
 
     private Text segment;
     private State currState;
@@ -72,17 +74,27 @@ public class LinkFragment extends android.support.v4.app.Fragment {
         isOpen = false;
         clicked = false;
         dontUpdate = false;
-
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (savedInstanceState != null) {
+
+        }
+
         if (getArguments() != null) {
             //mParam1 = getArguments().getString("param1");
             //mParam2 = getArguments().getString("param2");
             //
         }
+
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
 
     }
 
@@ -98,7 +110,6 @@ public class LinkFragment extends android.support.v4.app.Fragment {
 
         LinearLayout linkSelectorBarRoot = (LinearLayout) view.findViewById(R.id.link_selector_bar_root);
 
-        SuperTextActivity activity = (SuperTextActivity) getActivity();
         linkSelectorBar = new LinkSelectorBar(activity,linkSelectorBarButtonClick,linkSelectorBackClick);
         linkSelectorBarRoot.addView(linkSelectorBar);
 
@@ -112,6 +123,8 @@ public class LinkFragment extends android.support.v4.app.Fragment {
         super.onAttach(activity);
         try {
             mListener = (OnLinkFragInteractionListener) activity;
+            this.activity = (SuperTextActivity) activity;
+            updateFragment(segment);
             //mListener.onLinkFragAttached();
 
         } catch (ClassCastException e) {
@@ -130,7 +143,6 @@ public class LinkFragment extends android.support.v4.app.Fragment {
 
     public void gotoState(State state,View view,LinkCount linkCount) {
         currState = state;
-        SuperTextActivity activity = (SuperTextActivity) getActivity();
         View colorBar = view.findViewById(R.id.main_color_bar);
         TextView noLinksTV = (TextView) view.findViewById(R.id.no_links_tv);
         if (state == State.MAIN) {
@@ -152,7 +164,7 @@ public class LinkFragment extends android.support.v4.app.Fragment {
             view.setBackgroundColor(Color.parseColor("#FFFFFF"));
 
             //update linkSelectorQueue
-            linkSelectorBar.add(linkCount);
+            linkSelectorBar.add(linkCount,activity.getMenuLang());
 
 
 
@@ -210,7 +222,6 @@ public class LinkFragment extends android.support.v4.app.Fragment {
             }
             linkRecycler.scrollToPosition(0); //reset scroll to top
 
-
         } else {
             Log.d("frag", "DONT UPDATE");
         }
@@ -222,7 +233,10 @@ public class LinkFragment extends android.support.v4.app.Fragment {
     }
 
     //independent of whether or not you're using linkMainAdapter or linkTextAdapter, notify
-    public void notifyDataSetChanged() { linkRecycler.getAdapter().notifyDataSetChanged(); }
+    public void notifyDataSetChanged() {
+        linkRecycler.getAdapter().notifyDataSetChanged();
+        linkSelectorBar.update(activity.getMenuLang());
+    }
 
     public void setDontUpdate(boolean dontUpdate) { this.dontUpdate = dontUpdate; }
     public void setIsOpen(boolean isOpen) { this.isOpen = isOpen; }
@@ -251,7 +265,7 @@ public class LinkFragment extends android.support.v4.app.Fragment {
         public void onClick(View v) {
             LinkSelectorBarButton lsbb = (LinkSelectorBarButton) v;
             linkTextAdapter.setCurrLinkCount(lsbb.getLinkCount(), segment);
-            linkSelectorBar.update(lsbb.getLinkCount());
+            linkSelectorBar.update(lsbb.getLinkCount(),activity.getMenuLang());
         }
     };
 
