@@ -34,6 +34,7 @@
     <color name="toc_words">#000</color>
     <color name="toc_curr_section_title">#AAA</color>
     <color name="toc_num_box_background">#ffffff</color>
+    <color name="toc_greyed_out_section_name">#999</color>
 
     <color name="text_background_light">#F8FCF8</color>
     <color name="text_background_dark">#000000</color>

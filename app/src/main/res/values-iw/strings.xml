@@ -119,7 +119,6 @@
     <string name="askjosh">If you\'re looking for something in Gemara or Chumash &lt;a href=\'mailto:askjosh@torahsummary.com\'&gt;askjosh@torahsummary.com&lt;/a&gt; might be able to help.</string>
     <string name="ARE_YOU_SURE_TITLE" translatable="false">Are you sure you want to cancel?</string>
     <string name="ARE_YOU_SURE_MESSAGE" translatable="false">Are you sure you want to cancel? Your update might need to be restarted.</string>
-    <string name="CHECKING_FOR_UPDATE_TITLE" translatable="false">Checking for update</string>
     <string name="finish">Finish</string>
     <string name="mainMenuSearchHint">Search Texts or Book Titles</string>
 
