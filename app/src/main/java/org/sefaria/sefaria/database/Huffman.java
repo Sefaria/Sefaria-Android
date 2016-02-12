@@ -133,8 +133,13 @@ public class Huffman {
         try {
             String path = Database.getDbPath() + "/SefariaHuffmanDeflated.txt";
             String deflated = readFile(path);
-            Log.d("Huffman", "read file");
-            allocate(deflated.length()/2 + 1);
+
+            int size = Database.getDBSetting("huffmanSize");
+            if(size == Database.BAD_SETTING_GET) {
+                Log.e("Huffman", "BAD_SETTING_GET" + size);
+                size = ((int) Math.ceil(deflated.length() / 2.5));
+            }
+            allocate(size + 10);//it really only needs to be +2, but just to be safe
             int node = getNew();
             for(int i=1;i<deflated.length();i++){
                 Character character = deflated.charAt(i);

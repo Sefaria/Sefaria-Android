@@ -206,6 +206,24 @@ public class Database extends SQLiteOpenHelper{
 
     }
 
+    final static int BAD_SETTING_GET = -12349;
+    public static int getDBSetting(String key){
+        int value = BAD_SETTING_GET;
+        try {
+            Database dbHandler = Database.getInstance();
+            SQLiteDatabase db = dbHandler.getReadableDatabase();
+            Cursor cursor = db.query("Settings", null, "_id" + "=?",
+                    new String[]{key}, null, null, null, null);
+
+            if (cursor != null && cursor.moveToFirst()) {
+                value = cursor.getInt(1);
+            }
+        }catch(Exception e){
+            ;
+        }
+        return value;
+    }
+
     public static void createAPIdb(){
         Database myDbHelper = new Database(MyApp.currActivityContext);
         Log.d("api", "trying to create db");
@@ -263,19 +281,9 @@ public class Database extends SQLiteOpenHelper{
     }
 
     public static int getVersionInDB(){
-        int versionNum = -1;
-        try{
-            Database dbHandler = Database.getInstance();
-            SQLiteDatabase db = dbHandler.getReadableDatabase();
-            Cursor cursor = db.query("Settings", null, "_id" + "=?",
-                    new String[] { "version" }, null, null, null, null);
-
-            if (cursor != null && cursor.moveToFirst()){
-                versionNum = cursor.getInt(1);
-            }
-        }catch(Exception e){
+        int versionNum = getDBSetting("version");
+        if(versionNum == BAD_SETTING_GET)
             versionNum = -1;
-        }
         return versionNum;
     }
 
