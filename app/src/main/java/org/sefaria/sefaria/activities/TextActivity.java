@@ -86,6 +86,10 @@ public class TextActivity extends SuperTextActivity {
         }
     }
 
+    protected void updateFocusedSegment() {
+        //TODO IMPLEMENT ME!!!
+    }
+
     protected void incrementTextSize(boolean isIncrement) {
         float increment = getResources().getDimension(R.dimen.text_font_size_increment);
 

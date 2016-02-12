@@ -41,7 +41,7 @@ public class LinkSelectorBar extends LinearLayout {
         linkSelectorQueue = new LinkedList<>();
     }
 
-    public void add(LinkCount linkCount) {
+    public void add(LinkCount linkCount, Util.Lang lang) {
 
         //make sure linkCount is unique. technically should be overriding equals() in LinkCount, but this actually isn't a strict definition right n
         boolean exists = false;
@@ -58,10 +58,15 @@ public class LinkSelectorBar extends LinearLayout {
             linkSelectorQueue.add(linkCount);
         }
 
-        update(linkCount);
+        update(linkCount, lang);
     }
 
-    public void update(LinkCount currLinkCount ) {
+    //this function is used to only update the language of the link selector bar
+    public void update(Util.Lang lang) {
+        update(currLinkCount,lang);
+    }
+
+    public void update(LinkCount currLinkCount,Util.Lang lang ) {
         this.currLinkCount = currLinkCount;
         selectorListLayout.removeAllViews();
 
@@ -69,7 +74,7 @@ public class LinkSelectorBar extends LinearLayout {
         while(linkIt.hasPrevious()) {
             //add children in reverse order
             LinkCount tempLC = linkIt.previous();
-            LinkSelectorBarButton lssb = new LinkSelectorBarButton(activity,tempLC,activity.getBook());
+            LinkSelectorBarButton lssb = new LinkSelectorBarButton(activity,tempLC,activity.getBook(),lang);
             lssb.setOnClickListener(linkSelectorBarButtonClick);
             selectorListLayout.addView(lssb);
 
@@ -80,14 +85,9 @@ public class LinkSelectorBar extends LinearLayout {
 
     }
 
-    public void setLang(Util.Lang lang) {
-        if (lang == Util.Lang.EN) {
 
-        } else if (lang == Util.Lang.HE) {
+    private void flipViews() {
 
-        } else {
-            //wrong lang
-        }
     }
 
 }
