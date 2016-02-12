@@ -181,14 +181,17 @@ public class LinkCount {
 
     public static LinkCount getFromLinks_small(Text text){
         LinkCount allLinkCounts = new LinkCount(ALL_CONNECTIONS, 0, "All Connections (He)",DEPTH_TYPE.ALL);
-        if(text.getNumLinks() == 0)  return allLinkCounts;
+        LinkCount commentaryGroup = getCommentaryOnChap(text.tid -11,text.tid +11,text.bid);//getting all commentaries +-11 of the current text
+        if(text.getNumLinks() == 0){
+            if(commentaryGroup.getChildren().size()>0)
+                allLinkCounts.addChild(commentaryGroup,true);
+            return allLinkCounts;
+        }
         Database dbHandler = Database.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
         Log.d("Link", "starting getCountsTitlesFromLinks_small");
 
-        LinkCount commentaryGroup;
-        //commentaryGroup = new LinkCount(COMMENTARY,0, "מפרשים",DEPTH_TYPE.CAT);
-        commentaryGroup = getCommentaryOnChap(text.tid -10,text.tid +10,text.bid);//TODO this actually needs to get from begin and end of chap (not randomly)
+
 
         String sql = "SELECT B.title, Count(*) as booksCount, B.heTitle, B.commentsOn, B.categories FROM Books B, Links_small L, Texts T WHERE (" +
                 "(L.tid1 = " + text.tid + " AND L.tid2=T._id AND T.bid= B._id) OR " +
@@ -222,9 +225,7 @@ public class LinkCount {
                 String childHeTitle = cursor.getString(2);
                 if(cursor.getInt(3) == text.bid) {//Comments on this book
                     commentaryGroup.addCommentaryCount(childEnTitle,childCount,childHeTitle);
-                    //LinkCount linkCount = new LinkCount(childEnTitle,childCount,childHeTitle,DEPTH_TYPE.BOOK);
-                    //commentaryGroup.addChild(linkCount);
-                }else{
+                }else{ //non commentary book
                     LinkCount linkCount = new LinkCount(childEnTitle,childCount,childHeTitle,DEPTH_TYPE.BOOK);
                     countGroups.addChild(linkCount);
                 }
@@ -236,12 +237,8 @@ public class LinkCount {
 
         allLinkCounts = allLinkCounts.sortLinkCountCategories();
 
-        if(commentaryGroup.count >0)
+        if(commentaryGroup.count >0 || commentaryGroup.getChildren().size()>0)
             allLinkCounts.addChild(commentaryGroup,true);
-        Log.d("Link", "finished getCountsTitlesFromLinks_small");
-
-        //getStringTree(allLinkCounts, 0, true);
-
 
         return allLinkCounts;
     }
