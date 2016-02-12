@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MotionEventCompat;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -51,6 +52,8 @@ public abstract class SuperTextActivity extends FragmentActivity {
     public static final int TOC_CHAPTER_CLICKED_CODE = 3456;
     protected static final int LOAD_PIXEL_THRESHOLD = 500; //num pixels before the bottom (or top) of a segment after (before) which the next (previous) segment will be loaded
 
+    protected static final String LINK_FRAG_TAG = "LinkFragTag";
+
     protected boolean isTextMenuVisible;
     protected LinearLayout textMenuRoot;
 
@@ -91,13 +94,25 @@ public abstract class SuperTextActivity extends FragmentActivity {
         Intent intent = getIntent();
         Integer nodeHash;
         if (savedInstanceState != null) {//it's coming back after it cleared the activity from ram
+            linkFragment = (LinkFragment) getSupportFragmentManager().getFragment(savedInstanceState,LINK_FRAG_TAG);
             nodeHash = savedInstanceState.getInt("nodeHash", -1);
             book = savedInstanceState.getParcelable("currBook");
             openToText = savedInstanceState.getParcelable("incomingLinkText");
+
+            Log.d("save","frag == null = " + (linkFragment == null));
         }else{
             nodeHash = intent.getIntExtra("nodeHash", -1);
             book = intent.getParcelableExtra("currBook");
             openToText = intent.getParcelableExtra("incomingLinkText");
+
+            //LINK FRAGMENT
+            linkFragment = new LinkFragment();
+            //Bundle args = new Bundle();
+            //args.putParcelable(LinkFragment.ARG_CURR_SECTION, sectionAdapter.getItem(position));
+            //linkFragment.setArguments(args);
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.add(R.id.linkRoot, linkFragment,LINK_FRAG_TAG);
+            fragmentTransaction.commit();
         }
         if(book != null){ //||nodeHash == -1){// that means it came in from the menu or the TOC commentary tab
             try {
@@ -195,8 +210,10 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
         Settings.BookSettings.setSavedBook(book, currNode, currText, textLang);
         outState.putParcelable("currBook", book);
+        getSupportFragmentManager().putFragment(outState, LINK_FRAG_TAG, linkFragment);
     }
 
     /**
@@ -421,6 +438,8 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
     public Util.Lang getTextLang() { return textLang; }
 
+    public Util.Lang getMenuLang() { return menuLang; }
+
     public float getTextSize() {
         return textSize;
     }
@@ -445,6 +464,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
     protected abstract void setIsCts(boolean isCts);
     protected abstract void incrementTextSize(boolean isIncrement);
     protected abstract void jumpToText(Text text);
+    protected abstract void updateFocusedSegment();
 
     protected void setCurrNode(Node node){
         setCurrNode(node,null);

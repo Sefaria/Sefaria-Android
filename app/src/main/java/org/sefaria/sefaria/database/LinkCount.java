@@ -131,7 +131,7 @@ public class LinkCount {
         return str;
     }
 
-    final protected static String ALL_CONNECTIONS = "All Connections";
+    final protected static String ALL_CONNECTIONS = "All";
     final protected static String COMMENTARY = "Commentary";
     final protected static String QUOTING_COMMENTARY = "Quoting Commentary";
 
@@ -139,7 +139,6 @@ public class LinkCount {
         LinkCount commentaryGroup = new LinkCount(COMMENTARY,0, "מפרשים",DEPTH_TYPE.CAT);
         Database dbHandler = Database.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
-        Log.d("Link", "starting getCommentaryOnChap");
 
         String sql = "SELECT B.title, B.heTitle FROM Books B, Links_small L, Texts T WHERE (" +
                 "((L.tid1 BETWEEN " + chapStart + " AND " + chapEnd +  ") AND L.tid2=T._id AND T.bid= B._id AND B.commentsOn=" + bid + ")"
@@ -155,7 +154,6 @@ public class LinkCount {
                 commentaryGroup.addChild(linkCount);
             } while (cursor.moveToNext());
         }
-        Log.d("Link", "finsihing getCommentaryOnChap");
         return commentaryGroup;
     }
 
@@ -180,7 +178,7 @@ public class LinkCount {
 
 
     public static LinkCount getFromLinks_small(Text text){
-        LinkCount allLinkCounts = new LinkCount(ALL_CONNECTIONS, 0, "All Connections (He)",DEPTH_TYPE.ALL);
+        LinkCount allLinkCounts = new LinkCount(ALL_CONNECTIONS, 0, "הכל",DEPTH_TYPE.ALL);
         LinkCount commentaryGroup = getCommentaryOnChap(text.tid -11,text.tid +11,text.bid);//getting all commentaries +-11 of the current text
         if(text.getNumLinks() == 0){
             if(commentaryGroup.getChildren().size()>0)
@@ -189,10 +187,6 @@ public class LinkCount {
         }
         Database dbHandler = Database.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
-        Log.d("Link", "starting getCountsTitlesFromLinks_small");
-
-
-
         String sql = "SELECT B.title, Count(*) as booksCount, B.heTitle, B.commentsOn, B.categories FROM Books B, Links_small L, Texts T WHERE (" +
                 "(L.tid1 = " + text.tid + " AND L.tid2=T._id AND T.bid= B._id) OR " +
                 "(L.tid2 = " + text.tid + " AND L.tid1=T._id AND T.bid= B._id) ) GROUP BY B._id ORDER BY B.categories, B._id"
@@ -213,12 +207,17 @@ public class LinkCount {
                         allLinkCounts.addChild(countGroups);
                     }
                     lastCategory = categories[0];
-                    String category;
-                    if(categories[0].equals("Commentary"))
+                    String category,heCategory;
+                    if(categories[0].equals("Commentary")) {
                         category = QUOTING_COMMENTARY;
-                    else
+                        heCategory = "מפרשים מצטטים";
+                    }else {
                         category = categories[0];
-                    countGroups = new LinkCount(category,0, category + " (he)",DEPTH_TYPE.CAT);
+                        heCategory = category;
+                        //the real he titles will be added in sortLinkCountCategories() if it finds match
+                    }
+
+                    countGroups = new LinkCount(category,0,heCategory ,DEPTH_TYPE.CAT);
                 }
                 String childEnTitle = cursor.getString(0);
                 int childCount = cursor.getInt(1);

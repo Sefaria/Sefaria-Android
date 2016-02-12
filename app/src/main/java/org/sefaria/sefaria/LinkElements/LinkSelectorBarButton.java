@@ -25,12 +25,12 @@ public class LinkSelectorBarButton extends TextView {
     private LinkCount linkCount;
     private Book book;
 
-    public LinkSelectorBarButton(Context context, LinkCount linkCount, Book book) {
+    public LinkSelectorBarButton(Context context, LinkCount linkCount, Book book, Util.Lang lang) {
         super(context);
         this.context = context;
         this.linkCount = linkCount;
         this.book = book;
-        setLang(Util.Lang.EN);
+        setLang(lang);
 
 
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
