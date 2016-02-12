@@ -481,6 +481,36 @@ public class Node implements  Parcelable{
         return root;
     }
 
+    private Node createTempNode(int sectionNum){
+        this.isTextSection = false;
+        this.isGridItem = false;
+        this.isRef = false;
+        Node tempNode = new Node();
+        try{
+            tempNode.enTitle = this.sectionNames[textDepth -1] + " " + sectionNum; //using textDepth value to get the last section name (3-1 = 2)
+            tempNode.heTitle = this.heSectionNames[textDepth -1] + " " + Util.int2heb(sectionNum);
+            tempNode.sectionNames = Arrays.copyOfRange(this.sectionNames, 0, textDepth);//using textDepth value to get the last 2 section names (3-2=1,3)
+            tempNode.heSectionNames = Arrays.copyOfRange(this.heSectionNames, 0, textDepth);
+        }catch (Exception e){//This seems to happen with Complex texts with 3 levels (see Footnotes on Orot)
+            e.printStackTrace();
+            tempNode.sectionNames = tempNode.heSectionNames = new String []{"",""};//{"Section","Segment"};
+            tempNode.enTitle = "" + sectionNum;
+            tempNode.heTitle = Util.int2heb(sectionNum);
+        }
+        tempNode.textDepth = this.textDepth -1;
+        tempNode.isComplex = isComplex;
+        tempNode.isRef = false;
+        tempNode.isGridItem = false;
+        tempNode.isTextSection = false;
+        //tempNode.siblingNum = sectionNum - 1;
+        tempNode.gridNum = sectionNum;
+        tempNode.nid = NID_CHAP_NO_NID;
+        tempNode.bid = bid;
+
+        this.addChild(tempNode);
+
+        return tempNode;
+    }
 
     private void setAllChaps(boolean useNID) throws API.APIException {
         if(textDepth == 1){
@@ -511,7 +541,8 @@ public class Node implements  Parcelable{
 
         //Log.d("Node", "sql: " + sql);
         Node tempNode = null;
-        int lastLevel3 = 0;
+        Node tempNodeLevel4 = this;
+        int lastLevel3 = 0, lastLevel4 = 0;
 
         if(API.useAPI()){
             ;
@@ -523,46 +554,23 @@ public class Node implements  Parcelable{
             Cursor cursor = db.rawQuery(sql, null);
             if (cursor.moveToFirst()) {
                 do {
-                    int sectionNum = cursor.getInt(0);
                     if(textDepth == 2) {
-                        //chaps.add(cursor.getInt(0));
-                        addChapChild(sectionNum);
-                    }else if(textDepth == 3){
-                        this.isTextSection = false;
-                        this.isGridItem = false;
-                        this.isRef = false;
-                        int level3 = sectionNum;
+                        addChapChild(cursor.getInt(0));
+                    }else if(textDepth >=3){//textDepth == 3 || textDepth == 4
+                        int level3 = cursor.getInt(textDepth - 3);
+                        if(textDepth == 4){
+                            int level4 = cursor.getInt(0);
+                            if(level4 != lastLevel4 || tempNodeLevel4 == this){
+                                lastLevel4 = level4;
+                                lastLevel3 = 0;
+                                tempNodeLevel4 = this.createTempNode(level4);
+                            }
+                        }
                         if(level3 != lastLevel3 || tempNode == null){
                             lastLevel3 = level3;
-                            tempNode = new Node();
-                            try{
-                                tempNode.enTitle = this.sectionNames[textDepth -1] + " " + level3; //using textDepth value to get the last section name (3-1 = 2)
-                                tempNode.heTitle = this.heSectionNames[textDepth -1] + " " + Util.int2heb(level3);
-                                tempNode.sectionNames = Arrays.copyOfRange(this.sectionNames, 0, textDepth);//using textDepth value to get the last 2 section names (3-2=1,3)
-                                tempNode.heSectionNames = Arrays.copyOfRange(this.heSectionNames, 0, textDepth);
-                            }catch (Exception e){//This seems to happen with Complex texts with 3 levels (see Footnotes on Orot)
-                                e.printStackTrace();
-                                tempNode.sectionNames = tempNode.heSectionNames = new String []{"",""};//{"Section","Segment"};
-                                tempNode.enTitle = "" + level3;
-                                tempNode.heTitle = Util.int2heb(level3);
-                            }
-                            tempNode.textDepth = this.textDepth -1;
-                            tempNode.isComplex = isComplex;
-                            tempNode.isRef = false;
-                            tempNode.isGridItem = false;
-                            tempNode.isTextSection = false;
-                            //tempNode.siblingNum = sectionNum - 1;
-                            tempNode.gridNum = sectionNum;
-                            tempNode.nid = NID_CHAP_NO_NID;
-                            tempNode.bid = bid;
-
-                            this.addChild(tempNode);
+                            tempNode = tempNodeLevel4.createTempNode(level3);
                         }
-                        tempNode.addChapChild(cursor.getInt(1));
-                    }
-                    else{
-                        //TODO extend to more than 3 levels
-                        Log.e("Node", "add 4 or more levels");
+                        tempNode.addChapChild(cursor.getInt(textDepth-2));
                     }
                 } while (cursor.moveToNext());
             }
@@ -751,7 +759,6 @@ public class Node implements  Parcelable{
     public static List<Node> getRoots(Book book) throws API.APIException{
         List<Node> allRoots = allSavedBookTOCroots.get(book.title);
         if(allRoots != null){
-            showTree(allRoots.get(0));
             return allRoots;
         }
 

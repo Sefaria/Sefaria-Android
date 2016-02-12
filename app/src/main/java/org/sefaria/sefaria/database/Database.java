@@ -33,7 +33,7 @@ public class Database extends SQLiteOpenHelper{
     public static String DB_NAME = "UpdateForSefariaMobileDatabase";
     static int DB_VERSION = 1;
 
-    private static final int MIN_DB_VERSION = 118;
+    private static final int MIN_DB_VERSION = 135;
 
     private SQLiteDatabase myDataBase;
 

@@ -21,37 +21,12 @@ public class Link {//implements Parcelable {
         for(int i = 0;i<NUM_LEVELS;i++) {
             levels[i] = cursor.getInt(i + LEVELS_START_NUM);
         }
-		/*
-		bidb = cursor.getInt(9);
-		level1b = cursor.getInt(10);
-		level2b = cursor.getInt(11);
-		level3b = cursor.getInt(12);
-		level4b = cursor.getInt(13);
-		level5b = cursor.getInt(14);
-		level6b = cursor.getInt(15);
-		 */
     }
-
-    private static final String KconnType = "connType";
-    private static final String Kbida = "bida";
-    private static final String Klevel1a = "level1a";
-    private static final String Klevel2a = "level2a";
-    private static final String Klevel3a = "level3a";
-    private static final String Klevel4a = "level4a";
-    private static final String Klevel5a = "level5a";
-    private static final String Klevel6a = "level6a";
-    private static final String Kbidb = "bidb";
-    private static final String Klevel1b = "level1b";
-    private static final String Klevel2b = "level2b";
-    private static final String Klevel3b = "level3b";
-    private static final String Klevel4b = "level4b";
-    private static final String Klevel5b = "level5b";
-    private static final String Klevel6b = "level6b";
 
     public int lid;
     public String connType;
     public int bid;
-    private final static int NUM_LEVELS = 6;
+    private final static int NUM_LEVELS = 4;
     public int [] levels = new int [NUM_LEVELS];
 
     @Override
@@ -62,7 +37,7 @@ public class Link {//implements Parcelable {
         }
         return str;
     }
-
+     /*
     private static final String TABLE_LINKS = "Links" ;
 
     private static String addLevelWhere(String levelName, int levelNum, String linkTableName){
@@ -87,8 +62,8 @@ public class Link {//implements Parcelable {
                 + " AND (T." + Text.Klevel2 + "=L." + Klevel2b + ")"//+ " OR L." + Klevel2b + "=0)"
                 + " AND (T." + Text.Klevel3 + "=L." + Klevel3b + ")"//+ " OR L." + Klevel3b + "=0)"
                 + " AND (T." + Text.Klevel4 + "=L." + Klevel4b + ")"//+ " OR L." + Klevel4b + "=0)"
-                + " AND (T." + Text.Klevel5 + "=L." + Klevel5b + ")"//+ " OR L." + Klevel5b + "=0)"
-                + " AND (T." + Text.Klevel6 + "=L." + Klevel6b + ")"//+ " OR L." + Klevel6b + "=0)"
+                //+ " AND (T." + Text.Klevel5 + "=L." + Klevel5b + ")"//+ " OR L." + Klevel5b + "=0)"
+                //+ " AND (T." + Text.Klevel6 + "=L." + Klevel6b + ")"//+ " OR L." + Klevel6b + "=0)"
         ;
         return str;
     }
@@ -102,11 +77,11 @@ public class Link {//implements Parcelable {
                 + " AND (T3." + Text.Klevel2 + "=L2." + Klevel2a + ")"//+ " OR L2." + Klevel2a + "=0)"
                 + " AND (T3." + Text.Klevel3 + "=L2." + Klevel3a + ")"//+ " OR L2." + Klevel3a + "=0)"
                 + " AND (T3." + Text.Klevel4 + "=L2." + Klevel4a + ")"//+ " OR L2." + Klevel4a + "=0)"
-                + " AND (T3." + Text.Klevel5 + "=L2." + Klevel5a + ")"//+ " OR L2." + Klevel5a + "=0)"
-                + " AND (T3." + Text.Klevel6 + "=L2." + Klevel6a + ")" ; //+ " OR L2." + Klevel6a + "=0)";
+                //+ " AND (T3." + Text.Klevel5 + "=L2." + Klevel5a + ")"//+ " OR L2." + Klevel5a + "=0)"
+                //+ " AND (T3." + Text.Klevel6 + "=L2." + Klevel6a + ")" ; //+ " OR L2." + Klevel6a + "=0)";
         return str;
     }
-
+    */
 
 
 

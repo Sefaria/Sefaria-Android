@@ -19,7 +19,7 @@ import android.util.Log;
 
 public class Text implements Parcelable {
 
-    public static final int MAX_LEVELS = 6;
+    public static final int MAX_LEVELS = 4;
     public static final double BILINGUAL_THRESHOLD = 0.05; //percentage of text that is bilingual for us to default to bilingual
 
     private static boolean usingHuffman = true;
@@ -106,7 +106,7 @@ public class Text implements Parcelable {
         this.heText = heText;
         this.tid = 0;
         this.bid = 0;
-        levels = new int [] {0,0,0,0,0,0};
+        levels = new int [MAX_LEVELS];
         this.displayNum = true;//unless we know otherwise, we'll default to display the verse Number
     }
 
@@ -123,7 +123,7 @@ public class Text implements Parcelable {
             }
             else{
                 this.tid = 0;
-                this.levels = new int [] {0,0,0,0,0,0};
+                this.levels = new int [MAX_LEVELS];
             }
         }catch(SQLiteException e){
             if(!e.toString().contains(API.NO_TEXT_MESSAGE)){
@@ -131,7 +131,7 @@ public class Text implements Parcelable {
             }
             //This probably means that it's the API database
             this.tid = 0;
-            this.levels = new int [] {0,0,0,0,0,0};
+            this.levels = new int [MAX_LEVELS];
         }
     }
 
@@ -139,7 +139,7 @@ public class Text implements Parcelable {
     private void getFromCursor(Cursor cursor){
         tid = cursor.getInt(0);
         bid = cursor.getInt(1);
-        int flags = cursor.getInt(10);
+        int flags = cursor.getInt(MAX_LEVELS +4);
         displayNum = ((flags & 0x01) != 0);
         if(!usingHuffman) {
             enText = cursor.getString(2);
@@ -157,13 +157,13 @@ public class Text implements Parcelable {
                 heTextLength += (heTextCompress.length-((heTextLength != 0)?1:0))*8;
 
         }
-        levels = new int []{0,0,0,0,0,0};
-        for(int i=0;i<6;i++){
+        levels = new int [MAX_LEVELS];
+        for(int i=0;i<MAX_LEVELS;i++){
             levels[i] = cursor.getInt(i+4);
         }
 
-        numLinks = cursor.getInt(11);
-        parentNID = cursor.getInt(12);
+        numLinks = cursor.getInt(MAX_LEVELS+5);
+        parentNID = cursor.getInt(MAX_LEVELS+6);
     }
 
     public String getLocationString(Util.Lang lang){
@@ -528,8 +528,6 @@ public class Text implements Parcelable {
     protected static final String Klevel2 = "level2";
     protected static final String Klevel3 = "level3";
     protected static final String Klevel4 = "level4";
-    protected static final String Klevel5 = "level5";
-    protected static final String Klevel6 = "level6";
     //public static final String Khid = Header.Khid;
 
 
