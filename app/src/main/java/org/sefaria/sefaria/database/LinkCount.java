@@ -131,7 +131,7 @@ public class LinkCount {
         return str;
     }
 
-    final protected static String ALL_CONNECTIONS = "All Connections";
+    final protected static String ALL_CONNECTIONS = "All";
     final protected static String COMMENTARY = "Commentary";
     final protected static String QUOTING_COMMENTARY = "Quoting Commentary";
 
@@ -180,7 +180,7 @@ public class LinkCount {
 
 
     public static LinkCount getFromLinks_small(Text text){
-        LinkCount allLinkCounts = new LinkCount(ALL_CONNECTIONS, 0, "All Connections (He)",DEPTH_TYPE.ALL);
+        LinkCount allLinkCounts = new LinkCount(ALL_CONNECTIONS, 0, "הכל",DEPTH_TYPE.ALL);
         if(text.getNumLinks() == 0)  return allLinkCounts;
         Database dbHandler = Database.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();

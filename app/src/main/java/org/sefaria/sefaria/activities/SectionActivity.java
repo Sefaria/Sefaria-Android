@@ -72,14 +72,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
         AsyncLoadSection als = new AsyncLoadSection(TextEnums.NEXT_SECTION);
         als.execute();
 
-        //LINK FRAGMENT
-        linkFragment = new LinkFragment();
-        //Bundle args = new Bundle();
-        //args.putParcelable(LinkFragment.ARG_CURR_SECTION, sectionAdapter.getItem(position));
-        //linkFragment.setArguments(args);
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.add(R.id.linkRoot, linkFragment);
-        fragmentTransaction.commit();
+
 
 
 
@@ -116,11 +109,11 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
         sectionAdapter.notifyDataSetChanged();
     }
 
-    private void updateFocusedSegment() {
+    protected void updateFocusedSegment() {
         float mid = ((float)listView.getHeight())/2;
         int numChildren = listView.getChildCount();
 
-        
+
 
         for (int i = 0; i < numChildren; i++) {
             View v = listView.getChildAt(i);
