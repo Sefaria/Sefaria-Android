@@ -415,7 +415,7 @@ public class Node implements  Parcelable{
      * @param node
      */
     private static void showTree(Node node){
-        showTree(node,"");
+        showTree(node, "");
     }
 
     /**
@@ -520,6 +520,13 @@ public class Node implements  Parcelable{
             Log.e("Node", "called setAllChaps with too low texdepth" + this.toString());
             return;
         }
+
+        if(API.useAPI()){
+            ArrayList<Integer> chapList = API.getChaps(Book.getTitle(bid), new int [textDepth]);
+            for(Integer chap: chapList)
+                addChapChild(chap);
+            return;
+        }
         Database dbHandler = Database.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
 
@@ -544,11 +551,7 @@ public class Node implements  Parcelable{
         Node tempNodeLevel4 = this;
         int lastLevel3 = 0, lastLevel4 = 0;
 
-        if(API.useAPI()){
-            ;
-            //chapList = API.getAllChaps(Book.getTitle(bid),levels);
-            //TODO add complex text API stuff
-        }
+
 
         try{
             Cursor cursor = db.rawQuery(sql, null);
@@ -590,9 +593,11 @@ public class Node implements  Parcelable{
      * @throws API.APIException
      */
     public List<Text> getTexts() throws API.APIException{
+        Log.d("Node","getTexts called");
         if(textList != null) {
             return textList;
         }
+        Log.d("Node","found no textList");
         if(!isTextSection){
             Log.e("Node", "getTexts() was called when it's not a textSection!");
             textList = new ArrayList<>();
@@ -610,8 +615,10 @@ public class Node implements  Parcelable{
                 textList = new ArrayList<>();
                 return textList;
             }
-            //TODO deal with this
-            if(startTid>0 && endTid >0) {
+            if(API.useAPI()){
+                textList =  new ArrayList<>();
+                //TODO deal with this
+            }else if(startTid>0 && endTid >0) {
                 textList = Text.getWithTids(startTid, endTid);
             }
             else{
@@ -801,11 +808,11 @@ public class Node implements  Parcelable{
             }
             root.tocRootsNum = allRoots.size();
             allRoots.add(root);
-            //showTree(root);
         }
 
 
-        allSavedBookTOCroots.put(book.title,allRoots);
+        allSavedBookTOCroots.put(book.title, allRoots);
+        for(Node tempRoot:allRoots)  showTree(tempRoot);
         return allRoots;
     }
 

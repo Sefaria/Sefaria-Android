@@ -126,8 +126,10 @@ public class HomeActivity extends Activity {
 
 
         if(API.useAPI() || !Database.isValidDB()) {
+            Database.createAPIdb();
             Toast.makeText(this, "Starting Download", Toast.LENGTH_SHORT).show();
             Downloader.updateLibrary(this);
+
         }
 
     }
