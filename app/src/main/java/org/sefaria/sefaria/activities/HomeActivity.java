@@ -16,6 +16,8 @@ import org.sefaria.sefaria.database.DailyLearning;
 import org.sefaria.sefaria.database.Database;
 import org.sefaria.sefaria.database.Downloader;
 import org.sefaria.sefaria.database.Huffman;
+import org.sefaria.sefaria.database.Searching;
+import org.sefaria.sefaria.database.Text;
 import org.sefaria.sefaria.layouts.CustomActionbar;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
@@ -130,6 +132,16 @@ public class HomeActivity extends Activity {
             Toast.makeText(this, "Starting Download", Toast.LENGTH_SHORT).show();
             Downloader.updateLibrary(this);
 
+        }
+        try {
+            ArrayList<Text> results = Searching.searchDBheTexts("שג", new String[0]);
+            Log.d("Searching", "restults.size" + results.size());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (API.APIException e) {
+            e.printStackTrace();
+        }catch (Exception e){
+            e.printStackTrace();
         }
 
     }
