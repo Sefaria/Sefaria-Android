@@ -131,9 +131,9 @@ public class LinkCount {
         return str;
     }
 
-    final protected static String ALL_CONNECTIONS = "All";
-    final protected static String COMMENTARY = "Commentary";
-    final protected static String QUOTING_COMMENTARY = "Quoting Commentary";
+    final public static String ALL_CONNECTIONS = "All";
+    final public static String COMMENTARY = "Commentary";
+    final public static String QUOTING_COMMENTARY = "Quoting Commentary";
 
     private static LinkCount getCommentaryOnChap(int chapStart, int chapEnd, int bid){
         LinkCount commentaryGroup = new LinkCount(COMMENTARY,0, "מפרשים",DEPTH_TYPE.CAT);
