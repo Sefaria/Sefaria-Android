@@ -70,9 +70,10 @@ public class TOCSectionName extends LinearLayout implements TOCElement {
         String text = node.getTitle(lang);
         if(node.isTextSection()) {
             text += " >";
-        }else {
-            ;//text += " " + "\u2228";
+        }else if(node.getChildren().size() == 0){//it has no children but it's not a section, so it should be greyed out
+            sectionroot.setTextColor(getResources().getColor(R.color.toc_greyed_out_section_name));
         }
+        //else    ;//text += " " + "\u2228";
         sectionroot.setText(text);
         /*
         This is for a case of a node that holds just a grid and is a sibling of a sectionName which istextSection()
