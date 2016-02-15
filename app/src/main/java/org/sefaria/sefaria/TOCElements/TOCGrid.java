@@ -323,10 +323,7 @@ public class TOCGrid extends LinearLayout {
 
         }
 
-        if(numberOfTabs == 1){
-            tabs.setVisibility(View.INVISIBLE);
-        }
-        Log.d("TOCGrid", "makeTabSections started");
+        //if(numberOfTabs == 1) tabs.setVisibility(View.INVISIBLE);//removed so that people know what the structure is a bit better (seeing siman)
         return tabs;
     }
 

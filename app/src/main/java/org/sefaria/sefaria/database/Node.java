@@ -415,7 +415,7 @@ public class Node implements  Parcelable{
      * @param node
      */
     private static void showTree(Node node){
-        showTree(node,"");
+        showTree(node, "");
     }
 
     /**
@@ -520,6 +520,13 @@ public class Node implements  Parcelable{
             Log.e("Node", "called setAllChaps with too low texdepth" + this.toString());
             return;
         }
+
+        if(API.useAPI()){
+            ArrayList<Integer> chapList = API.getChaps(Book.getTitle(bid), new int [textDepth]);
+            for(Integer chap: chapList)
+                addChapChild(chap);
+            return;
+        }
         Database dbHandler = Database.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
 
@@ -544,11 +551,7 @@ public class Node implements  Parcelable{
         Node tempNodeLevel4 = this;
         int lastLevel3 = 0, lastLevel4 = 0;
 
-        if(API.useAPI()){
-            ;
-            //chapList = API.getAllChaps(Book.getTitle(bid),levels);
-            //TODO add complex text API stuff
-        }
+
 
         try{
             Cursor cursor = db.rawQuery(sql, null);
@@ -590,10 +593,11 @@ public class Node implements  Parcelable{
      * @throws API.APIException
      */
     public List<Text> getTexts() throws API.APIException{
+        Log.d("Node","getTexts called");
         if(textList != null) {
             return textList;
         }
-        Log.d("GetText","Starting");
+        Log.d("Node","found no textList");
         if(!isTextSection){
             Log.e("Node", "getTexts() was called when it's not a textSection!");
             textList = new ArrayList<>();
@@ -604,8 +608,6 @@ public class Node implements  Parcelable{
             textList = new ArrayList<>();
             return textList;
         }else if(!isComplex && isGridItem && !isRef){
-
-            Log.d("Node", "in (!isComplex && isGridItem && !isRef)");
             textList =  Text.get(getBid(),getLevels(),0);
         }else if(isRef()){
             if(!isComplex){
@@ -613,8 +615,10 @@ public class Node implements  Parcelable{
                 textList = new ArrayList<>();
                 return textList;
             }
-            //TODO deal with this
-            if(startTid>0 && endTid >0) {
+            if(API.useAPI()){
+                textList =  new ArrayList<>();
+                //TODO deal with this
+            }else if(startTid>0 && endTid >0) {
                 textList = Text.getWithTids(startTid, endTid);
             }
             else{
@@ -633,7 +637,7 @@ public class Node implements  Parcelable{
         else{
             Log.e("Node", "In Node.getText() and I'm confused. NodeTypeFlags: " + getNodeTypeFlagsStr());
         }
-        Log.d("Node", "finishing getTexts algo. textList.size():" + textList.size());
+        //Log.d("Node", "finishing getTexts algo. textList.size():" + textList.size());
         for(Text text:textList){
             text.parentNode = this;
         }
@@ -707,7 +711,6 @@ public class Node implements  Parcelable{
         }
         str = index + "." + str;
         str = PATH_DEFINING_NODE_VERSION + str;
-        Log.d("Node", "makeStringDefiningTreeAndNode:" + str);
         return str;
     }
 
@@ -763,7 +766,6 @@ public class Node implements  Parcelable{
         }
 
         allRoots = new ArrayList<>();
-        Log.d("Node", "calling Node.getRoots()");
         Database dbHandler = Database.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
         Cursor cursor = db.query(NODE_TABLE, null, "bid" + "=?",
@@ -806,32 +808,30 @@ public class Node implements  Parcelable{
             }
             root.tocRootsNum = allRoots.size();
             allRoots.add(root);
-            //showTree(root);
         }
 
 
-        allSavedBookTOCroots.put(book.title,allRoots);
+        allSavedBookTOCroots.put(book.title, allRoots);
+        //for(Node tempRoot:allRoots)  showTree(tempRoot);//for debugging only
         return allRoots;
     }
 
     public String getTabName(Util.Lang lang){
         String name = "";
+        Node root = getAncestorRoot();
         if (!isComplex || isRef) {
             try {
                 if (lang == Util.Lang.HE) {
-                    name = heSectionNames[heSectionNames.length - 1];
-                    return name;
+                    name = root.heSectionNames[root.heSectionNames.length - 1];
                 } else { //use EN for BI and EN
-                    name = sectionNames[sectionNames.length - 1];
-                    return name;
+                    name = root.sectionNames[root.sectionNames.length - 1];
                 }
             }catch (Exception e){
-                Log.d("Node.getTabName", e.toString());
+                e.printStackTrace();
             }
         }
-        //TODO I don't understand why this is causing me problems
-        //if (!name.equals("")) return name;
-        return getTitle(lang);
+        if (!name.equals("")) return name;
+        else return getTitle(lang);
     }
 
     private String getNodeTypeFlagsStr(){
