@@ -97,7 +97,7 @@ public class API {
      * @return api;
      */
     public static API getDataFromURLAsync(String url){
-        Log.d("api",url);
+        Log.d("api","URL:" + url);
         API api = new API();
         api.new GetDataTask().execute(url);
         return api;
@@ -109,7 +109,7 @@ public class API {
      */
     public void waitForComplete(){
         try {
-            while(!isDone()){
+            while(!isDone){
                 //TODO maybe use something smarter to do this - make a timeout just in case
                 Thread.sleep(10);
             }
@@ -167,8 +167,14 @@ public class API {
      */
     public static String getDataFromURL(String url) throws APIException{
         API api = getDataFromURLAsync(url);//creating an instance of api which will fetch data
-        Cache cache = Cache.getCache(url);
+        Cache cache = null;//Cache.getCache(url);
         String data;
+
+        data = api.getData();//waiting for data to be returned from internet
+        Log.d("api","in getDataFromURL: data length: " + data.length() );
+        if(true)
+            return data;
+
         if(cache != null  &&  !cache.isExpired()){
             data = cache.data;
         }
@@ -178,7 +184,7 @@ public class API {
                 if(cache != null)
                     data  = cache.data;
                 else{
-                    Log.d("api","trhowing apiexception");
+                    Log.e("api","throwing apiexception");
                     throw api.new APIException();
                 }
             }
@@ -336,7 +342,7 @@ public class API {
         String place = bookTitle.replace(" ", "_");
         String url = COUNT_URL + place;
         String data = getDataFromURL(url);
-
+        Log.d("api", "getChaps data.len: " + data.length());
         ArrayList<Integer> chapList = new ArrayList<Integer>();
         try {
             JSONObject jsonData = new JSONObject(data);
@@ -383,15 +389,15 @@ public class API {
      * @throws APIException
      */
     static public List<Text> getTextsFromAPI(String bookTitle, int[] levels) throws APIException{ //(String booktitle, int []levels)
+        Log.d("API","getTextsFromAPI called");
         String place = createPlace(bookTitle, levels);
         String completeUrl = TEXT_URL + place + "?" + ZERO_CONTEXT + ZERO_COMMENTARY;
         String data = getDataFromURL(completeUrl);
+        Log.d("API","getTextsFromAPI got data.size)" + data.length());
         List<Text> textList = parseJSON(data,levels,Book.getBid(bookTitle));
-        for(int i=0;i<levels.length;i++)
-            Log.d("api", "in getTextsFromAPI: levels" + i + ". "  + levels[i] );
-
-        //Log.d("api", "in getTextsFromAPI: api.textlist:" + textList.toString());
-
+        //for(int i=0;i<levels.length;i++)
+          //  Log.d("api", "in getTextsFromAPI: levels" + i + ". "  + levels[i] );
+        Log.d("api", "in getTextsFromAPI: api.textlist:" + textList.size());
         return textList;
     }
 
@@ -405,7 +411,7 @@ public class API {
             isDone = true;
 
             if(status == STATUS_GOOD && data.length() >0){
-                Cache.add(url, data); //cache data for later
+                ;//Cache.add(url, data); //cache data for later
             }
             return result;
         }
