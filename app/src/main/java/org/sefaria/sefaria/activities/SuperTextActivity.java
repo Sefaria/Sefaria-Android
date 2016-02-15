@@ -47,6 +47,9 @@ public abstract class SuperTextActivity extends FragmentActivity {
     public enum TextEnums {
         NEXT_SECTION, PREV_SECTION
     }
+
+    public static int SEGMENT_SELECTOR_LINE_FROM_TOP = 150; //pixels from top of layout
+    public static int MAX_LINK_FRAG_SNAP_DISTANCE = SEGMENT_SELECTOR_LINE_FROM_TOP;
     protected static int LINK_FRAG_ANIM_TIME = 300; //ms
     public static final int PREV_CHAP_DRAWN = 234234;
     public static final int TOC_CHAPTER_CLICKED_CODE = 3456;
@@ -72,6 +75,8 @@ public abstract class SuperTextActivity extends FragmentActivity {
     protected Util.Lang menuLang;
     protected Util.Lang textLang = null;
     protected boolean isCts;
+    protected boolean isSideBySide;
+
     protected Util.TextBG textBG;
     protected float textSize;
     protected boolean isLoadingSection; //to make sure multiple sections don't get loaded at once
@@ -90,7 +95,6 @@ public abstract class SuperTextActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Log.d("SuperTextAct","onCreate");
         Intent intent = getIntent();
         Integer nodeHash;
         if (savedInstanceState != null) {//it's coming back after it cleared the activity from ram
@@ -98,8 +102,6 @@ public abstract class SuperTextActivity extends FragmentActivity {
             nodeHash = savedInstanceState.getInt("nodeHash", -1);
             book = savedInstanceState.getParcelable("currBook");
             openToText = savedInstanceState.getParcelable("incomingLinkText");
-
-            Log.d("save","frag == null = " + (linkFragment == null));
         }else{
             nodeHash = intent.getIntExtra("nodeHash", -1);
             book = intent.getParcelableExtra("currBook");
@@ -156,6 +158,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
         //defaults
         textBG = Util.TextBG.WHITE;
         isCts = false;
+        isSideBySide = false;
         if(textLang == null)
             textLang = Settings.BookSettings.getSavedBook(book).lang;
         textSize = getResources().getDimension(R.dimen.default_text_font_size);
@@ -174,7 +177,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
         isTextMenuVisible = false;
         textMenuRoot = (LinearLayout) findViewById(R.id.textMenuRoot);
         textMenuBar = new TextMenuBar(SuperTextActivity.this,textMenuBtnClick);
-        textMenuBar.setState(textLang,isCts,textBG);
+        textMenuBar.setState(textLang,isCts,isSideBySide,textBG);
         textMenuRoot.addView(textMenuBar);
         textMenuRoot.setVisibility(View.GONE);
 
@@ -393,14 +396,16 @@ public abstract class SuperTextActivity extends FragmentActivity {
                     setTextLang(Util.Lang.BI);
                     break;
                 case R.id.cts_btn:
-                    //can only be cts if not bilingual
-                    if (textLang != Util.Lang.BI) {
-                        setIsCts(true);
-                    }
                     setIsCts(true);
                     break;
                 case R.id.sep_btn:
                     setIsCts(false);
+                    break;
+                case R.id.sbs_btn:
+                    setIsSideBySide(true);
+                    break;
+                case R.id.tb_btn:
+                    setIsSideBySide(false);
                     break;
                 case R.id.white_btn:
                     Log.d("text", "WHITE");
@@ -430,7 +435,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
                     }
                     break;
             }
-            textMenuBar.setState(textLang,isCts,textBG);
+            textMenuBar.setState(textLang,isCts,isSideBySide,textBG);
             if (!updatedTextSize) toggleTextMenu();
         }
     };
@@ -459,9 +464,12 @@ public abstract class SuperTextActivity extends FragmentActivity {
     }
 
     public Book getBook() { return book; }
+    public boolean getIsCts(){ return isCts;}
+    public boolean getIsSideBySide() { return isSideBySide; }
 
     protected abstract void setTextLang(Util.Lang textLang);
     protected abstract void setIsCts(boolean isCts);
+    protected abstract void setIsSideBySide(boolean isSideBySide);
     protected abstract void incrementTextSize(boolean isIncrement);
     protected abstract void jumpToText(Text text);
     protected abstract void updateFocusedSegment();
@@ -586,6 +594,11 @@ public abstract class SuperTextActivity extends FragmentActivity {
     //-----
     //LINK FRAGMENT
     //-----
+
+    public int getLinkFragMaxHeight() {
+        return findViewById(R.id.root).getHeight()-findViewById(R.id.actionbarRoot).getHeight()-findViewById(R.id.link_dragger).getHeight();
+    }
+
 
     protected abstract void onFinishLinkFragOpen();
     protected abstract void onStartLinkFragClose();
