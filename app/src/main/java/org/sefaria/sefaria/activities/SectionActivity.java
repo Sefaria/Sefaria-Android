@@ -5,14 +5,9 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.MotionEventCompat;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.TranslateAnimation;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -94,10 +89,15 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
         linkFragment.notifyDataSetChanged();
     }
 
-    public boolean getIsCts(){ return isCts;}
+
 
     protected void setIsCts(boolean isCts) {
         this.isCts = isCts;
+        sectionAdapter.notifyDataSetChanged();
+    }
+
+    protected void setIsSideBySide(boolean isSideBySide) {
+        this.isSideBySide = isSideBySide;
         sectionAdapter.notifyDataSetChanged();
     }
 
@@ -117,7 +117,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
 
         for (int i = 0; i < numChildren; i++) {
             View v = listView.getChildAt(i);
-            if (v.getTop() >= 0 /*v.getTop() < mid && v.getBottom() > mid*/) {
+            if (v.getTop() <= SEGMENT_SELECTOR_LINE_FROM_TOP && v.getBottom() > SEGMENT_SELECTOR_LINE_FROM_TOP) {
                 if (linkFragment.getIsOpen()) {
                     int currInd = i + listView.getFirstVisiblePosition();
                     Text currSeg = sectionAdapter.getItem(currInd);
@@ -193,7 +193,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
 
             } else {
                 if (view.getTop() > 0) //don't auto-scroll if the text is super long.
-                    listView.smoothScrollToPositionFromTop(position,0,SuperTextActivity.LINK_FRAG_ANIM_TIME);
+                    listView.smoothScrollToPositionFromTop(position,SuperTextActivity.SEGMENT_SELECTOR_LINE_FROM_TOP,SuperTextActivity.LINK_FRAG_ANIM_TIME);
                 linkFragment.setClicked(true);
                 linkFragment.updateFragment(sectionAdapter.getItem(position));
                 //linkRoot.setVisibility(View.VISIBLE);

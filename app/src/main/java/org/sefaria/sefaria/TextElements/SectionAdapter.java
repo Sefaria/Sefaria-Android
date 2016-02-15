@@ -1,10 +1,8 @@
 package org.sefaria.sefaria.TextElements;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.graphics.Color;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +13,6 @@ import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.activities.SectionActivity;
-import org.sefaria.sefaria.database.Link;
 import org.sefaria.sefaria.database.Text;
 
 import java.util.Collection;
@@ -31,15 +28,15 @@ public class SectionAdapter extends ArrayAdapter<Text> {
     private static float MIN_ALPHA = 0.2f;
     private static float MAX_ALPHA = 0.8f;
 
-    private SectionActivity context;
+    private SectionActivity activity;
     private List<Text> texts;
 
     private int resourceId;
     private int preLast;
 
-    public SectionAdapter(SectionActivity context, int resourceId, List<Text> objects) {
-        super(context,resourceId,objects);
-        this.context = context;
+    public SectionAdapter(SectionActivity activity, int resourceId, List<Text> objects) {
+        super(activity,resourceId,objects);
+        this.activity = activity;
         this.texts = objects;
         this.resourceId = resourceId;
 
@@ -56,23 +53,28 @@ public class SectionAdapter extends ArrayAdapter<Text> {
 
         if (segment.getNumLinks() == 0) linkAlpha = 0;
 
-        Util.Lang lang = context.getTextLang();
-        boolean isCts = context.getIsCts();
-        if (view == null || (view.findViewById(R.id.he) == null && lang == Util.Lang.BI)
-                || (view.findViewById(R.id.mono) == null && (lang == Util.Lang.HE || lang == Util.Lang.EN))) {
+        Util.Lang lang = activity.getTextLang();
+        boolean isCts = activity.getIsCts();
+        boolean isSideBySide = activity.getIsSideBySide();
+        if (view == null
+                || (view.findViewById(R.id.he) == null && lang == Util.Lang.BI)
+                || (view.findViewById(R.id.mono) == null && (lang == Util.Lang.HE || lang == Util.Lang.EN))
+                || (view.findViewById(R.id.top_bottom_layout) == null && !isSideBySide && lang == Util.Lang.BI)
+                || (view.findViewById(R.id.side_by_side_layout) == null && isSideBySide && lang == Util.Lang.BI)) {
             LayoutInflater inflater = (LayoutInflater)
-                    context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+                    activity.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
             if (lang == Util.Lang.BI) {
-                view = inflater.inflate(R.layout.adapter_text_bilingual,null);
+                if (isSideBySide) view = inflater.inflate(R.layout.adapter_text_bilingual_side_by_side,null);
+                else view = inflater.inflate(R.layout.adapter_text_bilingual_top_bottom,null);
             } else {
                 view = inflater.inflate(R.layout.adapter_text_mono,null);
             }
         }
 
 
-        boolean isCurrLinkSegment = segment.equals(context.getCurrLinkSegment());
-        if (isCurrLinkSegment && context.getFragmentIsOpen()) view.setBackgroundColor(context.getResources().getColor(R.color.text_selected));
-        else view.setBackgroundColor(context.getResources().getColor(android.R.color.transparent));
+        boolean isCurrLinkSegment = segment.equals(activity.getCurrLinkSegment());
+        if (isCurrLinkSegment && activity.getFragmentIsOpen()) view.setBackgroundColor(activity.getResources().getColor(R.color.text_selected));
+        else view.setBackgroundColor(activity.getResources().getColor(android.R.color.transparent));
 
         TextChapterHeader tch = (TextChapterHeader) view.findViewById(R.id.chapHeader);
         TextView enNum = (TextView) view.findViewById(R.id.enVerseNum);
@@ -92,7 +94,7 @@ public class SectionAdapter extends ArrayAdapter<Text> {
                 heNum.setVisibility(View.GONE);
 
                 tch.setSectionTitle(segment);
-                tch.setTextSize(context.getTextSize());
+                tch.setTextSize(activity.getTextSize());
             } else {
                 view.setClickable(false);
 
@@ -120,11 +122,11 @@ public class SectionAdapter extends ArrayAdapter<Text> {
 
                 //enTv.setTextColor(Color.parseColor("#999999"));
                 enTv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
-                enTv.setTextSize(context.getTextSize());
+                enTv.setTextSize(activity.getTextSize());
 
                 //heTv.setTextColor(Color.parseColor("#000000"));
                 heTv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
-                heTv.setTextSize(context.getTextSize());
+                heTv.setTextSize(activity.getTextSize());
                 if(segment.displayNum)
                     heNum.setText("" + Util.int2heb(segment.levels[0]));
                 else
@@ -150,7 +152,7 @@ public class SectionAdapter extends ArrayAdapter<Text> {
                 heNum.setVisibility(View.GONE);
 
                 tch.setSectionTitle(segment);
-                tch.setTextSize(context.getTextSize());
+                tch.setTextSize(activity.getTextSize());
 
             } else {
                 view.setClickable(false);
@@ -162,9 +164,9 @@ public class SectionAdapter extends ArrayAdapter<Text> {
 
                 String monoText = segment.getText(lang);
                 if (monoText.length() == 0)
-                    context.getResources().getString(R.string.no_text);
+                    activity.getResources().getString(R.string.no_text);
 
-                if (context.getTextLang() == Util.Lang.HE) {
+                if (activity.getTextLang() == Util.Lang.HE) {
                     tv.setText(Html.fromHtml(monoText));
                     enNum.setText(Util.VERSE_BULLET);
                     enNum.setAlpha(linkAlpha);
@@ -175,7 +177,7 @@ public class SectionAdapter extends ArrayAdapter<Text> {
                         heNum.setText("");
                     heNum.setAlpha(1);
                     heNum.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
-                } else /*if (context.getTextLang() == Util.Lang.EN)*/ {
+                } else /*if (activity.getTextLang() == Util.Lang.EN)*/ {
                     tv.setText(Html.fromHtml(monoText));
                     if(segment.displayNum)
                         enNum.setText(""+segment.levels[0]);
@@ -190,7 +192,7 @@ public class SectionAdapter extends ArrayAdapter<Text> {
                 }
                 tv.setTextColor(Color.parseColor("#000000"));
                 tv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
-                tv.setTextSize(context.getTextSize());
+                tv.setTextSize(activity.getTextSize());
             }
         }
         return view;

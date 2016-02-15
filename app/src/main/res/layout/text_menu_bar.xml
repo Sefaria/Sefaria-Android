@@ -52,8 +52,9 @@
 
     </LinearLayout>
 
-    <!-- formatting bar -->
+    <!-- formatting bar mono -->
     <LinearLayout
+        android:id="@+id/mono_formatting"
         android:layout_width="match_parent"
         android:orientation="horizontal"
         android:layout_height="wrap_content"
@@ -85,6 +86,47 @@
                 android:layout_width="@dimen/text_menu_bar_box"
                 android:layout_height="@dimen/text_menu_bar_box"
                 android:background="@drawable/breaks"
+                android:layout_margin="@dimen/text_menu_bar_box_margin"
+                android:layout_gravity="center"
+                />
+        </FrameLayout>
+
+    </LinearLayout>
+
+    <!-- formatting bar bilingual -->
+    <LinearLayout
+        android:id="@+id/bi_formatting"
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        >
+        <FrameLayout
+            android:id="@+id/sbs_btn"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="@dimen/text_menu_button_height"
+            android:background="@drawable/text_menu_button_background_left"
+            android:padding="10dp">
+            <View
+                android:layout_width="@dimen/text_menu_bar_box"
+                android:layout_height="@dimen/text_menu_bar_box"
+                android:background="@drawable/sidebyside"
+                android:layout_margin="@dimen/text_menu_bar_box_margin"
+                android:layout_gravity="center" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/tb_btn"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="@dimen/text_menu_button_height"
+            android:background="@drawable/text_menu_button_background_right_ripple"
+            android:padding="10dp">
+            <View
+                android:layout_width="@dimen/text_menu_bar_box"
+                android:layout_height="@dimen/text_menu_bar_box"
+                android:background="@drawable/topbottom"
                 android:layout_margin="@dimen/text_menu_bar_box_margin"
                 android:layout_gravity="center"
                 />

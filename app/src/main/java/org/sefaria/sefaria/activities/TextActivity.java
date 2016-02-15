@@ -86,6 +86,11 @@ public class TextActivity extends SuperTextActivity {
         }
     }
 
+    protected void setIsSideBySide(boolean isSideBySide) {
+        this.isSideBySide = isSideBySide;
+        //TODO IMPLEMENT ME!!!
+    }
+
     protected void updateFocusedSegment() {
         //TODO IMPLEMENT ME!!!
     }
