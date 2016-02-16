@@ -36,16 +36,15 @@
     <color name="toc_num_box_background">#ffffff</color>
     <color name="toc_greyed_out_section_name">#999</color>
 
-    <color name="text_background_light">#F8FCF8</color>
-    <color name="text_background_dark">#000000</color>
+
     <color name="text_verse_num">#666666</color>
     <color name="text_verse_mono">#000000</color>
     <color name="text_verse_en">#999999</color> <!-- specifically when in bilingual -->
-    <color name="text_selected">#eaeaea</color>
-
 
 
     <color name="link_background">#F9F9F7</color>
     <color name="button_clicked">#BBB</color>
+
+
 
 </resources>

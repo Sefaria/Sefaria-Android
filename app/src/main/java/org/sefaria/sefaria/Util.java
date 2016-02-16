@@ -5,6 +5,7 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.os.Environment;
 import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.View;
 
 import org.json.JSONArray;
@@ -403,6 +404,12 @@ public class Util {
         String bufferString = new String(buffer);
         JSONArray jsonObject = new JSONArray(bufferString);
         return jsonObject;
+    }
+
+    public static int getColor(Context context, int id) {
+        TypedValue colorVal = new TypedValue();
+        context.getTheme().resolveAttribute(id, colorVal, true);
+        return colorVal.data;
     }
 
 }

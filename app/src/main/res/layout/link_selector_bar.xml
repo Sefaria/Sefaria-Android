@@ -24,13 +24,29 @@
         </LinearLayout>
 
     </HorizontalScrollView>
-    <ImageView
-        android:id="@+id/link_back_btn"
+    <!--<ImageView
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:src="@drawable/dots"
         android:alpha="0.5"
         android:layout_margin="10dp"
         android:layout_gravity="center"
-        android:background="?selectableItemBackgroundBorderless"/>
+        android:background="?selectableItemBackgroundBorderless"/>-->
+    <FrameLayout
+        android:id="@+id/link_back_btn"
+        android:layout_width="@dimen/custom_action_bar_button_frame_width"
+        android:layout_height="@dimen/custom_action_bar_button_frame_width"
+        android:background="?selectableItemBackgroundBorderless"
+        >
+        <ImageView
+            android:layout_width="@dimen/custom_action_bar_pic_size"
+            android:layout_height="@dimen/custom_action_bar_pic_size"
+            android:src="@drawable/dots"
+            android:tint="?text_color_main"
+            android:scaleType="fitCenter"
+            android:alpha="0.5"
+            android:layout_gravity="center"
+
+            />
+    </FrameLayout>
 </merge>
