@@ -159,9 +159,8 @@ public abstract class SuperTextActivity extends FragmentActivity {
         //These vars are specifically initialized here and not in init() so that they don't get overidden when coming from TOC
         //defaults
         isCts = false;
-        isSideBySide = false;
-        colorTheme = intent.getIntExtra("colorTheme",-1);
-        if (colorTheme == -1) colorTheme = R.style.SefariaTheme_White;
+        isSideBySide = Settings.getIsSideBySide();
+        colorTheme = Settings.getTheme();
         setTheme(colorTheme);
 
         if(textLang == null)
@@ -208,7 +207,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
     protected void onResume() {
         super.onResume();
         GoogleTracker.sendScreen("SuperTextActivity");
-        GoogleTracker.sendEvent(GoogleTracker.CATEGORY_NEW_TEXT,book.title);
+        GoogleTracker.sendEvent(GoogleTracker.CATEGORY_NEW_TEXT, book.title);
         if(!veryFirstTime) {
             setMenuLang(Settings.getMenuLang());
         }else
@@ -229,9 +228,9 @@ public abstract class SuperTextActivity extends FragmentActivity {
      * @param context
      * @param text
      */
-    public static void startNewTextActivityIntent(Context context, Text text,int colorTheme){
+    public static void startNewTextActivityIntent(Context context, Text text){
         Book book = new Book(text.bid);
-        startNewTextActivityIntent(context, book, text, null, colorTheme);
+        startNewTextActivityIntent(context, book, text, null);
     }
 
     /**
@@ -251,12 +250,8 @@ public abstract class SuperTextActivity extends FragmentActivity {
      * @param node
      */
 
-    public static void startNewTextActivityIntent(Context context, Book book, Text text, Node node){
-        startNewTextActivityIntent(context,book,text,node,-1);
-    }
 
-
-    public static void startNewTextActivityIntent(Context context, Book book, Text text, Node node, int colorTheme) {
+    public static void startNewTextActivityIntent(Context context, Book book, Text text, Node node) {
         List<String> cats = Arrays.asList(book.categories);
         boolean isCtsText = false;
         final String[] CTS_TEXT_CATS = {};// {"Tanach","Talmud"};//
@@ -281,7 +276,6 @@ public abstract class SuperTextActivity extends FragmentActivity {
             intent.putExtra("nodeHash",node.hashCode());
         }
 
-        intent.putExtra("colorTheme",colorTheme);
         //lang replaced by general MyApp.getMenuLang() function
 
 
@@ -474,8 +468,9 @@ public abstract class SuperTextActivity extends FragmentActivity {
     public boolean getIsSideBySide() { return isSideBySide; }
     public int getColorTheme() { return colorTheme; }
     private void setColorTheme(int colorTheme) {
+        Settings.setTheme(colorTheme);
         finish();
-        startNewTextActivityIntent(this,book,currText,currNode,colorTheme);
+        startNewTextActivityIntent(this,book,currText,currNode);
         /*Intent intent = new Intent(this, .class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -484,7 +479,10 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
     protected abstract void setTextLang(Util.Lang textLang);
     protected abstract void setIsCts(boolean isCts);
-    protected abstract void setIsSideBySide(boolean isSideBySide);
+    protected void setIsSideBySide(boolean isSideBySide){
+        this.isSideBySide = isSideBySide;
+        Settings.setIsSideBySide(isSideBySide);
+    };
     protected abstract void incrementTextSize(boolean isIncrement);
     protected abstract void jumpToText(Text text);
     protected abstract void updateFocusedSegment();

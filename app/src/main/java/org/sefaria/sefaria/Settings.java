@@ -93,6 +93,30 @@ public class Settings {
         return Util.Lang.BI;
     }
 
+    public static boolean getIsSideBySide(){
+        SharedPreferences generalSettings = getGeneralSettings();
+        return generalSettings.getBoolean("sideBySide", false);
+    }
+
+    public static void setIsSideBySide(boolean isSideBySide){
+        SharedPreferences generalSettings = getGeneralSettings();
+        SharedPreferences.Editor editor = generalSettings.edit();
+        editor.putBoolean("sideBySide", isSideBySide);
+        editor.commit();
+    }
+
+    private static final int DEFAULT_THEME = R.style.SefariaTheme_White;
+    public static int getTheme(){
+        SharedPreferences generalSettings = getGeneralSettings();
+        return generalSettings.getInt("theme", DEFAULT_THEME);
+    }
+
+    public static void setTheme(int theme){
+        SharedPreferences generalSettings = getGeneralSettings();
+        SharedPreferences.Editor editor = generalSettings.edit();
+        editor.putInt("theme", theme);
+        editor.commit();
+    }
 
     public static class BookSettings {
         public Node node;
@@ -104,6 +128,7 @@ public class Settings {
             this.node = node;
             this.tid = tid;
             this.lang = lang;
+
             if(lang == null)
                 this.lang = getDefaultTextLang();
         }
