@@ -1,5 +1,6 @@
 package org.sefaria.sefaria.database;
 
+import java.lang.reflect.Array;
 import java.util.BitSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -9,6 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.util.Log;
 import android.util.Pair;
 import android.widget.Toast;
@@ -16,8 +18,9 @@ import android.widget.Toast;
 import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
+import org.sefaria.sefaria.Util;
 
-public class Searching extends Text {
+public class Searching {
 
 
     final static int CHUNK_SIZE = 500;
@@ -25,28 +28,28 @@ public class Searching extends Text {
     final static int CHUNK_COUNT = VERSE_COUNT/CHUNK_SIZE;
     final static int WORD_COUNT = 25000000;
 
-    private static int currChunkIndex;
-    private static ArrayList<Integer> searchableChunks = null;
-    private static ArrayList<Pair<Integer,Integer>> searchableTids = null;
-    public static boolean doneSearching;
-    public static volatile boolean interrupted;
-    private static final long WAITING_TIME = 2*1000; //2 seconds
+    private int currChunkIndex;
+    private ArrayList<Pair<Integer,Integer>> searchableTids = null;
+    public boolean doneSearching;
+    public volatile boolean interrupted;
+    private static final long WAITING_TIME = 2000; //2 seconds
     private static int APIStart = 0;
 
-    public static void init() {
+    private String [] filterArray;
+    private String query;
+    private ArrayList<ArrayList<Text>> resultsLists;
+
+    public Searching(String query, String [] filterArray) throws SQLException, InterruptedException {
         currChunkIndex = -1;
-        searchableTids = null;
         doneSearching = false;
         interrupted = false;
-        searchableChunks = null;
-    }
-    public static int getCurrChunkIndex(){
-        return currChunkIndex;
-    }
-    public static void setCurrChunkIndex(int num){
-        currChunkIndex = num;
-        if(num == -1)
-            init();
+
+        this.filterArray = filterArray;
+        this.query = query;
+        searchableTids = getSearchableTids(filterArray);
+        resultsLists = new ArrayList<>();
+
+        this.new SearchAsync().execute();
     }
 
     private static byte[] toByteArray(BitSet bits, int byteCount) {
@@ -296,17 +299,18 @@ public class Searching extends Text {
             boolean foundEn = false;
             text = list.get(i);
             //Test english words
-            Matcher m = enPattern.matcher(text.enText);
+            Matcher m = enPattern.matcher(text.getText(Util.Lang.EN));
             if(m.find()){
-                text.enText = addRedToFoundWord(m, text.enText, removeLongText);
+                text.setText(addRedToFoundWord(m, text.getText(Util.Lang.EN), removeLongText), Util.Lang.EN);
                 foundEn = true;
                 foundPositions.add(i);
             }
 
             ///TEST Hebrew words
-            m = hePattern.matcher(text.heText);
+            Util.Lang lang = Util.Lang.HE;
+            m = hePattern.matcher(text.getText(lang));
             if(m.find()){
-                text.heText = addRedToFoundWord(m, text.heText, removeLongText);
+                text.setText(addRedToFoundWord(m, text.getText(lang), removeLongText), lang);
                 if(!foundEn){//didn't already add this to the list for found English
                     foundPositions.add(i);
                 }
@@ -385,8 +389,27 @@ public class Searching extends Text {
         return c;
     }
 
-    private static ArrayList<Pair<Integer,Integer>> setSearchableTids(ArrayList<Pair<Integer,Integer>> tidMinMax){
-        //chunklist is [) (inclusive, exclusive), while tid is [] (inclusive,inclusive)
+    private ArrayList<Pair<Integer,Integer>> getSearchableTids(String [] filterArray) throws SQLException {
+        ArrayList<Integer> searchableChunks = getSearchingChunks(query);
+        searchableTids = new ArrayList<>();
+        if(filterArray != null && filterArray.length >0) {//use filter
+            String likeStatement = makeFilterStatement(filterArray, "");
+            filterArray = convertfilterArray(filterArray);
+            if (searchableChunks.size() != 0) {
+                searchableTids = getSearchableFilterTids(createTidList(likeStatement, filterArray),searchableChunks);
+            }
+        }else{
+            for(int i=0;i<searchableChunks.size();i++) {
+                searchableTids.add(
+                        new Pair<>(CHUNK_SIZE*searchableChunks.get(i),CHUNK_SIZE *(searchableChunks.get(i)+1))
+                );
+            }
+        }
+        return searchableTids;
+    }
+
+    private ArrayList<Pair<Integer,Integer>> getSearchableFilterTids(ArrayList<Pair<Integer,Integer>> tidMinMax, ArrayList<Integer> searchableChunks){
+        //chunklist is [) (inclusive, exclusive), and tid is (now) also [) (inclusive,exclusive)
         ArrayList<Pair<Integer,Integer>> searchableTidLoc = new ArrayList<Pair<Integer,Integer>>();
         int tidIndex = 0;
         for(int i = 0; i<searchableChunks.size();i++){
@@ -402,7 +425,7 @@ public class Searching extends Text {
             //chunkStart <= tidMinMax.get(tidIndex).second must be true
             if(chunkEnd >= tidMinMax.get(tidIndex).first){
                 searchableTidLoc.add(new Pair<Integer, Integer>(
-                        Math.max(chunkStart, tidMinMax.get(tidIndex).first), Math.min(chunkEnd, tidMinMax.get(tidIndex).second)));
+                        Math.max(chunkStart, tidMinMax.get(tidIndex).first), Math.min(chunkEnd, tidMinMax.get(tidIndex).second)+1));
             }else
                 continue;
         }
@@ -445,7 +468,7 @@ public class Searching extends Text {
     }
 
 
-    private static ArrayList<Text> APISearch(String query, String[] filterArray) throws API.APIException{
+    private ArrayList<Text> APISearch(String query, String[] filterArray) throws API.APIException{
         int offset = 10;
         ArrayList<Text> resultsList =  API.getSearchResults(query, filterArray, APIStart,offset);
         APIStart += offset;
@@ -454,36 +477,62 @@ public class Searching extends Text {
         return resultsList;
     }
 
-    public static ArrayList<Text> searchDBheTexts(String query, String[] filterArray) throws InterruptedException, API.APIException {
+    private static final int SEARCH_BUFFER_SIZE = 4;
+
+    private void fillSearchBuffer() throws API.APIException, InterruptedException {
+        while(true){
+            ArrayList results;
+            if(true) {//check if it's hebrew
+                results = searchDBheTexts();
+            }else{
+                results = searchEnTexts(query,filterArray);
+            }
+            resultsLists.add(results);
+            if(results.size()==0) break;
+            if(isBufferFilled())
+                break;
+
+        }
+    }
+
+    private boolean isBufferFilled(){
+        return (resultsLists.size()>currResultNumber + SEARCH_BUFFER_SIZE);
+    }
+
+    private int currResultNumber = 0;
+    public ArrayList<Text> getResults(){
+        while(true) {
+            Log.d("Searching", "currResultNumber:" + currResultNumber + "... resultsLists.size():"+ resultsLists.size());
+            if (currResultNumber < resultsLists.size()) {
+                if(!isBufferFilled())
+                    this.new SearchAsync().execute();
+                return resultsLists.get(currResultNumber++);
+            } else if (doneSearching && currResultNumber <= resultsLists.size()) {
+                return new ArrayList<>();
+            }
+            try {
+                Thread.sleep(40);
+            } catch (InterruptedException e) {
+                return new ArrayList<>();
+            }
+        }
+    }
+
+
+
+
+
+
+    private ArrayList<Text> searchDBheTexts() throws InterruptedException, API.APIException {
         if(API.useAPI()){
-            return APISearch(query, filterArray);
+            return new ArrayList<>();//APISearch(query, filterArray);
         }
 
-
         int startingChunk = currChunkIndex;
-        ArrayList<Text> resultsList = new ArrayList<Text>();
-        int endSearchingLoop;
+        ArrayList<Text> results = new ArrayList<>();
         long startTime = System.currentTimeMillis();
         try {
-            Database dbHandler = Database.getInstance();
-            SQLiteDatabase db = dbHandler.getReadableDatabase();
-
-            if(searchableChunks == null)//it's the first time searching this word
-                searchableChunks = getSearchingChunks(query);
-
-            if(filterArray.length >0){//use filter
-                String likeStatement = makeFilterStatement(filterArray, "");
-                filterArray = convertfilterArray(filterArray);
-                if(searchableTids == null){//first time, so make tidList
-                    if(searchableChunks.size() != 0)
-                        searchableTids = setSearchableTids(createTidList(likeStatement, filterArray));
-                    else
-                        searchableTids = new ArrayList<Pair<Integer,Integer>>();
-                }
-                endSearchingLoop = searchableTids.size();
-            }
-            else
-                endSearchingLoop = searchableChunks.size();
+            SQLiteDatabase db = Database.getDB();
 
             String [] words = getWords(query);
             Pattern [] patterns = new Pattern [words.length];
@@ -492,50 +541,41 @@ public class Searching extends Text {
             }
 
             Cursor cursor = null;
-            for(int i=startingChunk + 1; i<endSearchingLoop;i++){
-                if (interrupted) {
+            for(int i=startingChunk+1; i<searchableTids.size();i++){
+                /*if (interrupted) {
                     throw new InterruptedException();
+                }*/
+                if(results.size() >= 6 || (results.size() >= 3  && System.currentTimeMillis() > startTime + WAITING_TIME)){
+                    return results;
                 }
 
-                if(resultsList.size() >= 6 || (resultsList.size() >= 3  && System.currentTimeMillis() > startTime + WAITING_TIME)){
-                    return resultsList;
-                }
-                String sql;
-                if(filterArray.length > 0){//use filter
-                    sql = "SELECT _id, heText FROM Texts WHERE "
-                            + " _id >= " + searchableTids.get(i).first + " AND _id <= "  + searchableTids.get(i).second;
-                }
-                else{
-                    sql = "select _id, heText from Texts "+
-                            " WHERE _id >= " + CHUNK_SIZE*searchableChunks.get(i) + " AND _id < "  + CHUNK_SIZE*(searchableChunks.get(i)+1) ;	//	+ " AND heText NOT NULL "
-                }
+                String sql = "SELECT * " +
+                        "FROM Texts WHERE heTextCompress not null AND ";
+                sql += "  _id >= " + searchableTids.get(i).first + " AND _id < "  + searchableTids.get(i).second; //used to <=
                 cursor = db.rawQuery(sql, null);//filterArray
-
-                String verse = null;
-                if (cursor.moveToFirst()) { //TODO CursorWIndowAllocationException
+                if (cursor.moveToFirst()) {
                     do {
+                        Text text = new Text(cursor);
+                        String verse = text.getText(Util.Lang.HE);
 
-                        verse = cursor.getString(1);
-                        if(verse == null)
-                            continue;//might not be needed if doing at DB level
+                        //if(verse == null) continue;//might not be needed if doing at DB level
+                        //Log.d("searching", "verse Length: " + verse.length());
                         //String cleacursorredVerse = verse.replaceAll("[\u0591-\u05C7]", "");
                         //if(verse.length() > 4000) continue;//TODO this is a major hackk!!, but we aren't searching huge things
 
                         for(int j=0; j<words.length;j++){
-
-
                             Matcher m = patterns[j].matcher(verse);
-                            if(m.find()){
-                                //if(clearedVerse.contains(words[j])){ //if(verse.replaceFirst(wordsRegEx[j], "ABC").hashCode() != verse.hashCode()){ //more detailed //	if(clearedVerse.replaceAll("\\b\\u05d5","").replaceFirst("\\b" + words[j] + "\\b", "ABC").hashCode() == clearedVerse.hashCode()) break;
-
-                                verse = addRedToFoundWord(m,verse, true);
-                                if(j == words.length -1){
-                                    resultsList.add(new Text(cursor.getInt(0)));//maybe create a list of tids and do it as one big search
-                                    resultsList.get(resultsList.size()-1).heText = verse;
-                                }
-                            }
-                            else
+                            if(!m.find()) {
                                 break;
+                            }
+                            //if(clearedVerse.contains(words[j])){ //if(verse.replaceFirst(wordsRegEx[j], "ABC").hashCode() != verse.hashCode()){ //more detailed //	if(clearedVerse.replaceAll("\\b\\u05d5","").replaceFirst("\\b" + words[j] + "\\b", "ABC").hashCode() == clearedVerse.hashCode()) break;
+
+                            text.setText(addRedToFoundWord(m,verse, true), Util.Lang.HE);
+                            if(j == words.length -1){
+                                results.add(text);
+                                //resultsList.add(new Text(cursor.getInt(0)));//maybe create a list of tids and do it as one big search
+                                //resultsList.get(resultsList.size()-1).setText(verse, Util.Lang.HE);
+                            }
                         }
                     }
                     while (cursor.moveToNext());
@@ -543,18 +583,16 @@ public class Searching extends Text {
                 cursor.close();
                 currChunkIndex = i;
             }
-
-
-        } catch (SQLException e) {
+        } catch (Exception e) {
             GoogleTracker.sendException(e, "DB_search");
         }
 
-        if (resultsList.size() == 0) doneSearching = true;
+        if (results.size() == 0 && !interrupted) doneSearching = true;
 
-        return resultsList;
+        return results;
     }
 
-    public static ArrayList<Text> searchEnTexts(String word, String [] filterArray) throws API.APIException {
+    private ArrayList<Text> searchEnTexts(String word, String [] filterArray) throws API.APIException {
         if(API.useAPI()){
             return APISearch(word, filterArray);
         }
@@ -593,4 +631,30 @@ public class Searching extends Text {
         return textList;
     }
 
+    private boolean startedSearching = false;
+    private class SearchAsync extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            if(startedSearching)
+                return null;
+            Log.d("Searching", "Async task started");
+            startedSearching = true;
+            try {
+                fillSearchBuffer();
+            } catch (API.APIException e) {
+                e.printStackTrace();
+                doneSearching = true;
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            doneSearching = true;
+
+        }
+    }
 }

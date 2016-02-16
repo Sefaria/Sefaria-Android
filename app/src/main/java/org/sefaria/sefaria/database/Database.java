@@ -143,6 +143,10 @@ public class Database extends SQLiteOpenHelper{
         return sInstance;
     }
 
+    public static SQLiteDatabase getDB(){
+        return getInstance().getReadableDatabase();
+    }
+
     public static boolean checkDataBase(){
 
         SQLiteDatabase checkDB = null;
