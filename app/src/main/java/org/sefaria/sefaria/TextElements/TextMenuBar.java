@@ -1,6 +1,7 @@
 package org.sefaria.sefaria.TextElements;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -67,7 +68,7 @@ public class TextMenuBar extends LinearLayout {
         }
     }
 
-    public void setState(Util.Lang lang, boolean isCts, boolean isSideBySide, Util.TextBG textBG) {
+    public void setState(Util.Lang lang, boolean isCts, boolean isSideBySide, int colorTheme) {
         //LANG
         int currLangViewId;
         if (lang == Util.Lang.EN) currLangViewId = R.id.en_btn;
@@ -75,17 +76,17 @@ public class TextMenuBar extends LinearLayout {
         else /*if (lang == Util.Lang.HE)*/ currLangViewId = R.id.he_btn;
 
         if (currLangViewId == R.id.en_btn)
-           enBtn.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.text_menu_button_background_left_clicked));
+           enBtn.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.text_menu_button_background_left_clicked));
         else
-            enBtn.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.text_menu_button_background_left_ripple));
+            enBtn.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.text_menu_button_background_left_ripple));
         if (currLangViewId == R.id.bi_btn)
-            biBtn.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.text_menu_button_background_center_clicked));
+            biBtn.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.text_menu_button_background_center_clicked));
         else
-            biBtn.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.text_menu_button_background_center_ripple));
+            biBtn.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.text_menu_button_background_center_ripple));
         if (currLangViewId == R.id.he_btn)
-            heBtn.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.text_menu_button_background_right_clicked));
+            heBtn.setBackgroundDrawable(ContextCompat.getDrawable(context, R.drawable.text_menu_button_background_right_clicked));
         else
-            heBtn.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.text_menu_button_background_right_ripple));
+            heBtn.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.text_menu_button_background_right_ripple));
 
 
         //LINE MONO
@@ -94,13 +95,13 @@ public class TextMenuBar extends LinearLayout {
         else currLineMonoViewId = R.id.sep_btn;
 
         if (currLineMonoViewId == R.id.cts_btn)
-            ctsBtn.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.text_menu_button_background_left_clicked));
+            ctsBtn.setBackgroundDrawable(ContextCompat.getDrawable(context, R.drawable.text_menu_button_background_left_clicked));
         else
-            ctsBtn.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.text_menu_button_background_left_ripple));
+            ctsBtn.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.text_menu_button_background_left_ripple));
         if (currLineMonoViewId == R.id.sep_btn)
-            sepBtn.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.text_menu_button_background_right_clicked));
+            sepBtn.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.text_menu_button_background_right_clicked));
         else
-            sepBtn.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.text_menu_button_background_right_ripple));
+            sepBtn.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.text_menu_button_background_right_ripple));
 
         //LINE BI
         int currLineBiViewId;
@@ -108,34 +109,34 @@ public class TextMenuBar extends LinearLayout {
         else currLineBiViewId = R.id.tb_btn;
 
         if (currLineBiViewId == R.id.sbs_btn)
-            sbsBtn.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.text_menu_button_background_left_clicked));
+            sbsBtn.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.text_menu_button_background_left_clicked));
         else
-            sbsBtn.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.text_menu_button_background_left_ripple));
+            sbsBtn.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.text_menu_button_background_left_ripple));
         if (currLineBiViewId == R.id.tb_btn)
-            tbBtn.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.text_menu_button_background_right_clicked));
+            tbBtn.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.text_menu_button_background_right_clicked));
         else
-            tbBtn.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.text_menu_button_background_right_ripple));
+            tbBtn.setBackgroundDrawable(ContextCompat.getDrawable(context, R.drawable.text_menu_button_background_right_ripple));
 
 
 
         //COLOR
         int currColorViewId;
-        if (textBG == Util.TextBG.WHITE) currColorViewId = R.id.white_btn;
-        else if (textBG == Util.TextBG.GREY) currColorViewId = R.id.grey_btn;
+        if (colorTheme == R.style.SefariaTheme_White) currColorViewId = R.id.white_btn;
+        else if (colorTheme == R.style.SefariaTheme_Grey) currColorViewId = R.id.grey_btn;
         else /*if (textBG == Util.TextBG.BLACK)*/ currColorViewId = R.id.black_btn;
 
         if (currColorViewId == R.id.white_btn)
-            whiteBtn.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.text_menu_button_background_white_clicked));
+            whiteBtn.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.text_menu_button_background_white_clicked));
         else
-            whiteBtn.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.text_menu_button_background_white));
+            whiteBtn.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.text_menu_button_background_white));
         if (currColorViewId == R.id.grey_btn)
-            greyBtn.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.text_menu_button_background_grey_clicked));
+            greyBtn.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.text_menu_button_background_grey_clicked));
         else
-            greyBtn.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.text_menu_button_background_grey));
+            greyBtn.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.text_menu_button_background_grey));
         if (currColorViewId == R.id.black_btn)
-            blackBtn.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.text_menu_button_background_black_clicked));
+            blackBtn.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.text_menu_button_background_black_clicked));
         else
-            blackBtn.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.text_menu_button_background_black));
+            blackBtn.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.text_menu_button_background_black));
 
 
         setLang(lang);

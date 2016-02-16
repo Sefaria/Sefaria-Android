@@ -9,5 +9,5 @@
             <solid android:color="@color/button_clicked" />
         </shape>
     </item>
-    <item android:drawable="@android:color/white" />
+    <item android:drawable="?button_bg" />
 </ripple>

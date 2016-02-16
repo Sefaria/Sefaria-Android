@@ -22,6 +22,7 @@
         android:padding="12dp"
         android:textSize="15sp"
         android:textAllCaps="false"
+        android:textColor="?text_color_main"
         android:gravity="center"
         android:background="@drawable/button_ripple_rect_white"
         android:layout_margin="3dp"/>

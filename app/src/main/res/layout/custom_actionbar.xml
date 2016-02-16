@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="65dp">
+    android:layout_height="wrap_content">
 
     <!-- thin bar which changes color based on top-level section -->
     <View
@@ -17,7 +17,7 @@
         android:paddingRight="@dimen/custom_action_bar_button_to_side_padding"
 
 
-        android:background="@color/menu_background">
+        android:background="?custom_actionbar_bg">
 
         <FrameLayout
             android:id="@+id/back_btn"
@@ -84,6 +84,7 @@
                 android:layout_width="@dimen/custom_action_bar_pic_size"
                 android:layout_height="@dimen/custom_action_bar_pic_size"
                 android:src="@drawable/book"
+                android:tint="?text_color_main"
                 android:alpha="0.5"
                 android:scaleType="fitCenter"
                 android:layout_gravity="center"
@@ -137,6 +138,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:text="Aא"
+                android:textColor="?text_verse_num_color"
                 android:textSize="22dp" />
         </FrameLayout>
         <FrameLayout
@@ -159,6 +161,7 @@
             android:text="Table of Contents"
             android:textSize="20dp"
             android:textAllCaps="true"
+            android:textColor="?text_color_main"
             android:layout_centerHorizontal="true"
             android:gravity="center"
             android:padding="0dp"
@@ -191,7 +194,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/menu_foreground"
+        android:background="?custom_actionbar_border"
         android:layout_gravity="bottom|center"
         ></View>
 

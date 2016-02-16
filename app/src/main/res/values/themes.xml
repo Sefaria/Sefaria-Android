@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="SefariaTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowAnimationStyle">@null</item>
+    </style>
+    <style name="SefariaTheme.White">
+        <item name="button_bg">#fff</item>
+        <item name="button_clicked">#bbb</item>      <!-- this is only while touching button -->
+        <item name="button_selected">#eee</item> <!-- this is a permanent color-->
+        <item name="custom_actionbar_bg">@color/menu_background</item>
+        <item name="custom_actionbar_border">#ddd</item>
+        <item name="text_bg">#F8FCF8</item>
+        <item name="text_color_main">#000</item>
+        <item name="text_color_english">#999</item>
+        <item name="text_color_faded">#999</item>
+        <item name="text_chapter_header_color">#999</item>
+        <item name="text_chapter_header_border">#e6e5e6</item>
+        <item name="text_verse_selected_bg">#eaeaea</item>
+        <item name="text_verse_num_color">#666</item>
+        <item name="link_bg">#f9f9f7</item>
+    </style>
+
+    <style name="SefariaTheme.Grey">
+
+    </style>
+
+    <style name="SefariaTheme.Black">
+        <item name="button_bg">#333331</item>
+        <item name="button_clicked">#666</item>      <!-- this is only while touching button -->
+        <item name="button_selected">#444</item> <!-- this is a permanent color-->
+        <item name="custom_actionbar_bg">#2d2d2b</item>
+        <item name="custom_actionbar_border">#444</item>
+        <item name="text_bg">#333331</item>
+        <item name="text_color_main">#fff</item>
+        <item name="text_color_english">#999</item>
+        <item name="text_color_faded">#666</item>
+        <item name="text_chapter_header_color">#999</item>
+        <item name="text_chapter_header_border">#666</item>
+        <item name="text_verse_selected_bg">#444</item>
+        <item name="text_verse_num_color">#ddd</item>
+        <item name="link_bg">#2d2d2b</item>
+    </style>
+</resources>
