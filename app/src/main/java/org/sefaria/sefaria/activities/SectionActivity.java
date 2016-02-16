@@ -96,8 +96,9 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
         sectionAdapter.notifyDataSetChanged();
     }
 
+    @Override
     protected void setIsSideBySide(boolean isSideBySide) {
-        this.isSideBySide = isSideBySide;
+        super.setIsSideBySide(isSideBySide);
         sectionAdapter.notifyDataSetChanged();
     }
 
