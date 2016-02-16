@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayout;
 import android.view.Gravity;
 import android.view.View;
@@ -37,7 +38,7 @@ public class TOCNumBox extends TextView implements TOCElement {
 
         //FORMATTING
         Resources resources = getResources();
-        setBackgroundDrawable(resources.getDrawable(R.drawable.button_ripple_rect_white));
+        setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.button_ripple_rect_white));
         setTextColor(resources.getColor(R.color.toc_num_box_font));
 
         GridLayout.LayoutParams lp = new GridLayout.LayoutParams(new ViewGroup.MarginLayoutParams(
