@@ -79,7 +79,7 @@ public class LinkSelectorBar extends LinearLayout {
             selectorListLayout.addView(lssb);
 
             if (!LinkCount.pseudoEquals(tempLC,currLinkCount)) {
-                lssb.setTextColor(Color.parseColor("#999999"));
+                lssb.setTextColor(Util.getColor(activity,R.attr.text_chapter_header_color));
             }
         }
 

@@ -75,9 +75,9 @@ public abstract class SuperTextActivity extends FragmentActivity {
     protected Util.Lang menuLang;
     protected Util.Lang textLang = null;
     protected boolean isCts;
+    protected int colorTheme;
     protected boolean isSideBySide;
 
-    protected Util.TextBG textBG;
     protected float textSize;
     protected boolean isLoadingSection; //to make sure multiple sections don't get loaded at once
     protected boolean isLoadingInit; //true while init is loading. previous loads should not take place until after isLoadingInit is false
@@ -95,7 +95,10 @@ public abstract class SuperTextActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
+
         Intent intent = getIntent();
+
         Integer nodeHash;
         if (savedInstanceState != null) {//it's coming back after it cleared the activity from ram
             linkFragment = (LinkFragment) getSupportFragmentManager().getFragment(savedInstanceState,LINK_FRAG_TAG);
@@ -155,9 +158,12 @@ public abstract class SuperTextActivity extends FragmentActivity {
         }
         //These vars are specifically initialized here and not in init() so that they don't get overidden when coming from TOC
         //defaults
-        textBG = Util.TextBG.WHITE;
         isCts = false;
         isSideBySide = false;
+        colorTheme = intent.getIntExtra("colorTheme",-1);
+        if (colorTheme == -1) colorTheme = R.style.SefariaTheme_White;
+        setTheme(colorTheme);
+
         if(textLang == null)
             textLang = Settings.BookSettings.getSavedBook(book).lang;
         textSize = getResources().getDimension(R.dimen.default_text_font_size);
@@ -176,7 +182,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
         isTextMenuVisible = false;
         textMenuRoot = (LinearLayout) findViewById(R.id.textMenuRoot);
         textMenuBar = new TextMenuBar(SuperTextActivity.this,textMenuBtnClick);
-        textMenuBar.setState(textLang,isCts,isSideBySide,textBG);
+        textMenuBar.setState(textLang,isCts,isSideBySide,colorTheme);
         textMenuRoot.addView(textMenuBar);
         textMenuRoot.setVisibility(View.GONE);
 
@@ -223,9 +229,9 @@ public abstract class SuperTextActivity extends FragmentActivity {
      * @param context
      * @param text
      */
-    public static void startNewTextActivityIntent(Context context, Text text){
+    public static void startNewTextActivityIntent(Context context, Text text,int colorTheme){
         Book book = new Book(text.bid);
-        startNewTextActivityIntent(context, book, text, null);
+        startNewTextActivityIntent(context, book, text, null, colorTheme);
     }
 
     /**
@@ -246,6 +252,11 @@ public abstract class SuperTextActivity extends FragmentActivity {
      */
 
     public static void startNewTextActivityIntent(Context context, Book book, Text text, Node node){
+        startNewTextActivityIntent(context,book,text,node,-1);
+    }
+
+
+    public static void startNewTextActivityIntent(Context context, Book book, Text text, Node node, int colorTheme) {
         List<String> cats = Arrays.asList(book.categories);
         boolean isCtsText = false;
         final String[] CTS_TEXT_CATS = {};// {"Tanach","Talmud"};//
@@ -269,6 +280,8 @@ public abstract class SuperTextActivity extends FragmentActivity {
             Node.saveNode(node);
             intent.putExtra("nodeHash",node.hashCode());
         }
+
+        intent.putExtra("colorTheme",colorTheme);
         //lang replaced by general MyApp.getMenuLang() function
 
 
@@ -404,16 +417,14 @@ public abstract class SuperTextActivity extends FragmentActivity {
                     setIsSideBySide(false);
                     break;
                 case R.id.white_btn:
-                    Log.d("text", "WHITE");
+                    setColorTheme(R.style.SefariaTheme_White);
                     break;
                 case R.id.grey_btn:
-                    Log.d("text","GREY");
                     break;
                 case R.id.black_btn:
-                    Log.d("text","BLACK");
+                    setColorTheme(R.style.SefariaTheme_Black);
                     break;
                 case R.id.small_btn:
-                    Log.d("text", "SMALL");
 
 
                     if (textSize >= getResources().getDimension(R.dimen.min_text_font_size)-getResources().getDimension(R.dimen.text_font_size_increment)) {
@@ -423,7 +434,6 @@ public abstract class SuperTextActivity extends FragmentActivity {
                     }
                     break;
                 case R.id.big_btn:
-                    Log.d("text", "BIG");
                     if (textSize <= getResources().getDimension(R.dimen.max_text_font_size)+getResources().getDimension(R.dimen.text_font_size_increment)) {
                         textSize += getResources().getDimension(R.dimen.text_font_size_increment);
                         incrementTextSize(true);
@@ -431,7 +441,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
                     }
                     break;
             }
-            textMenuBar.setState(textLang,isCts,isSideBySide,textBG);
+            textMenuBar.setState(textLang,isCts,isSideBySide,colorTheme);
             if (!updatedTextSize) toggleTextMenu();
         }
     };
@@ -462,6 +472,15 @@ public abstract class SuperTextActivity extends FragmentActivity {
     public Book getBook() { return book; }
     public boolean getIsCts(){ return isCts;}
     public boolean getIsSideBySide() { return isSideBySide; }
+    public int getColorTheme() { return colorTheme; }
+    private void setColorTheme(int colorTheme) {
+        finish();
+        startNewTextActivityIntent(this,book,currText,currNode,colorTheme);
+        /*Intent intent = new Intent(this, .class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);*/
+    }
 
     protected abstract void setTextLang(Util.Lang textLang);
     protected abstract void setIsCts(boolean isCts);

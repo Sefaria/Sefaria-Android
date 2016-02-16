@@ -2,7 +2,9 @@ package org.sefaria.sefaria.TextElements;
 
 import android.app.Activity;
 import android.graphics.Color;
+import android.support.v4.content.ContextCompat;
 import android.text.Html;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,7 +75,12 @@ public class SectionAdapter extends ArrayAdapter<Text> {
 
 
         boolean isCurrLinkSegment = segment.equals(activity.getCurrLinkSegment());
-        if (isCurrLinkSegment && activity.getFragmentIsOpen()) view.setBackgroundColor(activity.getResources().getColor(R.color.text_selected));
+
+
+
+        if (isCurrLinkSegment && activity.getFragmentIsOpen()) {
+            view.setBackgroundColor(Util.getColor(activity,R.attr.text_verse_selected_bg));
+        }
         else view.setBackgroundColor(activity.getResources().getColor(android.R.color.transparent));
 
         TextChapterHeader tch = (TextChapterHeader) view.findViewById(R.id.chapHeader);
@@ -190,7 +197,6 @@ public class SectionAdapter extends ArrayAdapter<Text> {
                     heNum.setAlpha(linkAlpha);
                     heNum.setTypeface(MyApp.getFont(MyApp.MONTSERRAT_FONT));
                 }
-                tv.setTextColor(Color.parseColor("#000000"));
                 tv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
                 tv.setTextSize(activity.getTextSize());
             }

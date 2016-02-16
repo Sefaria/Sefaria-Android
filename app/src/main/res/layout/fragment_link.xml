@@ -2,7 +2,6 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:orientation="vertical"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
     tools:context="org.sefaria.sefaria.activities.LinkFragment">
     <View
         android:id="@+id/main_color_bar"
@@ -15,13 +14,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="#ededed"
+        android:background="?custom_actionbar_bg"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"></LinearLayout>
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/menu_foreground"/>
+        android:background="?custom_actionbar_border"/>
     <TextView
         android:visibility="gone"
         android:id="@+id/no_links_tv"

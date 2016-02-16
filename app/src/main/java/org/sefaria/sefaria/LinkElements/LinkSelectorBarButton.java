@@ -39,9 +39,9 @@ public class LinkSelectorBarButton extends TextView {
         this.setLayoutParams(lp);
 
         int padding = 15;
-        this.setPadding(padding,padding,padding,padding);
+        this.setPadding(padding, padding, padding, padding);
         this.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
-        this.setTextColor(Color.parseColor("#000000"));
+        this.setTextColor(Util.getColor(context,R.attr.text_color_main));
         this.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.button_ripple_rect));
     }
 

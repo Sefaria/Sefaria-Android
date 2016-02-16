@@ -89,10 +89,10 @@ public class LinkMainAdapter extends RecyclerView.Adapter<LinkMainAdapter.LinkHo
         if (linkCount.getDepthType() == LinkCount.DEPTH_TYPE.BOOK)  {
             if (linkCount.getCount() == 0) {
                 holder.tv.setText(bookTitle);
-                holder.tv.setTextColor(Color.parseColor("#999999"));
+                holder.tv.setTextColor(Util.getColor(context,R.attr.text_color_faded));
             } else {
                 holder.tv.setText(bookTitle + " (" + linkCount.getCount() + ")");
-                holder.tv.setTextColor(context.getResources().getColor(android.R.color.black));
+                holder.tv.setTextColor(Util.getColor(context, R.attr.text_color_main));
             }
 
             if (android.os.Build.VERSION.SDK_INT >= 14) {
@@ -104,7 +104,7 @@ public class LinkMainAdapter extends RecyclerView.Adapter<LinkMainAdapter.LinkHo
 
         } else { //ALL and CAT
             holder.tv.setText(bookTitle + " " + Util.LINK_CAT_VERICAL_LINE + " " + linkCount.getCount());
-            holder.tv.setTextColor(context.getResources().getColor(android.R.color.black));
+            holder.tv.setTextColor(Util.getColor(context, R.attr.text_color_main));
             if (android.os.Build.VERSION.SDK_INT >= 14) {//for older things it just will by non-capped (even though we can make a function to fix it, it's not worth it).
                 holder.tv.setAllCaps(true);
             }

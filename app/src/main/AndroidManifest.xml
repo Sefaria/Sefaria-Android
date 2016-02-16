@@ -15,7 +15,7 @@
         android:hardwareAccelerated="true"
         android:icon="@drawable/sefaria_icon"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme">
+        android:theme="@style/SefariaTheme.White">
         <activity
             android:name=".activities.HomeActivity"
             android:label="@string/app_name">
@@ -47,19 +47,17 @@
             android:label="@string/title_activity_toc"></activity>
         <activity
             android:name=".activities.SearchActivity"
-            android:label="@string/title_activity_search"
-            android:theme="@style/AppTheme"></activity>
+            android:label="@string/title_activity_search">
+        </activity>
         <activity
             android:name=".activities.SectionActivity"
             android:label="@string/title_activity_section"></activity>
         <activity
             android:name=".activities.AboutActivity"
-            android:label="@string/title_activity_about"
-            android:theme="@style/AppTheme"></activity>
+            android:label="@string/title_activity_about"></activity>
         <activity
             android:name=".activities.SettingsActivity"
-            android:label="@string/title_activity_settings"
-            android:theme="@style/AppTheme"></activity>
+            android:label="@string/title_activity_settings"></activity>
     </application>
 
 </manifest>

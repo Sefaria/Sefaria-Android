@@ -37,7 +37,7 @@
             android:layout_below="@+id/title"
             android:layout_toRightOf="@+id/enVerseNum"
             android:layout_toLeftOf="@+id/heVerseNum"
-            android:textColor="@android:color/black"
+            android:textColor="?text_color_main"
             android:text="Now the earth was unformed and void, and darkness was upon the face of the deep; and the spirit of God hovered over the face of the waters."/>
         <TextView
             android:visibility="gone"

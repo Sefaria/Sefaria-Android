@@ -9,6 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Chapter 1"
+        android:textColor="?text_chapter_header_color"
         android:textAllCaps="true"
         android:textSize="@dimen/text_chapter_font_size"
         android:padding="5dp"
@@ -21,5 +22,5 @@
         android:layout_alignBottom="@+id/tv"
         android:layout_alignLeft="@+id/tv"
         android:layout_alignRight="@+id/tv"
-        android:background="@color/menu_foreground"></View>
+        android:background="?text_chapter_header_border"></View>
 </RelativeLayout>
