@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -146,7 +147,7 @@ public class LinkFragment extends android.support.v4.app.Fragment {
         View colorBar = view.findViewById(R.id.main_color_bar);
         TextView noLinksTV = (TextView) view.findViewById(R.id.no_links_tv);
         if (state == State.MAIN) {
-            view.setBackgroundColor(getResources().getColor(R.color.menu_background));
+            view.setBackgroundColor(Util.getColor(activity,R.attr.link_bg));
 
             colorBar.setVisibility(View.GONE);
             linkSelectorBar.setVisibility(View.GONE);
@@ -161,10 +162,10 @@ public class LinkFragment extends android.support.v4.app.Fragment {
             updateFragment(segment);
 
         } else { //CAT and BOOK are very similar
-            view.setBackgroundColor(Color.parseColor("#FFFFFF"));
+            view.setBackgroundColor(Util.getColor(activity,R.attr.text_bg));
 
             //update linkSelectorQueue
-            linkSelectorBar.add(linkCount,activity.getMenuLang());
+            linkSelectorBar.add(linkCount, activity.getMenuLang());
 
 
 

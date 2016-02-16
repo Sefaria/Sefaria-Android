@@ -1,5 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <attr name="button_bg" format="reference|color"/>
+    <attr name="button_clicked" format="reference|color"/>
+    <attr name="button_selected" format="reference|color"/>
+    <attr name="custom_actionbar_bg" format="reference|color"/>
+    <attr name="custom_actionbar_border" format="reference|color"/>
+    <attr name="text_bg" format="reference|color" />
+    <attr name="text_color_main" format="reference|color"/>
+    <attr name="text_color_english" format="reference|color"/>
+    <attr name="text_color_faded" format="reference|color"/>
+    <attr name="text_chapter_header_color" format="reference|color"/>
+    <attr name="text_chapter_header_border" format="reference|color"/>
+    <attr name="text_verse_selected_bg" format="reference|color"/>
+    <attr name="text_verse_num_color" format="reference|color"/>
+    <attr name="link_bg" format="reference|color"/>
+    <attr name="link_text_bg" format="reference|color"/>
+
+
     <declare-styleable name="SplitView">
         <attr name="handle" format="reference" />
         <attr name="primaryContent" format="reference" />
