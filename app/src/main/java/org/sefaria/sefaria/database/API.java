@@ -54,7 +54,6 @@ public class API {
 
 
     //non-static methods
-
     private String fetchData(String urlString){
         String data = "";
         this.url = urlString;

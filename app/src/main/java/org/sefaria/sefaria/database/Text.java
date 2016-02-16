@@ -29,8 +29,8 @@ public class Text implements Parcelable {
     public Node parentNode = null; //for SectionAdapter. not null indicates that this obj is actually a placeholder for a perek title (and the node represents that perek)
     public int tid;
     public int bid;
-    protected String enText;
-    protected String heText;
+    private String enText;
+    private String heText;
     private byte [] enTextCompress;
     private int enTextLength = 0;
     private int heTextLength = 0;
@@ -60,6 +60,13 @@ public class Text implements Parcelable {
             Log.e("Text","Input wrong lang into Text.getText(Util.lang)");
             return "";
         }
+    }
+
+    public void setText(String text, Util.Lang lang){
+        if(lang == Util.Lang.HE)
+            heText = text;
+        else
+            enText = text;
     }
 
 

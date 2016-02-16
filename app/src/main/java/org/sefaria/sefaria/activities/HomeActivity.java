@@ -36,6 +36,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -132,17 +133,23 @@ public class HomeActivity extends Activity {
             Toast.makeText(this, "Starting Download", Toast.LENGTH_SHORT).show();
             Downloader.updateLibrary(this);
 
-        }
+        }/*
         try {
-            ArrayList<Text> results = Searching.searchDBheTexts("שג", new String[0]);
+            Searching searching = new Searching("ברא", new String[0]);
+           if(true) return;
+            ArrayList<Text> results;// = searching.searchDBheTexts();
+
             Log.d("Searching", "restults.size" + results.size());
+            for(Text verse:results){
+                verse.log();
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
-        } catch (API.APIException e) {
+        }catch (API.APIException e) {
             e.printStackTrace();
         }catch (Exception e){
             e.printStackTrace();
-        }
+        }*/
 
     }
 
