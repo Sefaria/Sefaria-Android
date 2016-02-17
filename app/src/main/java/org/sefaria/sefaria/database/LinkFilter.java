@@ -12,21 +12,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class LinkCount {
+public class LinkFilter {
 
     protected String enTitle;
     protected String heTitle;
     protected DEPTH_TYPE depth_type;
     protected int count;
-    protected List<LinkCount> children;
-    protected LinkCount parent = null;
+    protected List<LinkFilter> children;
+    protected LinkFilter parent = null;
 
     public enum DEPTH_TYPE {
         ALL,CAT,BOOK
     }
 
     //category is passed in only if DEPTH_TYPE == DEPTH_TYPE.BOOK
-    public LinkCount(String enTitle,int count,String heTitle, DEPTH_TYPE depth_type){
+    public LinkFilter(String enTitle, int count, String heTitle, DEPTH_TYPE depth_type){
         this.enTitle = enTitle;
         this.heTitle = heTitle;
         this.count = count;
@@ -73,17 +73,17 @@ public class LinkCount {
 
     }
 
-    public List<LinkCount> getChildren(){
+    public List<LinkFilter> getChildren(){
         if(children == null)
             children = new ArrayList<>();
         return children;
     }
 
-    protected void addChild(LinkCount child){
+    protected void addChild(LinkFilter child){
         addChild(child,false);
     }
 
-    protected void addChild(LinkCount child, boolean front){
+    protected void addChild(LinkFilter child, boolean front){
         if(children == null)
             children = new ArrayList<>();
         count += child.count;
@@ -94,7 +94,7 @@ public class LinkCount {
         child.parent = this;
     }
 
-    public static String getStringTree(LinkCount lc,int tabs, boolean printToLog){
+    public static String getStringTree(LinkFilter lc,int tabs, boolean printToLog){
         String tabStr = "";
         for(int i=0;i<tabs;i++)
             tabStr += "-";
@@ -107,8 +107,8 @@ public class LinkCount {
         return str;
     }
 
-    public static List<LinkCount> getList(LinkCount lc) {
-        List<LinkCount> linkList = new ArrayList<>();
+    public static List<LinkFilter> getList(LinkFilter lc) {
+        List<LinkFilter> linkList = new ArrayList<>();
 
         linkList.add(lc);
         for (int i = 0; i < lc.getChildren().size(); i++) {
@@ -135,8 +135,8 @@ public class LinkCount {
     final public static String COMMENTARY = "Commentary";
     final public static String QUOTING_COMMENTARY = "Quoting Commentary";
 
-    private static LinkCount getCommentaryOnChap(int chapStart, int chapEnd, int bid){
-        LinkCount commentaryGroup = new LinkCount(COMMENTARY,0, "מפרשים",DEPTH_TYPE.CAT);
+    private static LinkFilter getCommentaryOnChap(int chapStart, int chapEnd, int bid){
+        LinkFilter commentaryGroup = new LinkFilter(COMMENTARY,0, "מפרשים",DEPTH_TYPE.CAT);
         Database dbHandler = Database.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
 
@@ -150,7 +150,7 @@ public class LinkCount {
         Cursor cursor = db.rawQuery(sql, null);
         if (cursor.moveToFirst()) {
             do {
-                LinkCount linkCount = new LinkCount(cursor.getString(0),0,cursor.getString(1),DEPTH_TYPE.BOOK);
+                LinkFilter linkCount = new LinkFilter(cursor.getString(0),0,cursor.getString(1),DEPTH_TYPE.BOOK);
                 commentaryGroup.addChild(linkCount);
             } while (cursor.moveToNext());
         }
@@ -164,22 +164,22 @@ public class LinkCount {
      */
     private void addCommentaryCount(String title, int count, String heTitle){
         if(count == 0) return; //it's not worth trying to go through the whole list testing a match, if this is just zero anyways. (It should never happen that this is 0).
-        for(LinkCount child: children){
+        for(LinkFilter child: children){
             if(child.enTitle.equals(title)){
                 child.count = count;
                 this.count += count;
                 return;
             }
         }
-        Log.e("LinkCount", "I couldn't find the book, even though the list is supposed to contain all books that comment on the chap... I'll create a new LinkCount if I hae to");
-        LinkCount linkCount = new LinkCount(title,count,heTitle,DEPTH_TYPE.BOOK);
+        Log.e("LinkFilter", "I couldn't find the book, even though the list is supposed to contain all books that comment on the chap... I'll create a new LinkFilter if I hae to");
+        LinkFilter linkCount = new LinkFilter(title,count,heTitle,DEPTH_TYPE.BOOK);
         this.addChild(linkCount);
     }
 
 
-    public static LinkCount getFromLinks_small(Text text){
-        LinkCount allLinkCounts = new LinkCount(ALL_CONNECTIONS, 0, "הכל",DEPTH_TYPE.ALL);
-        LinkCount commentaryGroup = getCommentaryOnChap(text.tid -11,text.tid +11,text.bid);//getting all commentaries +-11 of the current text
+    public static LinkFilter getFromLinks_small(Text text){
+        LinkFilter allLinkCounts = new LinkFilter(ALL_CONNECTIONS, 0, "הכל",DEPTH_TYPE.ALL);
+        LinkFilter commentaryGroup = getCommentaryOnChap(text.tid -11,text.tid +11,text.bid);//getting all commentaries +-11 of the current text
         if(text.getNumLinks() == 0){
             if(commentaryGroup.getChildren().size()>0)
                 allLinkCounts.addChild(commentaryGroup,true);
@@ -195,7 +195,7 @@ public class LinkCount {
         Cursor cursor = db.rawQuery(sql, null);
 
 
-        LinkCount countGroups = null;
+        LinkFilter countGroups = null;
         String lastCategory = "";
         if (cursor.moveToFirst()) {
             do {
@@ -217,7 +217,7 @@ public class LinkCount {
                         //the real he titles will be added in sortLinkCountCategories() if it finds match
                     }
 
-                    countGroups = new LinkCount(category,0,heCategory ,DEPTH_TYPE.CAT);
+                    countGroups = new LinkFilter(category,0,heCategory ,DEPTH_TYPE.CAT);
                 }
                 String childEnTitle = cursor.getString(0);
                 int childCount = cursor.getInt(1);
@@ -225,7 +225,7 @@ public class LinkCount {
                 if(cursor.getInt(3) == text.bid) {//Comments on this book
                     commentaryGroup.addCommentaryCount(childEnTitle,childCount,childHeTitle);
                 }else{ //non commentary book
-                    LinkCount linkCount = new LinkCount(childEnTitle,childCount,childHeTitle,DEPTH_TYPE.BOOK);
+                    LinkFilter linkCount = new LinkFilter(childEnTitle,childCount,childHeTitle,DEPTH_TYPE.BOOK);
                     countGroups.addChild(linkCount);
                 }
 
@@ -242,15 +242,15 @@ public class LinkCount {
         return allLinkCounts;
     }
 
-    private LinkCount sortLinkCountCategories(){
-        LinkCount newLinkCount = new LinkCount(enTitle,0,heTitle,depth_type);
+    private LinkFilter sortLinkCountCategories(){
+        LinkFilter newLinkCount = new LinkFilter(enTitle,0,heTitle,depth_type);
         MenuNode menuNode = MenuState.getRootNode();
         String [] titles = menuNode.getChildrenTitles(Util.Lang.EN);
         String [] heTitles = menuNode.getChildrenTitles(Util.Lang.HE);
         for(int i=0;i<titles.length;i++){
             String title = titles[i];
             for(int j=0;j<getChildren().size();j++){
-                LinkCount child = getChildren().get(j);
+                LinkFilter child = getChildren().get(j);
                 if(child.enTitle.equals(title)){
                     child.heTitle = heTitles[i];
                     newLinkCount.addChild(child);
@@ -260,7 +260,7 @@ public class LinkCount {
             }
         }
         //if there's any categories left out them back in
-        for(LinkCount child:getChildren()){
+        for(LinkFilter child:getChildren()){
             newLinkCount.addChild(child);
         }
 
@@ -268,7 +268,7 @@ public class LinkCount {
     }
 
     //this is not a fool-proof equals() implementation. hence 'pseudo'
-    public static boolean pseudoEquals(LinkCount lc1, LinkCount lc2) {
+    public static boolean pseudoEquals(LinkFilter lc1, LinkFilter lc2) {
         return (lc1.getRealTitle(Util.Lang.EN).equals(lc2.getRealTitle(Util.Lang.EN)) &&
                 lc1.depth_type == lc2.depth_type);
     }

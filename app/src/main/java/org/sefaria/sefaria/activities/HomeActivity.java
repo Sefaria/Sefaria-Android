@@ -16,6 +16,7 @@ import org.sefaria.sefaria.database.DailyLearning;
 import org.sefaria.sefaria.database.Database;
 import org.sefaria.sefaria.database.Downloader;
 import org.sefaria.sefaria.database.Huffman;
+import org.sefaria.sefaria.database.LinkFilter;
 import org.sefaria.sefaria.database.Searching;
 import org.sefaria.sefaria.database.Text;
 import org.sefaria.sefaria.layouts.CustomActionbar;
@@ -133,23 +134,7 @@ public class HomeActivity extends Activity {
             Toast.makeText(this, "Starting Download", Toast.LENGTH_SHORT).show();
             Downloader.updateLibrary(this);
 
-        }/*
-        try {
-            Searching searching = new Searching("ברא", new String[0]);
-           if(true) return;
-            ArrayList<Text> results;// = searching.searchDBheTexts();
-
-            Log.d("Searching", "restults.size" + results.size());
-            for(Text verse:results){
-                verse.log();
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }catch (API.APIException e) {
-            e.printStackTrace();
-        }catch (Exception e){
-            e.printStackTrace();
-        }*/
+        }
 
     }
 
@@ -309,8 +294,27 @@ public class HomeActivity extends Activity {
         startActivity(intent);
     }
 
+    private static Searching searching;
     public void feedbackClick(View v) {
-        String email = "dev@sefaria.org";
+        /*
+        try {
+            if(searching == null) {
+                searching = new Searching("ברא", new LinkFilter("Tosefta", 0, "", LinkFilter.DEPTH_TYPE.CAT));
+                //searching = new Searching("ברא", null);
+            }
+            ArrayList<Text> results = searching.getResults();
+
+            Log.d("Searching", "results.size" + results.size());
+            for(Text verse:results){
+                verse.log();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(true) return;
+        */
+
+        String email = "android@sefaria.org";
         Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
                 "mailto", email, null));
         emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Android App Feedback");

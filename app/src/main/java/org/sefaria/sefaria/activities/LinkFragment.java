@@ -1,17 +1,12 @@
 package org.sefaria.sefaria.activities;
 
 import android.app.Activity;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -25,15 +20,11 @@ import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.Link;
-import org.sefaria.sefaria.database.LinkCount;
+import org.sefaria.sefaria.database.LinkFilter;
 import org.sefaria.sefaria.database.Text;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
-import java.util.Queue;
 
 public class LinkFragment extends android.support.v4.app.Fragment {
 
@@ -142,7 +133,7 @@ public class LinkFragment extends android.support.v4.app.Fragment {
 
     public State getCurrState() { return currState; }
 
-    public void gotoState(State state,View view,LinkCount linkCount) {
+    public void gotoState(State state,View view,LinkFilter linkCount) {
         currState = state;
         View colorBar = view.findViewById(R.id.main_color_bar);
         TextView noLinksTV = (TextView) view.findViewById(R.id.no_links_tv);
@@ -155,7 +146,7 @@ public class LinkFragment extends android.support.v4.app.Fragment {
             GridLayoutManager gridLayoutManager = new GridLayoutManager(activity,2);
             gridLayoutManager.setSpanSizeLookup(onSpanSizeLookup);
 
-            linkMainAdapter = new LinkMainAdapter(activity,new ArrayList<LinkCount>(),activity.getBook(),this);
+            linkMainAdapter = new LinkMainAdapter(activity,new ArrayList<LinkFilter>(),activity.getBook(),this);
 
             linkRecycler.setLayoutManager(gridLayoutManager);
             linkRecycler.setAdapter(linkMainAdapter);
@@ -170,7 +161,7 @@ public class LinkFragment extends android.support.v4.app.Fragment {
 
 
             String cat;
-            if (linkCount.getDepthType() == LinkCount.DEPTH_TYPE.BOOK) cat = linkCount.getCategory();
+            if (linkCount.getDepthType() == LinkFilter.DEPTH_TYPE.BOOK) cat = linkCount.getCategory();
             else cat = linkCount.getRealTitle(Util.Lang.EN); //CAT
 
             colorBar.setVisibility(View.VISIBLE);
@@ -214,8 +205,8 @@ public class LinkFragment extends android.support.v4.app.Fragment {
             if(!segment.isChapter()) Log.d("frag", "UPDATE FRAG TEXT " + segment.levels[0]);
 
             if (currState == State.MAIN) { //load new linkCounts
-                LinkCount linkCount = LinkCount.getFromLinks_small(segment);
-                linkMainAdapter.setItemList(LinkCount.getList(linkCount));
+                LinkFilter linkCount = LinkFilter.getFromLinks_small(segment);
+                linkMainAdapter.setItemList(LinkFilter.getList(linkCount));
             } else if (currState == State.BOOK || currState == State.CAT) { //change visibilty of links
                 linkTextAdapter.setItemList(Link.getLinkedTexts(segment,linkTextAdapter.getCurrLinkCount()));
             } else { //CAT load new cat links
@@ -252,8 +243,8 @@ public class LinkFragment extends android.support.v4.app.Fragment {
     GridLayoutManager.SpanSizeLookup onSpanSizeLookup = new GridLayoutManager.SpanSizeLookup() {
         @Override
         public int getSpanSize(int position) {
-            LinkCount linkCount = linkMainAdapter.getItem(position);
-            if (linkCount.getDepthType() != LinkCount.DEPTH_TYPE.BOOK) {
+            LinkFilter linkCount = linkMainAdapter.getItem(position);
+            if (linkCount.getDepthType() != LinkFilter.DEPTH_TYPE.BOOK) {
                 return 2;
             } else {
                 return 1;

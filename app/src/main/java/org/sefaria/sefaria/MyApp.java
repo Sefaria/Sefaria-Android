@@ -5,7 +5,7 @@ import android.app.Application;
 import android.content.Context;
 import android.graphics.Typeface;
 
-import org.sefaria.sefaria.database.LinkCount;
+import org.sefaria.sefaria.database.LinkFilter;
 
 import java.util.Arrays;
 
@@ -19,8 +19,8 @@ public class MyApp extends Application {
             "Philosophy","Chasidut","Musar",
             "Other","Halakhah","Midrash",
             "Kabbalah","Responsa","Parshanut",
-            "Apocrypha","More >",LinkCount.QUOTING_COMMENTARY,
-            "Modern Works",LinkCount.COMMENTARY, LinkCount.ALL_CONNECTIONS
+            "Apocrypha","More >", LinkFilter.QUOTING_COMMENTARY,
+            "Modern Works", LinkFilter.COMMENTARY, LinkFilter.ALL_CONNECTIONS
             };
     public static final int[] CAT_COLORS = {R.color.tanach, R.color.mishnah,R.color.talmud,
             R.color.tosefta,R.color.liturgy,R.color.liturgy,

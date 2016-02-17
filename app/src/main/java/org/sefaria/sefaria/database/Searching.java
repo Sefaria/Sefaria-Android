@@ -27,30 +27,34 @@ public class Searching {
     final static int VERSE_COUNT = 1000000;
     final static int CHUNK_COUNT = VERSE_COUNT/CHUNK_SIZE;
     final static int WORD_COUNT = 25000000;
-
-    private int currChunkIndex;
-    private ArrayList<Pair<Integer,Integer>> searchableTids = null;
-    public boolean doneSearching;
-    public volatile boolean interrupted;
+    final static int BITS_PER_PACKET = 24;
+    final static int PACKET_SIZE = 32;
+    final static int MAX_PACKET_COUNT = (int) Math.ceil(CHUNK_SIZE/BITS_PER_PACKET);
     private static final long WAITING_TIME = 2000; //2 seconds
+
+
+
+    private int currSearchIndex = -1;
+    private ArrayList<Pair<Integer,Integer>> searchableTids = null;
+    private boolean isDoneSearching = false;
+    private boolean middleOfSearching = false;
+    private int currResultNumber = 0;
+
     private static int APIStart = 0;
 
-    private String [] filterArray;
+    private LinkFilter linkFilter;
     private String query;
     private ArrayList<ArrayList<Text>> resultsLists;
 
-    public Searching(String query, String [] filterArray) throws SQLException, InterruptedException {
-        currChunkIndex = -1;
-        doneSearching = false;
-        interrupted = false;
-
-        this.filterArray = filterArray;
+    public Searching(String query, LinkFilter linkFilter) throws SQLException {
+        this.linkFilter = linkFilter;
         this.query = query;
-        searchableTids = getSearchableTids(filterArray);
+        searchableTids = getSearchableTids(linkFilter);
         resultsLists = new ArrayList<>();
-
-        this.new SearchAsync().execute();
+        fillSearchBuffer();
     }
+
+    public boolean isDoneSearching(){ return isDoneSearching; }
 
     private static byte[] toByteArray(BitSet bits, int byteCount) {
         if(byteCount <= 0)
@@ -65,9 +69,6 @@ public class Searching {
     }
 
 
-    final static int BITS_PER_PACKET = 24;
-    final static int PACKET_SIZE = 32;
-    final static int MAX_PACKET_COUNT = (int) Math.ceil(CHUNK_SIZE/BITS_PER_PACKET);
 
     private static ArrayList<Integer> JHpacketToNums (byte [] bytes) {
         ArrayList<Integer> chunkList = new ArrayList<Integer>();
@@ -362,24 +363,6 @@ public class Searching {
     }
 
 
-    private static String makeFilterStatement(String[] filterArray, String tableAbr){
-        String likeStatement = "";
-        if (filterArray.length != 0) {
-            likeStatement = " " + tableAbr + "categories LIKE ? ";
-            for (int j = 1; j < filterArray.length; j++) {
-                likeStatement += " OR " + tableAbr + "categories LIKE ? ";
-            }
-        }
-        return likeStatement;
-    }
-
-    private static String [] convertfilterArray(String[] filterArray){
-        for (int j = 0; j < filterArray.length; j++) {
-            filterArray[j] = "[\"" + filterArray[j] + "\"%";
-        }
-        return filterArray;
-    }
-
     private static String[] concat(String [] a, String[] b) {
         int aLen = a.length;
         int bLen = b.length;
@@ -389,28 +372,23 @@ public class Searching {
         return c;
     }
 
-    private ArrayList<Pair<Integer,Integer>> getSearchableTids(String [] filterArray) throws SQLException {
+
+    private ArrayList<Pair<Integer,Integer>> getSearchableTids(LinkFilter linkFilter) throws SQLException {
+        //chunklist is [) (inclusive, exclusive), and tid is (now) also [) (inclusive,exclusive)
+        ArrayList<Pair<Integer,Integer>> searchableTids = new ArrayList<>();
         ArrayList<Integer> searchableChunks = getSearchingChunks(query);
-        searchableTids = new ArrayList<>();
-        if(filterArray != null && filterArray.length >0) {//use filter
-            String likeStatement = makeFilterStatement(filterArray, "");
-            filterArray = convertfilterArray(filterArray);
-            if (searchableChunks.size() != 0) {
-                searchableTids = getSearchableFilterTids(createTidList(likeStatement, filterArray),searchableChunks);
-            }
-        }else{
+        if(searchableChunks.size() == 0) return searchableTids;
+
+        if(linkFilter == null || linkFilter.depth_type == LinkFilter.DEPTH_TYPE.ALL){
             for(int i=0;i<searchableChunks.size();i++) {
                 searchableTids.add(
                         new Pair<>(CHUNK_SIZE*searchableChunks.get(i),CHUNK_SIZE *(searchableChunks.get(i)+1))
                 );
             }
+            return searchableTids;
         }
-        return searchableTids;
-    }
 
-    private ArrayList<Pair<Integer,Integer>> getSearchableFilterTids(ArrayList<Pair<Integer,Integer>> tidMinMax, ArrayList<Integer> searchableChunks){
-        //chunklist is [) (inclusive, exclusive), and tid is (now) also [) (inclusive,exclusive)
-        ArrayList<Pair<Integer,Integer>> searchableTidLoc = new ArrayList<Pair<Integer,Integer>>();
+        ArrayList<Pair<Integer,Integer>> tidMinMax = createFilteredTidMinMaxList(linkFilter);
         int tidIndex = 0;
         for(int i = 0; i<searchableChunks.size();i++){
             int chunkStart = CHUNK_SIZE*(searchableChunks.get(i));
@@ -419,25 +397,41 @@ public class Searching {
                 tidIndex++;
                 if(tidIndex >= tidMinMax.size()){
                     Log.d("bid", "finished searchableTidLoc");
-                    return searchableTidLoc;
+                    return searchableTids;
                 }
             }
             //chunkStart <= tidMinMax.get(tidIndex).second must be true
             if(chunkEnd >= tidMinMax.get(tidIndex).first){
-                searchableTidLoc.add(new Pair<Integer, Integer>(
-                        Math.max(chunkStart, tidMinMax.get(tidIndex).first), Math.min(chunkEnd, tidMinMax.get(tidIndex).second)+1));
+                searchableTids.add(
+                    new Pair<>(Math.max(chunkStart, tidMinMax.get(tidIndex).first), Math.min(chunkEnd, tidMinMax.get(tidIndex).second)+1)
+                );
             }else
                 continue;
         }
-        Log.d("bid", "finished searchableTidLoc");
-        return searchableTidLoc;
+        Log.d("bid", "finished searchableTids");
+        return searchableTids;
     }
 
 
-    private static ArrayList<Pair<Integer,Integer>> createTidList(String likeStatement, String [] filterArray){
-        Database dbHandler = Database.getInstance();
-        SQLiteDatabase db = dbHandler.getReadableDatabase();
-        ArrayList<Pair<Integer,Integer>> tidMinMax = new ArrayList<Pair<Integer,Integer>>();
+    private static ArrayList<Pair<Integer,Integer>> createFilteredTidMinMaxList(LinkFilter linkFilter){
+        SQLiteDatabase db = Database.getDB();
+        ArrayList<Pair<Integer,Integer>> tidMinMax = new ArrayList<>();
+
+        String likeStatement;
+        String [] filterArray;
+        if (linkFilter == null || linkFilter.depth_type == LinkFilter.DEPTH_TYPE.ALL) {
+            Log.e("Searching", "This function shouldn't have been called if your looking for everything");
+            likeStatement = " 1=1 ";
+            filterArray = new String[0];
+        }else{
+            if(linkFilter.depth_type == LinkFilter.DEPTH_TYPE.CAT) {
+                likeStatement = " categories LIKE ? ";
+                filterArray = new String[]{"[\"" + linkFilter.enTitle + "\"%"};
+            }else{ // if(linkFilter.depth_type == LinkFilter.DEPTH_TYPE.BOOK) {
+                likeStatement = " title LIKE ? ";
+                filterArray = new String[]{"[\"" + linkFilter.enTitle + "\"%"};
+            }
+        }
         String bookSQL = "Select minTid, maxTid FROM Books WHERE " +
                 likeStatement + " ORDER BY _id";
         Cursor cursorB = db.rawQuery(bookSQL, filterArray);
@@ -449,7 +443,7 @@ public class Searching {
                 int second = cursorB.getInt(1);
                 if(first == -1 || second == -1)//it doesn't have any useful tids
                     continue;
-                Pair<Integer, Integer> tempPair = new Pair<Integer, Integer>(first, second);
+                Pair<Integer, Integer> tempPair = new Pair<>(first, second);
                 if(tidMinMax.isEmpty())
                     tidMinMax.add(tempPair);
                 else{
@@ -464,71 +458,29 @@ public class Searching {
             }while (cursorB.moveToNext());
         }
         //Log.d("bid", "finished createTidList");
-        return tidMinMax;//it was doing stuff on the local tidList
+        return tidMinMax;
     }
 
 
     private ArrayList<Text> APISearch(String query, String[] filterArray) throws API.APIException{
         int offset = 10;
-        ArrayList<Text> resultsList =  API.getSearchResults(query, filterArray, APIStart,offset);
+        ArrayList<Text> resultsList = API.getSearchResults(query, filterArray, APIStart, offset);
         APIStart += offset;
         if(resultsList.size() == 0)
-            doneSearching = true;
+            isDoneSearching = true;
         return resultsList;
     }
 
     private static final int SEARCH_BUFFER_SIZE = 4;
 
-    private void fillSearchBuffer() throws API.APIException, InterruptedException {
-        while(true){
-            ArrayList results;
-            if(true) {//check if it's hebrew
-                results = searchDBheTexts();
-            }else{
-                results = searchEnTexts(query,filterArray);
-            }
-            resultsLists.add(results);
-            if(results.size()==0) break;
-            if(isBufferFilled())
-                break;
-
-        }
-    }
-
-    private boolean isBufferFilled(){
-        return (resultsLists.size()>currResultNumber + SEARCH_BUFFER_SIZE);
-    }
-
-    private int currResultNumber = 0;
-    public ArrayList<Text> getResults(){
-        while(true) {
-            Log.d("Searching", "currResultNumber:" + currResultNumber + "... resultsLists.size():"+ resultsLists.size());
-            if (currResultNumber < resultsLists.size()) {
-                if(!isBufferFilled())
-                    this.new SearchAsync().execute();
-                return resultsLists.get(currResultNumber++);
-            } else if (doneSearching && currResultNumber <= resultsLists.size()) {
-                return new ArrayList<>();
-            }
-            try {
-                Thread.sleep(40);
-            } catch (InterruptedException e) {
-                return new ArrayList<>();
-            }
-        }
-    }
 
 
-
-
-
-
-    private ArrayList<Text> searchDBheTexts() throws InterruptedException, API.APIException {
+    private ArrayList<Text> searchDBheTexts() throws API.APIException {
         if(API.useAPI()){
             return new ArrayList<>();//APISearch(query, filterArray);
         }
 
-        int startingChunk = currChunkIndex;
+        int startingChunk = currSearchIndex;
         ArrayList<Text> results = new ArrayList<>();
         long startTime = System.currentTimeMillis();
         try {
@@ -542,9 +494,6 @@ public class Searching {
 
             Cursor cursor = null;
             for(int i=startingChunk+1; i<searchableTids.size();i++){
-                /*if (interrupted) {
-                    throw new InterruptedException();
-                }*/
                 if(results.size() >= 6 || (results.size() >= 3  && System.currentTimeMillis() > startTime + WAITING_TIME)){
                     return results;
                 }
@@ -581,17 +530,18 @@ public class Searching {
                     while (cursor.moveToNext());
                 }
                 cursor.close();
-                currChunkIndex = i;
+                currSearchIndex = i;
             }
         } catch (Exception e) {
             GoogleTracker.sendException(e, "DB_search");
         }
 
-        if (results.size() == 0 && !interrupted) doneSearching = true;
+        if (results.size() == 0) isDoneSearching = true;
 
         return results;
     }
 
+    /*
     private ArrayList<Text> searchEnTexts(String word, String [] filterArray) throws API.APIException {
         if(API.useAPI()){
             return APISearch(word, filterArray);
@@ -630,31 +580,73 @@ public class Searching {
 
         return textList;
     }
+    */
 
-    private boolean startedSearching = false;
-    private class SearchAsync extends AsyncTask<String, Void, String> {
+    private void fillSearchBuffer(){
+        this.new FillSearchBufferAsync().execute();
+    }
+
+    private boolean isBufferFilled(){
+        return (resultsLists.size()>currResultNumber + SEARCH_BUFFER_SIZE);
+    }
+
+    /**
+     *  waits (in spin loop) until there is data to send. It will also tell a Async task to refill the search buffer if it's within it's limits
+     * @return the next batch of search results
+     */
+    public ArrayList<Text> getResults(){
+        while(true) {
+            Log.d("Searching", "currResultNumber:" + currResultNumber + "... resultsLists.size():"+ resultsLists.size());
+            if (currResultNumber < resultsLists.size()) {
+                if(!isBufferFilled())
+                    fillSearchBuffer();
+                return resultsLists.get(currResultNumber++);
+            } else if (isDoneSearching && currResultNumber >= resultsLists.size()) {
+                return new ArrayList<>();
+            }
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                return new ArrayList<>();
+            }
+        }
+    }
+
+    private class FillSearchBufferAsync extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-            if(startedSearching)
-                return null;
-            Log.d("Searching", "Async task started");
-            startedSearching = true;
-            try {
-                fillSearchBuffer();
-            } catch (API.APIException e) {
-                e.printStackTrace();
-                doneSearching = true;
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            Log.d("Searching", "Async task seeing if it should start.");
+            if(middleOfSearching) return null;
+            if(isDoneSearching) return null;
+            Log.d("Searching", "Async task started!");
+            middleOfSearching = true;
+            while(true){
+                ArrayList results;
+                try {
+                    if(true) {//TODO check if it's hebrew
+                        results = searchDBheTexts();
+                    }else{
+                        ;//results = searchEnTexts(query,filterArray);
+                    }
+                    resultsLists.add(results);
+                    Log.d("Searching", "ASYNC: currResultNumber:" + currResultNumber + "... resultsLists.size():" + resultsLists.size());
+                    if(results.size()==0){
+                        isDoneSearching = true;
+                        break;
+                    }
+                    if(isBufferFilled())
+                        break;
+                } catch (Exception e) {
+                    isDoneSearching = true;
+                    e.printStackTrace();
+                    GoogleTracker.sendException(e,"in fillSearchBuffer");
+                }
             }
-
+            middleOfSearching = false;
             return null;
         }
 
         @Override
-        protected void onPostExecute(String result) {
-            doneSearching = true;
-
-        }
+        protected void onPostExecute(String result) {}
     }
 }

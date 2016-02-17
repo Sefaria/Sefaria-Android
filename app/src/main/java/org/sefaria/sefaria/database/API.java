@@ -324,7 +324,7 @@ public class API {
 
     }
 
-    public static List<Text> getLinks(Text text, LinkCount linkFilter) {
+    public static List<Text> getLinks(Text text, LinkFilter linkFilter) {
         List<Text> texts = new ArrayList<Text>();
 
         return texts;
