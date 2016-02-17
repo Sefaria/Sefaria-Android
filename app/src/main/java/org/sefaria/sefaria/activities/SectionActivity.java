@@ -122,11 +122,14 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
                 if (linkFragment.getIsOpen()) {
                     int currInd = i + listView.getFirstVisiblePosition();
                     Text currSeg = sectionAdapter.getItem(currInd);
-                    if (currSeg.equals(linkFragment.getSegment())) return; //no need to update
 
                     if (currSeg.isChapter()) {//TODO maybe make this select the chapter links...but not actually
                         currSeg = sectionAdapter.getItem(currInd + 1);
                     }
+
+                    if (currSeg.equals(linkFragment.getSegment())) return; //no need to update
+
+
                     linkFragment.updateFragment(currSeg);
                     sectionAdapter.notifyDataSetChanged(); //redraw visible views to make current segment view darker
 
