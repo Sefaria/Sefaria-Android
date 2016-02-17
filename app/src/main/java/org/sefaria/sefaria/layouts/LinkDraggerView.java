@@ -121,14 +121,11 @@ public class LinkDraggerView extends RelativeLayout {
                     vy += tempVy.floatValue();
                 }
 
-
-
-                Log.d("blah", "Y velocity: " + vy);
                 int tempNewHeight = (int) (dragView.getHeight() - (ev.getY() - mPointerOffset));
 
                 //TODO this is way too jittery
                 if ((tempNewHeight > activity.getLinkFragMaxHeight() - SuperTextActivity.MAX_LINK_FRAG_SNAP_DISTANCE && vy < 0)||
-                        (tempNewHeight < SuperTextActivity.MAX_LINK_FRAG_SNAP_DISTANCE && vy > 0)) {
+                        (tempNewHeight < SuperTextActivity.MAX_LINK_FRAG_SNAP_DISTANCE && vy > 0) && false) {
                     int endPos = tempNewHeight < SuperTextActivity.MAX_LINK_FRAG_SNAP_DISTANCE ? 0 : activity.getLinkFragMaxHeight();
 
                     ValueAnimator animation = ValueAnimator.ofInt(tempNewHeight, endPos);
@@ -188,8 +185,12 @@ public class LinkDraggerView extends RelativeLayout {
         //newHeight = newHeight > maxH-SuperTextActivity.MAX_LINK_FRAG_SNAP_DISTANCE ? maxH : newHeight;
 
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) dragView.getLayoutParams();
-        if (newHeight >= 0) {
+        if (newHeight > 0) {
             params.height = newHeight;
+        } else if (newHeight == 0) {
+            //never let fragment be less than this height
+            activity.AnimateLinkFragClose(dragView);
+            //params.height = SuperTextActivity.MAX_LINK_FRAG_SNAP_DISTANCE;
         }
         dragView.setLayoutParams(params);
         return true;
