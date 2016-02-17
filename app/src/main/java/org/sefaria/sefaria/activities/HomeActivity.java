@@ -299,8 +299,9 @@ public class HomeActivity extends Activity {
         /*
         try {
             if(searching == null) {
-                searching = new Searching("ברא", new LinkFilter("Tosefta", 0, "", LinkFilter.DEPTH_TYPE.CAT));
-                //searching = new Searching("ברא", null);
+                boolean alsoSearchCommentary = true;
+                searching = new Searching("ברא", new LinkFilter("Tosefta", 0, "", LinkFilter.DEPTH_TYPE.CAT),alsoSearchCommentary);
+                //searching = new Searching("ברא", null,alsoSearchCommentary);
             }
             ArrayList<Text> results = searching.getResults();
 

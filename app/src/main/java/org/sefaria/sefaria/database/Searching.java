@@ -46,10 +46,19 @@ public class Searching {
     private String query;
     private ArrayList<ArrayList<Text>> resultsLists;
 
-    public Searching(String query, LinkFilter linkFilter) throws SQLException {
+    /**
+     * This is used for searching everything, a particular category, or book.
+     * (Book will be implemented differently in the future).
+     *
+     * @param query the word to search in Hebrew or English (currently only supporting Hebrew).
+     * @param linkFilter the enTitle of the category or book name that you're searching
+     * @param alsoSearchCommentary used for when linkFilter.depth_type == CAT and you want to search for the commentary in addition to the category (like Tanach and the Commentaries on Tanach).
+     * @throws SQLException
+     */
+    public Searching(String query, LinkFilter linkFilter,boolean alsoSearchCommentary) throws SQLException {
         this.linkFilter = linkFilter;
         this.query = query;
-        searchableTids = getSearchableTids(linkFilter);
+        searchableTids = getSearchableTids(linkFilter,alsoSearchCommentary);
         resultsLists = new ArrayList<>();
         fillSearchBuffer();
     }
@@ -373,7 +382,7 @@ public class Searching {
     }
 
 
-    private ArrayList<Pair<Integer,Integer>> getSearchableTids(LinkFilter linkFilter) throws SQLException {
+    private ArrayList<Pair<Integer,Integer>> getSearchableTids(LinkFilter linkFilter, boolean alsoSearchCommentary) throws SQLException {
         //chunklist is [) (inclusive, exclusive), and tid is (now) also [) (inclusive,exclusive)
         ArrayList<Pair<Integer,Integer>> searchableTids = new ArrayList<>();
         ArrayList<Integer> searchableChunks = getSearchingChunks(query);
@@ -388,7 +397,7 @@ public class Searching {
             return searchableTids;
         }
 
-        ArrayList<Pair<Integer,Integer>> tidMinMax = createFilteredTidMinMaxList(linkFilter);
+        ArrayList<Pair<Integer,Integer>> tidMinMax = createFilteredTidMinMaxList(linkFilter,alsoSearchCommentary);
         int tidIndex = 0;
         for(int i = 0; i<searchableChunks.size();i++){
             int chunkStart = CHUNK_SIZE*(searchableChunks.get(i));
@@ -413,7 +422,7 @@ public class Searching {
     }
 
 
-    private static ArrayList<Pair<Integer,Integer>> createFilteredTidMinMaxList(LinkFilter linkFilter){
+    private static ArrayList<Pair<Integer,Integer>> createFilteredTidMinMaxList(LinkFilter linkFilter, boolean alsoSearchCommentary){
         SQLiteDatabase db = Database.getDB();
         ArrayList<Pair<Integer,Integer>> tidMinMax = new ArrayList<>();
 
@@ -425,11 +434,20 @@ public class Searching {
             filterArray = new String[0];
         }else{
             if(linkFilter.depth_type == LinkFilter.DEPTH_TYPE.CAT) {
-                likeStatement = " categories LIKE ? ";
-                filterArray = new String[]{"[\"" + linkFilter.enTitle + "\"%"};
+                //TODO make Mishneh Torah (which is a subcategory) work
+                if(alsoSearchCommentary){
+                    likeStatement = " categories LIKE ? OR ? ";
+                    filterArray = new String[]{
+                            "[\"" + linkFilter.enTitle + "\"%",
+                            "[\"Commentary\",\"" + linkFilter.enTitle + "\"%"
+                    };
+                }else{
+                    likeStatement = " categories LIKE ? ";
+                    filterArray = new String[]{"[\"" + linkFilter.enTitle + "\"%"};
+                }
             }else{ // if(linkFilter.depth_type == LinkFilter.DEPTH_TYPE.BOOK) {
                 likeStatement = " title LIKE ? ";
-                filterArray = new String[]{"[\"" + linkFilter.enTitle + "\"%"};
+                filterArray = new String[]{linkFilter.enTitle};
             }
         }
         String bookSQL = "Select minTid, maxTid FROM Books WHERE " +
