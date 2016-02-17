@@ -7,8 +7,6 @@ import java.util.List;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.util.Log;
 
 public class Link {//implements Parcelable {
@@ -96,10 +94,10 @@ public class Link {//implements Parcelable {
     /**
      *
      * @param text
-     * @param linkFilter null if no filter or linkCount containing anything you want included in the filter (including LinkCount linkfiler's children)
+     * @param linkFilter null if no filter or linkCount containing anything you want included in the filter (including LinkFilter linkfiler's children)
      * @return List<Text> for texts links to the input text
      */
-    public static List<Text> getLinkedTexts(Text text, LinkCount linkFilter) {
+    public static List<Text> getLinkedTexts(Text text, LinkFilter linkFilter) {
         List<Text> linkList = new ArrayList<Text>();
         try{
             linkList = getLinkedTextsFromDB(text, linkFilter);
@@ -116,7 +114,7 @@ public class Link {//implements Parcelable {
     }
 
 
-    private static List<Text> getLinkedTextsFromDB(Text text, LinkCount linkFilter) {
+    private static List<Text> getLinkedTextsFromDB(Text text, LinkFilter linkFilter) {
         Database dbHandler = Database.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
         List<Text> linkList = new ArrayList<Text>();
@@ -130,13 +128,13 @@ public class Link {//implements Parcelable {
                 + ")";
 
         String [] args = null;
-        if(linkFilter.depth_type == LinkCount.DEPTH_TYPE.CAT){
-            if(linkFilter.enTitle.equals(LinkCount.COMMENTARY)){
+        if(linkFilter.depth_type == LinkFilter.DEPTH_TYPE.CAT){
+            if(linkFilter.enTitle.equals(LinkFilter.COMMENTARY)){
                 sql += " AND B.commentsOn = ? ";
                 args = new String[] {""+text.bid};
             }else{
                 String category;
-                if(linkFilter.enTitle.equals(LinkCount.QUOTING_COMMENTARY)) {
+                if(linkFilter.enTitle.equals(LinkFilter.QUOTING_COMMENTARY)) {
                     //the category in the database is simply "Commentary"
                     category = "Commentary";
                     //don't include the commentary that is directly for this book (like "Rashi on Genesis" for "Genesis")
@@ -149,7 +147,7 @@ public class Link {//implements Parcelable {
                 args = new String[]{category};
 
             }
-        }else if(linkFilter.depth_type == LinkCount.DEPTH_TYPE.BOOK){
+        }else if(linkFilter.depth_type == LinkFilter.DEPTH_TYPE.BOOK){
             sql += " AND B.title = ?";
             args = new String[]{linkFilter.enTitle};
         }
@@ -167,7 +165,7 @@ public class Link {//implements Parcelable {
 
         //Log.d("getLinksTextsFromDB", "Finished ... linkList.size():" + linkList.size());
         if(linkList.size()!= linkFilter.count && linkList.size() < 7){
-            for(LinkCount lc: linkFilter.getChildren()){
+            for(LinkFilter lc: linkFilter.getChildren()){
                 Log.d("Link", lc.toString());
             }
             for(Text link:linkList){

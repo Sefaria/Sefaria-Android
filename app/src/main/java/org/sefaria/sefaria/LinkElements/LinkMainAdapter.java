@@ -1,12 +1,10 @@
 package org.sefaria.sefaria.LinkElements;
 import android.content.Context;
-import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
@@ -15,9 +13,7 @@ import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.activities.LinkFragment;
 import org.sefaria.sefaria.activities.SuperTextActivity;
 import org.sefaria.sefaria.database.Book;
-import org.sefaria.sefaria.database.Link;
-import org.sefaria.sefaria.database.LinkCount;
-import org.sefaria.sefaria.database.Text;
+import org.sefaria.sefaria.database.LinkFilter;
 
 import java.util.List;
 
@@ -26,7 +22,7 @@ import java.util.List;
  */
 public class LinkMainAdapter extends RecyclerView.Adapter<LinkMainAdapter.LinkHolder> {
 
-    private List<LinkCount> itemList;
+    private List<LinkFilter> itemList;
     private SuperTextActivity context;
     private Book book;
     private LinkFragment fragment;
@@ -48,9 +44,9 @@ public class LinkMainAdapter extends RecyclerView.Adapter<LinkMainAdapter.LinkHo
 
         @Override
         public void onClick(View v) {
-            LinkCount linkCount = itemList.get(getAdapterPosition());
+            LinkFilter linkCount = itemList.get(getAdapterPosition());
             LinkFragment.State tempState;
-            if (linkCount.getDepthType() == LinkCount.DEPTH_TYPE.BOOK) {
+            if (linkCount.getDepthType() == LinkFilter.DEPTH_TYPE.BOOK) {
                 tempState = LinkFragment.State.BOOK;
             } else {
                 tempState = LinkFragment.State.CAT;
@@ -62,7 +58,7 @@ public class LinkMainAdapter extends RecyclerView.Adapter<LinkMainAdapter.LinkHo
     }
 
 
-    public LinkMainAdapter(SuperTextActivity context, List<LinkCount> itemList, Book book, LinkFragment fragment) {
+    public LinkMainAdapter(SuperTextActivity context, List<LinkFilter> itemList, Book book, LinkFragment fragment) {
         this.itemList = itemList;
         this.context = context;
         this.book = book;
@@ -79,14 +75,14 @@ public class LinkMainAdapter extends RecyclerView.Adapter<LinkMainAdapter.LinkHo
 
     @Override
     public void onBindViewHolder(LinkHolder holder, int position) {
-        LinkCount linkCount = itemList.get(position);
+        LinkFilter linkCount = itemList.get(position);
 
         holder.tv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
 
         Util.Lang lang = Settings.getMenuLang();
         String bookTitle = linkCount.getSlimmedTitle(book, lang);
 
-        if (linkCount.getDepthType() == LinkCount.DEPTH_TYPE.BOOK)  {
+        if (linkCount.getDepthType() == LinkFilter.DEPTH_TYPE.BOOK)  {
             if (linkCount.getCount() == 0) {
                 holder.tv.setText(bookTitle);
                 holder.tv.setTextColor(Util.getColor(context,R.attr.text_color_faded));
@@ -122,12 +118,12 @@ public class LinkMainAdapter extends RecyclerView.Adapter<LinkMainAdapter.LinkHo
         return this.itemList.size();
     }
 
-    public void setItemList(List<LinkCount> items) {
+    public void setItemList(List<LinkFilter> items) {
         itemList = items;
         notifyDataSetChanged();
     }
 
-    public LinkCount getItem(int position) {
+    public LinkFilter getItem(int position) {
         return itemList.get(position);
     }
 
