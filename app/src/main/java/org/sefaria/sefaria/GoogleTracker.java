@@ -23,10 +23,26 @@ public class GoogleTracker extends MyApp {
     public static final String BUTTON_PRESS = "Button Press";
     public static final String SETTING_CHANGE = "Setting Change";
     public static final String CATEGORY_OPEN_MENU = "Opened Menu page";
+    public static final String CATEGORY_SCREEN_CHANGE = "Screen Change";
+    public static final String CATEGORY_STATUS_INFO = "Status Info";
 
     public GoogleTracker(){
         getTracker();
         setTrackerID();
+        sendEvent(CATEGORY_SCREEN_CHANGE, "Started App");
+        sendEvent("Menu lang",Settings.lang2Str(Settings.getDefaultTextLang()));
+        int theme = Settings.getTheme();
+        String themeName = "";
+        if(theme == R.style.SefariaTheme_White)
+            themeName = "SefariaTheme_White";
+        else if(theme == R.style.SefariaTheme_Grey)
+            themeName = "SefariaTheme_Grey";
+        else if(theme == R.style.SefariaTheme_Black)
+            themeName = "SefariaTheme_Black";
+        sendEvent("Theme",themeName);
+        Boolean sideBySide = Settings.getIsSideBySide();
+        sendEvent("sideBySide", sideBySide.toString());
+        sendEvent("Text lang",Settings.lang2Str(Settings.getDefaultTextLang()));
     }
 
 
@@ -52,7 +68,7 @@ public class GoogleTracker extends MyApp {
             tracker.set("&uid", randomID);
 
             // This hit will be sent with the User ID value and be visible in User-ID-enabled views (profiles).
-            tracker.send(new HitBuilders.EventBuilder().setCategory("UX").setAction("User Sign In").build());
+            //tracker.send(new HitBuilders.EventBuilder().setCategory("Scr").setAction("User Sign In").build());
         } catch (Exception e){
             e.printStackTrace();
             sendException(e);
@@ -70,8 +86,6 @@ public class GoogleTracker extends MyApp {
             t.enableExceptionReporting(true);
             t.enableAutoActivityTracking(true);
             tracker = t;
-
-            sendScreen("Started App");
             //Toast.makeText(context, "Made tracker.", Toast.LENGTH_SHORT).show();
         } catch (Exception e){
             e.printStackTrace();
@@ -113,7 +127,7 @@ public class GoogleTracker extends MyApp {
 
 
     static public void sendScreen(String screenName){
-        sendEvent("Screen Change", screenName);
+        sendEvent(CATEGORY_SCREEN_CHANGE, screenName);
         // Set screen name.
         tracker.setScreenName(screenName); //when you do this, it overrides the
 

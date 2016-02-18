@@ -31,6 +31,7 @@ public class Settings {
      */
 
     private static Util.Lang menuLang = null;
+    private static Util.Lang defaultTextLang = null;
 
     static public void setMenuLang(Util.Lang lang){
         menuLang = lang;
@@ -50,13 +51,22 @@ public class Settings {
         return menuLang;
     }
 
-    private static String lang2Str(Util.Lang lang){
+    public static String lang2Str(Util.Lang lang){
         if(lang == Util.Lang.HE)
             return "he";
         else if(lang == Util.Lang.EN)
             return "en";
         else //bi
             return  "bi";
+    }
+
+    public static int lang2Int(Util.Lang lang){
+        if(lang == Util.Lang.HE)
+            return 1;
+        else if(lang == Util.Lang.EN)
+            return 2;
+        else //bi
+            return 3;
     }
 
     private static Util.Lang str2Lang(String langStr){
@@ -90,8 +100,23 @@ public class Settings {
     }
 
     public static Util.Lang getDefaultTextLang(){
-        return Util.Lang.BI;
+        if(defaultTextLang != null) return defaultTextLang;
+        SharedPreferences generalSettings = getGeneralSettings();
+        String langStr = generalSettings.getString("defaultTextLang", "bi");
+        defaultTextLang = str2Lang(langStr);
+        return defaultTextLang;
     }
+
+    static public void setDefaultTextLang(Util.Lang lang){
+        defaultTextLang = lang;
+        SharedPreferences generalSettings = getGeneralSettings();
+        SharedPreferences.Editor editor = generalSettings.edit();
+        String langStr = lang2Str(lang);
+        editor.putString("defaultTextLang",langStr);
+        editor.commit();
+    }
+
+
 
     public static boolean getIsSideBySide(){
         SharedPreferences generalSettings = getGeneralSettings();
@@ -176,6 +201,7 @@ public class Settings {
             SharedPreferences bookSavedSettings = getBookSavedSettings();
             SharedPreferences.Editor editor = bookSavedSettings.edit();
             //"<en|he|bi>.<cts|sep>.<white|grey|black>.10px:"+ <rootNum>.<Childnum>.<until>.<leaf>.<verseNum>"
+            setDefaultTextLang(lang);
             String tid = "0";
             if (text != null)
                 tid = "" + text.tid;

@@ -8,6 +8,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Settings;
@@ -109,6 +110,7 @@ public class MenuDirectRef extends LinearLayout{
     OnClickListener clickListener = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            GoogleTracker.sendEvent("MenuDirectRef", enTitle);
             Text text = new Text(Settings.BookSettings.getSavedBook(book).tid);
             SuperTextActivity.startNewTextActivityIntent(context,book,text,getNode());
         }
