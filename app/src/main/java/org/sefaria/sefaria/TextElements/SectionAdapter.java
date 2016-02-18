@@ -129,8 +129,8 @@ public class SectionAdapter extends ArrayAdapter<Text> {
 
 
                 //enTv.setTextColor(Color.parseColor("#999999"));
-                enTv.setFont(Util.Lang.EN,true);
-                enTv.setTextSize(activity.getTextSize());
+                enTv.setFont(Util.Lang.EN,true,activity.getTextSize());
+                //enTv.setTextSize(activity.getTextSize());
 
                 //heTv.setTextColor(Color.parseColor("#000000"));
                 heTv.setFont(Util.Lang.HE,true);
@@ -141,11 +141,10 @@ public class SectionAdapter extends ArrayAdapter<Text> {
                     heNum.setText("");
 
                 heNum.setAlpha(1);
-                heNum.setFont(Util.Lang.HE,false);
-                //heNum.setTypeface(MyApp.getFont(MyApp.MONTSERRAT_FONT));
+                heNum.setFont(Util.Lang.HE,true);
                 enNum.setText(Util.VERSE_BULLET);
                 enNum.setAlpha(linkAlpha);
-                heNum.setFont(Util.Lang.EN, false);
+                enNum.setFont(Util.Lang.HE, true);
 
             }
 
@@ -179,13 +178,13 @@ public class SectionAdapter extends ArrayAdapter<Text> {
                     tv.setText(Html.fromHtml(monoText));
                     enNum.setText(Util.VERSE_BULLET);
                     enNum.setAlpha(linkAlpha);
-                    enNum.setFont(Util.Lang.EN, false);
+                    enNum.setFont(Util.Lang.HE, true);
                     if(segment.displayNum)
                         heNum.setText(Util.int2heb(segment.levels[0]));
                     else
                         heNum.setText("");
                     heNum.setAlpha(1);
-                    heNum.setFont(Util.Lang.HE, false);
+                    heNum.setFont(Util.Lang.HE, true);
                 } else /*if (activity.getTextLang() == Util.Lang.EN)*/ {
                     tv.setText(Html.fromHtml(monoText));
                     if(segment.displayNum)
@@ -193,11 +192,11 @@ public class SectionAdapter extends ArrayAdapter<Text> {
                     else
                         enNum.setText("");
 
-                    enNum.setFont(Util.Lang.EN, false);
+                    enNum.setFont(Util.Lang.EN, true);
                     enNum.setAlpha(1);
                     heNum.setText(Util.VERSE_BULLET);
                     heNum.setAlpha(linkAlpha);
-                    heNum.setFont(Util.Lang.EN, false);
+                    heNum.setFont(Util.Lang.HE, true);
                 }
                 tv.setFont(lang,true);
                 tv.setTextSize(activity.getTextSize());

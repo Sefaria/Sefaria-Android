@@ -110,7 +110,7 @@ public class HomeActivity extends Activity {
 
 
         //just extra spacing for the bottom
-        homeRoot.addView(createTypeTitle(""));
+        homeRoot.addView(createTypeTitle("",false));
 
         LayoutInflater inflater = (LayoutInflater) getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
         View homeFooter = inflater.inflate(R.layout.home_footer, null);
@@ -141,7 +141,7 @@ public class HomeActivity extends Activity {
 
     private void addHeader(LinearLayout homeRoot){
         //Living Library
-        TextView livingLibaryView = createTypeTitle("A Living Library of Jewish Texts");
+        TextView livingLibaryView = createTypeTitle("A Living Library of Jewish Texts",true);
         livingLibaryView.setTextSize(20);
         int livingPadding = 60;
         livingLibaryView.setPadding(3, livingPadding, 3, livingPadding);
@@ -164,7 +164,7 @@ public class HomeActivity extends Activity {
         List<String> recentBooks = Settings.RecentTexts.getRecentTexts();
         recentTexts = new ArrayList<>();
         if(recentBooks.size()>0) {
-            recentRoot.addView(createTypeTitle("Recent Texts"));
+            recentRoot.addView(createTypeTitle("Recent Texts",false));
             LinearLayout recentRow = null;
             for (int i=0;i<recentBooks.size();i++){
                 if(i%columNum  == 0){
@@ -204,7 +204,7 @@ public class HomeActivity extends Activity {
         //Menu grid
         Util.Lang menuLang = Settings.getMenuLang();
         menuGrid = new MenuGrid(this,NUM_COLUMNS, menuState,LIMIT_GRID_SIZE,menuLang);
-        homeRoot.addView(createTypeTitle("Browse Texts"));
+        homeRoot.addView(createTypeTitle("Browse Texts",false));
         homeRoot.addView(menuGrid);
     }
 
@@ -229,7 +229,7 @@ public class HomeActivity extends Activity {
         LinearLayout calendarRoot = new LinearLayout(this);
         calendarRoot.setOrientation(LinearLayout.HORIZONTAL);
         calendarRoot.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
-        homeRoot.addView(createTypeTitle("Calendar"));
+        homeRoot.addView(createTypeTitle("Calendar",false));
         homeRoot.addView(calendarRoot);
         dailtylearnings = DailyLearning.getDailyLearnings(this);
         for(MenuDirectRef menuDirectRef: dailtylearnings) {
@@ -237,14 +237,14 @@ public class HomeActivity extends Activity {
         }
     }
 
-    private TextView createTypeTitle(String title){
+    private TextView createTypeTitle(String title, boolean isSerif){
         SefariaTextView textView = new SefariaTextView(this);
         textView.setText(title);
         final int paddingSide= 3;
         final int paddingTop = 20;
         textView.setPadding(paddingSide,paddingTop*2,paddingSide,paddingTop);
         textView.setTextSize(20);
-        textView.setFont(Util.Lang.EN,true); //TODO change with system lang
+        textView.setFont(Util.Lang.EN,isSerif); //TODO change with system lang
         textView.setGravity(Gravity.CENTER);
 
         return textView;

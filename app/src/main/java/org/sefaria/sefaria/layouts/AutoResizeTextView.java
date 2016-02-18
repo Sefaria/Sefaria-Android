@@ -21,7 +21,7 @@ import android.widget.TextView;
  * It should work fine with most Android versions, but might have some issues on Android 3.1 - 4.04, as setTextSize will only work for the first time. <br/>
  * More info here: https://code.google.com/p/android/issues/detail?id=22493 and here in case you wish to fix it: http://stackoverflow.com/a/21851239/878126
  */
-public class AutoResizeTextView extends TextView
+public class AutoResizeTextView extends SefariaTextView
 {
     private static final int NO_LINE_LIMIT=-1;
     private final RectF _availableSpaceRect=new RectF();
