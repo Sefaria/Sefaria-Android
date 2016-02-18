@@ -25,7 +25,7 @@ public class CustomActionbar extends MenuElement {
     private View backBtn;
     private View invisableBtn;
     private View invisableBtnLeft;
-    private TextView titleTV;
+    private SefariaTextView titleTV;
     private String heText = null;
     private String enText = null;
     private MenuNode menuNode;
@@ -46,10 +46,10 @@ public class CustomActionbar extends MenuElement {
         invisableBtn = findViewById(R.id.invisable_btn);
         invisableBtnLeft = findViewById(R.id.invisable_btn_left);
         colorBar = findViewById(R.id.color_bar);
-        titleTV = (TextView) findViewById(R.id.title);
+        titleTV = (SefariaTextView) findViewById(R.id.title);
 
-        TextView langBtn = (TextView) menuBtn.findViewById(R.id.lang_btn);
-        langBtn.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
+        SefariaTextView langBtn = (SefariaTextView) menuBtn.findViewById(R.id.lang_btn);
+        langBtn.setFont(Util.Lang.HE,true);
 
 
         setLang(lang);
@@ -136,14 +136,7 @@ public class CustomActionbar extends MenuElement {
 
 
         setTitle(title);
-        if (lang == Util.Lang.HE) {
-            titleTV.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
-            //titleTV.setTextSize((getResources().getDimension(R.dimen.custom_actionbar_font_size) * Util.EN_HE_RATIO));
-        }
-        else if (lang == Util.Lang.EN) {
-            titleTV.setTypeface(MyApp.getFont(MyApp.MONTSERRAT_FONT));
-            //titleTV.setTextSize(getResources().getDimension(R.dimen.custom_actionbar_font_size));
-        }
+        titleTV.setFont(lang,false);
     }
 
     public MenuNode getNode(){

@@ -26,6 +26,7 @@ import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.MenuElements.MenuGrid;
 import org.sefaria.sefaria.MenuElements.MenuNode;
 import org.sefaria.sefaria.MenuElements.MenuState;
+import org.sefaria.sefaria.layouts.SefariaTextView;
 
 import android.util.Log;
 import android.util.Pair;
@@ -237,13 +238,13 @@ public class HomeActivity extends Activity {
     }
 
     private TextView createTypeTitle(String title){
-        TextView textView = new TextView(this);
+        SefariaTextView textView = new SefariaTextView(this);
         textView.setText(title);
         final int paddingSide= 3;
         final int paddingTop = 20;
         textView.setPadding(paddingSide,paddingTop*2,paddingSide,paddingTop);
         textView.setTextSize(20);
-        textView.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
+        textView.setFont(Util.Lang.EN,true); //TODO change with system lang
         textView.setGravity(Gravity.CENTER);
 
         return textView;

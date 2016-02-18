@@ -30,12 +30,15 @@ public class MyApp extends Application {
             R.color.apocrypha,R.color.system_color,R.color.quoting_commentary,
             R.color.modern_works,R.color.commentary, R.color.system_color};
 
-    public static final int MONTSERRAT_FONT = 123;
-    public static final int TAAMEY_FRANK_FONT = 124;
+    public enum Font {
+        MONTSERRAT,TAAMEY_FRANK,OPEN_SANS_EN,OPEN_SANS_HE,GARAMOND
+    }
 
     private static Typeface monserrat_tf;
     private static Typeface taamey_frank_tf;
-
+    private static Typeface open_sans_en_tf;
+    private static Typeface open_sans_he_tf;
+    private static Typeface garamond_tf;
 
     private static Context context;
     public static Activity currActivityContext;
@@ -60,14 +63,21 @@ public class MyApp extends Application {
     private static void initFonts() {
         monserrat_tf = Typeface.createFromAsset(context.getAssets(), "fonts/Montserrat-Regular.otf");
         taamey_frank_tf = Typeface.createFromAsset(context.getAssets(), "fonts/TaameyFrankCLM-Medium.ttf");
+        open_sans_en_tf = Typeface.createFromAsset(context.getAssets(), "fonts/OpenSans-Regular.ttf");
+        open_sans_he_tf = Typeface.createFromAsset(context.getAssets(), "fonts/OpenSansHebrew-Regular.ttf");
+        garamond_tf = Typeface.createFromAsset(context.getAssets(), "fonts/EBGaramond12-Regular.ttf");
     }
 
-    public static Typeface getFont(int which) {
-        switch ( which) {
-            case MONTSERRAT_FONT:
+    public static Typeface getFont(Font font) {
+        switch (font) {
+            case MONTSERRAT:
                 return monserrat_tf;
-            case TAAMEY_FRANK_FONT:
+            case TAAMEY_FRANK:
                 return taamey_frank_tf;
+            case OPEN_SANS_EN:
+                return open_sans_en_tf;
+            case GARAMOND:
+                return garamond_tf;
         }
         return null;
     }

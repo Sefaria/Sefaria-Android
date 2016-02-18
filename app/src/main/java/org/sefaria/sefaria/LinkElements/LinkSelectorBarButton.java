@@ -11,11 +11,12 @@ import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.LinkFilter;
+import org.sefaria.sefaria.layouts.SefariaTextView;
 
 /**
  * Created by nss on 1/21/16.
  */
-public class LinkSelectorBarButton extends TextView {
+public class LinkSelectorBarButton extends SefariaTextView {
 
     private Context context;
     private LinkFilter linkCount;
@@ -36,7 +37,7 @@ public class LinkSelectorBarButton extends TextView {
 
         int padding = 15;
         this.setPadding(padding, padding, padding, padding);
-        this.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
+        this.setFont(lang,true);
         this.setTextColor(Util.getColor(context,R.attr.text_color_main));
         this.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.button_ripple_rect));
     }

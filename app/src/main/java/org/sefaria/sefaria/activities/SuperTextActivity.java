@@ -84,7 +84,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
     //link vars
     protected LinkFragment linkFragment;
-    protected LinkDraggerView linkDraggerView;
+    //protected LinkDraggerView linkDraggerView;
     /**
      * hacky boolean so that if there's a problem with the on create, the subclasses know not to continue with init (after they call super.onCreate)
      */
@@ -187,7 +187,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
         textScrollView = (ScrollViewExt) findViewById(R.id.textScrollView);
 
-        linkDraggerView = (LinkDraggerView) findViewById(R.id.link_dragger);
+        //linkDraggerView = (LinkDraggerView) findViewById(R.id.link_dragger);
 
         //this specifically comes before menugrid, b/c in tabs it menugrid does funny stuff to currnode
         if (customActionbar == null) {
@@ -608,7 +608,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
     //-----
 
     public int getLinkFragMaxHeight() {
-        return findViewById(R.id.root).getHeight()-findViewById(R.id.actionbarRoot).getHeight()-findViewById(R.id.link_dragger).getHeight();
+        return findViewById(R.id.root).getHeight()-findViewById(R.id.actionbarRoot).getHeight();
     }
 
 
@@ -649,7 +649,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
                 linkFragment.setDontUpdate(false);
                 linkFragment.setIsOpen(true);
 
-                linkDraggerView.setVisibility(View.VISIBLE);
+                //linkDraggerView.setVisibility(View.VISIBLE);
             }
 
         });
@@ -670,7 +670,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
             @Override
             public void onAnimationStart(Animation animation) {
-                linkDraggerView.setVisibility(View.GONE);
+                //linkDraggerView.setVisibility(View.GONE);
 
                 linkFragment.setIsOpen(false);
                 linkFragment.setDontUpdate(true);
