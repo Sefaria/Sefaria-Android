@@ -130,7 +130,7 @@ public class SectionAdapter extends ArrayAdapter<Text> {
 
                 //enTv.setTextColor(Color.parseColor("#999999"));
                 enTv.setFont(Util.Lang.EN,true);
-                enTv.setTextSize((int) (0.9 * activity.getTextSize()));
+                enTv.setTextSize(activity.getTextSize());
 
                 //heTv.setTextColor(Color.parseColor("#000000"));
                 heTv.setFont(Util.Lang.HE,true);
