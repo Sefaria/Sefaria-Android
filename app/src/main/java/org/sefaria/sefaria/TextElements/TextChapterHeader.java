@@ -10,6 +10,7 @@ import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.Text;
+import org.sefaria.sefaria.layouts.SefariaTextView;
 
 /**
  * Created by nss on 11/4/15.
@@ -17,7 +18,7 @@ import org.sefaria.sefaria.database.Text;
 public class TextChapterHeader extends LinearLayout {
 
     //private Util.Lang lang;
-    private TextView tv;
+    private SefariaTextView tv;
     public String enText;
     public String heText;
 
@@ -45,7 +46,7 @@ public class TextChapterHeader extends LinearLayout {
 
     private void init(Context context, float textSize) {
         inflate(context, R.layout.text_chapter_header, this);
-        tv = (TextView) findViewById(R.id.tv);
+        tv = (SefariaTextView) findViewById(R.id.tv);
 
         Util.Lang lang = Settings.getMenuLang();
         setLang(lang);
@@ -53,16 +54,12 @@ public class TextChapterHeader extends LinearLayout {
     }
 
     public void setLang(Util.Lang lang) {
-
+        tv.setFont(lang,true);
         if (lang == Util.Lang.HE) {
             tv.setText(heText);
-            tv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
-            //tv.setTextSize((getResources().getDimension(R.dimen.button_menu_font_size) * Util.EN_HE_RATIO));
         }
         else {
             tv.setText(enText);
-            tv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT)); //actually, currently there's no nafka mina
-            //tv.setTextSize(getResources().getDimension(R.dimen.button_menu_font_size));
         }
     }
 

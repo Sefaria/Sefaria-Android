@@ -20,32 +20,30 @@ import android.widget.RelativeLayout;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.activities.SuperTextActivity;
 
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.Queue;
 
 /**
  * Created by nss on 2/8/16.
  */
-public class LinkDraggerView extends RelativeLayout {
+public class LinkDraggerView extends LinearLayout {
 
     private float mPointerOffset;
     private int maxHeightViewId;
     private int dragViewId;
-    private View maxHeightView;
     private View dragView;
 
-    private SuperTextActivity activity;
-    //velocity info found here: https://developer.android.com/training/gestures/movement.html#velocity
-    private VelocityTracker mVelocityTracker = null;
-    private Queue<Float> velocityQ;
+    //touch intercept vars
+    private static final int MAX_CLICK_DURATION = 200;
+    private long startClickTime;
 
-    private boolean dragDisabled;
+    private SuperTextActivity activity;
 
     public LinkDraggerView(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
 
         activity = (SuperTextActivity) context;
-        dragDisabled = false;
 
         TypedArray a = context.obtainStyledAttributes(attributeSet, R.styleable.LinkDraggerView);
         final int N = a.getIndexCount();
@@ -54,9 +52,6 @@ public class LinkDraggerView extends RelativeLayout {
             switch(attr){
                 case R.styleable.LinkDraggerView_dragView:
                     dragViewId = a.getResourceId(attr, -1);
-                    break;
-                case R.styleable.LinkDraggerView_maxHeightView:
-                    maxHeightViewId = a.getResourceId(attr,-1);
                     break;
             }
         }
@@ -79,9 +74,6 @@ public class LinkDraggerView extends RelativeLayout {
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-
-
-        if (maxHeightView == null) maxHeightView = getRootView().findViewById(maxHeightViewId);
         if (dragView == null) dragView = getRootView().findViewById(dragViewId);
 
         int index = ev.getActionIndex();
@@ -89,44 +81,25 @@ public class LinkDraggerView extends RelativeLayout {
         int pointerId = ev.getPointerId(index);
         switch (action) {
             case MotionEvent.ACTION_DOWN: {
-                if(mVelocityTracker == null) {
-                    // Retrieve a new VelocityTracker object to watch the velocity of a motion.
-                    velocityQ = new LinkedList<>();
-                    mVelocityTracker = VelocityTracker.obtain();
-                } else {
-                    // Reset the velocity tracker back to its initial state.
-                    velocityQ.clear();
-                    mVelocityTracker.clear();
-                }
-                // Add a user's movement to the tracker.
-                mVelocityTracker.addMovement(ev);
-
-
                 mPointerOffset = ev.getY();
                 break;
             }
 
             case MotionEvent.ACTION_MOVE: {
-                mVelocityTracker.addMovement(ev);
-                // When you want to determine the velocity, call
-                // computeCurrentVelocity(). Then call getXVelocity()
-                // and getYVelocity() to retrieve the velocity for each pointer ID.
-                mVelocityTracker.computeCurrentVelocity(100);
-
-                velocityQ.add(mVelocityTracker.getYVelocity(pointerId));
-                if (velocityQ.size() > 5) velocityQ.remove();
-
-                float vy = 0;// = mVelocityTracker.getYVelocity(pointerId);
-                for (Float tempVy : velocityQ) {
-                    vy += tempVy.floatValue();
-                }
-
                 int tempNewHeight = (int) (dragView.getHeight() - (ev.getY() - mPointerOffset));
 
-                //TODO this is way too jittery
-                if ((tempNewHeight > activity.getLinkFragMaxHeight() - SuperTextActivity.MAX_LINK_FRAG_SNAP_DISTANCE && vy < 0)||
-                        (tempNewHeight < SuperTextActivity.MAX_LINK_FRAG_SNAP_DISTANCE && vy > 0) && false) {
-                    int endPos = tempNewHeight < SuperTextActivity.MAX_LINK_FRAG_SNAP_DISTANCE ? 0 : activity.getLinkFragMaxHeight();
+
+                setNewHeight(tempNewHeight);
+
+
+                break;
+            }
+
+            case MotionEvent.ACTION_UP: {
+
+                int tempNewHeight = (int) (dragView.getHeight() - (ev.getY() - mPointerOffset));
+                if (tempNewHeight > activity.getLinkFragMaxHeight() - SuperTextActivity.MAX_LINK_FRAG_SNAP_DISTANCE) {
+                    int endPos = activity.getLinkFragMaxHeight();
 
                     ValueAnimator animation = ValueAnimator.ofInt(tempNewHeight, endPos);
                     animation.setDuration(300);
@@ -139,31 +112,22 @@ public class LinkDraggerView extends RelativeLayout {
                     });
                     animation.addListener(new Animator.AnimatorListener() {
                         @Override
-                        public void onAnimationStart(Animator animation) {dragDisabled = true;}
+                        public void onAnimationStart(Animator animation) {}
                         @Override
-                        public void onAnimationEnd(Animator animation) {dragDisabled = false;}
+                        public void onAnimationEnd(Animator animation) {}
                         @Override
                         public void onAnimationCancel(Animator animation) {}
                         @Override
                         public void onAnimationRepeat(Animator animation) {}
                     });
                     animation.start();
-                } else if (!dragDisabled){
-                    setNewHeight(tempNewHeight);
+                } else if (tempNewHeight < SuperTextActivity.MAX_LINK_FRAG_SNAP_DISTANCE) {
+                    activity.AnimateLinkFragClose(dragView);
                 }
-
-
-
-                break;
-            }
-
-            case MotionEvent.ACTION_UP: {
                 break;
             }
 
             case MotionEvent.ACTION_CANCEL: {
-                // Return a VelocityTracker object back to be re-used by others.
-                mVelocityTracker.recycle();
                 break;
             }
 
@@ -172,6 +136,32 @@ public class LinkDraggerView extends RelativeLayout {
             }
         }
         return true;
+    }
+
+    //roughly based off of:
+    //https://stackoverflow.com/questions/9965695/how-to-distinguish-between-move-and-click-in-ontouchevent
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent event) {
+
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN: {
+                startClickTime = Calendar.getInstance().getTimeInMillis();
+
+            }
+            case MotionEvent.ACTION_MOVE: {
+                long clickDuration = Calendar.getInstance().getTimeInMillis() - startClickTime;
+                if(clickDuration < MAX_CLICK_DURATION) {
+                    return false; //click event has occured
+                } else {
+                    //drag event
+                    return true;
+                }
+            }
+            case MotionEvent.ACTION_UP: {
+
+            }
+        }
+        return false;
     }
 
     private boolean setNewHeight(int newHeight) {
@@ -185,13 +175,7 @@ public class LinkDraggerView extends RelativeLayout {
         //newHeight = newHeight > maxH-SuperTextActivity.MAX_LINK_FRAG_SNAP_DISTANCE ? maxH : newHeight;
 
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) dragView.getLayoutParams();
-        if (newHeight > 0) {
-            params.height = newHeight;
-        } else if (newHeight == 0) {
-            //never let fragment be less than this height
-            activity.AnimateLinkFragClose(dragView);
-            //params.height = SuperTextActivity.MAX_LINK_FRAG_SNAP_DISTANCE;
-        }
+        params.height = newHeight;
         dragView.setLayoutParams(params);
         return true;
 

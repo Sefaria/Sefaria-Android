@@ -132,7 +132,7 @@
             android:layout_margin="0dp"
             android:background="?selectableItemBackgroundBorderless"
             >
-            <TextView
+            <org.sefaria.sefaria.layouts.SefariaTextView
                 android:id="@+id/lang_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -152,7 +152,7 @@
             >
 
         </FrameLayout>
-        <org.sefaria.sefaria.layouts.AutoResizeTextView
+        <org.sefaria.sefaria.layouts.SefariaTextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_toRightOf="@id/invisable_btn_left"

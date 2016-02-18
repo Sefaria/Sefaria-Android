@@ -1,5 +1,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_height="match_parent"
     tools:context="org.sefaria.sefaria.activities.LinkFragment">
@@ -7,21 +8,23 @@
         android:id="@+id/main_color_bar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/color_bar_height"
-        android:background="@color/talmud"
-        android:visibility="gone"/>
-    <LinearLayout
+        android:background="?custom_actionbar_border"/>
+
+    <org.sefaria.sefaria.layouts.LinkDraggerView
         android:id="@+id/link_selector_bar_root"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:background="?custom_actionbar_bg"
         android:paddingLeft="10dp"
-        android:paddingRight="10dp"></LinearLayout>
+        android:paddingRight="10dp"
+        custom:dragView="@+id/linkRoot">
+    </org.sefaria.sefaria.layouts.LinkDraggerView>
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="?custom_actionbar_border"/>
-    <TextView
+    <org.sefaria.sefaria.layouts.SefariaTextView
         android:visibility="gone"
         android:id="@+id/no_links_tv"
         android:layout_width="match_parent"

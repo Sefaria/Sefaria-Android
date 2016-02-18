@@ -13,10 +13,11 @@ import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.activities.SuperTextActivity;
 import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Node;
+import org.sefaria.sefaria.layouts.SefariaTextView;
 
 public class TOCCommentary extends LinearLayout implements TOCElement {
 
-    private TextView content_root;
+    private SefariaTextView content_root;
     private Context context;
     private Book commentary;
     private Book mainBook;
@@ -40,8 +41,7 @@ public class TOCCommentary extends LinearLayout implements TOCElement {
     }
 
     private void init(Util.Lang lang){
-        content_root = (TextView) findViewById(R.id.content_root);
-        content_root.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
+        content_root = (SefariaTextView) findViewById(R.id.content_root);
 
         setLang(lang);
         this.setOnClickListener(clickListener);
@@ -50,6 +50,7 @@ public class TOCCommentary extends LinearLayout implements TOCElement {
     @Override
     public void setLang(Util.Lang lang) {
         String text = Book.removeOnMainBookFromTitle(commentary.getTitle(lang),mainBook);
+        content_root.setFont(lang,true);
         content_root.setText(text);
     }
 

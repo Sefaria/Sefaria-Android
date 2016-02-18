@@ -37,23 +37,31 @@
         android:layout_height="match_parent"
 
         android:layout_alignTop="@id/useless"/><!--android:layout_above="@+id/linkRoot"-->
-    <org.sefaria.sefaria.layouts.LinkDraggerView
+    <!--<org.sefaria.sefaria.layouts.LinkDraggerView
         android:id="@+id/link_dragger"
         android:layout_width="match_parent"
-        android:layout_height="20dp"
+        android:layout_height="40dp"
         android:orientation="vertical"
-        android:background="@drawable/link_dragger_background"
+
         android:layout_above="@+id/linkRoot"
         custom:maxHeightView="@+id/useless"
         custom:dragView="@+id/linkRoot">
-        <ImageView
-            android:layout_width="10dp"
-            android:layout_height="10dp"
-            android:layout_centerInParent="true"
-            android:alpha="0.5"
-            android:src="@drawable/dots"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:orientation="vertical"
+            android:background="@drawable/link_dragger_background"
+            android:layout_alignParentBottom="true">
+            <ImageView
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_centerInParent="true"
+                android:alpha="0.5"
+                android:src="@drawable/dots"/>
+        </RelativeLayout>
 
-    </org.sefaria.sefaria.layouts.LinkDraggerView>
+
+    </org.sefaria.sefaria.layouts.LinkDraggerView>-->
     <RelativeLayout
         android:visibility="gone"
         android:id="@+id/linkRoot"

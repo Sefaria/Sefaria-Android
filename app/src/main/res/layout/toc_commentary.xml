@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<org.sefaria.sefaria.layouts.AutoResizeTextView  xmlns:android="http://schemas.android.com/apk/res/android"
+<org.sefaria.sefaria.layouts.SefariaTextView  xmlns:android="http://schemas.android.com/apk/res/android"
 
 
 
@@ -27,4 +27,4 @@
 
     >
 
-</org.sefaria.sefaria.layouts.AutoResizeTextView >
+</org.sefaria.sefaria.layouts.SefariaTextView >

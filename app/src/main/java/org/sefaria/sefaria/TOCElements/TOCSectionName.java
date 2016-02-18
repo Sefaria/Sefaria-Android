@@ -15,6 +15,7 @@ import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.activities.SectionActivity;
 import org.sefaria.sefaria.activities.TextActivity;
 import org.sefaria.sefaria.database.Node;
+import org.sefaria.sefaria.layouts.SefariaTextView;
 
 import java.util.Objects;
 
@@ -23,7 +24,7 @@ import java.util.Objects;
  */
 public class TOCSectionName extends LinearLayout implements TOCElement {
 
-    private TextView sectionroot;
+    private SefariaTextView sectionroot;
     private Context context;
     private Node node;
     private boolean displayLevel;
@@ -44,8 +45,8 @@ public class TOCSectionName extends LinearLayout implements TOCElement {
     }
 
     private void init(Util.Lang lang){
-        sectionroot = (TextView) findViewById(R.id.toc_sectionroot);
-        sectionroot.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
+        sectionroot = (SefariaTextView) findViewById(R.id.toc_sectionroot);
+        sectionroot.setFont(lang,true);
 
         setLang(lang);
         this.setOnClickListener(clickListener);

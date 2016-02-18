@@ -6,7 +6,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-        <TextView
+        <org.sefaria.sefaria.layouts.SefariaTextView
             android:id="@+id/enVerseNum"
             android:textColor="?text_verse_num_color"
             android:layout_width="40dp"
@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <TextView
+            <org.sefaria.sefaria.layouts.SefariaTextView
                 android:paddingTop="@dimen/text_activtiy_between_segment_padding"
                 android:paddingLeft="10dp"
                 android:paddingRight="7dp"
@@ -37,7 +37,7 @@
                 android:layout_marginRight="0dp"
                 android:textColor="?text_color_main"
                 android:text="וְהָאָ֗רֶץ הָיְתָ֥ה תֹ֙הוּ֙ וָבֹ֔הוּ וְחֹ֖שֶׁךְ עַל־פְּנֵ֣י תְה֑וֹם וְר֣וּחַ אֱלֹהִ֔ים מְרַחֶ֖פֶת עַל־פְּנֵ֥י הַמָּֽיִם׃"/>
-            <TextView
+            <org.sefaria.sefaria.layouts.SefariaTextView
                 android:paddingBottom="@dimen/text_activtiy_between_segment_padding"
                 android:paddingLeft="7dp"
                 android:paddingRight="10dp"
@@ -52,7 +52,7 @@
                 android:text="Now the earth was unformed and void, and darkness was upon the face of the deep; and the spirit of God hovered over the face of the waters."/>
 
         </LinearLayout>
-        <TextView
+        <org.sefaria.sefaria.layouts.SefariaTextView
             android:id="@+id/heVerseNum"
             android:textColor="?text_verse_num_color"
             android:layout_width="40dp"

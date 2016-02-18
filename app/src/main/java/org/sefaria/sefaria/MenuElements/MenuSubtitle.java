@@ -6,13 +6,14 @@ import android.widget.TextView;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
+import org.sefaria.sefaria.layouts.SefariaTextView;
 
 /**
  * Created by nss on 9/24/15.
  */
 public class MenuSubtitle extends MenuElement {
 
-    private TextView tv;
+    private SefariaTextView tv;
     private MenuNode node;
 
     public MenuSubtitle(Context context, MenuNode node, Util.Lang lang) {
@@ -20,7 +21,7 @@ public class MenuSubtitle extends MenuElement {
         inflate(context, R.layout.subtitle_menu, this);
         this.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, 1f));
         this.node = node;
-        this.tv = (TextView) findViewById(R.id.tv);
+        this.tv = (SefariaTextView) findViewById(R.id.tv);
         setLang(lang);
     }
 
@@ -28,13 +29,6 @@ public class MenuSubtitle extends MenuElement {
 
     public void setLang(Util.Lang lang) {
         tv.setText(node.getPrettyTitle(lang));
-        if (lang == Util.Lang.HE) {
-            tv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
-            //tv.setTextSize((getResources().getDimension(R.dimen.subtitle_menu_font_size) * Util.EN_HE_RATIO));
-        }
-        else if (lang == Util.Lang.EN) {
-            tv.setTypeface(MyApp.getFont(MyApp.MONTSERRAT_FONT));
-            //tv.setTextSize(getResources().getDimension(R.dimen.subtitle_menu_font_size));
-        }
+        tv.setFont(lang,true);
     }
 }
