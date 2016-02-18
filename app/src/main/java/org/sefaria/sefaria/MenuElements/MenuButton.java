@@ -37,6 +37,10 @@ public class MenuButton extends MenuElement {
             inflate(context, R.layout.button_home, this);
             this.tv = (SefariaTextView) this.findViewById(R.id.tv);
             this.colorBar = this.findViewById(R.id.color_bar);
+
+            if (android.os.Build.VERSION.SDK_INT >= 14) {
+                this.tv.setAllCaps(true);
+            }
             //Log.d("color", "BTN " + menuNode.getTitle(Util.Lang.EN) + " " + Integer.toHexString(context.getResources().getColor(menuNode.getColor())));
             setColor(menuNode.getColor());
         } else {//menu

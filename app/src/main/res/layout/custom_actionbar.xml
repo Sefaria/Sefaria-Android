@@ -152,7 +152,7 @@
             >
 
         </FrameLayout>
-        <org.sefaria.sefaria.layouts.SefariaTextView
+        <org.sefaria.sefaria.layouts.AutoResizeTextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_toRightOf="@id/invisable_btn_left"
