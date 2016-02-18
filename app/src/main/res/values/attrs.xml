@@ -25,6 +25,5 @@
 
     <declare-styleable name="LinkDraggerView">
         <attr name="dragView" format="reference"/>
-        <attr name="maxHeightView" format="reference"/>
     </declare-styleable>
 </resources>

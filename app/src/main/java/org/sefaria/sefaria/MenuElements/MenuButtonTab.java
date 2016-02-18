@@ -6,6 +6,7 @@ import android.widget.TextView;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
+import org.sefaria.sefaria.layouts.SefariaTextView;
 
 /**
  * Created by nss on 9/24/15.
@@ -14,7 +15,7 @@ import org.sefaria.sefaria.Util;
 public class MenuButtonTab extends MenuElement {
 
     private MenuNode node;
-    private TextView tv;
+    private SefariaTextView tv;
 
     public MenuButtonTab(Context context, MenuNode node, Util.Lang lang) {
         super(context);
@@ -22,9 +23,8 @@ public class MenuButtonTab extends MenuElement {
         this.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT));
 
         this.node = node;
-        this.tv = (TextView) findViewById(R.id.tv);
+        this.tv = (SefariaTextView) findViewById(R.id.tv);
         tv.setText(node.getTitle(lang));
-        tv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
         setLang(lang);
         setActive(false);
     }
@@ -33,16 +33,7 @@ public class MenuButtonTab extends MenuElement {
 
     public void setLang(Util.Lang lang) {
         tv.setText(node.getPrettyTitle(lang));
-        if (lang == Util.Lang.HE) {
-            tv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
-            //tv.setTextSize(Math.round(getResources().getDimension(R.dimen.tab_menu_font_size) * Util.EN_HE_RATIO));
-        } else {
-            tv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
-            //tv.setTypeface(MyApp.getFont(MyApp.MONTSERRAT_FONT));
-            //tv.setTextSize(getResources().getDimension(R.dimen.tab_menu_font_size));
-        }
-
-
+        tv.setFont(lang,true);
     }
 
     public void setActive(boolean isActive) {

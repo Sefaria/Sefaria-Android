@@ -2,6 +2,7 @@ package org.sefaria.sefaria.MenuElements;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
@@ -12,6 +13,8 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by nss on 9/8/15.
@@ -85,6 +88,32 @@ public class MenuNode implements Parcelable {
         String currTitle;
         if (lang == Util.Lang.EN) currTitle = enTitle;
         else currTitle = heTitle;
+
+        if (currTitle.equals("Midrash Rabbah")) return currTitle;
+        while (tempNode.parent != null && !foundTitleMatch) {
+            String tempTitle;
+            if (lang == Util.Lang.EN) tempTitle = tempNode.parent.enTitle;
+            else tempTitle = tempNode.parent.heTitle;
+
+            Pattern titlePattern = Pattern.compile("\\b" + tempTitle + "( |, )");
+            if (tempTitle.length() > 0 && titlePattern.matcher(currTitle).find()) {
+                foundTitleMatch = true;
+                currTitle = titlePattern.matcher(currTitle).replaceAll("");
+            } else {
+                tempNode = tempNode.parent;
+            }
+
+        }
+
+        return currTitle;
+    }
+
+    /*private String makePrettyTitle(Util.Lang lang) {
+        MenuNode tempNode = this;
+        boolean foundTitleMatch = false;
+        String currTitle;
+        if (lang == Util.Lang.EN) currTitle = enTitle;
+        else currTitle = heTitle;
         while (tempNode.parent != null && !foundTitleMatch) {
             String tempTitle;
             if (lang == Util.Lang.EN) tempTitle = tempNode.parent.enTitle;
@@ -104,7 +133,7 @@ public class MenuNode implements Parcelable {
         }
 
         return currTitle;
-    }
+    }*/
 
     public String getPrettyTitle(Util.Lang lang) {
         if (lang == Util.Lang.EN) return enPrettyTitle;

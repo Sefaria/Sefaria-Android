@@ -7,6 +7,7 @@ import android.widget.TextView;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.activities.SuperTextActivity;
 import org.sefaria.sefaria.database.Text;
+import org.sefaria.sefaria.layouts.SefariaTextView;
 
 import java.util.List;
 
@@ -16,9 +17,9 @@ import java.util.List;
 public class LinkTextHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
 
-    public TextView enVerseNum;
-    public TextView heVerseNum;
-    public TextView title;
+    public SefariaTextView enVerseNum;
+    public SefariaTextView heVerseNum;
+    public SefariaTextView title;
 
     private List<Text> itemList;
     private SuperTextActivity activity;
@@ -33,9 +34,9 @@ public class LinkTextHolder extends RecyclerView.ViewHolder implements View.OnCl
         this.activity = activity;
 
         v.setOnClickListener(this);
-        enVerseNum = (TextView) v.findViewById(R.id.enVerseNum);
-        heVerseNum = (TextView) v.findViewById(R.id.heVerseNum);
-        title = (TextView) v.findViewById(R.id.title);
+        enVerseNum = (SefariaTextView) v.findViewById(R.id.enVerseNum);
+        heVerseNum = (SefariaTextView) v.findViewById(R.id.heVerseNum);
+        title = (SefariaTextView) v.findViewById(R.id.title);
     }
 
     @Override

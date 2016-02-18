@@ -10,6 +10,7 @@ import android.widget.TextView;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
+import org.sefaria.sefaria.layouts.SefariaTextView;
 
 /**
  * Created by nss on 9/10/15.
@@ -18,7 +19,7 @@ public class MenuButton extends MenuElement {
 
     private MenuNode sectionNode;
     private MenuNode menuNode;
-    private TextView tv;
+    private SefariaTextView tv;
     private View colorBar;
 
     public MenuButton(Context context) {
@@ -34,13 +35,17 @@ public class MenuButton extends MenuElement {
         //annoyingly, it's difficult to set margin dynamically, instead I'll just switch views
         if (menuNode.isHomeButton()) {
             inflate(context, R.layout.button_home, this);
-            this.tv = (TextView) this.findViewById(R.id.tv);
+            this.tv = (SefariaTextView) this.findViewById(R.id.tv);
             this.colorBar = this.findViewById(R.id.color_bar);
+
+            if (android.os.Build.VERSION.SDK_INT >= 14) {
+                this.tv.setAllCaps(true);
+            }
             //Log.d("color", "BTN " + menuNode.getTitle(Util.Lang.EN) + " " + Integer.toHexString(context.getResources().getColor(menuNode.getColor())));
             setColor(menuNode.getColor());
         } else {//menu
             inflate(context, R.layout.button_menu, this);
-            this.tv = (TextView) this.findViewById(R.id.tv);
+            this.tv = (SefariaTextView) this.findViewById(R.id.tv);
         }
         this.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, 1f));
 
@@ -78,13 +83,6 @@ public class MenuButton extends MenuElement {
 
     public void setLang(Util.Lang lang) {
         tv.setText(menuNode.getPrettyTitle(lang));
-        if (lang == Util.Lang.HE) {
-            tv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
-            //tv.setTextSize((getResources().getDimension(R.dimen.button_menu_font_size) * Util.EN_HE_RATIO));
-        }
-        else {
-            tv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT)); //actually, currently there's no nafka mina
-            //tv.setTextSize(getResources().getDimension(R.dimen.button_menu_font_size));
-        }
+        tv.setFont(lang,true);
     }
 }

@@ -23,6 +23,7 @@ import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.Link;
 import org.sefaria.sefaria.database.LinkFilter;
 import org.sefaria.sefaria.database.Text;
+import org.sefaria.sefaria.layouts.SefariaTextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -134,15 +135,18 @@ public class LinkFragment extends android.support.v4.app.Fragment {
 
     public State getCurrState() { return currState; }
 
+
+    //linkCount only necessary when going to CAT or BOOK state
     public void gotoState(State state,View view,LinkFilter linkCount) {
         currState = state;
+        View linkBackButton = view.findViewById(R.id.link_back_btn);
         View colorBar = view.findViewById(R.id.main_color_bar);
-        TextView noLinksTV = (TextView) view.findViewById(R.id.no_links_tv);
+        SefariaTextView noLinksTV = (SefariaTextView) view.findViewById(R.id.no_links_tv);
         if (state == State.MAIN) {
             view.setBackgroundColor(Util.getColor(activity,R.attr.link_bg));
 
-            colorBar.setVisibility(View.GONE);
-            linkSelectorBar.setVisibility(View.GONE);
+            colorBar.setBackgroundColor(Util.getColor(activity, R.attr.custom_actionbar_border));
+            linkBackButton.setVisibility(View.INVISIBLE);
             noLinksTV.setVisibility(View.GONE);
             GridLayoutManager gridLayoutManager = new GridLayoutManager(activity,2);
             gridLayoutManager.setSpanSizeLookup(onSpanSizeLookup);
@@ -153,12 +157,15 @@ public class LinkFragment extends android.support.v4.app.Fragment {
             linkRecycler.setAdapter(linkMainAdapter);
             updateFragment(segment);
 
+            //make all buttons gray
+            linkSelectorBar.update(null, activity.getMenuLang());
+
         } else { //CAT and BOOK are very similar
             view.setBackgroundColor(Util.getColor(activity,R.attr.text_bg));
 
             //update linkSelectorQueue
             linkSelectorBar.add(linkCount, activity.getMenuLang());
-
+            linkBackButton.setVisibility(View.VISIBLE);
 
 
             String cat;
@@ -168,7 +175,7 @@ public class LinkFragment extends android.support.v4.app.Fragment {
             colorBar.setVisibility(View.VISIBLE);
             int color = MyApp.getCatColor(cat);
             colorBar.setBackgroundColor(activity.getResources().getColor(color));
-            linkSelectorBar.setVisibility(View.VISIBLE);
+            //linkSelectorBar.setVisibility(View.VISIBLE);
             noLinksTV.setVisibility(View.VISIBLE);
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(activity,LinearLayoutManager.VERTICAL,false);
 
@@ -263,6 +270,7 @@ public class LinkFragment extends android.support.v4.app.Fragment {
         @Override
         public void onClick(View v) {
             LinkSelectorBarButton lsbb = (LinkSelectorBarButton) v;
+            gotoState(State.BOOK,getView(),lsbb.getLinkCount());
             linkTextAdapter.setCurrLinkCount(lsbb.getLinkCount(), segment);
             linkSelectorBar.update(lsbb.getLinkCount(),activity.getMenuLang());
         }

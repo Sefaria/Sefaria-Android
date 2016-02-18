@@ -12,7 +12,7 @@ import android.widget.TextView;
 /**
  * Created by ccheng on 3/18/14.
  */
-public class JustifyTextView extends TextView {
+public class JustifyTextView extends SefariaTextView {
 
     private int mLineY;
     private int mViewWidth;

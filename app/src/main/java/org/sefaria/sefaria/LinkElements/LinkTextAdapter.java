@@ -15,6 +15,7 @@ import org.sefaria.sefaria.activities.SuperTextActivity;
 import org.sefaria.sefaria.database.Link;
 import org.sefaria.sefaria.database.LinkFilter;
 import org.sefaria.sefaria.database.Text;
+import org.sefaria.sefaria.layouts.SefariaTextView;
 
 import java.util.List;
 
@@ -30,12 +31,12 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextHolder> {
     private List<Text> itemList;
     private SuperTextActivity activity;
     private LinkFilter currLinkCount;
-    private TextView noLinksTV;
+    private SefariaTextView noLinksTV;
 
 
 
 
-    public LinkTextAdapter(SuperTextActivity context, List<Text> itemList, TextView noLinksTV) {
+    public LinkTextAdapter(SuperTextActivity context, List<Text> itemList, SefariaTextView noLinksTV) {
         this.itemList = itemList;
         this.activity = context;
         this.noLinksTV = noLinksTV;
@@ -79,13 +80,13 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextHolder> {
         if (showFullTitle) {
             holder.title.setVisibility(View.GONE);
             holder.enVerseNum.setVisibility(View.VISIBLE);
-            holder.enVerseNum.setText("" + link.levels[1]);
-            holder.enVerseNum.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
+            holder.enVerseNum.setText("" + link.levels[1]); //TODO make this change lang
+            holder.enVerseNum.setFont(Util.Lang.EN,false);
         } else {
             holder.enVerseNum.setVisibility(View.GONE);
             holder.title.setVisibility(View.VISIBLE);
             holder.title.setText(Html.fromHtml("<i>" + link.getLocationString(Settings.getMenuLang()) + "</i>"));
-            holder.title.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
+            holder.title.setFont(lang,false);
             holder.title.setTextSize(20);
         }
 
@@ -99,7 +100,7 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextHolder> {
                 text = link.getText(lang);
 
             monoHolder.monoTv.setText(Html.fromHtml(text));
-            monoHolder.monoTv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
+            monoHolder.monoTv.setFont(lang,true);
             monoHolder.monoTv.setTextSize(20);
         } else if (holder instanceof LinkBiTextHolder) {
             LinkBiTextHolder biHolder = (LinkBiTextHolder) holder;
@@ -114,14 +115,14 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextHolder> {
                 biHolder.enTv.setVisibility(View.GONE);
             else
                 biHolder.enTv.setText(Html.fromHtml(enText));
-            biHolder.enTv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
+            biHolder.enTv.setFont(Util.Lang.EN,true);
             biHolder.enTv.setTextSize(20);
 
             if (heText.length() == 0)
                 biHolder.heTv.setVisibility(View.GONE);
             else
                 biHolder.heTv.setText(Html.fromHtml(heText));
-            biHolder.heTv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
+            biHolder.heTv.setFont(Util.Lang.HE,true);
             biHolder.heTv.setTextSize(20);
         }
 
