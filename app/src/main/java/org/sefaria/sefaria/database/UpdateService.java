@@ -181,6 +181,7 @@ public class UpdateService extends Service {
     //this stage downloads csv, checks version and if that checks out, passes the url to updateStage2()
     public static void updateStage1() {
         //if (userInitiated) Toast.makeText(contextYo, "Library Download Started", Toast.LENGTH_LONG).show();
+        Log.d("download","Downloader.FULL_DOWNLOAD_PATH: "+  Downloader.FULL_DOWNLOAD_PATH);
         File csvFile = new File(Downloader.FULL_DOWNLOAD_PATH + Downloader.CSV_FILE_NAME);
         if (csvFile.exists()) csvFile.delete();
 

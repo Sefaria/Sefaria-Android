@@ -207,7 +207,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
     protected void onResume() {
         super.onResume();
         GoogleTracker.sendScreen("SuperTextActivity");
-        GoogleTracker.sendEvent(GoogleTracker.CATEGORY_NEW_TEXT, book.title);
+        GoogleTracker.sendEvent(GoogleTracker.CATEGORY_NEW_TEXT, book.title, Settings.lang2Int(textLang));
         if(!veryFirstTime) {
             setMenuLang(Settings.getMenuLang());
         }else

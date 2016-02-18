@@ -130,7 +130,7 @@ public class HomeActivity extends Activity {
 
 
         if(API.useAPI() || !Database.isValidDB()) {
-            Database.createAPIdb();
+            //Database.createAPIdb();
             Toast.makeText(this, "Starting Download", Toast.LENGTH_SHORT).show();
             Downloader.updateLibrary(this);
 
@@ -296,6 +296,7 @@ public class HomeActivity extends Activity {
 
     private static Searching searching;
     public void feedbackClick(View v) {
+
         /*
         try {
             if(searching == null) {
@@ -304,6 +305,7 @@ public class HomeActivity extends Activity {
                 //searching = new Searching("ברא", null,alsoSearchCommentary);
             }
             ArrayList<Text> results = searching.getResults();
+            results = API.getSearchResults("love",null,0,10);
 
             Log.d("Searching", "results.size" + results.size());
             for(Text verse:results){
