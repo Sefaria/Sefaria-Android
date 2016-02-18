@@ -18,6 +18,7 @@ import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Node;
 import org.sefaria.sefaria.database.Text;
+import org.sefaria.sefaria.layouts.SefariaTextView;
 
 
 public class MenuDirectRef extends LinearLayout{
@@ -29,7 +30,7 @@ public class MenuDirectRef extends LinearLayout{
     private Context context;
     private Book book;
 
-    private TextView tv;
+    private SefariaTextView tv;
     private View colorBar;
 
     public MenuDirectRef(Context context, String enTitle, String heTitle, String nodePath, Book book, String colorWording){
@@ -52,7 +53,7 @@ public class MenuDirectRef extends LinearLayout{
 
         this.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, 1f));
 
-        this.tv = (TextView) this.findViewById(R.id.tv);
+        this.tv = (SefariaTextView) this.findViewById(R.id.tv);
         this.colorBar = this.findViewById(R.id.color_bar);
 
         /*
@@ -75,16 +76,11 @@ public class MenuDirectRef extends LinearLayout{
     }
 
     public void setLang(Util.Lang lang) {
-
+        tv.setFont(lang,true);
         if (lang == Util.Lang.HE) {
             tv.setText(heTitle);
-            tv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
-            //tv.setTextSize((getResources().getDimension(R.dimen.button_menu_font_size) * Util.EN_HE_RATIO));
-        }
-        else {
+        } else {
             tv.setText(enTitle);
-            tv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT)); //actually, currently there's no nafka mina
-            //tv.setTextSize(getResources().getDimension(R.dimen.button_menu_font_size));
         }
     }
 

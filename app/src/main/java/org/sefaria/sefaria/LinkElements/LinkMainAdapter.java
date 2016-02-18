@@ -14,6 +14,7 @@ import org.sefaria.sefaria.activities.LinkFragment;
 import org.sefaria.sefaria.activities.SuperTextActivity;
 import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.LinkFilter;
+import org.sefaria.sefaria.layouts.SefariaTextView;
 
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class LinkMainAdapter extends RecyclerView.Adapter<LinkMainAdapter.LinkHo
     private LinkFragment fragment;
 
     public class LinkHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public TextView tv;
+        public SefariaTextView tv;
         public View colorBar;
         public View catPadding;
         private Context context;
@@ -36,7 +37,7 @@ public class LinkMainAdapter extends RecyclerView.Adapter<LinkMainAdapter.LinkHo
             super(v);
             v.setClickable(true);
             v.setOnClickListener(this);
-            tv = (TextView) v.findViewById(R.id.tv);
+            tv = (SefariaTextView) v.findViewById(R.id.tv);
             colorBar = v.findViewById(R.id.color_bar);
             catPadding = v.findViewById(R.id.cat_padding);
             this.context = context;
@@ -77,10 +78,11 @@ public class LinkMainAdapter extends RecyclerView.Adapter<LinkMainAdapter.LinkHo
     public void onBindViewHolder(LinkHolder holder, int position) {
         LinkFilter linkCount = itemList.get(position);
 
-        holder.tv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
+
 
         Util.Lang lang = Settings.getMenuLang();
         String bookTitle = linkCount.getSlimmedTitle(book, lang);
+        holder.tv.setFont(lang,true);
 
         if (linkCount.getDepthType() == LinkFilter.DEPTH_TYPE.BOOK)  {
             if (linkCount.getCount() == 0) {

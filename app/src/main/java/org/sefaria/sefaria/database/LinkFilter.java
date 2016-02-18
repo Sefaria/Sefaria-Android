@@ -269,6 +269,7 @@ public class LinkFilter {
 
     //this is not a fool-proof equals() implementation. hence 'pseudo'
     public static boolean pseudoEquals(LinkFilter lc1, LinkFilter lc2) {
+        if (lc1 == null || lc2 == null) return false;
         return (lc1.getRealTitle(Util.Lang.EN).equals(lc2.getRealTitle(Util.Lang.EN)) &&
                 lc1.depth_type == lc2.depth_type);
     }

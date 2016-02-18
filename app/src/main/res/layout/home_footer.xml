@@ -5,7 +5,7 @@
     android:padding="8dp"
     android:paddingBottom="12dp"
     >
-    <TextView
+    <org.sefaria.sefaria.layouts.SefariaTextView
         android:text="Settings"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -13,7 +13,7 @@
         android:gravity="center"
         android:onClick="settingsClick"
         />
-    <TextView
+    <org.sefaria.sefaria.layouts.SefariaTextView
         android:text="About"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -21,7 +21,7 @@
         android:layout_weight="1"
         android:onClick="aboutClick"
         />
-    <TextView
+    <org.sefaria.sefaria.layouts.SefariaTextView
         android:text="Feedback"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -29,7 +29,7 @@
         android:gravity="center"
         android:onClick="feedbackClick"
         />
-    <TextView
+    <org.sefaria.sefaria.layouts.SefariaTextView
         android:text="Visit Site"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

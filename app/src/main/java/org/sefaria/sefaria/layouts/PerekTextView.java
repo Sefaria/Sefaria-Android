@@ -91,7 +91,7 @@ public class PerekTextView extends JustifyTextView {
             }
         });
         setTextColor(Color.parseColor("#000000"));
-        setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
+        setFont(lang,true);
         setIsCts(isCts);
         setLang(lang);
         setTextSize(textSize);

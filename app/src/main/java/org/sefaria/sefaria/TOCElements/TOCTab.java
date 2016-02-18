@@ -9,6 +9,7 @@ import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.Node;
+import org.sefaria.sefaria.layouts.SefariaTextView;
 
 
 /**
@@ -18,7 +19,7 @@ import org.sefaria.sefaria.database.Node;
 public class TOCTab extends LinearLayout implements TOCElement {
 
     private Node node;
-    private TextView tv;
+    private SefariaTextView tv;
     private boolean isActive;
     private Util.Lang lang;
 
@@ -29,7 +30,7 @@ public class TOCTab extends LinearLayout implements TOCElement {
 
         this.lang = lang;
         this.node = node;
-        this.tv = (TextView) findViewById(R.id.tv);
+        this.tv = (SefariaTextView) findViewById(R.id.tv);
         tv.setText(node.getTabName(lang));
         tv.setTextSize(6);//TODO dynamic sizes
         setLang(lang);
@@ -46,7 +47,7 @@ public class TOCTab extends LinearLayout implements TOCElement {
         inflate(context, R.layout.tab_menu, this);
         this.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT));
 
-        this.tv = (TextView) findViewById(R.id.tv);
+        this.tv = (SefariaTextView) findViewById(R.id.tv);
 
         tv.setTextSize(6);//TODO dynamic sizes
         setLang(lang);
@@ -60,16 +61,12 @@ public class TOCTab extends LinearLayout implements TOCElement {
 
     public void setLang(Util.Lang lang) {
         this.lang = lang;
-
+        tv.setFont(lang,true);
         String newTvText;
         if (lang == Util.Lang.HE) {
-            tv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
             newTvText = "מפרשים" ;//Mifarshim //
-            //tv.setTextSize(Math.round(getResources().getDimension(R.dimen.tab_menu_font_size) * Util.EN_HE_RATIO));
         } else {
             newTvText = "Commentary";
-            tv.setTypeface(MyApp.getFont(MyApp.MONTSERRAT_FONT));
-            //tv.setTextSize(getResources().getDimension(R.dimen.tab_menu_font_size));
         }
         if(node != null)//It's a regular TOC tab
             newTvText = node.getTabName(lang);

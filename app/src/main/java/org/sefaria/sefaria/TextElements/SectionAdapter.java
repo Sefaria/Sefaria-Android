@@ -16,6 +16,7 @@ import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.activities.SectionActivity;
 import org.sefaria.sefaria.database.Text;
+import org.sefaria.sefaria.layouts.SefariaTextView;
 
 import java.util.Collection;
 import java.util.List;
@@ -84,12 +85,12 @@ public class SectionAdapter extends ArrayAdapter<Text> {
         else view.setBackgroundColor(activity.getResources().getColor(android.R.color.transparent));
 
         TextChapterHeader tch = (TextChapterHeader) view.findViewById(R.id.chapHeader);
-        TextView enNum = (TextView) view.findViewById(R.id.enVerseNum);
-        TextView heNum = (TextView) view.findViewById(R.id.heVerseNum);
+        SefariaTextView enNum = (SefariaTextView) view.findViewById(R.id.enVerseNum);
+        SefariaTextView heNum = (SefariaTextView) view.findViewById(R.id.heVerseNum);
 
         if (lang == Util.Lang.BI) {
-            TextView enTv = (TextView) view.findViewById(R.id.en);
-            TextView heTv = (TextView) view.findViewById(R.id.he);
+            SefariaTextView enTv = (SefariaTextView) view.findViewById(R.id.en);
+            SefariaTextView heTv = (SefariaTextView) view.findViewById(R.id.he);
 
             if (segment.isChapter()) {
                 view.setClickable(true); //TODO why is this so weird?! I'm literally setting this to the opposite of what I want and it works
@@ -128,11 +129,11 @@ public class SectionAdapter extends ArrayAdapter<Text> {
 
 
                 //enTv.setTextColor(Color.parseColor("#999999"));
-                enTv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
-                enTv.setTextSize(activity.getTextSize());
+                enTv.setFont(Util.Lang.EN,true,activity.getTextSize());
+                //enTv.setTextSize(activity.getTextSize());
 
                 //heTv.setTextColor(Color.parseColor("#000000"));
-                heTv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
+                heTv.setFont(Util.Lang.HE,true);
                 heTv.setTextSize(activity.getTextSize());
                 if(segment.displayNum)
                     heNum.setText("" + Util.int2heb(segment.levels[0]));
@@ -140,15 +141,15 @@ public class SectionAdapter extends ArrayAdapter<Text> {
                     heNum.setText("");
 
                 heNum.setAlpha(1);
-                heNum.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
-                //heNum.setTypeface(MyApp.getFont(MyApp.MONTSERRAT_FONT));
+                heNum.setFont(Util.Lang.HE,true);
                 enNum.setText(Util.VERSE_BULLET);
                 enNum.setAlpha(linkAlpha);
+                enNum.setFont(Util.Lang.HE, true);
 
             }
 
         } else { //Hebrew or English
-            TextView tv = (TextView) view.findViewById(R.id.mono);
+            SefariaTextView tv = (SefariaTextView      ) view.findViewById(R.id.mono);
 
             if (segment.isChapter()) {
                 view.setClickable(true);
@@ -177,13 +178,13 @@ public class SectionAdapter extends ArrayAdapter<Text> {
                     tv.setText(Html.fromHtml(monoText));
                     enNum.setText(Util.VERSE_BULLET);
                     enNum.setAlpha(linkAlpha);
-                    enNum.setTypeface(MyApp.getFont(MyApp.MONTSERRAT_FONT));
+                    enNum.setFont(Util.Lang.HE, true);
                     if(segment.displayNum)
                         heNum.setText(Util.int2heb(segment.levels[0]));
                     else
                         heNum.setText("");
                     heNum.setAlpha(1);
-                    heNum.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
+                    heNum.setFont(Util.Lang.HE, true);
                 } else /*if (activity.getTextLang() == Util.Lang.EN)*/ {
                     tv.setText(Html.fromHtml(monoText));
                     if(segment.displayNum)
@@ -191,13 +192,13 @@ public class SectionAdapter extends ArrayAdapter<Text> {
                     else
                         enNum.setText("");
 
-                    enNum.setTypeface(MyApp.getFont(MyApp.MONTSERRAT_FONT));
+                    enNum.setFont(Util.Lang.EN, true);
                     enNum.setAlpha(1);
                     heNum.setText(Util.VERSE_BULLET);
                     heNum.setAlpha(linkAlpha);
-                    heNum.setTypeface(MyApp.getFont(MyApp.MONTSERRAT_FONT));
+                    heNum.setFont(Util.Lang.HE, true);
                 }
-                tv.setTypeface(MyApp.getFont(MyApp.TAAMEY_FRANK_FONT));
+                tv.setFont(lang,true);
                 tv.setTextSize(activity.getTextSize());
             }
         }

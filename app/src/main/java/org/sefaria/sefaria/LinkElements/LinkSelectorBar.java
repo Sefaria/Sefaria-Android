@@ -60,6 +60,8 @@ public class LinkSelectorBar extends LinearLayout {
         update(currLinkCount,lang);
     }
 
+
+    //if currLinkCount == null, all linkSelectorBarButtons will be gray
     public void update(LinkFilter currLinkCount,Util.Lang lang ) {
         this.currLinkCount = currLinkCount;
         selectorListLayout.removeAllViews();
