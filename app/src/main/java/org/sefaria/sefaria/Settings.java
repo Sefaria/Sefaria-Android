@@ -166,6 +166,15 @@ public class Settings {
             return MyApp.getContext().getSharedPreferences("org.sefaria.sefaria.book_save_title_settings", Context.MODE_PRIVATE);
         }
 
+        static public void clearAllBookSettings(){
+            SharedPreferences.Editor editor = getBookSavedSettings().edit();
+            editor.clear();
+            editor.commit();
+            editor = getBookSavedTitleSettings().edit();
+            editor.clear();
+            editor.commit();
+        }
+
         static public BookSettings getSavedBook(Book book){
             SharedPreferences bookSavedSettings = getBookSavedSettings();
             String stringThatRepsSavedSettings = bookSavedSettings.getString(book.title, "");

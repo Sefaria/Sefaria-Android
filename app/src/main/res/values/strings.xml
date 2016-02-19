@@ -19,6 +19,7 @@
     <string name="bilingual">Bilingual</string>
     <string name="menu_lang">Menu Language</string>
     <string name="settings_done">Done</string>
+    <string name="clear_all_book_settings">Clear all book settings</string>
 
     <string name="action_bookmarks">Bookmarks</string>
     <string name="activity_filterlinks">Filter Sources</string>

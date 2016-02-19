@@ -99,6 +99,10 @@ public class SettingsActivity extends Activity {
         Downloader.updateLibrary(this);
     }
 
+    public void clearAllBookSettings(View v){
+        Settings.BookSettings.clearAllBookSettings();
+    }
+
     public void done(View v){
         finish();
     }
