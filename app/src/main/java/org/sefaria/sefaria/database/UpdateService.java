@@ -37,7 +37,6 @@ import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.MenuElements.MenuState;
 
 public class UpdateService extends Service {
-    public static final int UPDATE_STAGE_1_COMPLETE = 0;
     public static final int UPDATE_STAGE_2_COMPLETE = 1;
     public static final int UPDATE_STAGE_3_COMPLETE = 2;
 
@@ -168,52 +167,24 @@ public class UpdateService extends Service {
         userInitiated = userInit;
         currentVersionNum = Database.getDBDownloadVersion();
 
+        postUpdateStage1();
 
-        new Thread(new Runnable() {
-            public void run() {
-                updateStage1();
-            };
-        }).start();
-
-
-    }
-
-    //this stage downloads csv, checks version and if that checks out, passes the url to updateStage2()
-    public static void updateStage1() {
-        //if (userInitiated) Toast.makeText(contextYo, "Library Download Started", Toast.LENGTH_LONG).show();
-        Log.d("download","Downloader.FULL_DOWNLOAD_PATH: "+  Downloader.FULL_DOWNLOAD_PATH);
-        File csvFile = new File(Downloader.FULL_DOWNLOAD_PATH + Downloader.CSV_FILE_NAME);
-        if (csvFile.exists()) csvFile.delete();
-
-        SharedPreferences settings = Settings.getGeneralSettings();
-        String csvURL = settings.getString("csvURL", Downloader.getCSV());
-        Downloader.download(csvURL,Downloader.CSV_DOWNLOAD_TITLE,Downloader.DB_DOWNLOAD_PATH,Downloader.CSV_FILE_NAME,true);
     }
 
 
     public static void postUpdateStage1() {
-        File csvFile = new File(Downloader.FULL_DOWNLOAD_PATH + Downloader.CSV_FILE_NAME);
-        BufferedReader csvReader;
         try {
-            csvReader = new BufferedReader(new FileReader(csvFile));
-            String[] firstLine = csvReader.readLine().split(",");
+            String csvData = API.getDataFromURL(Downloader.getCSVurl());
+            Log.d("Downloader", "postUpdateStage1 CSV: " + csvData);
+            String[] firstLine = csvData.split(",");
             int dbVersion = Integer.parseInt(firstLine[0]);
             String zipUrl = firstLine[1];
             String indexURL = firstLine[2];
-            int newestAppVersionNum  = Integer.parseInt(firstLine[3]);
+            String newestAppVersion = firstLine[3];
+            Log.d("Downloader","postUpdateStage1: +" + newestAppVersion + "+");
+            int newestAppVersionNum  = Integer.parseInt(newestAppVersion.replace("[^0-9]","").replace("\n",""));
 
             updatedVersionNum = dbVersion; //save this for later
-            csvReader.close();
-            //cover your tracks
-            csvFile.delete();
-
-            if(updatedVersionNum == MyApp.KILL_SWITCH_NUM){
-                MyApp.killSwitch();
-                if(userInitiated)
-                    DialogManager.dismissCurrentDialog(); //dismiss progressDialog
-                unlockOrientation(MyApp.currActivityContext);
-                return;
-            }
 
             if((newestAppVersionNum > MyApp.getContext().getPackageManager().getPackageInfo(MyApp.getAppPackageName(), 0).versionCode)
                     && !MyApp.askedForUpgradeThisTime
@@ -251,13 +222,11 @@ public class UpdateService extends Service {
 
             }
 
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-            GoogleTracker.sendException(ioe, "postUpdateStage1_ioe");
-            return;
         }catch (Exception e){
             e.printStackTrace();
             GoogleTracker.sendException(e, "postUpdateStage1");
+            if(userInitiated) DialogManager.dismissCurrentDialog();
+            unlockOrientation(MyApp.currActivityContext);
             return;
         }
     }
@@ -320,7 +289,7 @@ public class UpdateService extends Service {
                     //clean up by deleting zip that you downloaded...
                     //File updateFile = new File(DATABASE_ZIP_DOWNLOAD_LOC);
                     //if (updateFile.exists()) updateFile.delete();
-                    Util.deleteNonRecursiveDir(Downloader.FULL_DOWNLOAD_PATH);
+                    //Util.deleteNonRecursiveDir(Downloader.FULL_DOWNLOAD_PATH);
 
                     long timeToCompleteUpdate = System.currentTimeMillis() - startedUpdateTime;
                     if(startedUpdateTime != 0 && timeToCompleteUpdate > 0)
@@ -346,9 +315,6 @@ public class UpdateService extends Service {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case UPDATE_STAGE_1_COMPLETE:
-                    postUpdateStage1();
-                    break;
                 case UPDATE_STAGE_2_COMPLETE:
                     //let's move on to stage 2
                     //Toast.makeText(contextYo, "Download complete. Installing...", Toast.LENGTH_SHORT).show();
@@ -415,14 +381,12 @@ public class UpdateService extends Service {
 
         }
 
-
-
-
         String ns = Context.NOTIFICATION_SERVICE;
         NotificationManager nMgr = (NotificationManager) MyApp.getContext().getSystemService(ns);
         nMgr.cancel(UpdateService.NOTIFICATION_ID);
 
     }
+
 
 
 }

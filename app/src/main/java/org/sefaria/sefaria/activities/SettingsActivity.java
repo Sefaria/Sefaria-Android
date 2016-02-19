@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +38,21 @@ public class SettingsActivity extends Activity {
         CustomActionbar customActionbar = new CustomActionbar(this, new MenuNode("Settings","Settings (he)", null), Settings.getSystemLang(),homeClick,null,null,null,null,backClick,-1);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(customActionbar);
+
+        RadioButton defaultTextButton;
+        Util.Lang defaultTextLang = Settings.getDefaultTextLang();
+        switch (defaultTextLang){
+            case BI:
+                defaultTextButton = (RadioButton) findViewById(R.id.bilingual);
+                break;
+            case HE:
+                defaultTextButton = (RadioButton) findViewById(R.id.hebrew);
+                break;
+            default://case EN:
+                defaultTextButton = (RadioButton) findViewById(R.id.english);
+                break;
+        }
+        defaultTextButton.setChecked(true);
 
         //LinearLayout gridRoot = (LinearLayout) findViewById(R.id.gridRoot);
         TextView appInfo = (TextView) findViewById(R.id.appInfo);
@@ -69,6 +85,27 @@ public class SettingsActivity extends Activity {
         Downloader.updateLibrary(this);
     }
 
+
+    public void onRadioButtonClicked(View view) {
+        // Is the button now checked?
+        boolean checked = ((RadioButton) view).isChecked();
+
+        // Check which radio button was clicked
+        switch(view.getId()) {
+            case R.id.hebrew:
+                if (checked)
+                    Settings.setDefaultTextLang(Util.Lang.HE);
+                    break;
+            case R.id.english:
+                if (checked)
+                    Settings.setDefaultTextLang(Util.Lang.EN);
+                    break;
+            case R.id.bilingual:
+                if (checked)
+                    Settings.setDefaultTextLang(Util.Lang.BI);
+                    break;
+        }
+    }
 
 
 }
