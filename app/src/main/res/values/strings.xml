@@ -17,8 +17,8 @@
     <string name="hebrew">Hebrew</string>
     <string name="english">English</string>
     <string name="bilingual">Bilingual</string>
-
-
+    <string name="menu_lang">Menu Language</string>
+    <string name="settings_done">Done</string>
 
     <string name="action_bookmarks">Bookmarks</string>
     <string name="activity_filterlinks">Filter Sources</string>
@@ -91,7 +91,7 @@
     <string name="black">Black</string>
     <string name="book_title_language">Book Title Language</string>
     <string name="text_background_color">Text Background Color</string>
-    <string name="default_text_language">Default Text Language</string>
+    <string name="default_text_language">Default Book Language</string>
     <string name="show_hebrew_vowels_">Show Hebrew Vowels / Cantillation Marks</string>
     <string name="nekudot_not_supported_">(Note: Nekudot are not fully supported on your version of Android)</string>
     <string name="no">No</string>
