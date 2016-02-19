@@ -62,7 +62,7 @@ public class Downloader {
 
     public static int downloadErrorNum;
 
-    public static String getCSV(){
+    public static String getCSVurl(){
         if(useDebugCSV)
             return CSV_DEBUG_URL;
         else
@@ -126,9 +126,7 @@ public class Downloader {
 
             Log.d("update",downloadTitle);
 
-            if (downloadTitle.equals(CSV_DOWNLOAD_TITLE)) {
-                UpdateService.handler.sendEmptyMessage(UpdateService.UPDATE_STAGE_1_COMPLETE);
-            } else if (downloadTitle.equals(DB_DOWNLOAD_TITLE)) {
+            if (downloadTitle.equals(DB_DOWNLOAD_TITLE)) {
                 if (eitherDBorIndexFinished) UpdateService.handler.sendEmptyMessage(UpdateService.UPDATE_STAGE_2_COMPLETE);
                 else eitherDBorIndexFinished = true;
             } else if (downloadTitle.equals(JSON_INDEX_TITLE)) {

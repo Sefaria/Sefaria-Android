@@ -14,6 +14,10 @@
     <string name="no_text">&lt;i&gt;(No text for this language)&lt;/i&gt;</string>
     <string name="pinned_item">Pinned Item</string>
     <string name="remove_pinned_item">Removed Pinned Item</string>
+    <string name="hebrew">Hebrew</string>
+    <string name="english">English</string>
+    <string name="bilingual">Bilingual</string>
+
 
 
     <string name="action_bookmarks">Bookmarks</string>
@@ -64,8 +68,7 @@
 
     <string name="upgrade_to_newest">Upgrade to the newest version of</string>
     <string name="view_bookmarks">View Bookmarks</string>
-    <string name="hebrew">Hebrew</string>
-    <string name="english">English</string>
+
     <string name="update_preparing">Update is still setting up. Wait a moment to cancel.</string>
     <string name="error_parsing_query_n">Error Parsing Query - trying nikudah dependent search.</string>
     <string name="error_parsing_query">Error Parsing Query</string>
@@ -89,7 +92,6 @@
     <string name="book_title_language">Book Title Language</string>
     <string name="text_background_color">Text Background Color</string>
     <string name="default_text_language">Default Text Language</string>
-    <string name="bilingual">Bilingual</string>
     <string name="show_hebrew_vowels_">Show Hebrew Vowels / Cantillation Marks</string>
     <string name="nekudot_not_supported_">(Note: Nekudot are not fully supported on your version of Android)</string>
     <string name="no">No</string>

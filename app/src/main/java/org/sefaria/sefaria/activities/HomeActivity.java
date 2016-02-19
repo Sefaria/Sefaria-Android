@@ -19,6 +19,7 @@ import org.sefaria.sefaria.database.Huffman;
 import org.sefaria.sefaria.database.LinkFilter;
 import org.sefaria.sefaria.database.Searching;
 import org.sefaria.sefaria.database.Text;
+import org.sefaria.sefaria.database.UpdateService;
 import org.sefaria.sefaria.layouts.CustomActionbar;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
@@ -70,7 +71,6 @@ public class HomeActivity extends Activity {
         }
 
         init();
-
     }
 
     private boolean veryFirstTime = true;
@@ -127,16 +127,17 @@ public class HomeActivity extends Activity {
                 Settings.getSystemLang(),null,tempCloseClick,null,null,menuClick,null,-1);
         abRoot.addView(cab);
 
+        dealWithDatabaseStuff();
+    }
 
-
-
+    private void dealWithDatabaseStuff(){
+        Util.deleteNonRecursiveDir(Downloader.FULL_DOWNLOAD_PATH); //remove any old temp downloads
         if(API.useAPI() || !Database.isValidDB()) {
             //Database.createAPIdb();
             Toast.makeText(this, "Starting Download", Toast.LENGTH_SHORT).show();
             Downloader.updateLibrary(this);
 
         }
-
     }
 
     private void addHeader(LinearLayout homeRoot){
@@ -244,7 +245,7 @@ public class HomeActivity extends Activity {
         final int paddingTop = 20;
         textView.setPadding(paddingSide,paddingTop*2,paddingSide,paddingTop);
         textView.setTextSize(20);
-        textView.setFont(Util.Lang.EN,isSerif); //TODO change with system lang
+        textView.setFont(Util.Lang.EN, isSerif); //TODO change with system lang
         textView.setGravity(Gravity.CENTER);
 
         return textView;

@@ -39,10 +39,13 @@ public class API {
     final static int STATUS_GOOD = 1;
     final static int STATUS_ERROR = 2;
 
+
     private String data = "";
     private String url = "";
     private int status = STATUS_NONE;
     private boolean isDone = false;
+
+    private boolean sendJSON = false;
     String sefariaData = null;
     final static int READ_TIMEOUT = 3000;
     final static int CONNECT_TIMEOUT = 3000;
@@ -59,7 +62,7 @@ public class API {
         String data = "";
         this.url = urlString;
         try {
-            if(false) {//!use JSON post
+            if(!sendJSON) {//!use JSON post
                 URL url = new URL(urlString);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setReadTimeout(READ_TIMEOUT);

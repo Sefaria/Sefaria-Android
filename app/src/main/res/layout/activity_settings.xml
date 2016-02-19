@@ -34,6 +34,35 @@
             >
 
             <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/default_text_language"/>
+            <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="10dp"
+                android:layout_marginBottom="20dp"
+                android:gravity="center"
+                >
+                <RadioButton android:id="@+id/bilingual"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/bilingual"
+                    android:onClick="onRadioButtonClicked"/>
+                <RadioButton android:id="@+id/hebrew"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/hebrew"
+                    android:onClick="onRadioButtonClicked"/>
+                <RadioButton android:id="@+id/english"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/english"
+                    android:onClick="onRadioButtonClicked"/>
+
+            </RadioGroup>
+            <TextView
                 android:id="@+id/appInfo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

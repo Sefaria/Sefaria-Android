@@ -201,7 +201,6 @@ public class Settings {
             SharedPreferences bookSavedSettings = getBookSavedSettings();
             SharedPreferences.Editor editor = bookSavedSettings.edit();
             //"<en|he|bi>.<cts|sep>.<white|grey|black>.10px:"+ <rootNum>.<Childnum>.<until>.<leaf>.<verseNum>"
-            setDefaultTextLang(lang);
             String tid = "0";
             if (text != null)
                 tid = "" + text.tid;
