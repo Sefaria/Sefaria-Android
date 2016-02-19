@@ -45,17 +45,17 @@
                 android:layout_marginBottom="20dp"
                 android:gravity="center"
                 >
-                <RadioButton android:id="@+id/bilingual"
+                <RadioButton android:id="@+id/text_bilingual"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/bilingual"
                     android:onClick="onRadioButtonClicked"/>
-                <RadioButton android:id="@+id/hebrew"
+                <RadioButton android:id="@+id/text_hebrew"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/hebrew"
                     android:onClick="onRadioButtonClicked"/>
-                <RadioButton android:id="@+id/english"
+                <RadioButton android:id="@+id/text_english"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/english"
@@ -63,17 +63,42 @@
 
             </RadioGroup>
             <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/menu_lang"/>
+            <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="10dp"
+                android:layout_marginBottom="20dp"
+                android:gravity="center"
+                >
+
+                <RadioButton android:id="@+id/menu_hebrew"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/hebrew"
+                    android:onClick="onMenuLangRadioButtonClicked"/>
+                <RadioButton android:id="@+id/menu_english"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/english"
+                    android:onClick="onMenuLangRadioButtonClicked"/>
+
+            </RadioGroup>
+            <TextView
                 android:id="@+id/appInfo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="App Version:"
+                android:text="@string/app_version_is"
                 android:gravity="center"
                 android:padding="5dp"/>
             <TextView
                 android:id="@+id/databaseInfo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Database info:"
+                android:text="@string/library_version_is"
                 android:gravity="center"
                 android:padding="5dp"/>
 
@@ -83,6 +108,12 @@
                 android:layout_height="45dp"
                 android:text="Update Library"
                 android:onClick="updateLibrary"
+                />
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:text="@string/settings_done"
+                android:onClick="done"
                 />
         </LinearLayout>
 

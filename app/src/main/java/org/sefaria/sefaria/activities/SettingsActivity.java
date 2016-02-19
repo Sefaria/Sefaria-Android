@@ -43,16 +43,30 @@ public class SettingsActivity extends Activity {
         Util.Lang defaultTextLang = Settings.getDefaultTextLang();
         switch (defaultTextLang){
             case BI:
-                defaultTextButton = (RadioButton) findViewById(R.id.bilingual);
+                defaultTextButton = (RadioButton) findViewById(R.id.text_bilingual);
                 break;
             case HE:
-                defaultTextButton = (RadioButton) findViewById(R.id.hebrew);
+                defaultTextButton = (RadioButton) findViewById(R.id.text_hebrew);
                 break;
             default://case EN:
-                defaultTextButton = (RadioButton) findViewById(R.id.english);
+                defaultTextButton = (RadioButton) findViewById(R.id.text_english);
                 break;
         }
         defaultTextButton.setChecked(true);
+
+        RadioButton menuLangButton;
+        Util.Lang menuLang = Settings.getMenuLang();
+        switch (menuLang){
+            case HE:
+                menuLangButton = (RadioButton) findViewById(R.id.menu_hebrew);
+                break;
+            default: //case EN:
+                menuLangButton = (RadioButton) findViewById(R.id.menu_english);
+                break;
+        }
+        menuLangButton.setChecked(true);
+
+
 
         //LinearLayout gridRoot = (LinearLayout) findViewById(R.id.gridRoot);
         TextView appInfo = (TextView) findViewById(R.id.appInfo);
@@ -85,6 +99,10 @@ public class SettingsActivity extends Activity {
         Downloader.updateLibrary(this);
     }
 
+    public void done(View v){
+        finish();
+    }
+
 
     public void onRadioButtonClicked(View view) {
         // Is the button now checked?
@@ -92,20 +110,38 @@ public class SettingsActivity extends Activity {
 
         // Check which radio button was clicked
         switch(view.getId()) {
-            case R.id.hebrew:
+            case R.id.text_hebrew:
                 if (checked)
                     Settings.setDefaultTextLang(Util.Lang.HE);
                     break;
-            case R.id.english:
+            case R.id.text_english:
                 if (checked)
                     Settings.setDefaultTextLang(Util.Lang.EN);
                     break;
-            case R.id.bilingual:
+            case R.id.text_bilingual:
                 if (checked)
                     Settings.setDefaultTextLang(Util.Lang.BI);
                     break;
         }
     }
+
+    public void onMenuLangRadioButtonClicked(View view) {
+        // Is the button now checked?
+        boolean checked = ((RadioButton) view).isChecked();
+
+        // Check which radio button was clicked
+        switch(view.getId()) {
+            case R.id.menu_hebrew:
+                if (checked)
+                    Settings.setMenuLang(Util.Lang.HE);
+                break;
+            case R.id.menu_english:
+                if (checked)
+                    Settings.setMenuLang(Util.Lang.EN);
+                break;
+        }
+    }
+
 
 
 }
