@@ -2,7 +2,6 @@ package org.sefaria.sefaria.layouts;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.widget.TextView;
 
 import org.sefaria.sefaria.MyApp;
@@ -43,9 +42,13 @@ public class SefariaTextView extends TextView {
         if (lang == Util.Lang.HE) {
             if (isSerif) font = MyApp.Font.TAAMEY_FRANK;
             else font = MyApp.Font.OPEN_SANS_HE;
+
+            if (textSize != -1) {
+                setTextSize(textSize);
+            }
         } else {
-            if (isSerif) font = MyApp.Font.CRIMSON;
-            else font = MyApp.Font.OPEN_SANS_EN;
+            if (isSerif) font = MyApp.Font.QUATTROCENTO;
+            else font = MyApp.Font.MONTSERRAT;
 
             if (textSize != -1) {
                 setTextSize((float) Math.round(textSize * 0.8));

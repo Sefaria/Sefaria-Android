@@ -29,6 +29,6 @@ public class MenuSubtitle extends MenuElement {
 
     public void setLang(Util.Lang lang) {
         tv.setText(node.getPrettyTitle(lang));
-        tv.setFont(lang,true);
+        tv.setFont(lang,false);
     }
 }

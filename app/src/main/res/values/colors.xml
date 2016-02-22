@@ -46,5 +46,35 @@
     <color name="button_clicked">#BBB</color>
 
 
+    <!--THEME STUPIDNESSS -->
+    <color name="button_bg_w">#fff</color>
+    <color name="button_clicked_w">#bbb</color>
+    <color name="button_selected_w">#eee</color>
+    <color name="custom_actionbar_border_w">#ddd</color>
+    <color name="text_bg_w">#F8FCF8</color>
+    <color name="text_color_main_w">#000</color>
+    <color name="text_color_english_w">#999999</color>
+    <color name="text_color_faded_w">#999999</color>
+    <color name="text_chapter_header_color_w">#999999</color>
+    <color name="text_chapter_header_border_w">#e6e5e6</color>
+    <color name="text_verse_selected_bg_w">#eaeaea</color>
+    <color name="text_verse_num_color_w">#666666</color>
+    <color name="link_bg_w">#f9f9f7</color>
+
+    <color name="button_bg_b">#333331</color>
+    <color name="button_clicked_b">#666666</color>      <!-- this is only while touching button -->
+    <color name="button_selected_b">#444444</color> <!-- this is a permanent color-->
+    <color name="custom_actionbar_bg_b">#2d2d2b</color>
+    <color name="custom_actionbar_border_b">#444444</color>
+    <color name="text_bg_b">#333331</color>
+    <color name="text_color_main_b">#ffffff</color>
+    <color name="text_color_english_b">#999999</color>
+    <color name="text_color_faded_b">#666666</color>
+    <color name="text_chapter_header_color_b">#999999</color>
+    <color name="text_chapter_header_border_b">#666666</color>
+    <color name="text_verse_selected_bg_b">#444444</color>
+    <color name="text_verse_num_color_b">#dddddd</color>
+    <color name="link_bg_b">#2d2d2b</color>
+
 
 </resources>

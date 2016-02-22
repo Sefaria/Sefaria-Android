@@ -31,7 +31,7 @@ public class MyApp extends Application {
             R.color.modern_works,R.color.commentary, R.color.system_color};
 
     public enum Font {
-        MONTSERRAT,TAAMEY_FRANK,OPEN_SANS_EN,OPEN_SANS_HE,GARAMOND,NEW_ATHENA,CRIMSON
+        MONTSERRAT,TAAMEY_FRANK,OPEN_SANS_EN,OPEN_SANS_HE,GARAMOND,NEW_ATHENA,CRIMSON,QUATTROCENTO
     }
 
     private static Typeface monserrat_tf;
@@ -41,6 +41,7 @@ public class MyApp extends Application {
     private static Typeface garamond_tf;
     private static Typeface new_athena_tf;
     private static Typeface crimson_tf;
+    private static Typeface quattrocento_tf;
 
     private static Context context;
     public static Activity currActivityContext;
@@ -70,6 +71,7 @@ public class MyApp extends Application {
         garamond_tf = Typeface.createFromAsset(context.getAssets(), "fonts/EBGaramond12-Regular.ttf");
         new_athena_tf = Typeface.createFromAsset(context.getAssets(), "fonts/new_athena_unicode.ttf");
         crimson_tf = Typeface.createFromAsset(context.getAssets(), "fonts/CrimsonText-Regular.ttf");
+        quattrocento_tf = Typeface.createFromAsset(context.getAssets(), "fonts/Quattrocento-Regular.otf");
     }
 
     public static Typeface getFont(Font font) {
@@ -88,6 +90,8 @@ public class MyApp extends Application {
                 return new_athena_tf;
             case CRIMSON:
                 return crimson_tf;
+            case QUATTROCENTO:
+                return quattrocento_tf;
         }
         return null;
     }

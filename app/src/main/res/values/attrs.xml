@@ -2,6 +2,9 @@
 <resources>
     <attr name="button_bg" format="reference|color"/>
     <attr name="button_clicked" format="reference|color"/>
+    <attr name="button_selector_solid_drawable" format="reference"/>
+    <attr name="button_selector_transparent_drawable" format="reference"/>
+    <attr name="button_selector_border_top_bot_drawable" format="reference"/>
     <attr name="button_selected" format="reference|color"/>
     <attr name="custom_actionbar_bg" format="reference|color"/>
     <attr name="custom_actionbar_border" format="reference|color"/>

@@ -5,7 +5,7 @@
     android:layout_weight="1"
     android:layout_margin="3dp"
     android:orientation="vertical"
-    android:background="@drawable/button_ripple_rect_white">
+    android:background="?button_selector_solid_drawable">
     <View
         android:id="@+id/color_bar"
         android:layout_width="match_parent"
