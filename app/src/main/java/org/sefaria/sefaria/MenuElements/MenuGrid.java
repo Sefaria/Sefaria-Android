@@ -16,6 +16,7 @@ import org.sefaria.sefaria.activities.MenuActivity;
 import org.sefaria.sefaria.activities.SuperTextActivity;
 import org.sefaria.sefaria.activities.TOCActivity;
 import org.sefaria.sefaria.Util;
+import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.database.Book;
 
 import java.util.ArrayList;
@@ -304,6 +305,10 @@ public class MenuGrid extends LinearLayout {
                 boolean goToTOC = false;
                 Book book = null;
                 try {
+                    if(API.useAPI()){ //There's no DB //TODO make it work with API
+                        Toast.makeText(context,"You need to download library to open Book",Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     book = new Book(newMenuState.getCurrNode().getTitle(Util.Lang.EN));
                     if(goToTOC){
                         intent = new Intent(context, TOCActivity.class);

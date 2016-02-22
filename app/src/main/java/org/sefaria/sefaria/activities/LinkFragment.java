@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.LinkElements.LinkMainAdapter;
 import org.sefaria.sefaria.LinkElements.LinkSelectorBar;
 import org.sefaria.sefaria.LinkElements.LinkSelectorBarButton;
@@ -238,7 +239,13 @@ public class LinkFragment extends android.support.v4.app.Fragment {
     }
 
     public void setDontUpdate(boolean dontUpdate) { this.dontUpdate = dontUpdate; }
-    public void setIsOpen(boolean isOpen) { this.isOpen = isOpen; }
+    public void setIsOpen(boolean isOpen) {
+        if(isOpen)
+            GoogleTracker.sendScreen("LinkFragment");
+        else
+            GoogleTracker.sendScreen("SuperTextActivity");
+        this.isOpen = isOpen;
+    }
     public boolean getIsOpen() { return isOpen; }
     public void setClicked (boolean clicked) { this.clicked = clicked; }
     public void setSegment(Text segment) {

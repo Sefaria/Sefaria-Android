@@ -1,6 +1,7 @@
 package org.sefaria.sefaria.database;
 
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -38,10 +39,13 @@ public class API {
     final static int STATUS_GOOD = 1;
     final static int STATUS_ERROR = 2;
 
+
     private String data = "";
     private String url = "";
     private int status = STATUS_NONE;
     private boolean isDone = false;
+
+    private boolean sendJSON = false;
     String sefariaData = null;
     final static int READ_TIMEOUT = 3000;
     final static int CONNECT_TIMEOUT = 3000;
@@ -58,13 +62,54 @@ public class API {
         String data = "";
         this.url = urlString;
         try {
-            URL url = new URL(urlString);
-            HttpURLConnection conn = (HttpURLConnection)url.openConnection();
-            conn.setReadTimeout(READ_TIMEOUT);
-            conn.setConnectTimeout(CONNECT_TIMEOUT);
-            conn.connect();
-            InputStream stream = conn.getInputStream();
-            data = convertStreamToString(stream);
+            if(!sendJSON) {//!use JSON post
+                URL url = new URL(urlString);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setReadTimeout(READ_TIMEOUT);
+                conn.setConnectTimeout(CONNECT_TIMEOUT);
+                conn.connect();
+                InputStream stream = conn.getInputStream();
+                data = convertStreamToString(stream);
+            }else{
+                URL url = new URL(urlString);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setDoOutput(true);
+                connection.setDoInput(true);
+                connection.setInstanceFollowRedirects(false);
+                connection.setRequestMethod("POST");
+                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                connection.setRequestProperty("charset", "utf-8");
+                //connection.setRequestProperty("Content-Length", "" + Integer.toString(urlParameters.getBytes().length));
+                connection.setUseCaches (false);
+
+                DataOutputStream wr = new DataOutputStream(connection.getOutputStream ());
+                //wr.writeBytes(otherParametersUrServiceNeed);
+
+
+                try {
+
+                    JSONObject jsonParam = new JSONObject(
+                            //"{\"sort\":[{\"order\":{}}],\"highlight\":{\"pre_tags\":[\"<b>\"],\"post_tags\":[\"</b>\"],\"fields\":{\"content\":{\"fragment_size\":200}}},\"query\":{\"query_string\":{\"query\":\"fish\",\"default_operator\":\"AND\",\"fields\":[\"content\"]}},\"aggs\":{\"category\":{\"terms\":{\"field\":\"path\",\"size\":0}}}}"
+                            //"{\"sort\":[{\"order\":{}}],\"highlight\":{\"pre_tags\":[\"<b>\"],\"post_tags\":[\"</b>\"],\"fields\":{\"content\":{\"fragment_size\":200}}},\"query\":{\"filtered\":{\"query\":{\"query_string\":{\"query\":\"fish\",\"default_operator\":\"AND\",\"fields\":[\"content\"]}},\"filter\":{\"or\":[{\"regexp\":{\"path\":\"Tosefta.*\"}}]}}}}"
+                            //"\"{\"sort\":[{\"order\":{}}],\"highlight\":{\"pre_tags\":[\"<b>\"],\"post_tags\":[\"</b>\"],\"fields\":{\"content\":{\"fragment_size\":200}}},\"query\":{\"query_string\":{\"query\":\"Moshe\",\"default_operator\":\"AND\",\"fields\":[\"content\"]}},\"aggs\":{\"category\":{\"terms\":{\"field\":\"path\",\"size\":0}}}}\""
+                            "\"{\"sort\":[{\"order\":{}}],\"highlight\":{\"pre_tags\":[\"<b>\"],\"post_tags\":[\"</b>\"],\"fields\":{\"content\":{\"fragment_size\":200}}},\"query\":{\"query_string\":{\"query\":\"Moshe\",\"default_operator\":\"AND\",\"fields\":[\"content\"]}}}\""
+                    );
+                    wr.writeBytes(jsonParam.toString());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                wr.flush();
+                wr.close();
+                connection.setReadTimeout(READ_TIMEOUT);
+                connection.setConnectTimeout(CONNECT_TIMEOUT);
+                connection.connect();
+                InputStream stream = connection.getInputStream();
+                data = convertStreamToString(stream);
+                Log.d("API", "finsihed json get data: " + data.length());
+                Log.d("API", "finsihed json get data: " + data);
+            }
+
+
             //TODO handle timeouts ... messages, or maybe increase timeout time, etc.
         } catch (MalformedURLException e) {
             e.printStackTrace();
@@ -266,8 +311,9 @@ public class API {
 
 
     public static ArrayList<Text> getSearchResults(String query,String[] filterArray, int from, int offset) throws APIException {
-        ArrayList<Text> texts = new ArrayList<Text>();
-        String url = SEARCH_URL + "?" + "&from=" +from + "&offset=" + offset + "q=" + Uri.encode(query) ;
+        Log.d("Searching", "starting api");
+        ArrayList<Text> texts = new ArrayList<>();
+        String url = SEARCH_URL ;//+ "?" + "&from=" +from + "&offset=" + offset + "q=" + Uri.encode(query) ;
         String data = getDataFromURL(url);
         try {
             JSONObject jsonData = new JSONObject(data);
@@ -298,6 +344,7 @@ public class API {
             e.printStackTrace();
         }
 
+        Log.d("Searching", "finishing api");
         return texts;
 
     }
