@@ -2,6 +2,9 @@ package org.sefaria.sefaria.database;
 
 import android.os.AsyncTask;
 import android.util.Log;
+
+import org.sefaria.sefaria.GoogleTracker;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -130,6 +133,7 @@ public class Huffman {
 
     private static boolean makeTree(){
         Log.d("Huffman", "getTree started");
+        long startTime= System.currentTimeMillis();
         try {
             String path = Database.getDbPath() + "/SefariaHuffmanDeflated.txt";
             String deflated = readFile(path);
@@ -184,6 +188,7 @@ public class Huffman {
             return false;
         }
         Log.d("Huffman", "getTree finished");
+        GoogleTracker.sendEvent(GoogleTracker.CATEGORY_STATUS_INFO,"Huffman tree finished time",(System.currentTimeMillis() - startTime) );
         return true;
     }
 

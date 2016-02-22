@@ -37,8 +37,8 @@ public class Downloader {
     public static final String CSV_DOWNLOAD_TITLE = "Sefaria Pre Update";
     public static final String DB_DOWNLOAD_TITLE = "Sefaria Library Update";
     public static final String JSON_INDEX_TITLE = "Sefaria Index";
-    public static final String DB_DOWNLOAD_PATH = ".sefariaTempDownld/" ; //Environment.DIRECTORY_DOWNLOADS + "/";
-    public static final String FULL_DOWNLOAD_PATH = Environment.getExternalStorageDirectory() + "/" + DB_DOWNLOAD_PATH;
+    public static final String DB_DOWNLOAD_PATH = ".sefariaTempDownld/" ; // + "/";
+    public static final String FULL_DOWNLOAD_PATH = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + DB_DOWNLOAD_PATH; //Environment.getExternalStorageDirectory()
     public static final String INDEX_JSON_NAME = "sefaria_mobile_updating_index.json";
 
     public static final int INTERNET_LOST = 56;
@@ -62,7 +62,7 @@ public class Downloader {
 
     public static int downloadErrorNum;
 
-    public static String getCSV(){
+    public static String getCSVurl(){
         if(useDebugCSV)
             return CSV_DEBUG_URL;
         else
@@ -126,9 +126,7 @@ public class Downloader {
 
             Log.d("update",downloadTitle);
 
-            if (downloadTitle.equals(CSV_DOWNLOAD_TITLE)) {
-                UpdateService.handler.sendEmptyMessage(UpdateService.UPDATE_STAGE_1_COMPLETE);
-            } else if (downloadTitle.equals(DB_DOWNLOAD_TITLE)) {
+            if (downloadTitle.equals(DB_DOWNLOAD_TITLE)) {
                 if (eitherDBorIndexFinished) UpdateService.handler.sendEmptyMessage(UpdateService.UPDATE_STAGE_2_COMPLETE);
                 else eitherDBorIndexFinished = true;
             } else if (downloadTitle.equals(JSON_INDEX_TITLE)) {
@@ -188,7 +186,9 @@ public class Downloader {
             return;
         }
 
-        request.setDestinationInExternalPublicDir(destPath,destName);
+        Log.d("Downloader","destPath:" + destPath);
+        Log.d("Downloader","destName:" + destName);
+        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,destPath + destName);
         // get download service and enqueue file
         manager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
         downloadIdList.add(manager.enqueue(request));

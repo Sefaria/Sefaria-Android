@@ -27,24 +27,85 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:paddingBottom="100dp"
+
+            android:padding="20dp"
             >
 
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/menu_lang"/>
+            <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="10dp"
+                android:layout_marginBottom="15dp"
+                android:gravity="center"
+                >
+
+                <RadioButton android:id="@+id/menu_english"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/english"
+                    android:onClick="onMenuLangRadioButtonClicked"/>
+                <RadioButton android:id="@+id/menu_hebrew"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/hebrew"
+                    android:onClick="onMenuLangRadioButtonClicked"/>
+
+
+            </RadioGroup>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/default_text_language"/>
+            <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="10dp"
+                android:gravity="center"
+                >
+                <RadioButton android:id="@+id/text_bilingual"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/bilingual"
+                    android:onClick="onRadioButtonClicked"/>
+                <RadioButton android:id="@+id/text_hebrew"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/hebrew"
+                    android:onClick="onRadioButtonClicked"/>
+                <RadioButton android:id="@+id/text_english"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/english"
+                    android:onClick="onRadioButtonClicked"/>
+
+            </RadioGroup>
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:text="@string/clear_all_book_settings"
+                android:onClick="clearAllBookSettings"
+                />
             <TextView
                 android:id="@+id/appInfo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="App Version:"
+                android:text="@string/app_version_is"
                 android:gravity="center"
-                android:padding="5dp"/>
+                android:padding="5dp"
+                android:layout_marginTop="15dp"
+                />
             <TextView
                 android:id="@+id/databaseInfo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Database info:"
+                android:text="@string/library_version_is"
                 android:gravity="center"
                 android:padding="5dp"/>
 
@@ -52,8 +113,16 @@
                 android:id="@+id/update_library"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
-                android:text="Update Library"
+                android:text="@string/update_library"
                 android:onClick="updateLibrary"
+
+                />
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:text="@string/settings_done"
+                android:onClick="done"
+                android:layout_marginTop="15dp"
                 />
         </LinearLayout>
 
