@@ -1,6 +1,7 @@
 package org.sefaria.sefaria.LinkElements;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -37,9 +38,9 @@ public class LinkSelectorBarButton extends SefariaTextView {
 
         int padding = 15;
         this.setPadding(padding, padding, padding, padding);
-        this.setFont(lang,true);
-        this.setTextColor(Util.getColor(context,R.attr.text_color_main));
-        this.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.button_ripple_rect));
+        this.setFont(lang, true);
+        this.setTextColor(Util.getColor(context, R.attr.text_color_main));
+        this.setBackgroundResource(Util.getDrawable(context, R.attr.button_selector_transparent_drawable));
     }
 
     public void setLang(Util.Lang lang) {

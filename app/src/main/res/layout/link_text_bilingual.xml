@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/button_ripple_rect_border_top_bot">
+    android:background="?button_selector_border_top_bot_drawable">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

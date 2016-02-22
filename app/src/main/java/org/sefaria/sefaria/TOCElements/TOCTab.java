@@ -32,7 +32,6 @@ public class TOCTab extends LinearLayout implements TOCElement {
         this.node = node;
         this.tv = (SefariaTextView) findViewById(R.id.tv);
         tv.setText(node.getTabName(lang));
-        tv.setTextSize(6);//TODO dynamic sizes
         setLang(lang);
         setActive(false);
     }
@@ -49,7 +48,6 @@ public class TOCTab extends LinearLayout implements TOCElement {
 
         this.tv = (SefariaTextView) findViewById(R.id.tv);
 
-        tv.setTextSize(6);//TODO dynamic sizes
         setLang(lang);
         setActive(false);
     }

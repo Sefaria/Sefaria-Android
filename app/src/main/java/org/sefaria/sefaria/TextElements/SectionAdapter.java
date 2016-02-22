@@ -129,12 +129,11 @@ public class SectionAdapter extends ArrayAdapter<Text> {
 
 
                 //enTv.setTextColor(Color.parseColor("#999999"));
-                enTv.setFont(Util.Lang.EN,true,activity.getTextSize());
+                enTv.setFont(Util.Lang.EN, true, activity.getTextSize());
                 //enTv.setTextSize(activity.getTextSize());
 
                 //heTv.setTextColor(Color.parseColor("#000000"));
-                heTv.setFont(Util.Lang.HE,true);
-                heTv.setTextSize(activity.getTextSize());
+                heTv.setFont(Util.Lang.HE,true,activity.getTextSize());
                 if(segment.displayNum)
                     heNum.setText("" + Util.int2heb(segment.levels[0]));
                 else

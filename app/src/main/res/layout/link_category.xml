@@ -24,6 +24,6 @@
         android:textAllCaps="false"
         android:textColor="?text_color_main"
         android:gravity="center"
-        android:background="@drawable/button_ripple_rect_white"
+        android:background="?button_selector_solid_drawable"
         android:layout_margin="3dp"/>
 </LinearLayout>

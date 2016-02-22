@@ -10,7 +10,7 @@
     android:layout_margin="5dp"
     android:padding="12dp"
     android:textSize="15sp"
-    android:background="@drawable/button_ripple_rect_white"
+    android:background="?button_selector_solid_drawable"
     android:text="yoyo"
     android:textColor="@android:color/black"
     android:gravity="center"

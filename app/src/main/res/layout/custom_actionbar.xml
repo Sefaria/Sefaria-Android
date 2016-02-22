@@ -169,7 +169,7 @@
 
             android:ellipsize="none"
             android:singleLine="true"
-            android:background="@drawable/button_ripple_rect"
+            android:background="?button_selector_transparent_drawable"
             />
         <!--
         <FrameLayout

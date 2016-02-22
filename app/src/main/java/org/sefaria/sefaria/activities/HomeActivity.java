@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import org.sefaria.sefaria.BuildConfig;
@@ -246,6 +247,9 @@ public class HomeActivity extends Activity {
         textView.setTextSize(20);
         textView.setFont(Util.Lang.EN,isSerif); //TODO change with system lang
         textView.setGravity(Gravity.CENTER);
+        if (! isSerif && Build.VERSION.SDK_INT > 14) {
+            textView.setAllCaps(true);
+        }
 
         return textView;
     }

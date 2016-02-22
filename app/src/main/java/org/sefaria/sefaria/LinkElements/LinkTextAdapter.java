@@ -87,7 +87,7 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextHolder> {
             holder.title.setVisibility(View.VISIBLE);
             holder.title.setText(Html.fromHtml("<i>" + link.getLocationString(Settings.getMenuLang()) + "</i>"));
             holder.title.setFont(lang,false);
-            holder.title.setTextSize(20);
+            holder.title.setTextSize(15);
         }
 
         if (holder instanceof LinkMonoTextHolder) {
@@ -101,7 +101,7 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextHolder> {
 
             monoHolder.monoTv.setText(Html.fromHtml(text));
             monoHolder.monoTv.setFont(lang,true);
-            monoHolder.monoTv.setTextSize(20);
+            monoHolder.monoTv.setTextSize(activity.getTextSize());
         } else if (holder instanceof LinkBiTextHolder) {
             LinkBiTextHolder biHolder = (LinkBiTextHolder) holder;
 
@@ -115,15 +115,13 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextHolder> {
                 biHolder.enTv.setVisibility(View.GONE);
             else
                 biHolder.enTv.setText(Html.fromHtml(enText));
-            biHolder.enTv.setFont(Util.Lang.EN,true);
-            biHolder.enTv.setTextSize(20);
+            biHolder.enTv.setFont(Util.Lang.EN,true,activity.getTextSize());
 
             if (heText.length() == 0)
                 biHolder.heTv.setVisibility(View.GONE);
             else
                 biHolder.heTv.setText(Html.fromHtml(heText));
-            biHolder.heTv.setFont(Util.Lang.HE,true);
-            biHolder.heTv.setTextSize(20);
+            biHolder.heTv.setFont(Util.Lang.HE,true,activity.getTextSize());
         }
 
     }

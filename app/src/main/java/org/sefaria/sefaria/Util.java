@@ -413,4 +413,10 @@ public class Util {
         return colorVal.data;
     }
 
+    public static int getDrawable(Context context, int id) {
+        TypedValue drawableVal = new TypedValue();
+        context.getTheme().resolveAttribute(id, drawableVal, false); //false means that this is equivalent of using the R.drawable.x value
+        return drawableVal.data;
+    }
+
 }
