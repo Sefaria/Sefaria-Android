@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item>
+        <shape
+            android:shape="rectangle">
+            <stroke android:width="1dp" android:color="@color/custom_actionbar_border_b" />
+            <solid android:color="@color/button_selected_b" />
+            <corners
+                android:topLeftRadius="0dp"
+                android:bottomLeftRadius="0dp"
+                android:topRightRadius="5dp"
+                android:bottomRightRadius="5dp"/>
+        </shape>
+    </item>
+    <item android:bottom="1dp" android:top="1dp" android:right="1dp">
+        <shape android:shape="rectangle">
+            <stroke android:width="1dp" android:color="@color/button_selected_b" />
+            <solid android:color="@android:color/transparent" />
+            <corners
+                android:topLeftRadius="0dp"
+                android:bottomLeftRadius="0dp"
+                android:topRightRadius="5dp"
+                android:bottomRightRadius="5dp"/>
+        </shape>
+    </item>
+</layer-list>

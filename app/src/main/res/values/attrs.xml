@@ -5,6 +5,17 @@
     <attr name="button_selector_solid_drawable" format="reference"/>
     <attr name="button_selector_transparent_drawable" format="reference"/>
     <attr name="button_selector_border_top_bot_drawable" format="reference"/>
+    <attr name="text_menu_button_background_right_clicked_drawable" format="reference"/>
+    <attr name="text_menu_button_background_right_drawable" format="reference"/>
+    <attr name="text_menu_button_background_right_ripple_drawable" format="reference"/>
+    <attr name="text_menu_button_background_left_clicked_drawable" format="reference"/>
+    <attr name="text_menu_button_background_left_drawable" format="reference"/>
+    <attr name="text_menu_button_background_left_ripple_drawable" format="reference"/>
+    <attr name="text_menu_button_background_center_clicked_drawable" format="reference"/>
+    <attr name="text_menu_button_background_center_drawable" format="reference"/>
+    <attr name="text_menu_button_background_center_ripple_drawable" format="reference"/>
+
+
     <attr name="button_selected" format="reference|color"/>
     <attr name="custom_actionbar_bg" format="reference|color"/>
     <attr name="custom_actionbar_border" format="reference|color"/>

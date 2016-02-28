@@ -7,11 +7,11 @@
         <shape android:shape="rectangle">
             <solid android:color="?button_clicked" />
             <corners
-                android:topLeftRadius="5dp"
-                android:bottomLeftRadius="5dp"
+                android:topLeftRadius="0dp"
+                android:bottomLeftRadius="0dp"
                 android:topRightRadius="0dp"
                 android:bottomRightRadius="0dp"/>
         </shape>
     </item>
-    <item android:drawable="@drawable/text_menu_button_background_left"/>
+    <item android:drawable="?text_menu_button_background_center_drawable"/>
 </ripple>

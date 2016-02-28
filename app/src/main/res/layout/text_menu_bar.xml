@@ -25,7 +25,7 @@
             android:textSize="20dp"
             android:textColor="?text_color_main"
             android:gravity="center"
-            android:background="@drawable/text_menu_button_background_left" />
+            android:background="?text_menu_button_background_left_drawable" />
         <org.sefaria.sefaria.layouts.SefariaTextView
             android:id="@+id/bi_btn"
             android:layout_width="0dp"
@@ -36,7 +36,7 @@
             android:textSize="20dp"
             android:textColor="?text_color_main"
             android:gravity="center"
-            android:background="@drawable/text_menu_button_background_center" />
+            android:background="?text_menu_button_background_center_drawable" />
         <org.sefaria.sefaria.layouts.SefariaTextView
             android:id="@+id/he_btn"
             android:layout_width="0dp"
@@ -47,7 +47,7 @@
             android:textSize="20dp"
             android:textColor="?text_color_main"
             android:gravity="center"
-            android:background="@drawable/text_menu_button_background_right" />
+            android:background="?text_menu_button_background_right_drawable" />
 
 
     </LinearLayout>
@@ -65,7 +65,7 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="@dimen/text_menu_button_height"
-            android:background="@drawable/text_menu_button_background_left"
+            android:background="?text_menu_button_background_left_drawable"
             android:padding="10dp">
             <ImageView
                 android:layout_width="@dimen/text_menu_bar_box"
@@ -81,7 +81,7 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="@dimen/text_menu_button_height"
-            android:background="@drawable/text_menu_button_background_right_ripple"
+            android:background="?text_menu_button_background_right_ripple_drawable"
             android:padding="10dp">
             <ImageView
                 android:layout_width="@dimen/text_menu_bar_box"
@@ -108,7 +108,7 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="@dimen/text_menu_button_height"
-            android:background="@drawable/text_menu_button_background_left"
+            android:background="?text_menu_button_background_left_drawable"
             android:padding="10dp">
             <ImageView
                 android:layout_width="@dimen/text_menu_bar_box"
@@ -124,7 +124,7 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="@dimen/text_menu_button_height"
-            android:background="@drawable/text_menu_button_background_right_ripple"
+            android:background="?text_menu_button_background_right_ripple_drawable"
             android:padding="10dp">
             <ImageView
                 android:layout_width="@dimen/text_menu_bar_box"
@@ -212,7 +212,7 @@
             android:textSize="15dp"
             android:textColor="?text_color_main"
             android:gravity="center"
-            android:background="@drawable/text_menu_button_background_left_ripple" />
+            android:background="?text_menu_button_background_left_ripple_drawable" />
         <org.sefaria.sefaria.layouts.SefariaTextView
             android:id="@+id/big_btn"
             android:layout_width="0dp"
@@ -223,7 +223,7 @@
             android:textSize="20dp"
             android:textColor="?text_color_main"
             android:gravity="center"
-            android:background="@drawable/text_menu_button_background_right_ripple" />
+            android:background="?text_menu_button_background_right_ripple_drawable" />
 
     </LinearLayout>
 
