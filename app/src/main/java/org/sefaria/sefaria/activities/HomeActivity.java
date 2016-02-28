@@ -1,6 +1,9 @@
 package org.sefaria.sefaria.activities;
 
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -62,7 +65,6 @@ public class HomeActivity extends Activity {
         MyApp.currActivityContext = this;
         setContentView(R.layout.activity_home);
         Huffman.makeTree(true);
-
         Intent intent = getIntent();
         menuState = intent.getParcelableExtra("menuState");
         isPopup = intent.getBooleanExtra("isPopup",false);
