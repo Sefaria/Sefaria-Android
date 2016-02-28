@@ -523,9 +523,13 @@ public class Text implements Parcelable {
     @Override
     public String toString() {
         String string =  tid + "-" + bid ;
-        for(int i=0;i<levels.length;i++)
-            string+= "." + levels[i];
-        string += " " + enText + " " + heText;
+        try {
+            for (int i = 0; i < levels.length; i++)
+                string += "." + levels[i];
+            string += " " + getText(Util.Lang.EN) + " " + getText(Util.Lang.HE);
+        }catch (Exception e){
+            ;
+        }
         return string;
     }
 

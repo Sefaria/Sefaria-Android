@@ -1,9 +1,16 @@
 package org.sefaria.sefaria.database;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import org.sefaria.sefaria.BuildConfig;
 import org.sefaria.sefaria.GoogleTracker;
+import org.sefaria.sefaria.MyApp;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -69,12 +76,16 @@ public class Huffman {
     }
 
 
-    private static void printTree(int node, String tabs){
-        if(node == 0)
+    public static StringBuilder printedTree = new StringBuilder();
+    private static void printTree(int node, String tabs,String path){
+        if(node == 0) {
             return;
-        Log.d("Huffman", tabs + node);
-        printTree(getLeft(node), tabs + "\t");
-        printTree(getRight(node), tabs + "\t");
+        }
+        if(getPlainText(node) != null)
+            printedTree.append(path + "\t:" + "_" + getPlainText(node) + "_\n");
+        //Log.d("Huffman", );
+        printTree(getLeft(node), tabs + "\t",path + "0");
+        printTree(getRight(node), tabs + "\t",path + "1");
     }
 
     public String makeString(int index) {
@@ -103,6 +114,7 @@ public class Huffman {
                 }
                 String text = getPlainText(node);
                 if(text != null){
+                    //text = "{"  + text + "}"; //THIS IS MAJOR DEBUGGING!!//+byteString.toString() + ":"
                     decode.append(text);
                     node = nodeRoot;
                 }
@@ -156,6 +168,7 @@ public class Huffman {
                             break;
                         }
                     }
+                    if(i == deflated.length() -1) i++; //make sure to get the very last character
                     tempText = deflated.substring(startIndex, i--);
                     if(tempText == null)
                         tempText = "";
