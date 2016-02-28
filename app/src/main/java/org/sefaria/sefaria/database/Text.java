@@ -47,7 +47,6 @@ public class Text implements Parcelable {
                 else
                     enText = Huffman.decode(enTextCompress, enTextLength);
             }
-            Log.d("text",enText);
             return enText;
         } else if (lang == Util.Lang.HE) {
             if(heText == null){
