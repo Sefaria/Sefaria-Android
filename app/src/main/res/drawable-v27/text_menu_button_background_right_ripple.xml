@@ -13,5 +13,5 @@
                 android:bottomRightRadius="5dp"/>
         </shape>
     </item>
-    <item android:drawable="@drawable/text_menu_button_background_right"/>
+    <item android:drawable="?text_menu_button_background_right_drawable"/>
 </ripple>

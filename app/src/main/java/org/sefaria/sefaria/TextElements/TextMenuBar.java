@@ -77,17 +77,17 @@ public class TextMenuBar extends LinearLayout {
         else /*if (lang == Util.Lang.HE)*/ currLangViewId = R.id.he_btn;
 
         if (currLangViewId == R.id.en_btn)
-           enBtn.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.text_menu_button_background_left_clicked));
+            enBtn.setBackgroundResource(Util.getDrawable(context,R.attr.text_menu_button_background_left_clicked_drawable));
         else
-            enBtn.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.text_menu_button_background_left_ripple));
+            enBtn.setBackgroundResource(Util.getDrawable(context,R.attr.text_menu_button_background_left_ripple_drawable));
         if (currLangViewId == R.id.bi_btn)
-            biBtn.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.text_menu_button_background_center_clicked));
+            biBtn.setBackgroundResource(Util.getDrawable(context,R.attr.text_menu_button_background_center_clicked_drawable));
         else
-            biBtn.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.text_menu_button_background_center_ripple));
+            biBtn.setBackgroundResource(Util.getDrawable(context,R.attr.text_menu_button_background_center_ripple_drawable));
         if (currLangViewId == R.id.he_btn)
-            heBtn.setBackgroundDrawable(ContextCompat.getDrawable(context, R.drawable.text_menu_button_background_right_clicked));
+            heBtn.setBackgroundResource(Util.getDrawable(context,R.attr.text_menu_button_background_right_clicked_drawable));
         else
-            heBtn.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.text_menu_button_background_right_ripple));
+            heBtn.setBackgroundResource(Util.getDrawable(context,R.attr.text_menu_button_background_right_ripple_drawable));
 
 
         //LINE MONO
@@ -96,13 +96,13 @@ public class TextMenuBar extends LinearLayout {
         else currLineMonoViewId = R.id.sep_btn;
 
         if (currLineMonoViewId == R.id.cts_btn)
-            ctsBtn.setBackgroundDrawable(ContextCompat.getDrawable(context, R.drawable.text_menu_button_background_left_clicked));
+            ctsBtn.setBackgroundResource(Util.getDrawable(context,R.attr.text_menu_button_background_left_clicked_drawable));
         else
-            ctsBtn.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.text_menu_button_background_left_ripple));
+            ctsBtn.setBackgroundResource(Util.getDrawable(context,R.attr.text_menu_button_background_left_ripple_drawable));
         if (currLineMonoViewId == R.id.sep_btn)
-            sepBtn.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.text_menu_button_background_right_clicked));
+            sepBtn.setBackgroundResource(Util.getDrawable(context,R.attr.text_menu_button_background_right_clicked_drawable));
         else
-            sepBtn.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.text_menu_button_background_right_ripple));
+            sepBtn.setBackgroundResource(Util.getDrawable(context,R.attr.text_menu_button_background_right_ripple_drawable));
 
         //LINE BI
         int currLineBiViewId;
@@ -110,13 +110,13 @@ public class TextMenuBar extends LinearLayout {
         else currLineBiViewId = R.id.tb_btn;
 
         if (currLineBiViewId == R.id.sbs_btn)
-            sbsBtn.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.text_menu_button_background_left_clicked));
+            sbsBtn.setBackgroundResource(Util.getDrawable(context,R.attr.text_menu_button_background_left_clicked_drawable));
         else
-            sbsBtn.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.text_menu_button_background_left_ripple));
+            sbsBtn.setBackgroundResource(Util.getDrawable(context,R.attr.text_menu_button_background_left_ripple_drawable));
         if (currLineBiViewId == R.id.tb_btn)
-            tbBtn.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.text_menu_button_background_right_clicked));
+            tbBtn.setBackgroundResource(Util.getDrawable(context,R.attr.text_menu_button_background_right_clicked_drawable));
         else
-            tbBtn.setBackgroundDrawable(ContextCompat.getDrawable(context, R.drawable.text_menu_button_background_right_ripple));
+            tbBtn.setBackgroundResource(Util.getDrawable(context,R.attr.text_menu_button_background_right_ripple_drawable));
 
 
 
