@@ -1,10 +1,12 @@
 package org.sefaria.sefaria.activities;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
@@ -33,6 +35,8 @@ import org.sefaria.sefaria.MenuElements.MenuNode;
 import org.sefaria.sefaria.MenuElements.MenuState;
 import org.sefaria.sefaria.layouts.SefariaTextView;
 
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.util.Pair;
 import android.view.Gravity;
@@ -88,6 +92,14 @@ public class HomeActivity extends Activity {
         }else
             veryFirstTime = false;
         GoogleTracker.sendScreen("HomeActivity");
+
+        boolean hasPermission = (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
+        if (!hasPermission) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    MyApp.REQUEST_WRITE_STORAGE);
+        }
     }
 
 
@@ -97,7 +109,7 @@ public class HomeActivity extends Activity {
             menuState = new MenuState();
         }
 
-        ScrollView gridRoot = (ScrollView) findViewById(R.id.gridRoot);
+        LinearLayout gridRoot = (LinearLayout) findViewById(R.id.gridRoot);
         LinearLayout homeRoot = new LinearLayout(this);
         homeRoot.setOrientation(LinearLayout.VERTICAL);
         homeRoot.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
@@ -116,8 +128,6 @@ public class HomeActivity extends Activity {
         homeRoot.addView(createTypeTitle("",false));
 
         LayoutInflater inflater = (LayoutInflater) getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-        View homeFooter = inflater.inflate(R.layout.home_footer, null);
-        homeRoot.addView(homeFooter);
 
 
         //toggle closeClick, depending on if menu is popup or not
