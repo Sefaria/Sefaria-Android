@@ -210,7 +210,7 @@ public class LinkFragment extends android.support.v4.app.Fragment {
         if (!dontUpdate || clicked) {
             this.segment = segment;
             clicked = false;
-            if(!segment.isChapter()) Log.d("frag", "UPDATE FRAG TEXT " + segment.levels[0]);
+
 
             if (currState == State.MAIN) { //load new linkCounts
                 LinkFilter linkCount = LinkFilter.getFromLinks_small(segment);
@@ -220,6 +220,7 @@ public class LinkFragment extends android.support.v4.app.Fragment {
             } else { //CAT load new cat links
 
             }
+            if(!segment.isChapter()) Log.d("frag", "UPDATE FRAG TEXT " + segment.levels[0]);
             linkRecycler.scrollToPosition(0); //reset scroll to top
 
         } else {

@@ -46,6 +46,7 @@ public class MyApp extends Application {
     private static Context context;
     public static Activity currActivityContext;
     public static final String APP_NAME = "Sefaria";//TODO get rid of variable
+    public static final int REQUEST_WRITE_STORAGE = 112;
 
     public static final int KILL_SWITCH_NUM = -247;
     private static String appPackageName = "org.sefaria.sefaria";
