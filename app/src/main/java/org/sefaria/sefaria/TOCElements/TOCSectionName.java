@@ -35,7 +35,7 @@ public class TOCSectionName extends LinearLayout implements TOCElement {
         inflate(context, R.layout.toc_sectionname, this);
         this.setOrientation(VERTICAL);
         this.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-
+//NECHAMA WUZ HERE!!! <3
         this.lang = lang;
         this.node = node;
         this.context = context;
