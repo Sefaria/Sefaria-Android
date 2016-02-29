@@ -35,7 +35,7 @@
     <string name="USING_DATA_MESSAGE">You are using mobile data (not WIFI). The update is about 100MB. Do you want to download it anyways?</string>
     <string name="FIRST_UPDATE_FAIL_MESSAGE" translatable="false">You don\'t have internet to download the library. You can install it manually when you have internet by going to Settings and tapping \'Update Library\'.</string>
     <string name="NO_NEW_UPDATE_MESSAGE" translatable="false">There is no new update to download. Try again later.</string>
-    <string name="UPDATE_STARTED_MESSAGE">Your library is downloading and installing. This should only take a few minutes. If it is taking longer than 5-10 minutes after downloading, which should also only be a few minutes, then cancel update (and it most likely worked).</string>
+    <string name="UPDATE_STARTED_MESSAGE">Your library is downloading and installing. This should only take a few minutes. If it is taking longer than 5-10 minutes after downloading, then cancel update.</string>
     <string name="LIBRARY_EMPTY_TITLE" translatable="false">Library Empty</string>
     <string name="NEW_UPDATE_TITLE" translatable="false">Update Available</string>
     <string name="YES">Yes</string>
