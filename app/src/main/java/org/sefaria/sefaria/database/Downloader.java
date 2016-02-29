@@ -1,6 +1,8 @@
 package org.sefaria.sefaria.database;
 
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import android.app.Activity;
@@ -37,7 +39,7 @@ public class Downloader {
     public static final String CSV_DOWNLOAD_TITLE = "Sefaria Pre Update";
     public static final String DB_DOWNLOAD_TITLE = "Sefaria Library Update";
     public static final String JSON_INDEX_TITLE = "Sefaria Index";
-    public static final String DB_DOWNLOAD_PATH = ".sefariaTempDownld/" ; // + "/";
+    public static final String DB_DOWNLOAD_PATH = "sefariaTempDownld/" ; // + "/";
     public static final String FULL_DOWNLOAD_PATH = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + DB_DOWNLOAD_PATH; //Environment.getExternalStorageDirectory()
     public static final String INDEX_JSON_NAME = "sefaria_mobile_updating_index.json";
 
@@ -72,7 +74,7 @@ public class Downloader {
     public static void updateLibrary(Activity activity) {
         UpdateService.lockOrientation(activity);
         Intent intent = new Intent(activity,UpdateReceiver.class);
-        intent.putExtra("isPre",true);
+        intent.putExtra("isPre", true);
         intent.putExtra("userInit",true);
         activity.sendBroadcast(intent);
         DialogManager.showDialog(DialogManager.CHECKING_FOR_UPDATE);
@@ -186,9 +188,7 @@ public class Downloader {
             return;
         }
 
-        Log.d("Downloader","destPath:" + destPath);
-        Log.d("Downloader","destName:" + destName);
-        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,destPath + destName);
+        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, destPath + destName);
         // get download service and enqueue file
         manager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
         downloadIdList.add(manager.enqueue(request));
@@ -239,7 +239,7 @@ public class Downloader {
             //  to know is we can neither read nor write
             mExternalStorageAvailable = mExternalStorageWriteable = false;
         }
-
+        Log.d("stor","Avail " + mExternalStorageAvailable + " Write " + mExternalStorageWriteable);
         return mExternalStorageAvailable && mExternalStorageWriteable;
     }
 

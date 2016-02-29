@@ -198,6 +198,9 @@ public abstract class SuperTextActivity extends FragmentActivity {
             abRoot.addView(customActionbar);
             customActionbar.setLang(menuLang);
         }
+
+
+
         setCurrNode(firstLoadedNode);
 
     }
@@ -343,9 +346,13 @@ public abstract class SuperTextActivity extends FragmentActivity {
     }
 
     protected void toggleTextMenu() {
+        textMenuRoot.bringToFront();
+        customActionbar.bringToFront();
         if (isTextMenuVisible) {
+            //textMenuRoot.setVisibility(View.GONE);
             AnimateLinkTMBClose(textMenuRoot);
         } else {
+            //textMenuRoot.setVisibility(View.VISIBLE);
             AnimateLinkTMBOpen(textMenuRoot);
         }
         isTextMenuVisible = !isTextMenuVisible;
@@ -567,7 +574,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
             @Override
             public void onAnimationEnd(Animation animation) {
                 v.clearAnimation();
-                onFinishLinkFragOpen();
+                //onFinishLinkFragOpen();
             }
 
         });

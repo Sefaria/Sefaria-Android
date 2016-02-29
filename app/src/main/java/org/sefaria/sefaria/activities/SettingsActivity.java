@@ -77,6 +77,12 @@ public class SettingsActivity extends Activity {
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MyApp.currActivityContext = this;
+    }
+
     View.OnClickListener homeClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
