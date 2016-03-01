@@ -8,8 +8,8 @@ android {
         applicationId "org.sefaria.sefaria"
         minSdkVersion 11
         targetSdkVersion 23
-        versionCode 211
-        versionName "2.11"
+        versionCode 212
+        versionName "2.12"
     }
     buildTypes {
         release {
