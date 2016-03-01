@@ -407,10 +407,10 @@ public abstract class SuperTextActivity extends FragmentActivity {
     View.OnClickListener homeClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(SuperTextActivity.this, HomeActivity.class);
-            intent.putExtra("homeClicked",true);
-            intent.putExtra("isPopup",true);
-            startActivity(intent);
+            //intent.putExtra("isPopup",true);
+            finish();
+            MyApp.homeClick(SuperTextActivity.this);
+
         }
     };
 

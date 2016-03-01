@@ -116,9 +116,13 @@ public class MenuActivity extends Activity {
     View.OnClickListener homeClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            /*
             Intent returnIntent = new Intent();
             returnIntent.putExtra("homeClicked",true);
             setResult(0, returnIntent);
+            finish();
+            */
+            MyApp.homeClick(MenuActivity.this);
             finish();
         }
     };

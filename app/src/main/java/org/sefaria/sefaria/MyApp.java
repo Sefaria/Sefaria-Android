@@ -3,8 +3,10 @@ package org.sefaria.sefaria;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Typeface;
 
+import org.sefaria.sefaria.activities.HomeActivity;
 import org.sefaria.sefaria.database.LinkFilter;
 
 import java.util.Arrays;
@@ -112,5 +114,11 @@ public class MyApp extends Application {
 
     public static void killSwitch(){return; }//TODO remove function
 
+    public static void homeClick(Activity activity){
+        Intent intent = new Intent(activity, HomeActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); //Clear Activity stack
+        intent.putExtra("homeClicked",true);
+        activity.startActivity(intent);
+    }
 
 }
