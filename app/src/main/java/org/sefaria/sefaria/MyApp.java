@@ -5,6 +5,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.widget.Toast;
 
 import org.sefaria.sefaria.activities.HomeActivity;
 import org.sefaria.sefaria.database.LinkFilter;
@@ -15,6 +16,7 @@ import java.util.Arrays;
  * Created by nss on 9/16/15.
  */
 public class MyApp extends Application {
+
 
     public static final String[] CAT_NAMES = {"Tanach","Mishnah","Talmud",
             "Tosefta","Liturgy","Tefillah",
@@ -119,6 +121,12 @@ public class MyApp extends Application {
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); //Clear Activity stack
         intent.putExtra("homeClicked",true);
         activity.startActivity(intent);
+    }
+
+    public static Intent startNewTab(Intent intent){
+        Toast.makeText(context, context.getString(R.string.opening_new_task), Toast.LENGTH_SHORT).show();
+        intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        return intent;
     }
 
 }
