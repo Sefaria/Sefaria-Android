@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.DownloadManager;
 import android.app.DownloadManager.Query;
@@ -21,6 +22,8 @@ import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -73,6 +76,14 @@ public class Downloader {
 
     public static void updateLibrary(Activity activity) {
         UpdateService.lockOrientation(activity);
+        boolean hasPermission = (ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED);
+        if (!hasPermission) {
+            ActivityCompat.requestPermissions(activity,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    MyApp.REQUEST_WRITE_STORAGE);
+        }
+
         Intent intent = new Intent(activity,UpdateReceiver.class);
         intent.putExtra("isPre", true);
         intent.putExtra("userInit",true);
@@ -180,6 +191,7 @@ public class Downloader {
         }
 
         //i would use the var s, but it doesn't seem to work...
+
 
         if (canWrite()) {
             //Log.d("yo","all good");

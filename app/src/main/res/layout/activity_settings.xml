@@ -86,12 +86,15 @@
                     android:onClick="onRadioButtonClicked"/>
 
             </RadioGroup>
+
+            <!--
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
                 android:text="@string/clear_all_book_settings"
                 android:onClick="clearAllBookSettings"
                 />
+            -->
             <TextView
                 android:id="@+id/appInfo"
                 android:layout_width="match_parent"
