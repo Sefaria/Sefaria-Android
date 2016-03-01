@@ -1,14 +1,14 @@
 <resources>
     <string name="app_name">ספאריה</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_menu">MenuActivity</string>
+    <string name="title_activity_menu">Sefaria | Menu</string>
     <string name="home_more_button">More ></string>
-    <string name="title_activity_text">TextActivity</string>
-    <string name="title_activity_toc">TOCActivity</string>
-    <string name="title_activity_search">Search</string>
-    <string name="title_activity_section">SectionActivity</string>
-    <string name="title_activity_settings">SettingsActivity</string>
-    <string name="title_activity_about">AboutActivity</string>
+    <string name="title_activity_text">Sefaria | Text</string>
+    <string name="title_activity_toc">Sefaria | Table Of Contents</string>
+    <string name="title_activity_search">Sefaria | Search</string>
+    <string name="title_activity_section">Sefaria | Texts</string>
+    <string name="title_activity_settings">Sefaria | Settings</string>
+    <string name="title_activity_about">Sefaria | About</string>
     <string name="no_links">אין מקורות. שים לב לה-● ליד טקסטים לדעת אם יש לטקסט מקורות</string>
     <string name="no_links_filtered">אין מקורות</string>
     <string name="no_text">&lt;i&gt;(אין טקסט לפי השפה הזאת)&lt;/i&gt;</string>

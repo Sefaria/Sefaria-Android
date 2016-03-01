@@ -271,7 +271,12 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
                 scrolledDownTimes++;
                 if(openedNewBook >0 && !reportedNewBookScroll && scrolledDownTimes==2 && (System.currentTimeMillis() - openedNewBook < 10000)){
                     reportedNewBookScroll = true;
-                    GoogleTracker.sendEvent(GoogleTracker.CATEGORY_OPEN_NEW_BOOK_ACTION,"Scrolled down",scrolledDownTimes/openedNewBook);
+                    String category;
+                    if(reportedNewBookTOC || reportedNewBookBack)
+                        category = GoogleTracker.CATEGORY_OPEN_NEW_BOOK_ACTION_2;
+                    else
+                        category = GoogleTracker.CATEGORY_OPEN_NEW_BOOK_ACTION;
+                    GoogleTracker.sendEvent(category,"Scrolled down",scrolledDownTimes/openedNewBook);
                 }
 
             } else if (dir == TextEnums.PREV_SECTION) {

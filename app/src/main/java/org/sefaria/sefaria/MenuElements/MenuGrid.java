@@ -164,6 +164,7 @@ public class MenuGrid extends LinearLayout {
         ll.removeViewAt(childIndex);
         MenuButton mb = new MenuButton(context, node, sectionNode, menuState.getLang());
         mb.setOnClickListener(menuButtonClick);
+        mb.setOnLongClickListener(menuButtonLongClick);
         ll.addView(mb, childIndex);
 
         menuElementList.add(mb);
@@ -295,47 +296,65 @@ public class MenuGrid extends LinearLayout {
         menuState.goHome();
     }
 
+    public OnLongClickListener menuButtonLongClick = new OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+            menuClick(v,true);
+            return true;
+        }
+    };
+
     public OnClickListener menuButtonClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            MenuButton mb = (MenuButton) v;
-            MenuState newMenuState = menuState.goForward(mb.getNode(), mb.getSectionNode());
-            Intent intent;
-            if (mb.isBook()) {
-                boolean goToTOC = false;
-                Book book = null;
-                try {
-                    if(API.useAPI()){ //There's no DB //TODO make it work with API
-                        Toast.makeText(context,"You need to download library to open Book",Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    book = new Book(newMenuState.getCurrNode().getTitle(Util.Lang.EN));
-                    if(goToTOC){
-                        intent = new Intent(context, TOCActivity.class);
-                        intent.putExtra("currBook", book);
-                        intent.putExtra("lang", newMenuState.getLang());
-                        context.startActivity(intent);
-                    }else {
-                        SuperTextActivity.startNewTextActivityIntent(context,book);
-
-                    }
-                } catch (Book.BookNotFoundException e) {
-                    Toast.makeText(context,"Sorry, book not found",Toast.LENGTH_SHORT).show();
-                }
-
-            }else {
-                intent = new Intent(context, MenuActivity.class);
-                intent.putExtra("menuState", newMenuState);
-                intent.putExtra("hasSectionBack", mb.getSectionNode() != null);
-                intent.putExtra("hasTabBack", hasTabs);
-
-
-                ((Activity)context).startActivityForResult(intent, 0);
-            }
-
-
+            menuClick(v, false);
         }
     };
+
+    private void menuClick(View v,boolean longClick){
+        MenuButton mb = (MenuButton) v;
+        MenuState newMenuState = menuState.goForward(mb.getNode(), mb.getSectionNode());
+        Intent intent;
+        if (mb.isBook()) {
+            boolean goToTOC = false;
+            Book book = null;
+            try {
+                if(API.useAPI()){ //There's no DB //TODO make it work with API
+                    Toast.makeText(context,context.getString(R.string.need_library),Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                book = new Book(newMenuState.getCurrNode().getTitle(Util.Lang.EN));
+                if(goToTOC){
+                    intent = new Intent(context, TOCActivity.class);
+                    intent.putExtra("currBook", book);
+                    intent.putExtra("lang", newMenuState.getLang());
+                    context.startActivity(intent);
+                }else {
+                    SuperTextActivity.startNewTextActivityIntent(context,book,longClick);
+
+                }
+            } catch (Book.BookNotFoundException e) {
+                Toast.makeText(context,"Sorry, book not found",Toast.LENGTH_SHORT).show();
+            }
+
+        }else {
+            intent = new Intent(context, MenuActivity.class);
+            if(longClick) {
+                Toast.makeText(context,context.getString(R.string.opening_new_task),Toast.LENGTH_SHORT).show();
+                intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            }
+            intent.putExtra("menuState", newMenuState);
+            intent.putExtra("hasSectionBack", mb.getSectionNode() != null);
+            intent.putExtra("hasTabBack", hasTabs);
+
+
+            ((Activity)context).startActivityForResult(intent, 0);
+        }
+
+
+    }
+
+
 
     public OnClickListener moreButtonClick = new OnClickListener() {
         @Override
