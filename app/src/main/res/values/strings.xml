@@ -1,13 +1,6 @@
 <resources>
     <string name="app_name">Sefaria</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_menu">Sefaria | Menu</string>
-    <string name="title_activity_text">Sefaria | Text</string>
-    <string name="title_activity_toc">Sefaria | Table Of Contents</string>
-    <string name="title_activity_search">Sefaria | Search</string>
-    <string name="title_activity_section">Sefaria | Texts</string>
-    <string name="title_activity_settings">Sefaria | Settings</string>
-    <string name="title_activity_about">Sefaria | About</string>
     <string name="home_more_button">More ></string>
     <string name="no_links">No connections available. Use the ● next to each verse to check if that verse has connections. </string>
     <string name="no_links_filtered">No connections available </string>

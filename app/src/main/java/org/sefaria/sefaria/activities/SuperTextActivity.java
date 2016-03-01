@@ -315,8 +315,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
         //Intent mainIntent = IntentCompat.makeRestartActivityTask(cn);
         //intent.putExtra("menuState", newMenuState);
         if(openNewTask){
-            Toast.makeText(context,context.getString(R.string.opening_new_task),Toast.LENGTH_SHORT).show();
-            intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent = MyApp.startNewTab(intent);
         }
         context.startActivity(intent);
     }
@@ -407,10 +406,10 @@ public abstract class SuperTextActivity extends FragmentActivity {
     View.OnClickListener homeClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(SuperTextActivity.this, HomeActivity.class);
-            intent.putExtra("homeClicked",true);
-            intent.putExtra("isPopup",true);
-            startActivity(intent);
+            //intent.putExtra("isPopup",true);
+            finish();
+            MyApp.homeClick(SuperTextActivity.this);
+
         }
     };
 
