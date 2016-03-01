@@ -82,6 +82,7 @@ public class Downloader {
             ActivityCompat.requestPermissions(activity,
                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                     MyApp.REQUEST_WRITE_STORAGE);
+            return;
         }
 
         Intent intent = new Intent(activity,UpdateReceiver.class);
