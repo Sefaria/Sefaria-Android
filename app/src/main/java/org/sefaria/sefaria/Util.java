@@ -1,10 +1,12 @@
 package org.sefaria.sefaria;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Environment;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
 
@@ -48,11 +50,6 @@ public class Util {
     public static final String VERSE_BULLET = "\u25CF";
     public static final String LINK_CAT_VERICAL_LINE = "\u007C";
     public static final float EN_HE_RATIO = 40f/35f; //universal constant
-
-    public static int dp2pixel(int dp, Context context) {
-        float scale = context.getResources().getDisplayMetrics().density;
-        return (int) (dp*scale + 0.5f);
-    }
 
 
     static final private char[] heChars = {
@@ -306,6 +303,17 @@ public class Util {
     public static float pixelsToSp(Context context, float px) {
         float scaledDensity = context.getResources().getDisplayMetrics().scaledDensity;
         return px/scaledDensity;
+    }
+
+    public static float dpToPixels(Context context, float px) {
+        float scale = context.getResources().getDisplayMetrics().density;
+        return (px * scale + 0.5f);
+    }
+
+    private float inchesToPixels(Activity activity, float inches) {
+        DisplayMetrics metrics = new DisplayMetrics();
+        activity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        return inches*metrics.ydpi;
     }
 
     public static int getRelativeTop(View myView) {
