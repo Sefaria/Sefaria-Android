@@ -47,8 +47,8 @@ public class API {
 
     private boolean sendJSON = false;
     String sefariaData = null;
-    final static int READ_TIMEOUT = 3000;
-    final static int CONNECT_TIMEOUT = 3000;
+    final static int READ_TIMEOUT = 10000;
+    final static int CONNECT_TIMEOUT = 10000;
     //TODO determine good times
     private static int useAPI = -1;
 
