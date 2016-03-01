@@ -197,7 +197,8 @@ public class Huffman {
             }
             createdTree = true;
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            Log.e("Huffman", "problems getting huffman tree");
             return false;
         }
         Log.d("Huffman", "getTree finished");

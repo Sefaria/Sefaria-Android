@@ -42,7 +42,7 @@ public class Downloader {
     public static final String CSV_DOWNLOAD_TITLE = "Sefaria Pre Update";
     public static final String DB_DOWNLOAD_TITLE = "Sefaria Library Update";
     public static final String JSON_INDEX_TITLE = "Sefaria Index";
-    public static final String DB_DOWNLOAD_PATH = "sefariaTempDownld/" ; // + "/";
+    public static final String DB_DOWNLOAD_PATH = ".sefariaTempDownld/" ; // + "/";
     public static final String FULL_DOWNLOAD_PATH = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + DB_DOWNLOAD_PATH; //Environment.getExternalStorageDirectory()
     public static final String INDEX_JSON_NAME = "sefaria_mobile_updating_index.json";
 
@@ -91,6 +91,41 @@ public class Downloader {
         DialogManager.showDialog(DialogManager.CHECKING_FOR_UPDATE);
     }
 
+    private static String getErrorReason(Cursor cursor){
+        int reason = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_REASON));
+        String failedReason = "";
+        switch(reason){
+            case DownloadManager.ERROR_CANNOT_RESUME:
+                failedReason = "ERROR_CANNOT_RESUME";
+                break;
+            case DownloadManager.ERROR_DEVICE_NOT_FOUND:
+                failedReason = "ERROR_DEVICE_NOT_FOUND";
+                break;
+            case DownloadManager.ERROR_FILE_ALREADY_EXISTS:
+                failedReason = "ERROR_FILE_ALREADY_EXISTS";
+                break;
+            case DownloadManager.ERROR_FILE_ERROR:
+                failedReason = "ERROR_FILE_ERROR";
+                break;
+            case DownloadManager.ERROR_HTTP_DATA_ERROR:
+                failedReason = "ERROR_HTTP_DATA_ERROR";
+                break;
+            case DownloadManager.ERROR_INSUFFICIENT_SPACE:
+                failedReason = "ERROR_INSUFFICIENT_SPACE";
+                break;
+            case DownloadManager.ERROR_TOO_MANY_REDIRECTS:
+                failedReason = "ERROR_TOO_MANY_REDIRECTS";
+                break;
+            case DownloadManager.ERROR_UNHANDLED_HTTP_CODE:
+                failedReason = "ERROR_UNHANDLED_HTTP_CODE";
+                break;
+            case DownloadManager.ERROR_UNKNOWN:
+                failedReason = "ERROR_UNKNOWN";
+                break;
+        }
+        return failedReason;
+    }
+
     //even though this is really long, it's just a property of the SettingsActivity
     private static BroadcastReceiver downloadCompleteReceiver = new BroadcastReceiver() {
         @Override
@@ -118,9 +153,12 @@ public class Downloader {
             int status = cursor.getInt(statusIndex);
             if (DownloadManager.STATUS_FAILED == status) {
 
-                int reason = cursor.getColumnIndex(DownloadManager.COLUMN_REASON);
-                GoogleTracker.sendEvent("DOWNLOAD_ERROR", "Error : " + reason);
+
+                String reasonStr = getErrorReason(cursor);
+                GoogleTracker.sendEvent("DOWNLOAD_ERROR", "Error : " + reasonStr);
+
                 Log.d("status","Download Status " + status);
+                /*
                 if (reason == DownloadManager.ERROR_CANNOT_RESUME) {
                     downloadErrorNum = DownloadManager.ERROR_CANNOT_RESUME;
                     UpdateService.handler.sendEmptyMessage(Downloader.INTERNET_LOST);
@@ -129,8 +167,14 @@ public class Downloader {
                     downloadErrorNum = DownloadManager.ERROR_INSUFFICIENT_SPACE;
                 } else { //unknown error
                     UpdateService.handler.sendEmptyMessage(Downloader.UNKNOWN_ERROR);
+
+
                     downloadErrorNum = reason;
-                }
+                }*/
+                Log.e("Downloader",reasonStr);
+                Toast.makeText(context,reasonStr,Toast.LENGTH_LONG).show();
+                UpdateService.handler.sendEmptyMessage(Downloader.UNKNOWN_ERROR);
+
                 return;
             }
 
@@ -199,7 +243,9 @@ public class Downloader {
             Toast.makeText(context, context.getString(R.string.problem_writting_file), Toast.LENGTH_LONG).show();
             return;
         }
-
+        Log.d("Downloader", "path:" + FULL_DOWNLOAD_PATH);
+        File downloadPath = new File(FULL_DOWNLOAD_PATH);
+        downloadPath.mkdirs();
         request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, destPath + destName);
         // get download service and enqueue file
         manager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);

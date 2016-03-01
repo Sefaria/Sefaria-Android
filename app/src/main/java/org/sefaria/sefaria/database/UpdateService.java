@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -310,10 +312,19 @@ public class UpdateService extends Service {
 
     }
 
+    private static Map<Integer,String> messageMap = new HashMap<>();
+
+
+    public static void sendMessage(String string){
+        messageMap.put(string.hashCode(),string);
+        handler.sendEmptyMessage(string.hashCode());
+    }
+
     public static Handler handler = new Handler() {
 
         @Override
         public void handleMessage(Message msg) {
+
             switch (msg.what) {
                 case UPDATE_STAGE_2_COMPLETE:
                     //let's move on to stage 2
@@ -327,17 +338,9 @@ public class UpdateService extends Service {
 
 
                     break;
-                case Downloader.INTERNET_LOST:
+                default:
                     endService();
-                    DialogManager.showDialog(DialogManager.DL_INTERNET_LOST);
-                    break;
-                case Downloader.NOT_ENOUGH_SPACE:
-                    endService();
-                    DialogManager.showDialog(DialogManager.DL_NOT_ENOUGH_SPACE);
-                    break;
-                case Downloader.UNKNOWN_ERROR:
-                    endService();
-                    DialogManager.showDialog(DialogManager.DL_UNKNOWN_ERROR);
+                    DialogManager.showDialog("Download Error",messageMap.get(msg.what));
                     break;
             }
         }

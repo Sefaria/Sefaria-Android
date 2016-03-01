@@ -68,6 +68,28 @@ public class DialogManager {
         showDialog(dialogId,-1);
     }
 
+    public static void showDialog(String title, String body) {
+        if (isShowingDialog) dismissCurrentDialog();
+
+        isShowingDialog = true;
+
+        final Activity context = MyApp.currActivityContext;
+        builder = new AlertDialog.Builder(context);
+        builder.setNeutralButton(context.getString(R.string.OK), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dismissCurrentDialog();
+                UpdateService.unlockOrientation(context);
+                UpdateService.endService();
+            }
+        });
+        Log.d("DialogManager", "body:" + body);
+        builder.setMessage(body);
+        builder.setTitle(title);
+        dialog = builder.create();
+        dialog.setCancelable(false);
+        dialog.show();
+    }
+
     public static void showDialog(int dialogId, int errorCode) {
         String errorString = "";
         if (errorCode != -1) {
