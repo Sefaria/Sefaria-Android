@@ -146,54 +146,58 @@ public class HomeActivity extends Activity {
     }
 
     private void handleIncomingURL(Intent intent){
-        if (intent.getAction().equalsIgnoreCase(Intent.ACTION_VIEW)
-            //&&  intent.getCategories().contains(Intent.CATEGORY_BROWSABLE)
-                ) {
-            //url to go to  www.sefaria.org
-            String url = intent.getDataString();
-            Log.d("HomeActivity", "Sefaria URL:" + url);
-            GoogleTracker.sendEvent(GoogleTracker.CATEGORY_OPENED_URL,url);
-            try {
-                String place = url.replaceAll("(?i).*sefaria\\.org/?(s2/)?", "");
-                Log.d("HomeActivity", "place:" + place);
-                String[] spots = place.split("\\.");
-                Book book = new Book(spots[0]);
-                if(spots.length == 1) {
-                    SuperTextActivity.startNewTextActivityIntent(this,book);
-                } else{
-                    Node node = book.getTOCroots().get(0);
-                    for(int i=1;i<spots.length;i++){
-                        Node tempNode = node.getChild(spots[i]);
-                        if(tempNode == null){
-                            tempNode = node.getFirstDescendant();
-                            if(tempNode == node){//you were already at the final level... I guess this number means it's the level1 value
-                                try{
-                                    int num = Integer.valueOf(spots[i]);
-                                    List<Text> texts = node.getTexts();
-                                    for(Text text:texts){
-                                        if(text.levels[0] == num) {
-                                            SuperTextActivity.startNewTextActivityIntent(this, book, text, node);
-                                            return;
+        try {
+            if (intent != null && intent.getAction().equalsIgnoreCase(Intent.ACTION_VIEW)
+                //&&  intent.getCategories().contains(Intent.CATEGORY_BROWSABLE)
+                    ) {
+                //url to go to  www.sefaria.org
+                String url = intent.getDataString();
+                Log.d("HomeActivity", "Sefaria URL:" + url);
+                GoogleTracker.sendEvent(GoogleTracker.CATEGORY_OPENED_URL, url);
+                try {
+                    String place = url.replaceAll("(?i).*sefaria\\.org/?(s2/)?", "");
+                    Log.d("HomeActivity", "place:" + place);
+                    String[] spots = place.split("\\.");
+                    Book book = new Book(spots[0]);
+                    if (spots.length == 1) {
+                        SuperTextActivity.startNewTextActivityIntent(this, book);
+                    } else {
+                        Node node = book.getTOCroots().get(0);
+                        for (int i = 1; i < spots.length; i++) {
+                            Node tempNode = node.getChild(spots[i]);
+                            if (tempNode == null) {
+                                tempNode = node.getFirstDescendant();
+                                if (tempNode == node) {//you were already at the final level... I guess this number means it's the level1 value
+                                    try {
+                                        int num = Integer.valueOf(spots[i]);
+                                        List<Text> texts = node.getTexts();
+                                        for (Text text : texts) {
+                                            if (text.levels[0] == num) {
+                                                SuperTextActivity.startNewTextActivityIntent(this, book, text, node);
+                                                return;
+                                            }
                                         }
-                                    }
-                                }catch (Exception e1){
+                                    } catch (Exception e1) {
 
+                                    }
                                 }
+                                break;
+                            } else {
+                                node = tempNode;
                             }
-                            break;
-                        }else{
-                            node = tempNode;
                         }
+                        SuperTextActivity.startNewTextActivityIntent(this, book, null, node);
                     }
-                    SuperTextActivity.startNewTextActivityIntent(this, book, null, node);
+                } catch (Exception e) {
+                    Toast.makeText(this, this.getString(R.string.cannot_parse_link), Toast.LENGTH_SHORT).show();
+                    Log.e("HomeActivity", "Parsing URL. " + e.getMessage());
+                    url = url.replaceFirst("http", "https");
+                    Intent intent2 = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                    startActivity(intent2);
                 }
-            }catch (Exception e){
-                Toast.makeText(this,this.getString(R.string.cannot_parse_link),Toast.LENGTH_SHORT).show();
-                Log.e("HomeActivity", "Parsing URL. " + e.getMessage());
-                url = url.replaceFirst("http","https");
-                Intent intent2 = new Intent(Intent.ACTION_VIEW,Uri.parse(url));
-                startActivity(intent2);
             }
+        }catch (Exception e){
+            Log.e("HomeActivity","not able to open intent for URL parse " + e.getMessage());
         }
     }
 
