@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.activities.MenuActivity;
 import org.sefaria.sefaria.activities.SuperTextActivity;
@@ -340,8 +341,7 @@ public class MenuGrid extends LinearLayout {
         }else {
             intent = new Intent(context, MenuActivity.class);
             if(longClick) {
-                Toast.makeText(context,context.getString(R.string.opening_new_task),Toast.LENGTH_SHORT).show();
-                intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent = MyApp.startNewTab(intent);
             }
             intent.putExtra("menuState", newMenuState);
             intent.putExtra("hasSectionBack", mb.getSectionNode() != null);
