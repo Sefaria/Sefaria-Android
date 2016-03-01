@@ -93,8 +93,8 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
     protected long openedNewBook = 0; //this is used for Analytics for when someone first goes to a book
     protected int openedNewBookType = 0;
-    private boolean reportedNewBookBack = false;
-    private boolean reportedNewBookTOC = false;
+    protected boolean reportedNewBookBack = false;
+    protected boolean reportedNewBookTOC = false;
     protected boolean reportedNewBookScroll = false;
 
 
@@ -256,14 +256,33 @@ public abstract class SuperTextActivity extends FragmentActivity {
     }
 
     /**
+     * used for coming in from Menu
+     * @param context
+     * @param book
+     */
+    public static void startNewTextActivityIntent(Context context, Book book, boolean openNewTask){
+        Settings.RecentTexts.addRecentText(book.title);
+        startNewTextActivityIntent(context, book, null, null,openNewTask);
+    }
+
+    /**
      * used for coming in from DirectRefMenu
      * @param context
      * @param book
      * @param node
      */
 
-
+    /**
+     * used for coming in from DirectRefMenu
+     * @param context
+     * @param book
+     * @param node
+     */
     public static void startNewTextActivityIntent(Context context, Book book, Text text, Node node) {
+        startNewTextActivityIntent(context,book,text,node,false);
+    }
+
+    public static void startNewTextActivityIntent(Context context, Book book, Text text, Node node,boolean openNewTask) {
         List<String> cats = Arrays.asList(book.categories);
         boolean isCtsText = false;
         final String[] CTS_TEXT_CATS = {};// {"Tanach","Talmud"};//
@@ -295,6 +314,10 @@ public abstract class SuperTextActivity extends FragmentActivity {
         //ComponentName cn = intent.getComponent();
         //Intent mainIntent = IntentCompat.makeRestartActivityTask(cn);
         //intent.putExtra("menuState", newMenuState);
+        if(openNewTask){
+            Toast.makeText(context,context.getString(R.string.opening_new_task),Toast.LENGTH_SHORT).show();
+            intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        }
         context.startActivity(intent);
     }
 
@@ -332,8 +355,14 @@ public abstract class SuperTextActivity extends FragmentActivity {
     public void onBackPressed() {
         if(openedNewBook >0 && !reportedNewBookBack){
             long time = (System.currentTimeMillis() - openedNewBook);
-            if(time <10000)
-                GoogleTracker.sendEvent(GoogleTracker.CATEGORY_OPEN_NEW_BOOK_ACTION,"Back Pressed",time);
+            if(time <10000) {
+                String category;
+                if(reportedNewBookScroll || reportedNewBookTOC)
+                    category = GoogleTracker.CATEGORY_OPEN_NEW_BOOK_ACTION_2;
+                else
+                    category = GoogleTracker.CATEGORY_OPEN_NEW_BOOK_ACTION;
+                GoogleTracker.sendEvent(category, "Back Pressed", time);
+            }
             reportedNewBookBack = true;
         }
 
@@ -389,7 +418,12 @@ public abstract class SuperTextActivity extends FragmentActivity {
         @Override
         public void onClick(View v) {
             if(openedNewBook >0 && !reportedNewBookTOC){
-                GoogleTracker.sendEvent(GoogleTracker.CATEGORY_OPEN_NEW_BOOK_ACTION,"Opening TOC", (System.currentTimeMillis() - openedNewBook));
+                String category;
+                if(reportedNewBookScroll || reportedNewBookBack)
+                    category = GoogleTracker.CATEGORY_OPEN_NEW_BOOK_ACTION_2;
+                else
+                    category = GoogleTracker.CATEGORY_OPEN_NEW_BOOK_ACTION;
+                GoogleTracker.sendEvent(category,"Opening TOC", (System.currentTimeMillis() - openedNewBook));
                 reportedNewBookTOC = true;
             }
             Intent intent = TOCActivity.getStartTOCActivityIntent(SuperTextActivity.this, book,firstLoadedNode);
