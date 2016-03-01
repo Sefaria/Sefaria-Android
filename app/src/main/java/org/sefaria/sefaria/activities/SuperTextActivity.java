@@ -696,9 +696,9 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
                 v.setVisibility(View.GONE);
 
-                if (v.getHeight() < MAX_LINK_FRAG_SNAP_DISTANCE ) {
+                if (v.getHeight() < Util.dpToPixels(SuperTextActivity.this,MAX_LINK_FRAG_SNAP_DISTANCE) ) {
                     RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) v.getLayoutParams();
-                    params.height = MAX_LINK_FRAG_SNAP_DISTANCE;
+                    params.height = (int) Util.dpToPixels(SuperTextActivity.this,MAX_LINK_FRAG_SNAP_DISTANCE);
                     v.setLayoutParams(params);
                 }
 
