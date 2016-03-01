@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 
@@ -114,6 +115,8 @@ public class Settings {
         String langStr = lang2Str(lang);
         editor.putString("defaultTextLang",langStr);
         editor.commit();
+
+        BookSettings.setAllBookSettingsTextLang(lang);
     }
 
 
@@ -166,6 +169,29 @@ public class Settings {
             return MyApp.getContext().getSharedPreferences("org.sefaria.sefaria.book_save_title_settings", Context.MODE_PRIVATE);
         }
 
+        static private void setAllBookSettingsTextLang(Util.Lang lang){
+            String langStr = lang2Str(lang);
+            SharedPreferences bookSettings = getBookSavedSettings();
+            SharedPreferences.Editor editor = bookSettings.edit();
+            Map<String,?> map =  bookSettings.getAll();
+            for (String title : map.keySet()) {
+                String stringThatRepsSavedSettings = (String) map.get(title);
+                String[] settings = stringThatRepsSavedSettings.split(SETTINGS_SPLITTER,4);
+                String newSettings = "";
+                try {
+                    newSettings = settings[0] + SETTINGS_SPLITTER + settings[1] + SETTINGS_SPLITTER + langStr + SETTINGS_SPLITTER + settings[3];
+                }catch (Exception e) {
+                    try {
+                        newSettings = settings[0] + SETTINGS_SPLITTER + settings[1] + SETTINGS_SPLITTER + langStr;
+                    } catch (Exception e1) {
+                        e1.printStackTrace();
+                    }
+                }
+                editor.putString(title,newSettings);
+            }
+            editor.commit();
+        }
+
         static public void clearAllBookSettings(){
             SharedPreferences.Editor editor = getBookSavedSettings().edit();
             editor.clear();
@@ -174,6 +200,7 @@ public class Settings {
             editor.clear();
             editor.commit();
         }
+
 
         static public BookSettings getSavedBook(Book book){
             SharedPreferences bookSavedSettings = getBookSavedSettings();

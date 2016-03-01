@@ -14,6 +14,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.TextElements.SectionAdapter;
@@ -30,6 +31,8 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
     private SectionAdapter sectionAdapter;
 
     private int preLast;
+
+    private int scrolledDownTimes = 0;
     //text formatting props
     //private boolean isLoadingSection; //to make sure multiple sections don't get loaded at once
 
@@ -252,6 +255,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
             return loadSection(dir);
         }
 
+
         @Override
         protected void onPostExecute(List<Text> textsList) {
             isLoadingSection = false;
@@ -263,6 +267,12 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
                 if(sectionHeader.getText(Util.Lang.EN).length() > 0 || sectionHeader.getText(Util.Lang.HE).length() > 0)
                     sectionAdapter.add(sectionHeader);
                 sectionAdapter.addAll(textsList);
+
+                scrolledDownTimes++;
+                if(openedNewBook >0 && !reportedNewBookScroll && scrolledDownTimes==2 && (System.currentTimeMillis() - openedNewBook < 10000)){
+                    reportedNewBookScroll = true;
+                    GoogleTracker.sendEvent(GoogleTracker.CATEGORY_OPEN_NEW_BOOK_ACTION,"Scrolled down",scrolledDownTimes/openedNewBook);
+                }
 
             } else if (dir == TextEnums.PREV_SECTION) {
                 sectionAdapter.addAll(0, textsList);
