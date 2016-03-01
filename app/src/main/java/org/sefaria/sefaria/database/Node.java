@@ -392,6 +392,33 @@ public class Node implements  Parcelable{
         }
     }
 
+    /**
+     * //TODO work for complex text
+     * @param spot is a number as the level number or the title of the Complex text node
+     * @return correct child for spot name (or null if can't find it)
+     */
+    public Node getChild(String spot) {
+        Log.d("Node","spot:" + spot);
+        try {
+            int num = Integer.valueOf(spot);
+            Node lastChild = null;
+            for(Node child: getChildren()){
+                if(num == child.gridNum)
+                    return child;
+                else if(num < child.gridNum){
+                    if(lastChild == null)
+                        lastChild = child;
+                    return lastChild;
+                }
+                lastChild = child;
+            }
+        }catch (Exception e){
+            Log.d("Node",e.getMessage() + "...Complex string spot:" + spot);
+        }
+
+        return null;
+    }
+
     public class LastNodeException extends Exception{
         public LastNodeException(){
             super();
