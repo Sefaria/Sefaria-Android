@@ -93,13 +93,6 @@ public class HomeActivity extends Activity {
             veryFirstTime = false;
         GoogleTracker.sendScreen("HomeActivity");
 
-        boolean hasPermission = (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
-        if (!hasPermission) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    MyApp.REQUEST_WRITE_STORAGE);
-        }
     }
 
 
@@ -144,6 +137,7 @@ public class HomeActivity extends Activity {
     }
 
     private void dealWithDatabaseStuff(){
+
         Util.deleteNonRecursiveDir(Downloader.FULL_DOWNLOAD_PATH); //remove any old temp downloads
         if(API.useAPI() || !Database.isValidDB()) {
             //Database.createAPIdb();

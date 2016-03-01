@@ -91,6 +91,13 @@ public abstract class SuperTextActivity extends FragmentActivity {
     protected boolean badOnCreate = false;
     private CustomActionbar customActionbar;
 
+    protected long openedNewBook = 0; //this is used for Analytics for when someone first goes to a book
+    protected int openedNewBookType = 0;
+    private boolean reportedNewBookBack = false;
+    private boolean reportedNewBookTOC = false;
+    protected boolean reportedNewBookScroll = false;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -121,7 +128,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
         }
         if(book != null){ //||nodeHash == -1){// that means it came in from the menu or the TOC commentary tab
             try {
-                if (openToText != null) {
+                if (openToText != null) { //wants to go to specific text (for example, coming from Links or searching).
                     firstLoadedNode = Node.getNodeFromText(openToText, book);
                     if(firstLoadedNode == null){
                         Log.e("SuperTextAct", "firstLoadedNode is null");
@@ -129,7 +136,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
                 }else {
                     Settings.BookSettings bookSettings = Settings.BookSettings.getSavedBook(book);
                     textLang = bookSettings.lang;
-                    if(bookSettings.node != null) {
+                    if(bookSettings.node != null) { //opening previously opened book
                         openToText = new Text(bookSettings.tid);
                         firstLoadedNode = bookSettings.node;
                     }else {//couldn't get saved Node data (most likely you were never at the book, or possibly an error happened).
@@ -142,6 +149,8 @@ public abstract class SuperTextActivity extends FragmentActivity {
                         }
                         Node root = TOCroots.get(0);
                         firstLoadedNode = root.getFirstDescendant();
+                        GoogleTracker.sendEvent(GoogleTracker.CATEGORY_OPEN_NEW_BOOK_ACTION,"Opened New Book");
+                        openedNewBook = System.currentTimeMillis();
                     }
                 }
             }catch (API.APIException e) {
@@ -318,8 +327,16 @@ public abstract class SuperTextActivity extends FragmentActivity {
     }
     */
 
+
     @Override
     public void onBackPressed() {
+        if(openedNewBook >0 && !reportedNewBookBack){
+            long time = (System.currentTimeMillis() - openedNewBook);
+            if(time <10000)
+                GoogleTracker.sendEvent(GoogleTracker.CATEGORY_OPEN_NEW_BOOK_ACTION,"Back Pressed",time);
+            reportedNewBookBack = true;
+        }
+
         Settings.BookSettings.setSavedBook(book, currNode, currText, textLang);
         if(isTextMenuVisible)
             toggleTextMenu();
@@ -371,6 +388,10 @@ public abstract class SuperTextActivity extends FragmentActivity {
     View.OnClickListener titleClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            if(openedNewBook >0 && !reportedNewBookTOC){
+                GoogleTracker.sendEvent(GoogleTracker.CATEGORY_OPEN_NEW_BOOK_ACTION,"Opening TOC", (System.currentTimeMillis() - openedNewBook));
+                reportedNewBookTOC = true;
+            }
             Intent intent = TOCActivity.getStartTOCActivityIntent(SuperTextActivity.this, book,firstLoadedNode);
             startActivityForResult(intent, TOC_CHAPTER_CLICKED_CODE);
         }
