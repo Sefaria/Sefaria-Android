@@ -58,7 +58,7 @@ public class TOCCommentary extends LinearLayout implements TOCElement {
         @Override
         public void onClick(View v) {
             //go to text page
-            SuperTextActivity.startNewTextActivityIntent(context,commentary);
+            SuperTextActivity.startNewTextActivityIntent(context,commentary,false);
 
         }
     };
