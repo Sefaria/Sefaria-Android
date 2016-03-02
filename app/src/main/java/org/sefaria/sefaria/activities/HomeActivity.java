@@ -160,7 +160,7 @@ public class HomeActivity extends Activity {
                     String[] spots = place.split("\\.");
                     Book book = new Book(spots[0]);
                     if (spots.length == 1) {
-                        SuperTextActivity.startNewTextActivityIntent(this, book,true);
+                        SuperTextActivity.startNewTextActivityIntent(this, book, true);
                         finish();
                         return;
                     } else {
@@ -175,7 +175,7 @@ public class HomeActivity extends Activity {
                                         List<Text> texts = node.getTexts();
                                         for (Text text : texts) {
                                             if (text.levels[0] == num) {
-                                                SuperTextActivity.startNewTextActivityIntent(this, book, text, node,true);
+                                                SuperTextActivity.startNewTextActivityIntent(this, book, text, node, true);
                                                 finish();
                                                 return;
                                             }
@@ -397,7 +397,7 @@ public class HomeActivity extends Activity {
     }
 
     public void aboutClick(View v) {
-        String url = "http://sefaria.org/about";
+        String url = "https://sefaria.org/about";
         Intent intent = new Intent(Intent.ACTION_VIEW,Uri.parse(url));
         startActivity(intent);
     }
@@ -442,7 +442,7 @@ public class HomeActivity extends Activity {
     }
 
     public void siteClick(View v){
-        String url = "http://sefaria.org";
+        String url = "https://sefaria.org";
         Intent intent = new Intent(Intent.ACTION_VIEW,Uri.parse(url));
         startActivity(intent);
     }
