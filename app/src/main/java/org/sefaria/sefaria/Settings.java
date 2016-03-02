@@ -9,6 +9,7 @@ import android.util.Pair;
 import org.sefaria.sefaria.activities.SuperTextActivity;
 import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.database.Book;
+import org.sefaria.sefaria.database.LinkFilter;
 import org.sefaria.sefaria.database.Node;
 import org.sefaria.sefaria.database.Text;
 
@@ -267,6 +268,37 @@ public class Settings {
         }
     }
 
+
+
+    public static class Links{
+        static private SharedPreferences getLinkSettings() {
+            return MyApp.getContext().getSharedPreferences("org.sefaria.sefaria.link_settings", Context.MODE_PRIVATE);
+        }
+
+        public static void setLinks(String enBookTitle, List<LinkFilter> linkFilters){
+            Set<String> set = new HashSet<>();
+            for(LinkFilter linkFilter:linkFilters){
+                set.add(linkFilter.getRealTitle(Util.Lang.EN));
+            }
+            SharedPreferences.Editor editor = getLinkSettings().edit();
+            editor.putStringSet(enBookTitle,set);
+            editor.commit();
+        }
+
+        /**
+         *
+         * @param enBookTitle
+         * @return Set of the strings that are the EN names for the linkFilters
+         */
+        public static Set<String> getLinks(String enBookTitle){
+            SharedPreferences settings = getLinkSettings();
+            Set<String> set = settings.getStringSet(enBookTitle,null);
+            if(set == null)
+                set = new HashSet<>();
+            return set;
+        }
+
+    }
 
 
     public static class RecentTexts {

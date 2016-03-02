@@ -102,10 +102,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
-
         Intent intent = getIntent();
-
         Integer nodeHash;
         if (savedInstanceState != null) {//it's coming back after it cleared the activity from ram
             linkFragment = (LinkFragment) getSupportFragmentManager().getFragment(savedInstanceState,LINK_FRAG_TAG);
@@ -162,7 +159,11 @@ public abstract class SuperTextActivity extends FragmentActivity {
         }
         else { // no book means it came in from TOC
             firstLoadedNode = Node.getSavedNode(nodeHash);
-            //lastLoadedNode = firstLoadedNode;
+            if(firstLoadedNode == null){//there's a problem with getting the Node from hash. This happens when there's mutli tabs and restores from ram.
+                MyApp.homeClick(this);
+                finish();
+                return;
+            }
             book = new Book(firstLoadedNode.getBid());
         }
         //These vars are specifically initialized here and not in init() so that they don't get overidden when coming from TOC
