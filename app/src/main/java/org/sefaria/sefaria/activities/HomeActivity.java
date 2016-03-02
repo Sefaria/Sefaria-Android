@@ -160,7 +160,9 @@ public class HomeActivity extends Activity {
                     String[] spots = place.split("\\.");
                     Book book = new Book(spots[0]);
                     if (spots.length == 1) {
-                        SuperTextActivity.startNewTextActivityIntent(this, book);
+                        SuperTextActivity.startNewTextActivityIntent(this, book, true);
+                        finish();
+                        return;
                     } else {
                         Node node = book.getTOCroots().get(0);
                         for (int i = 1; i < spots.length; i++) {
@@ -173,7 +175,8 @@ public class HomeActivity extends Activity {
                                         List<Text> texts = node.getTexts();
                                         for (Text text : texts) {
                                             if (text.levels[0] == num) {
-                                                SuperTextActivity.startNewTextActivityIntent(this, book, text, node);
+                                                SuperTextActivity.startNewTextActivityIntent(this, book, text, node, true);
+                                                finish();
                                                 return;
                                             }
                                         }
@@ -186,7 +189,9 @@ public class HomeActivity extends Activity {
                                 node = tempNode;
                             }
                         }
-                        SuperTextActivity.startNewTextActivityIntent(this, book, null, node);
+                        SuperTextActivity.startNewTextActivityIntent(this, book, null, node,true);
+                        finish();
+                        return;
                     }
                 } catch (Exception e) {
                     Toast.makeText(this, this.getString(R.string.cannot_parse_link), Toast.LENGTH_SHORT).show();
@@ -392,7 +397,7 @@ public class HomeActivity extends Activity {
     }
 
     public void aboutClick(View v) {
-        String url = "http://sefaria.org/about";
+        String url = "https://sefaria.org/about";
         Intent intent = new Intent(Intent.ACTION_VIEW,Uri.parse(url));
         startActivity(intent);
     }
@@ -437,7 +442,7 @@ public class HomeActivity extends Activity {
     }
 
     public void siteClick(View v){
-        String url = "http://sefaria.org";
+        String url = "https://sefaria.org";
         Intent intent = new Intent(Intent.ACTION_VIEW,Uri.parse(url));
         startActivity(intent);
     }
