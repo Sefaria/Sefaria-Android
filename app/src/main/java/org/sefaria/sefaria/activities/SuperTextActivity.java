@@ -240,20 +240,11 @@ public abstract class SuperTextActivity extends FragmentActivity {
      * @param context
      * @param text
      */
-    public static void startNewTextActivityIntent(Context context, Text text){
+    public static void startNewTextActivityIntent(Context context, Text text, boolean openNewTask){
         Book book = new Book(text.bid);
-        startNewTextActivityIntent(context, book, text, null);
+        startNewTextActivityIntent(context, book, text, null,openNewTask);
     }
 
-    /**
-     * used for coming in from Menu
-     * @param context
-     * @param book
-     */
-    public static void startNewTextActivityIntent(Context context, Book book){
-        Settings.RecentTexts.addRecentText(book.title);
-        startNewTextActivityIntent(context, book, null, null);
-    }
 
     /**
      * used for coming in from Menu
@@ -272,15 +263,6 @@ public abstract class SuperTextActivity extends FragmentActivity {
      * @param node
      */
 
-    /**
-     * used for coming in from DirectRefMenu
-     * @param context
-     * @param book
-     * @param node
-     */
-    public static void startNewTextActivityIntent(Context context, Book book, Text text, Node node) {
-        startNewTextActivityIntent(context,book,text,node,false);
-    }
 
     public static void startNewTextActivityIntent(Context context, Book book, Text text, Node node,boolean openNewTask) {
         List<String> cats = Arrays.asList(book.categories);
@@ -531,7 +513,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
     private void setColorTheme(int colorTheme) {
         Settings.setTheme(colorTheme);
         finish();
-        startNewTextActivityIntent(this,book,currText,currNode);
+        startNewTextActivityIntent(this,book,currText,currNode,false);
         /*Intent intent = new Intent(this, .class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
