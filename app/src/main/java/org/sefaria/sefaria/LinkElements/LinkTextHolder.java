@@ -42,6 +42,6 @@ public class LinkTextHolder extends RecyclerView.ViewHolder implements View.OnCl
     @Override
     public void onClick(View v) {
         Text link = itemList.get(getAdapterPosition());
-        SuperTextActivity.startNewTextActivityIntent(activity, link);
+        SuperTextActivity.startNewTextActivityIntent(activity, link,false);
     }
 }
