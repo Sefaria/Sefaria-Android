@@ -52,7 +52,7 @@ public class MenuActivity extends Activity {
         setTitle(menuState.getCurrNode().getTitle(menuLang));
         //this specifically comes before menugrid, b/c in tabs it menugrid does funny stuff to currnode
         int catColor = menuState.getCurrNode().getTopLevelColor();
-        cab = new CustomActionbar(this, menuState.getCurrNode(),menuLang,homeClick,null,null,null,menuClick,backClick,catColor);
+        cab = new CustomActionbar(this, menuState.getCurrNode(),menuLang,homeClick,homeLongClick, null,null,null,menuClick,backClick,catColor);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(cab);
 
@@ -113,6 +113,14 @@ public class MenuActivity extends Activity {
         out.putBoolean("hasSectionBack", hasSectionBack);
     }
 
+    View.OnLongClickListener homeLongClick = new View.OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+            MyApp.homeClick(MenuActivity.this, true);
+            return true;
+        }
+    };
+
     View.OnClickListener homeClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -122,7 +130,7 @@ public class MenuActivity extends Activity {
             setResult(0, returnIntent);
             finish();
             */
-            MyApp.homeClick(MenuActivity.this);
+            MyApp.homeClick(MenuActivity.this,false);
             finish();
         }
     };

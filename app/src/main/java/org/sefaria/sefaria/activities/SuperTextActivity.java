@@ -160,7 +160,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
         else { // no book means it came in from TOC
             firstLoadedNode = Node.getSavedNode(nodeHash);
             if(firstLoadedNode == null){//there's a problem with getting the Node from hash. This happens when there's mutli tabs and restores from ram.
-                MyApp.homeClick(this);
+                MyApp.homeClick(this, false);
                 finish();
                 return;
             }
@@ -203,7 +203,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
         if (customActionbar == null) {
             MenuNode menuNode = new MenuNode("a","b",null); //TODO possibly replace this object with a more general bilinual node
             int catColor = book.getCatColor();
-            customActionbar = new CustomActionbar(this, menuNode, menuLang,homeClick,null,null,titleClick,menuClick,backClick,catColor); //TODO.. I'm not actually sure this should be lang.. instead it shuold be MENU_LANG from Util.S
+            customActionbar = new CustomActionbar(this, menuNode, menuLang,homeClick,homeLongClick, null,null,titleClick,menuClick,backClick,catColor); //TODO.. I'm not actually sure this should be lang.. instead it shuold be MENU_LANG from Util.S
             LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
             abRoot.addView(customActionbar);
             customActionbar.setLang(menuLang);
@@ -386,12 +386,20 @@ public abstract class SuperTextActivity extends FragmentActivity {
         isTextMenuVisible = !isTextMenuVisible;
     }
 
+    View.OnLongClickListener homeLongClick = new View.OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+            MyApp.homeClick(SuperTextActivity.this, true);
+            return true;
+        }
+    };
+
     View.OnClickListener homeClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             //intent.putExtra("isPopup",true);
             finish();
-            MyApp.homeClick(SuperTextActivity.this);
+            MyApp.homeClick(SuperTextActivity.this, false);
 
         }
     };

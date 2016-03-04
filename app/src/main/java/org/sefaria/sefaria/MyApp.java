@@ -118,11 +118,14 @@ public class MyApp extends Application {
 
     public static void killSwitch(){return; }//TODO remove function
 
-    public static void homeClick(Activity activity){
+    public static void homeClick(Activity activity, boolean openNewTab){
         Intent intent = new Intent(activity, HomeActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); //Clear Activity stack
+        if(openNewTab)
+            intent = startNewTab(intent);
         intent.putExtra("homeClicked",true);
         activity.startActivity(intent);
+        //TODO if(openNewTab) start animation
     }
 
     public static Intent startNewTab(Intent intent){
