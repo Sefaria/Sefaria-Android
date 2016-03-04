@@ -4,6 +4,7 @@ package org.sefaria.sefaria.database;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Set;
 
 import android.Manifest;
 import android.app.Activity;
@@ -31,6 +32,7 @@ import org.sefaria.sefaria.DialogManager;
 import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
+import org.sefaria.sefaria.Settings;
 
 public class Downloader {
 
@@ -38,7 +40,7 @@ public class Downloader {
     public static final String CSV_FILE_NAME = "sefaria_mobile_updating_csv.csv";
     private static final String CSV_DEBUG_URL = "http://betamidrash.com/other/app/v2/dev/" + CSV_FILE_NAME; //developing version
     private static final String CSV_REAL_URL  = "http://betamidrash.com/other/app/v2/" + CSV_FILE_NAME;
-    private static boolean useDebugCSV = false;
+
     public static final String CSV_DOWNLOAD_TITLE = "Sefaria Pre Update";
     public static final String DB_DOWNLOAD_TITLE = "Sefaria Library Update";
     public static final String JSON_INDEX_TITLE = "Sefaria Index";
@@ -68,7 +70,7 @@ public class Downloader {
     public static int downloadErrorNum;
 
     public static String getCSVurl(){
-        if(useDebugCSV)
+        if(Settings.getIsDebug())
             return CSV_DEBUG_URL;
         else
             return CSV_REAL_URL;
