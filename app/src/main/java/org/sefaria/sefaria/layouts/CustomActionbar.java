@@ -32,7 +32,7 @@ public class CustomActionbar extends MenuElement {
 
     private static final boolean noBackButton = true;
 
-    public CustomActionbar(Context context, MenuNode menuNode, Util.Lang lang, OnClickListener homeClick, OnClickListener closeClick, OnClickListener searchClick, OnClickListener titleClick, OnClickListener menuClick, OnClickListener backClick, int catColor) {
+    public CustomActionbar(Context context, MenuNode menuNode, Util.Lang lang, OnClickListener homeClick, OnLongClickListener homeLongClick, OnClickListener closeClick, OnClickListener searchClick, OnClickListener titleClick, OnClickListener menuClick, OnClickListener backClick, int catColor) {
         super(context);
         inflate(context, R.layout.custom_actionbar, this);
 
@@ -63,6 +63,9 @@ public class CustomActionbar extends MenuElement {
             invisableBtn.setVisibility(View.GONE);
             invisableBtnLeft.setVisibility(View.GONE);
         }
+
+        if(homeLongClick != null)
+            homeBtn.setOnLongClickListener(homeLongClick);
 
         if (closeClick != null)  closeBtn.setOnClickListener(closeClick);
         else closeBtn.setVisibility(View.INVISIBLE);

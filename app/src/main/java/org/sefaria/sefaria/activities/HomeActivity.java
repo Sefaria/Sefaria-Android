@@ -139,7 +139,7 @@ public class HomeActivity extends Activity {
 
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         CustomActionbar cab = new CustomActionbar(this,new MenuNode("Sefaria","ספאריה",null),
-                Settings.getSystemLang(),null,tempCloseClick,null,null,menuClick,null,-1);
+                Settings.getSystemLang(),null,null,tempCloseClick,null,null,menuClick,null,-1);
         abRoot.addView(cab);
 
         dealWithDatabaseStuff();
