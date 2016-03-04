@@ -1,14 +1,17 @@
 package org.sefaria.sefaria.LinkElements;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 
 import org.sefaria.sefaria.R;
+import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.activities.SuperTextActivity;
 import org.sefaria.sefaria.database.LinkFilter;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.ListIterator;
 
 /**
@@ -24,6 +27,8 @@ public class LinkSelectorBar extends LinearLayout {
     OnClickListener linkSelectorBarButtonClick;
     LinkFilter currLinkCount;
 
+    private boolean hasBeenInitialized;
+
     public LinkSelectorBar(SuperTextActivity activity, OnClickListener linkSelectorBarButtonClick, OnClickListener linkSelectorBackClick) {
         super(activity);
         inflate(activity, R.layout.link_selector_bar, this);
@@ -32,7 +37,9 @@ public class LinkSelectorBar extends LinearLayout {
         selectorListLayout = (LinearLayout) findViewById(R.id.link_selection_bar_list);
         backButton = findViewById(R.id.link_back_btn);
         backButton.setOnClickListener(linkSelectorBackClick);
-        linkSelectorQueue = new LinkedList<>();
+
+
+        hasBeenInitialized = false;
     }
 
     public void add(LinkFilter linkCount, Util.Lang lang) {
@@ -60,12 +67,20 @@ public class LinkSelectorBar extends LinearLayout {
         update(currLinkCount,lang);
     }
 
+    public void initialUpdate(LinkFilter linkFilterAll, Util.Lang lang) {
+        hasBeenInitialized = true;
+        List<LinkFilter> yo = Settings.Link.getLinks(activity.getBook().getTitle(Util.Lang.EN),linkFilterAll);
+        linkSelectorQueue = new LinkedList<>(yo);
+        currLinkCount = linkSelectorQueue.peek();
+        update(lang);
+    }
+
 
     //if currLinkCount == null, all linkSelectorBarButtons will be gray
     public void update(LinkFilter currLinkCount,Util.Lang lang ) {
         this.currLinkCount = currLinkCount;
         selectorListLayout.removeAllViews();
-
+        if (linkSelectorQueue == null) return;
         ListIterator<LinkFilter> linkIt = linkSelectorQueue.listIterator(linkSelectorQueue.size());
         while(linkIt.hasPrevious()) {
             //add children in reverse order
@@ -79,11 +94,9 @@ public class LinkSelectorBar extends LinearLayout {
             }
         }
 
-    }
-
-
-    private void flipViews() {
+        Settings.Link.setLinks(activity.getBook().getTitle(Util.Lang.EN), linkSelectorQueue);
 
     }
 
+    public boolean getHasBeenInitialized() { return hasBeenInitialized; }
 }
