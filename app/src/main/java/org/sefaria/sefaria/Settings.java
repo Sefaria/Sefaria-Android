@@ -269,6 +269,16 @@ public class Settings {
         }
     }
 
+    public static boolean getIsDebug(){
+        SharedPreferences settings = getGeneralSettings();
+        return settings.getBoolean("isDebug", false);
+    }
+
+    public static void setIsDebug(boolean isDebug){
+        SharedPreferences.Editor editor = getGeneralSettings().edit();
+        editor.putBoolean("isDebug",isDebug);
+        editor.commit();
+    }
 
 
     public static class Links{
