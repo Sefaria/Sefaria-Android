@@ -75,8 +75,11 @@ public class SettingsActivity extends Activity {
 
 
         //LinearLayout gridRoot = (LinearLayout) findViewById(R.id.gridRoot);
+        String debugVer = "";
+        if (Settings.getIsDebug()) debugVer = "D";
+
         TextView appInfo = (TextView) findViewById(R.id.appInfo);
-        appInfo.setText("App Version: " + BuildConfig.VERSION_NAME);
+        appInfo.setText("App Version: " + BuildConfig.VERSION_NAME + debugVer);
         TextView databaseInfo = (TextView) findViewById(R.id.databaseInfo);
         databaseInfo.setText("Library Version: " + Util.convertDBnum(Database.getDBDownloadVersion()));
 
@@ -169,8 +172,8 @@ public class SettingsActivity extends Activity {
     public void debubDBUnlockClick(View view) {
         if (numDebugDBUnlockClicks >= TOT_NUM_DEBUG_DB_CLICKS) {
             numDebugDBUnlockClicks = 0;
-            if ()
-            Toast.makeText(this,"DB Unlocked",Toast.LENGTH_SHORT).show();
+            Settings.setIsDebug(!Settings.getIsDebug()); //toggle
+            Toast.makeText(this,"DB isDebug == " + Settings.getIsDebug(),Toast.LENGTH_SHORT).show();
 
         } else {
             numDebugDBUnlockClicks++;
