@@ -45,16 +45,16 @@ public class LinkMainAdapter extends RecyclerView.Adapter<LinkMainAdapter.LinkHo
 
         @Override
         public void onClick(View v) {
-            LinkFilter linkCount = itemList.get(getAdapterPosition());
+            LinkFilter linkFilter = itemList.get(getAdapterPosition());
             LinkFragment.State tempState;
-            if (linkCount.getDepthType() == LinkFilter.DEPTH_TYPE.BOOK) {
+            if (linkFilter.getDepthType() == LinkFilter.DEPTH_TYPE.BOOK) {
                 tempState = LinkFragment.State.BOOK;
             } else {
                 tempState = LinkFragment.State.CAT;
             }
 
 
-            fragment.gotoState(tempState,fragment.getView(),linkCount);
+            fragment.gotoState(tempState,fragment.getView(),linkFilter);
         }
     }
 

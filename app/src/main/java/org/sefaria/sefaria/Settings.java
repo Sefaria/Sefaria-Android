@@ -281,7 +281,7 @@ public class Settings {
     }
 
 
-    public static class Links{
+    public static class Link {
         static private SharedPreferences getLinkSettings() {
             return MyApp.getContext().getSharedPreferences("org.sefaria.sefaria.link_settings", Context.MODE_PRIVATE);
         }

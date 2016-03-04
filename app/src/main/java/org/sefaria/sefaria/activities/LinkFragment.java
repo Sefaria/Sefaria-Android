@@ -104,6 +104,7 @@ public class LinkFragment extends android.support.v4.app.Fragment {
 
         LinearLayout linkSelectorBarRoot = (LinearLayout) view.findViewById(R.id.link_selector_bar_root);
 
+
         linkSelectorBar = new LinkSelectorBar(activity,linkSelectorBarButtonClick,linkSelectorBackClick);
         linkSelectorBarRoot.addView(linkSelectorBar);
 
@@ -160,6 +161,7 @@ public class LinkFragment extends android.support.v4.app.Fragment {
             //make all buttons gray
             linkSelectorBar.update(null, activity.getMenuLang());
 
+
         } else { //CAT and BOOK are very similar
             view.setBackgroundColor(Util.getColor(activity,R.attr.text_bg));
 
@@ -213,8 +215,11 @@ public class LinkFragment extends android.support.v4.app.Fragment {
 
 
             if (currState == State.MAIN) { //load new linkCounts
-                LinkFilter linkCount = LinkFilter.getFromLinks_small(segment);
-                linkMainAdapter.setItemList(LinkFilter.getList(linkCount));
+                LinkFilter linkFilterAll = LinkFilter.getFromLinks_small(segment);
+                if (!linkSelectorBar.getHasBeenInitialized())
+                    linkSelectorBar.initialUpdate(linkFilterAll,activity.getMenuLang());
+
+                linkMainAdapter.setItemList(LinkFilter.getList(linkFilterAll));
             } else if (currState == State.BOOK || currState == State.CAT) { //change visibilty of links
                 linkTextAdapter.setItemList(Link.getLinkedTexts(segment,linkTextAdapter.getCurrLinkCount()));
             } else { //CAT load new cat links
