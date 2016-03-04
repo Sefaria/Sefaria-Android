@@ -49,7 +49,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
     }
 
     public static int SEGMENT_SELECTOR_LINE_FROM_TOP = 150; //pixels from top of layout
-    public static int MAX_LINK_FRAG_SNAP_DISTANCE = 70;
+    public static int MAX_LINK_FRAG_SNAP_DISTANCE = 230;
     protected static int LINK_FRAG_ANIM_TIME = 300; //ms
     public static final int PREV_CHAP_DRAWN = 234234;
     public static final int TOC_CHAPTER_CLICKED_CODE = 3456;
@@ -733,9 +733,9 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
                 v.setVisibility(View.GONE);
 
-                if (v.getHeight() < Util.dpToPixels(SuperTextActivity.this,MAX_LINK_FRAG_SNAP_DISTANCE) ) {
+                if (v.getHeight() < MAX_LINK_FRAG_SNAP_DISTANCE) {
                     RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) v.getLayoutParams();
-                    params.height = (int) Util.dpToPixels(SuperTextActivity.this,MAX_LINK_FRAG_SNAP_DISTANCE);
+                    params.height = MAX_LINK_FRAG_SNAP_DISTANCE;
                     v.setLayoutParams(params);
                 }
 

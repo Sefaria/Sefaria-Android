@@ -99,7 +99,7 @@ public class LinkDraggerView extends LinearLayout {
             case MotionEvent.ACTION_UP: {
 
                 int tempNewHeight = (int) (dragView.getHeight() - (ev.getY() - mPointerOffset));
-                if (tempNewHeight > activity.getLinkFragMaxHeight() - Util.dpToPixels(activity,SuperTextActivity.MAX_LINK_FRAG_SNAP_DISTANCE)) {
+                if (tempNewHeight > activity.getLinkFragMaxHeight() - SuperTextActivity.MAX_LINK_FRAG_SNAP_DISTANCE) {
                     int endPos = activity.getLinkFragMaxHeight();
 
                     ValueAnimator animation = ValueAnimator.ofInt(tempNewHeight, endPos);
@@ -122,7 +122,7 @@ public class LinkDraggerView extends LinearLayout {
                         public void onAnimationRepeat(Animator animation) {}
                     });
                     animation.start();
-                } else if (tempNewHeight < Util.dpToPixels(activity,SuperTextActivity.MAX_LINK_FRAG_SNAP_DISTANCE)) {
+                } else if (tempNewHeight < SuperTextActivity.MAX_LINK_FRAG_SNAP_DISTANCE) {
                     activity.AnimateLinkFragClose(dragView);
                 }
                 break;
