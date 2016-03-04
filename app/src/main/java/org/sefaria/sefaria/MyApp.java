@@ -5,6 +5,8 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.os.Bundle;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.widget.Toast;
 
 import org.sefaria.sefaria.activities.HomeActivity;
@@ -126,6 +128,7 @@ public class MyApp extends Application {
     public static Intent startNewTab(Intent intent){
         Toast.makeText(context, context.getString(R.string.opening_new_task), Toast.LENGTH_SHORT).show();
         intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        //ActivityCompat.startActivity(this, intent, options)
         return intent;
     }
 

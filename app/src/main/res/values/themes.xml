@@ -44,10 +44,10 @@
         <item name="button_selector_border_top_bot_drawable">@drawable/button_ripple_rect_border_top_bot_black</item>
         <item name="text_menu_button_background_right_clicked_drawable">@drawable/text_menu_button_background_right_clicked_black</item>
         <item name="text_menu_button_background_right_drawable">@drawable/text_menu_button_background_right_black</item>
-        <item name="text_menu_button_background_right_ripple_drawable">@drawable/text_menu_button_background_right_ripple_white</item>
+        <item name="text_menu_button_background_right_ripple_drawable">@drawable/text_menu_button_background_right_ripple_black</item>
         <item name="text_menu_button_background_left_clicked_drawable">@drawable/text_menu_button_background_left_clicked_black</item>
         <item name="text_menu_button_background_left_drawable">@drawable/text_menu_button_background_left_black</item>
-        <item name="text_menu_button_background_left_ripple_drawable">@drawable/text_menu_button_background_left_ripple_white</item>
+        <item name="text_menu_button_background_left_ripple_drawable">@drawable/text_menu_button_background_left_ripple_black</item>
         <item name="text_menu_button_background_center_clicked_drawable">@drawable/text_menu_button_background_center_clicked_black</item>
         <item name="text_menu_button_background_center_drawable">@drawable/text_menu_button_background_center_black</item>
         <item name="text_menu_button_background_center_ripple_drawable">@drawable/text_menu_button_background_center_ripple_black</item>

@@ -4,6 +4,11 @@ package org.sefaria.sefaria.MenuElements;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -340,15 +345,21 @@ public class MenuGrid extends LinearLayout {
 
         }else {
             intent = new Intent(context, MenuActivity.class);
+            Bundle options = null;
             if(longClick) {
                 intent = MyApp.startNewTab(intent);
+                options = ActivityOptionsCompat.makeCustomAnimation(context,R.animator.activity_zoom_in,R.animator.activity_zoom_out).toBundle();
             }
             intent.putExtra("menuState", newMenuState);
             intent.putExtra("hasSectionBack", mb.getSectionNode() != null);
             intent.putExtra("hasTabBack", hasTabs);
 
 
-            ((Activity)context).startActivityForResult(intent, 0);
+            //if (longClick) {
+            //    ((ActivityCompat)context).startActivityForResult(intent,0,options);
+            //} else {
+                ((Activity) context).startActivityForResult(intent, 0);
+            //}
         }
 
 
