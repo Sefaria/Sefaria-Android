@@ -136,18 +136,22 @@ public class LinkFilter {
     final public static String QUOTING_COMMENTARY = "Quoting Commentary";
 
     private static LinkFilter getCommentaryOnChap(int chapStart, int chapEnd, int bid){
+
         LinkFilter commentaryGroup = new LinkFilter(COMMENTARY,0, "מפרשים",DEPTH_TYPE.CAT);
+
         Database dbHandler = Database.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
 
         String sql = "SELECT B.title, B.heTitle FROM Books B, Links_small L, Texts T WHERE (" +
                 "((L.tid1 BETWEEN " + chapStart + " AND " + chapEnd +  ") AND L.tid2=T._id AND T.bid= B._id AND B.commentsOn=" + bid + ")"
                 + " OR " +
-                "((L.tid2 BETWEEN " + chapStart + " AND " + chapEnd +  ") AND L.tid1=T._id AND T.bid= B._id AND B.commentsOn=" + bid + ")"
+                "((L.tid2 BETWEEN " + chapStart + " AND " + chapEnd +  ") AND L.tid1=T._id AND T.bid= B._id AND B.commentsOn=" + bid + ")"  //TODO make work for jeli's phone
                 + ") GROUP BY B._id ORDER BY B._id"
                 ;
 
         Cursor cursor = db.rawQuery(sql, null);
+
+        int count = 0;
         if (cursor.moveToFirst()) {
             do {
                 LinkFilter linkCount = new LinkFilter(cursor.getString(0),0,cursor.getString(1),DEPTH_TYPE.BOOK);
@@ -180,20 +184,23 @@ public class LinkFilter {
     public static LinkFilter getFromLinks_small(Text text){
         LinkFilter allLinkCounts = new LinkFilter(ALL_CONNECTIONS, 0, "הכל",DEPTH_TYPE.ALL);
         LinkFilter commentaryGroup = getCommentaryOnChap(text.tid -11,text.tid +11,text.bid);//getting all commentaries +-11 of the current text
+
+
         if(text.getNumLinks() == 0){
             if(commentaryGroup.getChildren().size()>0)
                 allLinkCounts.addChild(commentaryGroup,true);
             return allLinkCounts;
         }
+
         Database dbHandler = Database.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
         String sql = "SELECT B.title, Count(*) as booksCount, B.heTitle, B.commentsOn, B.categories FROM Books B, Links_small L, Texts T WHERE (" +
-                "(L.tid1 = " + text.tid + " AND L.tid2=T._id AND T.bid= B._id) OR " +
-                "(L.tid2 = " + text.tid + " AND L.tid1=T._id AND T.bid= B._id) ) GROUP BY B._id ORDER BY B.categories, B._id"
+                "(L.tid1 = " + text.tid + " AND L.tid2=T._id AND T.bid= B._id)" +
+                " OR (L.tid2 = " + text.tid + " AND L.tid1=T._id AND T.bid= B._id)" +//TODO make work for eli's jellysbean phone
+                " ) GROUP BY B._id ORDER BY B.categories, B._id"
                 ;
 
         Cursor cursor = db.rawQuery(sql, null);
-
 
         LinkFilter countGroups = null;
         String lastCategory = "";
