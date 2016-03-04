@@ -29,11 +29,17 @@ import java.util.Set;
 
 public class SettingsActivity extends Activity {
 
+    private final int TOT_NUM_DEBUG_DB_CLICKS = 7;
+    private int numDebugDBUnlockClicks;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+
+        numDebugDBUnlockClicks = 0;
 
         CustomActionbar customActionbar = new CustomActionbar(this, new MenuNode("Settings","Settings (he)", null), Settings.getSystemLang(),homeClick,homeLongClick,null,null,null,null,backClick,-1);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
@@ -158,6 +164,18 @@ public class SettingsActivity extends Activity {
                     Settings.setMenuLang(Util.Lang.EN);
                 break;
         }
+    }
+
+    public void debubDBUnlockClick(View view) {
+        if (numDebugDBUnlockClicks >= TOT_NUM_DEBUG_DB_CLICKS) {
+            numDebugDBUnlockClicks = 0;
+            if ()
+            Toast.makeText(this,"DB Unlocked",Toast.LENGTH_SHORT).show();
+
+        } else {
+            numDebugDBUnlockClicks++;
+        }
+
     }
 
 

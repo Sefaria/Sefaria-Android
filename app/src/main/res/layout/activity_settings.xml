@@ -103,6 +103,8 @@
                 android:gravity="center"
                 android:padding="5dp"
                 android:layout_marginTop="15dp"
+                android:clickable="true"
+                android:onClick="debubDBUnlockClick"
                 />
             <TextView
                 android:id="@+id/databaseInfo"

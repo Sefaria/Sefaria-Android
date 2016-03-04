@@ -49,6 +49,18 @@ public class SectionAdapter extends ArrayAdapter<Text> {
     @Override
     public View getView(int position, View view, ViewGroup parent) {
         Text segment = texts.get(position);
+        String enText = segment.getText(Util.Lang.EN);
+        String heText = segment.getText(Util.Lang.HE);
+        Util.Lang lang = activity.getTextLang();
+
+        if (lang == Util.Lang.BI) {
+            if (enText.length() == 0) {
+                lang = Util.Lang.HE;
+            } else if (heText.length() == 0) {
+                lang = Util.Lang.EN;
+            }
+        }
+
 
         float linkAlpha = ((float)segment.getNumLinks()-MIN_ALPHA_NUM_LINKS) / (MAX_ALPHA_NUM_LINKS-MIN_ALPHA_NUM_LINKS);
         if (linkAlpha < MIN_ALPHA) linkAlpha = MIN_ALPHA;
@@ -56,7 +68,7 @@ public class SectionAdapter extends ArrayAdapter<Text> {
 
         if (segment.getNumLinks() == 0) linkAlpha = 0;
 
-        Util.Lang lang = activity.getTextLang();
+
         boolean isCts = activity.getIsCts();
         boolean isSideBySide = activity.getIsSideBySide();
         if (view == null
@@ -89,6 +101,8 @@ public class SectionAdapter extends ArrayAdapter<Text> {
         SefariaTextView heNum = (SefariaTextView) view.findViewById(R.id.heVerseNum);
 
         if (lang == Util.Lang.BI) {
+
+
             SefariaTextView enTv = (SefariaTextView) view.findViewById(R.id.en);
             SefariaTextView heTv = (SefariaTextView) view.findViewById(R.id.he);
 
@@ -112,21 +126,8 @@ public class SectionAdapter extends ArrayAdapter<Text> {
                 enNum.setVisibility(View.VISIBLE);
                 heNum.setVisibility(View.VISIBLE);
 
-
-                String enText = segment.getText(Util.Lang.EN);
-                String heText = segment.getText(Util.Lang.HE);
-
-                if(enText.length() > 0)
-                    enTv.setText(Html.fromHtml(enText));
-                else
-                    enTv.setVisibility(View.GONE);
-                //enTv.setText(""+segment.getNumLinks() + " / " + maxNumLinks + "\nALPHA = " + linkAlpha);
-                if(heText.length() > 0)
-                    heTv.setText(Html.fromHtml(heText));
-                else
-                    heTv.setVisibility(View.GONE);
-
-
+                enTv.setText(Html.fromHtml(enText));
+                heTv.setText(Html.fromHtml(heText));
 
                 //enTv.setTextColor(Color.parseColor("#999999"));
                 enTv.setFont(Util.Lang.EN, true, activity.getTextSize());
