@@ -434,7 +434,8 @@ public class HomeActivity extends Activity {
                 + BuildConfig.VERSION_NAME + " ("  + BuildConfig.VERSION_CODE + ")" + "\n"
                 + "Database Down Version:" + Database.getDBDownloadVersion() + "\n"
                 + "Database Internal Version:" + Database.getVersionInDB() + "\n"
-                + GoogleTracker.randomID
+                + GoogleTracker.randomID + "\n"
+                + Build.VERSION.RELEASE + " (" + Build.VERSION.SDK_INT + ")" + "\n"
 
         );
         emailIntent.putExtra(Intent.EXTRA_EMAIL, new String [] {email});
