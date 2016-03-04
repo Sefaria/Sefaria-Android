@@ -35,7 +35,7 @@ public class SettingsActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        CustomActionbar customActionbar = new CustomActionbar(this, new MenuNode("Settings","Settings (he)", null), Settings.getSystemLang(),homeClick,null,null,null,null,backClick,-1);
+        CustomActionbar customActionbar = new CustomActionbar(this, new MenuNode("Settings","Settings (he)", null), Settings.getSystemLang(),homeClick,homeLongClick,null,null,null,null,backClick,-1);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(customActionbar);
 
@@ -82,6 +82,14 @@ public class SettingsActivity extends Activity {
         super.onResume();
         MyApp.currActivityContext = this;
     }
+
+    View.OnLongClickListener homeLongClick = new View.OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+            MyApp.homeClick(SettingsActivity.this, true);
+            return true;
+        }
+    };
 
     View.OnClickListener homeClick = new View.OnClickListener() {
         @Override

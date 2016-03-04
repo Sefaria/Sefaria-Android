@@ -170,7 +170,7 @@ public class MenuGrid extends LinearLayout {
         ll.removeViewAt(childIndex);
         MenuButton mb = new MenuButton(context, node, sectionNode, menuState.getLang());
         mb.setOnClickListener(menuButtonClick);
-        mb.setOnLongClickListener(menuButtonLongClick);
+        //mb.setOnLongClickListener(menuButtonLongClick);
         ll.addView(mb, childIndex);
 
         menuElementList.add(mb);
@@ -302,7 +302,7 @@ public class MenuGrid extends LinearLayout {
         menuState.goHome();
     }
 
-    public OnLongClickListener menuButtonLongClick = new OnLongClickListener() {
+    public OnLongClickListener menuButtonLongClick1 = new OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
             menuClick(v,true);
@@ -348,7 +348,7 @@ public class MenuGrid extends LinearLayout {
             Bundle options = null;
             if(longClick) {
                 intent = MyApp.startNewTab(intent);
-                options = ActivityOptionsCompat.makeCustomAnimation(context,R.animator.activity_zoom_in,R.animator.activity_zoom_out).toBundle();
+                //options = ActivityOptionsCompat.makeCustomAnimation(context,R.animator.activity_zoom_in,R.animator.activity_zoom_out).toBundle();
             }
             intent.putExtra("menuState", newMenuState);
             intent.putExtra("hasSectionBack", mb.getSectionNode() != null);

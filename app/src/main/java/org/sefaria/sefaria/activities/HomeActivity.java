@@ -139,7 +139,7 @@ public class HomeActivity extends Activity {
 
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         CustomActionbar cab = new CustomActionbar(this,new MenuNode("Sefaria","ספאריה",null),
-                Settings.getSystemLang(),null,tempCloseClick,null,null,menuClick,null,-1);
+                Settings.getSystemLang(),null,null,tempCloseClick,null,null,menuClick,null,-1);
         abRoot.addView(cab);
 
         dealWithDatabaseStuff();
@@ -434,7 +434,8 @@ public class HomeActivity extends Activity {
                 + BuildConfig.VERSION_NAME + " ("  + BuildConfig.VERSION_CODE + ")" + "\n"
                 + "Database Down Version:" + Database.getDBDownloadVersion() + "\n"
                 + "Database Internal Version:" + Database.getVersionInDB() + "\n"
-                + GoogleTracker.randomID
+                + GoogleTracker.randomID + "\n"
+                + Build.VERSION.RELEASE + " (" + Build.VERSION.SDK_INT + ")" + "\n"
 
         );
         emailIntent.putExtra(Intent.EXTRA_EMAIL, new String [] {email});

@@ -75,7 +75,7 @@ public class TOCActivity extends AppCompatActivity {
         MenuNode titleNode = new MenuNode("Table of Contents","תוכן העניינים",null);
         int catColor = book.getCatColor();
         //CustomActionbar cab = new CustomActionbar(this, titleNode, Settings.getSystemLang(),homeClick,null,null,null,langClick,backClick,catColor);
-        CustomActionbar cab = new CustomActionbar(this, titleNode, Settings.getSystemLang(),null,closeClick,null,null,langClick,backClick,catColor);
+        CustomActionbar cab = new CustomActionbar(this, titleNode, Settings.getSystemLang(),null,null,closeClick,null,null,langClick,backClick,catColor);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(cab);
 
@@ -109,11 +109,7 @@ public class TOCActivity extends AppCompatActivity {
     View.OnClickListener homeClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
-            Intent intent = new Intent(context,HomeActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); //Clear Activity stack
-            startActivity(intent);//TODO make this work with the proper stack order
-
+            MyApp.homeClick(TOCActivity.this,false);
             finish();
         }
     };
