@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -268,6 +269,16 @@ public class Settings {
         }
     }
 
+    public static boolean getIsDebug(){
+        SharedPreferences settings = getGeneralSettings();
+        return settings.getBoolean("isDebug", false);
+    }
+
+    public static void setIsDebug(boolean isDebug){
+        SharedPreferences.Editor editor = getGeneralSettings().edit();
+        editor.putBoolean("isDebug",isDebug);
+        editor.commit();
+    }
 
 
     public static class Links{
@@ -285,17 +296,29 @@ public class Settings {
             editor.commit();
         }
 
+
+        private static void parseLinkFilterTree(LinkFilter linkFilter, LinkedList<LinkFilter> list, Set<String> set){
+            if(set.contains(linkFilter.getRealTitle(Util.Lang.EN))){
+                list.add(linkFilter);
+            }
+            for(LinkFilter child:linkFilter.getChildren()){
+                parseLinkFilterTree(child,list,set);
+            }
+        }
+
         /**
          *
          * @param enBookTitle
          * @return Set of the strings that are the EN names for the linkFilters
          */
-        public static Set<String> getLinks(String enBookTitle){
+        public static LinkedList<LinkFilter> getLinks(String enBookTitle, LinkFilter linkFilterAll){
             SharedPreferences settings = getLinkSettings();
-            Set<String> set = settings.getStringSet(enBookTitle,null);
+            Set<String> set = settings.getStringSet(enBookTitle, null);
+            LinkedList<LinkFilter> list = new LinkedList<>();
             if(set == null)
-                set = new HashSet<>();
-            return set;
+                return list;
+            parseLinkFilterTree(linkFilterAll,list,set);
+            return list;
         }
 
     }
