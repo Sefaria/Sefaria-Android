@@ -89,7 +89,6 @@ public class SettingsActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        MyApp.currActivityContext = this;
     }
 
     View.OnLongClickListener homeLongClick = new View.OnLongClickListener() {
