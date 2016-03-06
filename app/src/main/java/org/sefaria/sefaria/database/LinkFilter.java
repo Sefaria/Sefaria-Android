@@ -2,8 +2,10 @@ package org.sefaria.sefaria.database;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.util.Log;
 
+import org.sefaria.sefaria.BuildConfig;
 import org.sefaria.sefaria.MenuElements.MenuNode;
 import org.sefaria.sefaria.MenuElements.MenuState;
 import org.sefaria.sefaria.Util;
@@ -142,13 +144,23 @@ public class LinkFilter {
         Database dbHandler = Database.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
 
-        String sql = "SELECT B.title, B.heTitle FROM Books B, Links_small L, Texts T WHERE (" +
-                "((L.tid1 BETWEEN " + chapStart + " AND " + chapEnd +  ") AND L.tid2=T._id AND T.bid= B._id AND B.commentsOn=" + bid + ")"
-                + " OR " +
-                "((L.tid2 BETWEEN " + chapStart + " AND " + chapEnd +  ") AND L.tid1=T._id AND T.bid= B._id AND B.commentsOn=" + bid + ")"  //TODO make work for jeli's phone
-                + ") GROUP BY B._id ORDER BY B._id"
-                ;
-
+        String sql;
+        if(Build.VERSION.SDK_INT >= 21) {
+            sql = "SELECT B.title, B.heTitle FROM Books B, Links_small L, Texts T WHERE (" +
+                    "((L.tid1 BETWEEN " + chapStart + " AND " + chapEnd + ") AND L.tid2=T._id AND T.bid= B._id AND B.commentsOn=" + bid + ")"
+                    + " OR ((L.tid2 BETWEEN " + chapStart + " AND " + chapEnd + ") AND L.tid1=T._id AND T.bid= B._id AND B.commentsOn=" + bid + ")"  //TODO make work for jeli's phone
+                    + ") GROUP BY B._id ORDER BY B._id"
+            ;
+        }else {
+            sql = "SELECT B.title, B.heTitle, B._id FROM Books B, Links_small L, Texts T WHERE (" +
+                    "((L.tid1 BETWEEN " + chapStart + " AND " + chapEnd + ") AND L.tid2=T._id AND T.bid= B._id AND B.commentsOn=" + bid + ")"
+                    + ") " +
+                    "UNION" +
+                    " SELECT B.title, B.heTitle, B._id FROM Books B, Links_small L, Texts T WHERE (" +
+                    " ((L.tid2 BETWEEN " + chapStart + " AND " + chapEnd + ") AND L.tid1=T._id AND T.bid= B._id AND B.commentsOn=" + bid + ")"  //TODO make work for jeli's phone
+                    + ") GROUP BY B._id ORDER BY B._id"
+            ;
+        }
         Cursor cursor = db.rawQuery(sql, null);
 
         int count = 0;
@@ -183,7 +195,7 @@ public class LinkFilter {
 
     public static LinkFilter getFromLinks_small(Text text){
         LinkFilter allLinkCounts = new LinkFilter(ALL_CONNECTIONS, 0, "הכל",DEPTH_TYPE.ALL);
-        LinkFilter commentaryGroup = getCommentaryOnChap(text.tid -11,text.tid +11,text.bid);//getting all commentaries +-11 of the current text
+        LinkFilter commentaryGroup = getCommentaryOnChap(text.tid - 11, text.tid + 11, text.bid);//getting all commentaries +-11 of the current text
 
 
         if(text.getNumLinks() == 0){
@@ -194,21 +206,33 @@ public class LinkFilter {
 
         Database dbHandler = Database.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
-        String sql = "SELECT B.title, Count(*) as booksCount, B.heTitle, B.commentsOn, B.categories FROM Books B, Links_small L, Texts T WHERE (" +
-                "(L.tid1 = " + text.tid + " AND L.tid2=T._id AND T.bid= B._id)" +
-                " OR (L.tid2 = " + text.tid + " AND L.tid1=T._id AND T.bid= B._id)" +//TODO make work for eli's jellysbean phone
-                " ) GROUP BY B._id ORDER BY B.categories, B._id"
-                ;
+        String sql;
 
+        if(Build.VERSION.SDK_INT >= 21) {//this works for newer androids
+            sql = "SELECT B.title, Count(*) as booksCount, B.heTitle, B.commentsOn, B.categories FROM Books B, Links_small L, Texts T WHERE (" +
+                    "(L.tid1 = " + text.tid + " AND L.tid2=T._id AND T.bid= B._id)" +
+                    " OR (L.tid2 = " + text.tid + " AND L.tid1=T._id AND T.bid= B._id)" +
+                    " ) GROUP BY B._id ORDER BY B.categories, B._id"
+            ;
+        }else {//this still doesn't work right
+            sql = "SELECT B.title, Count(*) as booksCount, B.heTitle, B.commentsOn, B.categories,B._id FROM Books B, Links_small L, Texts T WHERE (" +
+                    "(L.tid1 = " + text.tid + " AND L.tid2=T._id AND T.bid= B._id)" +
+                    " ) UNION ALL SELECT B.title, Count(*) as booksCount, B.heTitle, B.commentsOn, B.categories,B._id FROM Books B, Links_small L, Texts T WHERE (" +
+                    " (L.tid2 = " + text.tid + " AND L.tid1=T._id AND T.bid= B._id)" +
+                    " ) GROUP BY B._id ORDER BY B.categories, B._id"
+            ;
+        }
+        Log.d("LinkFilter", ""+ text.levels[0]);
         Cursor cursor = db.rawQuery(sql, null);
 
         LinkFilter countGroups = null;
         String lastCategory = "";
         if (cursor.moveToFirst()) {
             do {
-
+                Log.d("LinkFilter", ""+ text.levels[0] + ": " + cursor.getString(4));
                 String [] categories = Util.str2strArray(cursor.getString(4));
                 //TODO test length
+                if(categories.length == 0) continue;
                 if(countGroups == null || !categories[0].equals(lastCategory)){
                     if(countGroups != null && countGroups.count >0) {
                         allLinkCounts.addChild(countGroups);

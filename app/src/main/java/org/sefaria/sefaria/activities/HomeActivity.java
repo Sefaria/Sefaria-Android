@@ -60,7 +60,7 @@ public class HomeActivity extends Activity {
     private MenuGrid menuGrid;
     private MenuState menuState;
     private boolean isPopup;
-    private List<MenuDirectRef> dailtylearnings;
+    private List<MenuDirectRef> dailyLearnings;
     private List<MenuDirectRef> recentTexts;
     private LinearLayout recentRoot;
 
@@ -293,7 +293,7 @@ public class HomeActivity extends Activity {
         menuState.setLang(lang);
         menuGrid.setLang(lang);
         //not setting cab, b/c it should stay as the SystemLang
-        for(MenuDirectRef menuDirectRef:dailtylearnings)
+        for(MenuDirectRef menuDirectRef:dailyLearnings)
             menuDirectRef.setLang(lang);
 
         for(MenuDirectRef menuDirectRef:recentTexts){
@@ -309,8 +309,8 @@ public class HomeActivity extends Activity {
         calendarRoot.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
         homeRoot.addView(createTypeTitle("Calendar", false));
         homeRoot.addView(calendarRoot);
-        dailtylearnings = DailyLearning.getDailyLearnings(this);
-        for(MenuDirectRef menuDirectRef: dailtylearnings) {
+        dailyLearnings = DailyLearning.getDailyLearnings(this);
+        for(MenuDirectRef menuDirectRef: dailyLearnings) {
             calendarRoot.addView(menuDirectRef);
         }
     }

@@ -231,7 +231,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        Settings.BookSettings.setSavedBook(book, currNode, currText, textLang);
+        Settings.BookSettings.setSavedBook(book, currNode, currText, textLang);//data also saved with home click
         outState.putParcelable("currBook", book);
         getSupportFragmentManager().putFragment(outState, LINK_FRAG_TAG, linkFragment);
     }
@@ -389,6 +389,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
     View.OnLongClickListener homeLongClick = new View.OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
+            Settings.BookSettings.setSavedBook(book, currNode, currText, textLang);
             MyApp.homeClick(SuperTextActivity.this, true);
             return true;
         }
@@ -397,7 +398,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
     View.OnClickListener homeClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            //intent.putExtra("isPopup",true);
+            Settings.BookSettings.setSavedBook(book, currNode, currText, textLang);
             finish();
             MyApp.homeClick(SuperTextActivity.this, false);
 
