@@ -64,21 +64,20 @@ public class DialogManager {
     public static int currentDialog = -1;
 
 
-    public static void showDialog(int dialogId) {
-        showDialog(dialogId,-1);
+    public static void showDialog(Activity activity,int dialogId) {
+        showDialog(activity,dialogId,-1);
     }
 
-    public static void showDialog(String title, String body) {
+    public static void showDialog(final Activity activity, String title, String body) {
         if (isShowingDialog) dismissCurrentDialog();
 
         isShowingDialog = true;
 
-        final Activity context = MyApp.currActivityContext;
-        builder = new AlertDialog.Builder(context);
-        builder.setNeutralButton(context.getString(R.string.OK), new DialogInterface.OnClickListener() {
+        builder = new AlertDialog.Builder(activity);
+        builder.setNeutralButton(activity.getString(R.string.OK), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 dismissCurrentDialog();
-                UpdateService.unlockOrientation(context);
+                UpdateService.unlockOrientation(activity);
                 UpdateService.endService();
             }
         });
@@ -90,7 +89,7 @@ public class DialogManager {
         dialog.show();
     }
 
-    public static void showDialog(int dialogId, int errorCode) {
+    public static void showDialog(final Activity activity,int dialogId, int errorCode) {
         String errorString = "";
         if (errorCode != -1) {
             errorString = " Error Number: " + errorCode;
@@ -99,32 +98,31 @@ public class DialogManager {
         if (isShowingDialog) dismissCurrentDialog();
 
         isShowingDialog = true;
-        final Activity  context = MyApp.currActivityContext;
         Intent intent;
         switch (dialogId) {
             case FIRST_UPDATE:
                 //click yes very quickly...
-                intent = new Intent(context,UpdateReceiver.class);
+                intent = new Intent(activity,UpdateReceiver.class);
                 intent.putExtra("isPre",true);
                 intent.putExtra("userInit",true);
-                context.sendBroadcast(intent);
-                DialogManager.showDialog(DialogManager.CHECKING_FOR_UPDATE);
+                activity.sendBroadcast(intent);
+                DialogManager.showDialog(activity,DialogManager.CHECKING_FOR_UPDATE);
                 if(true)
                     break;//Auto updating if don't have db (will check for wifi first).
                 currentDialog = FIRST_UPDATE;
-                builder = new AlertDialog.Builder(context);
+                builder = new AlertDialog.Builder(activity);
                 // Add the buttons
-                builder.setPositiveButton(context.getString(R.string.YES), new DialogInterface.OnClickListener() {
+                builder.setPositiveButton(activity.getString(R.string.YES), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        Intent intent = new Intent(context,UpdateReceiver.class);
+                        Intent intent = new Intent(activity,UpdateReceiver.class);
                         intent.putExtra("isPre",true);
                         intent.putExtra("userInit",true);
-                        context.sendBroadcast(intent);
-                        DialogManager.showDialog(DialogManager.CHECKING_FOR_UPDATE);
+                        activity.sendBroadcast(intent);
+                        DialogManager.showDialog(activity,DialogManager.CHECKING_FOR_UPDATE);
 
                     }
                 });
-                builder.setNegativeButton(context.getString(R.string.LATER), new DialogInterface.OnClickListener() {
+                builder.setNegativeButton(activity.getString(R.string.LATER), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dismissCurrentDialog();
                     }
@@ -139,172 +137,172 @@ public class DialogManager {
                 break;
             case LIBRARY_EMPTY:
                 currentDialog = LIBRARY_EMPTY;
-                builder = new AlertDialog.Builder(context);
+                builder = new AlertDialog.Builder(activity);
                 // Add the buttons
-                builder.setPositiveButton(context.getString(R.string.YES), new DialogInterface.OnClickListener() {
+                builder.setPositiveButton(activity.getString(R.string.YES), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        Intent intent = new Intent(context,UpdateReceiver.class);
+                        Intent intent = new Intent(activity,UpdateReceiver.class);
                         intent.putExtra("isPre",true);
                         intent.putExtra("userInit",true);
-                        context.sendBroadcast(intent);
-                        DialogManager.showDialog(DialogManager.CHECKING_FOR_UPDATE);
+                        activity.sendBroadcast(intent);
+                        DialogManager.showDialog(activity,DialogManager.CHECKING_FOR_UPDATE);
                     }
                 });
-                builder.setNegativeButton(context.getString(R.string.LATER), new DialogInterface.OnClickListener() {
+                builder.setNegativeButton(activity.getString(R.string.LATER), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dismissCurrentDialog();
                     }
                 });
 
-                builder.setTitle(context.getString(R.string.LIBRARY_EMPTY_TITLE));
-                builder.setMessage(context.getString(R.string.LIBRARY_EMPTY_MESSAGE));
+                builder.setTitle(activity.getString(R.string.LIBRARY_EMPTY_TITLE));
+                builder.setMessage(activity.getString(R.string.LIBRARY_EMPTY_MESSAGE));
                 dialog = builder.create();
                 dialog.setCancelable(false);
                 dialog.show();
                 break;
             case NEW_UPDATE:
                 currentDialog = NEW_UPDATE;
-                builder = new AlertDialog.Builder(context);
+                builder = new AlertDialog.Builder(activity);
                 // Add the buttons
-                builder.setPositiveButton(context.getString(R.string.YES), new DialogInterface.OnClickListener() {
+                builder.setPositiveButton(activity.getString(R.string.YES), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        Intent intent = new Intent(context,UpdateReceiver.class);
+                        Intent intent = new Intent(activity,UpdateReceiver.class);
                         intent.putExtra("isPre",true);
                         intent.putExtra("userInit",true);
-                        context.sendBroadcast(intent);
-                        DialogManager.showDialog(DialogManager.UPDATE_STARTED);
+                        activity.sendBroadcast(intent);
+                        DialogManager.showDialog(activity,DialogManager.UPDATE_STARTED);
                     }
                 });
-                builder.setNegativeButton(context.getString(R.string.LATER), new DialogInterface.OnClickListener() {
+                builder.setNegativeButton(activity.getString(R.string.LATER), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dismissCurrentDialog();
-                        UpdateService.unlockOrientation(context);
+                        UpdateService.unlockOrientation(activity);
                         UpdateService.endService();
                     }
                 });
-                builder.setTitle(context.getString(R.string.NEW_UPDATE_TITLE));
-                builder.setMessage(context.getString(R.string.NEW_UPDATE_MESSAGE));
+                builder.setTitle(activity.getString(R.string.NEW_UPDATE_TITLE));
+                builder.setMessage(activity.getString(R.string.NEW_UPDATE_MESSAGE));
                 dialog = builder.create();
                 dialog.setCancelable(false);
                 dialog.show();
                 break;
             case NO_INTERNET:
                 currentDialog = NO_INTERNET;
-                builder = new AlertDialog.Builder(context);
-                builder.setNegativeButton(context.getString(R.string.CANCEL), new DialogInterface.OnClickListener() {
+                builder = new AlertDialog.Builder(activity);
+                builder.setNegativeButton(activity.getString(R.string.CANCEL), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dismissCurrentDialog();
-                        UpdateService.unlockOrientation(context);
+                        UpdateService.unlockOrientation(activity);
                         UpdateService.endService();
                     }
                 });
-                builder.setMessage(context.getString(R.string.NO_INTERNET_MESSAGE));
-                builder.setTitle(context.getString(R.string.NO_INTERNET_TITLE));
+                builder.setMessage(activity.getString(R.string.NO_INTERNET_MESSAGE));
+                builder.setTitle(activity.getString(R.string.NO_INTERNET_TITLE));
                 dialog = builder.create();
                 dialog.setCancelable(false);
                 dialog.show();
                 break;
             case USING_DATA:
                 currentDialog = USING_DATA;
-                builder = new AlertDialog.Builder(context);
+                builder = new AlertDialog.Builder(activity);
                 // Add the buttons
-                builder.setPositiveButton(context.getString(R.string.CONTINUE), new DialogInterface.OnClickListener() {
+                builder.setPositiveButton(activity.getString(R.string.CONTINUE), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        Intent intent = new Intent(context,UpdateReceiver.class);
+                        Intent intent = new Intent(activity,UpdateReceiver.class);
                         intent.putExtra("isPre",false);
                         intent.putExtra("userInit",true);
-                        context.sendBroadcast(intent);
-                        DialogManager.showDialog(DialogManager.CHECKING_FOR_UPDATE);
+                        activity.sendBroadcast(intent);
+                        DialogManager.showDialog(activity,DialogManager.CHECKING_FOR_UPDATE);
                     }
                 });
-                builder.setNegativeButton(context.getString(R.string.CANCEL), new DialogInterface.OnClickListener() {
+                builder.setNegativeButton(activity.getString(R.string.CANCEL), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dismissCurrentDialog();
-                        UpdateService.unlockOrientation(context);
+                        UpdateService.unlockOrientation(activity);
                         UpdateService.endService();
                     }
                 });
-                builder.setMessage(context.getString(R.string.USING_DATA_MESSAGE));
-                builder.setTitle(context.getString(R.string.USING_DATA_TITLE));
+                builder.setMessage(activity.getString(R.string.USING_DATA_MESSAGE));
+                builder.setTitle(activity.getString(R.string.USING_DATA_TITLE));
                 dialog = builder.create();
                 dialog.setCancelable(false);
                 dialog.show();
                 break;
             case FIRST_UPDATE_FAIL:
                 currentDialog = FIRST_UPDATE_FAIL;
-                builder = new AlertDialog.Builder(context);
-                builder.setNegativeButton(context.getString(R.string.OK), new DialogInterface.OnClickListener() {
+                builder = new AlertDialog.Builder(activity);
+                builder.setNegativeButton(activity.getString(R.string.OK), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dismissCurrentDialog();
                     }
                 });
-                builder.setMessage(context.getString(R.string.FIRST_UPDATE_FAIL_MESSAGE));
-                builder.setTitle(context.getString(R.string.FIRST_UPDATE_FAIL_TITLE));
+                builder.setMessage(activity.getString(R.string.FIRST_UPDATE_FAIL_MESSAGE));
+                builder.setTitle(activity.getString(R.string.FIRST_UPDATE_FAIL_TITLE));
                 dialog = builder.create();
                 dialog.setCancelable(false);
                 dialog.show();
                 break;
             case NO_NEW_UPDATE:
                 currentDialog = NO_NEW_UPDATE;
-                builder = new AlertDialog.Builder(context);
-                builder.setNeutralButton(context.getString(R.string.OK), new DialogInterface.OnClickListener() {
+                builder = new AlertDialog.Builder(activity);
+                builder.setNeutralButton(activity.getString(R.string.OK), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dismissCurrentDialog();
-                        UpdateService.unlockOrientation(context);
+                        UpdateService.unlockOrientation(activity);
                         UpdateService.endService();
                     }
                 });
-                builder.setMessage(context.getString(R.string.NO_NEW_UPDATE_MESSAGE));
-                builder.setTitle(context.getString(R.string.NO_NEW_UPDATE_TITLE));
+                builder.setMessage(activity.getString(R.string.NO_NEW_UPDATE_MESSAGE));
+                builder.setTitle(activity.getString(R.string.NO_NEW_UPDATE_TITLE));
                 dialog = builder.create();
                 dialog.setCancelable(false);
                 dialog.show();
                 break;
             case FIRST_TIME_TEXT:
                 currentDialog = FIRST_TIME_TEXT;
-                builder = new AlertDialog.Builder(context);
-                builder.setNeutralButton(context.getString(R.string.OK), new DialogInterface.OnClickListener() {
+                builder = new AlertDialog.Builder(activity);
+                builder.setNeutralButton(activity.getString(R.string.OK), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dismissCurrentDialog();
-                        UpdateService.unlockOrientation(context);
+                        UpdateService.unlockOrientation(activity);
                         UpdateService.endService();
                     }
                 });
-                builder.setMessage(context.getString(R.string.FIRST_TIME_TEXT_MESSAGE));
-                builder.setTitle(context.getString(R.string.FIRST_TIME_TEXT_TITLE));
+                builder.setMessage(activity.getString(R.string.FIRST_TIME_TEXT_MESSAGE));
+                builder.setTitle(activity.getString(R.string.FIRST_TIME_TEXT_TITLE));
                 dialog = builder.create();
                 dialog.setCancelable(false);
                 dialog.show();
                 break;
             case DL_INTERNET_LOST:
                 currentDialog = DL_INTERNET_LOST;
-                builder = new AlertDialog.Builder(context);
-                builder.setNeutralButton(context.getString(R.string.OK), new DialogInterface.OnClickListener() {
+                builder = new AlertDialog.Builder(activity);
+                builder.setNeutralButton(activity.getString(R.string.OK), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dismissCurrentDialog();
-                        UpdateService.unlockOrientation(context);
+                        UpdateService.unlockOrientation(activity);
                         UpdateService.endService();
                     }
                 });
-                builder.setMessage(context.getString(R.string.DL_INTERNET_LOST_MESSAGE) + errorString);
-                builder.setTitle(context.getString(R.string.DL_INTERNET_LOST_TITLE));
+                builder.setMessage(activity.getString(R.string.DL_INTERNET_LOST_MESSAGE) + errorString);
+                builder.setTitle(activity.getString(R.string.DL_INTERNET_LOST_TITLE));
                 dialog = builder.create();
                 dialog.setCancelable(false);
                 dialog.show();
                 break;
             case DL_NOT_ENOUGH_SPACE:
                 currentDialog = DL_NOT_ENOUGH_SPACE;
-                builder = new AlertDialog.Builder(context);
-                builder.setNeutralButton(context.getString(R.string.OK), new DialogInterface.OnClickListener() {
+                builder = new AlertDialog.Builder(activity);
+                builder.setNeutralButton(activity.getString(R.string.OK), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dismissCurrentDialog();
-                        UpdateService.unlockOrientation(context);
+                        UpdateService.unlockOrientation(activity);
                         UpdateService.endService();
                     }
                 });
 
-                builder.setMessage(context.getString(R.string.DL_NOT_ENOUGH_SPACE_MESSAGE) + errorString);
-                builder.setTitle(context.getString(R.string.DL_NOT_ENOUGH_SPACE_TITLE));
+                builder.setMessage(activity.getString(R.string.DL_NOT_ENOUGH_SPACE_MESSAGE) + errorString);
+                builder.setTitle(activity.getString(R.string.DL_NOT_ENOUGH_SPACE_TITLE));
                 dialog = builder.create();
                 dialog.setCancelable(false);
                 dialog.show();
@@ -312,16 +310,16 @@ public class DialogManager {
 
             case DL_UNKNOWN_ERROR:
                 currentDialog = DL_UNKNOWN_ERROR;
-                builder = new AlertDialog.Builder(context);
-                builder.setNeutralButton(context.getString(R.string.OK), new DialogInterface.OnClickListener() {
+                builder = new AlertDialog.Builder(activity);
+                builder.setNeutralButton(activity.getString(R.string.OK), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dismissCurrentDialog();
-                        UpdateService.unlockOrientation(context);
+                        UpdateService.unlockOrientation(activity);
                         UpdateService.endService();
                     }
                 });
-                builder.setMessage(context.getString(R.string.DL_UNKNOWN_ERROR_MESSAGE) + errorString);
-                builder.setTitle(context.getString(R.string.DL_UNKNOWN_ERROR_TITLE));
+                builder.setMessage(activity.getString(R.string.DL_UNKNOWN_ERROR_MESSAGE) + errorString);
+                builder.setTitle(activity.getString(R.string.DL_UNKNOWN_ERROR_TITLE));
                 dialog = builder.create();
                 dialog.setCancelable(false);
                 dialog.show();
@@ -330,9 +328,9 @@ public class DialogManager {
 
             case ARE_YOU_SURE_CANCEL:
                 currentDialog = ARE_YOU_SURE_CANCEL;
-                builder = new AlertDialog.Builder(context);
+                builder = new AlertDialog.Builder(activity);
                 // Add the buttons
-                builder.setPositiveButton(context.getString(R.string.YES), new DialogInterface.OnClickListener() {
+                builder.setPositiveButton(activity.getString(R.string.YES), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         if (Downloader.downloadIdList.size() != 0) { //meaning the download is in progress (hopefully)
                             for (int i = 0; i < Downloader.downloadIdList.size(); i++) {
@@ -347,35 +345,35 @@ public class DialogManager {
                         UpdateService.endService();
 
                         dismissCurrentDialog();
-                        UpdateService.unlockOrientation(context);
+                        UpdateService.unlockOrientation(activity);
                     }
                 });
-                builder.setNegativeButton(context.getString(R.string.no), new DialogInterface.OnClickListener() {
+                builder.setNegativeButton(activity.getString(R.string.no), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dismissCurrentDialog();
                         //Log.d("dialog","neg aysc click");
-                        showDialog(UPDATE_STARTED);
+                        showDialog(activity,UPDATE_STARTED);
                     }
                 });
-                builder.setMessage(context.getString(R.string.ARE_YOU_SURE_MESSAGE));
-                builder.setTitle(context.getString(R.string.ARE_YOU_SURE_TITLE));
+                builder.setMessage(activity.getString(R.string.ARE_YOU_SURE_MESSAGE));
+                builder.setTitle(activity.getString(R.string.ARE_YOU_SURE_TITLE));
                 dialog = builder.create();
                 dialog.setCancelable(false);
                 dialog.show();
                 break;
             case CHECKING_FOR_UPDATE:
                 currentDialog = CHECKING_FOR_UPDATE;
-                builder = new AlertDialog.Builder(context);
-                builder.setTitle(context.getString(R.string.CHECKING_FOR_UPDATE_TITLE));
+                builder = new AlertDialog.Builder(activity);
+                builder.setTitle(activity.getString(R.string.CHECKING_FOR_UPDATE_TITLE));
                 dialog = builder.create();
                 dialog.setCancelable(false);
                 dialog.show();
                 break;
             case UPDATE_STARTED:
                 currentDialog = UPDATE_STARTED;
-                dialog = new ProgressDialog(context);
-                dialog.setTitle(context.getString(R.string.UPDATE_STARTED_TITLE));
-                dialog.setMessage(context.getString(R.string.UPDATE_STARTED_MESSAGE));
+                dialog = new ProgressDialog(activity);
+                dialog.setTitle(activity.getString(R.string.UPDATE_STARTED_TITLE));
+                dialog.setMessage(activity.getString(R.string.UPDATE_STARTED_MESSAGE));
                 //((ProgressDialog) dialog).setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
                 //((ProgressDialog) dialog).setProgress(0);
                 //((ProgressDialog) dialog).setMax(100);
@@ -383,7 +381,7 @@ public class DialogManager {
                 dialog.setCancelable(false);
 
 
-                dialog.setButton(DialogInterface.BUTTON_NEGATIVE, context.getString(R.string.CANCEL),new DialogInterface.OnClickListener() {
+                dialog.setButton(DialogInterface.BUTTON_NEGATIVE, activity.getString(R.string.CANCEL),new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         //will override later
@@ -403,10 +401,10 @@ public class DialogManager {
                             public void onClick(View view) {
                                 try {
                                     dismissCurrentDialog();
-                                    showDialog(ARE_YOU_SURE_CANCEL);
+                                    showDialog(activity,ARE_YOU_SURE_CANCEL);
 
                                 } catch (Exception e) {
-                                    Toast.makeText(context, context.getString(R.string.update_preparing), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(activity, activity.getString(R.string.update_preparing), Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });

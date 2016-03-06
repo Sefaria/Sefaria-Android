@@ -229,7 +229,7 @@ public class Database extends SQLiteOpenHelper{
     }
 
     public static void createAPIdb(){
-        Database myDbHelper = new Database(MyApp.currActivityContext);
+        Database myDbHelper = new Database(MyApp.getContext());
         Log.d("api", "trying to create db");
         myDbHelper.getReadableDatabase();
         try {

@@ -79,7 +79,6 @@ public class Downloader {
     public static void updateLibrary(Activity activity) {
         UpdateService.lockOrientation(activity);
         boolean hasPermission = (ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                == PackageManager.PERMISSION_GRANTED) && (ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE)
                 == PackageManager.PERMISSION_GRANTED);
         if (!hasPermission) {
             ActivityCompat.requestPermissions(activity,
@@ -91,8 +90,10 @@ public class Downloader {
         Intent intent = new Intent(activity,UpdateReceiver.class);
         intent.putExtra("isPre", true);
         intent.putExtra("userInit",true);
+
+        MyApp.setContext(activity);
         activity.sendBroadcast(intent);
-        DialogManager.showDialog(DialogManager.CHECKING_FOR_UPDATE);
+        DialogManager.showDialog(activity,DialogManager.CHECKING_FOR_UPDATE);
     }
 
     private static String getErrorReason(Cursor cursor){
@@ -262,7 +263,7 @@ public class Downloader {
     protected static int getNetworkStatus()
     {
         final ConnectivityManager connMgr = (ConnectivityManager)
-                MyApp.currActivityContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+                MyApp.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         final android.net.NetworkInfo wifi =  connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
         final android.net.NetworkInfo mobile =  connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
         if( wifi.isConnected()) {
