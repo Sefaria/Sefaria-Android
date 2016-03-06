@@ -71,7 +71,7 @@ public class LinkSelectorBar extends LinearLayout {
         hasBeenInitialized = true;
         List<LinkFilter> yo = Settings.Link.getLinks(activity.getBook().getTitle(Util.Lang.EN),linkFilterAll);
         linkSelectorQueue = new LinkedList<>(yo);
-        currLinkCount = linkSelectorQueue.peek();
+        currLinkCount = null; //initialize to all grayed
         update(lang);
     }
 

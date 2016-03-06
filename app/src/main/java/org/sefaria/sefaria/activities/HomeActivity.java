@@ -67,7 +67,6 @@ public class HomeActivity extends Activity {
     @Override
     protected void onCreate(Bundle in) {
         super.onCreate(in);
-        MyApp.currActivityContext = this;
         setContentView(R.layout.activity_home);
         Huffman.makeTree(true);
         Intent intent = getIntent();
@@ -353,8 +352,7 @@ public class HomeActivity extends Activity {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
+                    dealWithDatabaseStuff();
 
                 } else {
 

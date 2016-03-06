@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
@@ -302,7 +304,7 @@ public class Searching {
                 enPattern  = Pattern.compile(word.replaceAll("_", replace_(false)).replaceAll("%", replacePer(false)),Pattern.CASE_INSENSITIVE); //make case insensitive
         }catch(Exception e){//maybe try excaping the regex
             enPattern = Pattern.compile("");
-            Toast.makeText(MyApp.currActivityContext, MyApp.getContext().getString(R.string.error_parsing_query), Toast.LENGTH_SHORT).show();
+            Toast.makeText(MyApp.getContext(), MyApp.getContext().getString(R.string.error_parsing_query), Toast.LENGTH_SHORT).show();
         }
         //String wordLower = Util.getRemovedNikudString(word.toLowerCase(Locale.US));
         for (int i = 0; i< list.size(); i++){

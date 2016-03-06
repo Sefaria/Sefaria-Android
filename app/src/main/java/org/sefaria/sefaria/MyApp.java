@@ -50,7 +50,6 @@ public class MyApp extends Application {
     private static Typeface quattrocento_tf;
 
     private static Context context;
-    public static Activity currActivityContext;
     public static final String APP_NAME = "Sefaria";//TODO get rid of variable
     public static final int REQUEST_WRITE_STORAGE = 112;
 
@@ -114,6 +113,7 @@ public class MyApp extends Application {
 
 
     public static Context getContext() { return context; }
+    public static void setContext(Context newContext) { context = newContext; }
     public static String getAppPackageName() { return appPackageName; }
 
     public static void killSwitch(){return; }//TODO remove function

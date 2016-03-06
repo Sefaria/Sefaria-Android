@@ -174,7 +174,7 @@ public class SectionAdapter extends ArrayAdapter<Text> {
                 if (monoText.length() == 0)
                     activity.getResources().getString(R.string.no_text);
 
-                if (activity.getTextLang() == Util.Lang.HE) {
+                if (lang == Util.Lang.HE) {
                     tv.setText(Html.fromHtml(monoText));
                     enNum.setText(Util.VERSE_BULLET);
                     enNum.setAlpha(linkAlpha);
@@ -185,7 +185,7 @@ public class SectionAdapter extends ArrayAdapter<Text> {
                         heNum.setText("");
                     heNum.setAlpha(1);
                     heNum.setFont(Util.Lang.HE, true);
-                } else /*if (activity.getTextLang() == Util.Lang.EN)*/ {
+                } else /*if (lang == Util.Lang.EN)*/ {
                     tv.setText(Html.fromHtml(monoText));
                     if(segment.displayNum)
                         enNum.setText(""+segment.levels[0]);
