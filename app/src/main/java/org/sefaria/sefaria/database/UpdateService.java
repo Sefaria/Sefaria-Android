@@ -90,12 +90,10 @@ public class UpdateService extends Service {
 
 
         if (isPre) {
-            preupdateLibrary(MyApp.currActivityContext, userInit);
+            preupdateLibrary(userInit);
         } else {
-            updateLibrary(MyApp.currActivityContext,userInit);
+            updateLibrary(userInit);
         }
-
-        Log.d("bs","HEREERERER userInit: " + userInit);
 
         return Service.START_NOT_STICKY;
     }
@@ -119,28 +117,28 @@ public class UpdateService extends Service {
     }
 
     //check internet status before update, and if necessary, inform user of problems
-    public static void preupdateLibrary(Activity context, boolean userInit) {
+    public static void preupdateLibrary(boolean userInit) {
 
 
         int netStat = Downloader.getNetworkStatus();
         if (netStat == Downloader.NO_INTERNET) {
-            DialogManager.showDialog(DialogManager.NO_INTERNET);
+            DialogManager.showDialog((Activity)MyApp.getContext(),DialogManager.NO_INTERNET);
         } else if (netStat == Downloader.DATA_CONNECTED) {
-            DialogManager.showDialog(DialogManager.USING_DATA);
+            DialogManager.showDialog((Activity)MyApp.getContext(),DialogManager.USING_DATA);
         } else if (netStat == Downloader.WIFI_CONNECTED) {
-            updateLibrary(context,userInit);
+            updateLibrary(userInit);
         }
     }
 
     //suppressing because I handle sdk check myself
     @SuppressLint("NewApi")
-    public static void updateLibrary(Activity context, boolean userInit) {
+    public static void updateLibrary(boolean userInit) {
 
         //Toast.makeText(context, "Start background update", Toast.LENGTH_SHORT).show();
         //Toast.makeText(context, "background update only headers.", Toast.LENGTH_SHORT).show();
         GoogleTracker.sendEvent("Download", "getting_update_csv");
         startedUpdateTime = System.currentTimeMillis();
-        lockOrientation(context);
+        //lockOrientation(context);
 
         int SDK_INT = android.os.Build.VERSION.SDK_INT;
         Notification.Builder notBuild = new Notification.Builder(serviceYo)
@@ -165,7 +163,6 @@ public class UpdateService extends Service {
         editor.putLong("lastUpdateTime", System.currentTimeMillis());
         editor.apply();
 
-        MyApp.currActivityContext = context;
         userInitiated = userInit;
         currentVersionNum = Database.getDBDownloadVersion();
 
@@ -191,16 +188,16 @@ public class UpdateService extends Service {
             if((newestAppVersionNum > MyApp.getContext().getPackageManager().getPackageInfo(MyApp.getAppPackageName(), 0).versionCode)
                     && !MyApp.askedForUpgradeThisTime
                     ){
-                Toast.makeText(MyApp.currActivityContext, MyApp.currActivityContext.getString(R.string.upgrade_to_newest) + " " + MyApp.APP_NAME, Toast.LENGTH_SHORT).show();
+                Toast.makeText(MyApp.getContext(), MyApp.getContext().getString(R.string.upgrade_to_newest) + " " + MyApp.APP_NAME, Toast.LENGTH_SHORT).show();
                 try {
-                    MyApp.currActivityContext.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + MyApp.getAppPackageName())));
+                    MyApp.getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + MyApp.getAppPackageName())));
                 } catch (android.content.ActivityNotFoundException anfe) {
-                    MyApp.currActivityContext.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + MyApp.getAppPackageName())));
+                    MyApp.getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + MyApp.getAppPackageName())));
                 }
                 MyApp.askedForUpgradeThisTime = true;
                 if(userInitiated)
                     DialogManager.dismissCurrentDialog(); //dismiss progressDialog
-                unlockOrientation(MyApp.currActivityContext);
+                unlockOrientation((Activity)MyApp.getContext());
                 return;
 
             }//else just continue to check if there's an update
@@ -208,19 +205,19 @@ public class UpdateService extends Service {
             //check versions before continuing
             if (updatedVersionNum > currentVersionNum && userInitiated) {
                 DialogManager.dismissCurrentDialog();
-                DialogManager.showDialog(DialogManager.UPDATE_STARTED);
+                DialogManager.showDialog((Activity)MyApp.getContext(),DialogManager.UPDATE_STARTED);
                 updateStage2(zipUrl, indexURL);
             } else if (updatedVersionNum > currentVersionNum && !userInitiated) {
-                if (currentVersionNum == -1) DialogManager.showDialog(DialogManager.FIRST_UPDATE);
-                else DialogManager.showDialog(DialogManager.NEW_UPDATE);
+                if (currentVersionNum == -1) DialogManager.showDialog((Activity)MyApp.getContext(),DialogManager.FIRST_UPDATE);
+                else DialogManager.showDialog((Activity)MyApp.getContext(),DialogManager.NEW_UPDATE);
             } else if (updatedVersionNum <= currentVersionNum && userInitiated) {
                 DialogManager.dismissCurrentDialog(); //dismiss progressDialog
-                DialogManager.showDialog(DialogManager.NO_NEW_UPDATE);
+                DialogManager.showDialog((Activity)MyApp.getContext(),DialogManager.NO_NEW_UPDATE);
                 //UpdateService.endService(); //PROBABLY NOT NECESSARY, BUT ADDED IN CASE OF FUTURE BUG (ES)
             } else {
                 //no new update and not user initiated
                 UpdateService.endService(); //ADDED TO STOP THE SERVICE, SINCE THERE IS NO UPDATE (ES)
-                unlockOrientation(MyApp.currActivityContext);
+                unlockOrientation((Activity)MyApp.getContext());
 
             }
 
@@ -228,7 +225,7 @@ public class UpdateService extends Service {
             e.printStackTrace();
             GoogleTracker.sendException(e, "postUpdateStage1");
             if(userInitiated) DialogManager.dismissCurrentDialog();
-            unlockOrientation(MyApp.currActivityContext);
+            unlockOrientation((Activity)MyApp.getContext());
             return;
         }
     }
@@ -259,7 +256,7 @@ public class UpdateService extends Service {
                 inUpdateStage3 = true;
                 try {
                     Database myDbHelper;
-                    myDbHelper = new Database(MyApp.currActivityContext);
+                    myDbHelper = new Database(MyApp.getContext());
 
                     myDbHelper.getReadableDatabase();
                     try {
@@ -340,7 +337,7 @@ public class UpdateService extends Service {
                     break;
                 default:
                     endService();
-                    DialogManager.showDialog("Download Error",messageMap.get(msg.what));
+                    DialogManager.showDialog((Activity)MyApp.getContext(),"Download Error",messageMap.get(msg.what));
                     break;
             }
         }
@@ -363,13 +360,13 @@ public class UpdateService extends Service {
 
         DialogManager.dismissCurrentDialog();
         //Toast.makeText(MyApp.currActivityContext, "Installation complete. Enjoy the Torah!", Toast.LENGTH_SHORT).show();
-        unlockOrientation(MyApp.currActivityContext);
+        unlockOrientation((Activity)MyApp.getContext());
         //total restart. To be safe, restart so the database is readable.
-        Intent mStartActivity = new Intent(MyApp.currActivityContext, HomeActivity.class);
+        Intent mStartActivity = new Intent(MyApp.getContext(), HomeActivity.class);
         int mPendingIntentId = 31415;
-        PendingIntent mPendingIntent = PendingIntent.getActivity(MyApp.currActivityContext, mPendingIntentId,    mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
+        PendingIntent mPendingIntent = PendingIntent.getActivity(MyApp.getContext(), mPendingIntentId,    mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
 
-        AlarmManager mgr = (AlarmManager)MyApp.currActivityContext.getSystemService(Context.ALARM_SERVICE);
+        AlarmManager mgr = (AlarmManager)MyApp.getContext().getSystemService(Context.ALARM_SERVICE);
         mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
         System.exit(0);
     }
