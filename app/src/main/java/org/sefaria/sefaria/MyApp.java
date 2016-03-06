@@ -124,6 +124,7 @@ public class MyApp extends Application {
         if(openNewTab)
             intent = startNewTab(intent);
         intent.putExtra("homeClicked",true);
+        intent.putExtra("isPopup",true);
         activity.startActivity(intent);
         //TODO if(openNewTab) start animation
     }
