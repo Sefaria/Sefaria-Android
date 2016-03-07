@@ -9,6 +9,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutCompat;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -348,18 +349,18 @@ public class MenuGrid extends LinearLayout {
             Bundle options = null;
             if(longClick) {
                 intent = MyApp.startNewTab(intent);
-                //options = ActivityOptionsCompat.makeCustomAnimation(context,R.animator.activity_zoom_in,R.animator.activity_zoom_out).toBundle();
+                options = ActivityOptionsCompat.makeCustomAnimation(context,R.animator.activity_zoom_in,R.animator.activity_zoom_out).toBundle();
             }
             intent.putExtra("menuState", newMenuState);
             intent.putExtra("hasSectionBack", mb.getSectionNode() != null);
             intent.putExtra("hasTabBack", hasTabs);
 
 
-            //if (longClick) {
-            //    ((ActivityCompat)context).startActivityForResult(intent,0,options);
-            //} else {
+            if (longClick) {
+                ActivityCompat.startActivityForResult((Activity)context, intent, 0, options);
+            } else {
                 ((Activity) context).startActivityForResult(intent, 0);
-            //}
+            }
         }
 
 
