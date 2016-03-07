@@ -68,7 +68,7 @@ public class TOCGrid extends LinearLayout {
 
     private void init(String pathDefiningNode) {
         this.setOrientation(LinearLayout.VERTICAL);
-        this.setPadding(10, 10, 10, 10);
+        this.setPadding(10, 10, 10, 100);
         this.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
         this.flippedForHe = false;
 

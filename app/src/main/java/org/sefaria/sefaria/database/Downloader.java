@@ -76,14 +76,21 @@ public class Downloader {
             return CSV_REAL_URL;
     }
 
-    public static void updateLibrary(Activity activity) {
-        UpdateService.lockOrientation(activity);
-        boolean hasPermission = (ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    private static boolean hasPermission(Context context){
+        return (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 == PackageManager.PERMISSION_GRANTED);
-        if (!hasPermission) {
+    }
+
+    public static void updateLibrary(Activity activity, boolean evenOverwriteOldDB) {
+        UpdateService.evenOverWriteOldDatabase = evenOverwriteOldDB;
+        UpdateService.lockOrientation(activity);
+        if (!hasPermission(activity)) {
             ActivityCompat.requestPermissions(activity,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    MyApp.REQUEST_WRITE_STORAGE);
+                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                MyApp.REQUEST_WRITE_STORAGE);
+        }
+        if(!hasPermission(activity)){
+            Toast.makeText(activity,"Can't download Library without storage permissions.", Toast.LENGTH_SHORT).show();
             return;
         }
 
