@@ -18,16 +18,18 @@ import org.sefaria.sefaria.layouts.SefariaTextView;
  */
 public class TOCTab extends LinearLayout implements TOCElement {
 
+    private Context context;
     private Node node;
     private SefariaTextView tv;
     private boolean isActive;
     private Util.Lang lang;
 
+
     public TOCTab(Context context, Node node, Util.Lang lang) {
         super(context);
         inflate(context, R.layout.tab_menu, this);
         this.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT));
-
+        this.context = context;
         this.lang = lang;
         this.node = node;
         this.tv = (SefariaTextView) findViewById(R.id.tv);
@@ -46,6 +48,7 @@ public class TOCTab extends LinearLayout implements TOCElement {
         inflate(context, R.layout.tab_menu, this);
         this.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT));
 
+        this.context = context;
         this.tv = (SefariaTextView) findViewById(R.id.tv);
 
         setLang(lang);
@@ -76,9 +79,9 @@ public class TOCTab extends LinearLayout implements TOCElement {
     public void setActive(boolean isActive) {
         this.isActive = isActive;
         if (isActive) {
-            tv.setTextColor(getResources().getColor(R.color.tab_active));
+            tv.setTextColor(Util.getColor(context,R.attr.text_color_main));
         } else {
-            tv.setTextColor(getResources().getColor(R.color.tab_inactive));
+            tv.setTextColor(Util.getColor(context,R.attr.text_color_english));
         }
     }
 

@@ -14,6 +14,7 @@ import org.sefaria.sefaria.layouts.SefariaTextView;
  */
 public class MenuButtonTab extends MenuElement {
 
+    private Context context;
     private MenuNode node;
     private SefariaTextView tv;
 
@@ -22,6 +23,7 @@ public class MenuButtonTab extends MenuElement {
         inflate(context, R.layout.tab_menu, this);
         this.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT));
 
+        this.context = context;
         this.node = node;
         this.tv = (SefariaTextView) findViewById(R.id.tv);
         tv.setText(node.getTitle(lang));
@@ -38,9 +40,9 @@ public class MenuButtonTab extends MenuElement {
 
     public void setActive(boolean isActive) {
         if (isActive) {
-            tv.setTextColor(getResources().getColor(R.color.tab_active));
+            tv.setTextColor(Util.getColor(context,R.attr.text_color_main));
         } else {
-            tv.setTextColor(getResources().getColor(R.color.tab_inactive));
+            tv.setTextColor(Util.getColor(context,R.attr.text_color_faded));
         }
     }
 

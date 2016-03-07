@@ -122,24 +122,21 @@ public class MyApp extends Application {
     public static void homeClick(Activity activity, boolean openNewTab){
         Intent intent = new Intent(activity, HomeActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); //Clear Activity stack
-        if(openNewTab)
-            intent = startNewTab(intent);
         intent.putExtra("homeClicked",true);
         intent.putExtra("isPopup",true);
 
         if (openNewTab) {
+            intent = startNewTab(intent);
             Bundle activityOptionsBundle = ActivityOptionsCompat.makeCustomAnimation(context,R.animator.slide_up,0).toBundle();
             ActivityCompat.startActivity(activity,intent,activityOptionsBundle);
         } else {
             activity.startActivity(intent);
         }
-        //TODO if(openNewTab) start animation
     }
 
     public static Intent startNewTab(Intent intent){
         Toast.makeText(context, context.getString(R.string.opening_new_task), Toast.LENGTH_SHORT).show();
         intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        //ActivityCompat.startActivity(this, intent, options)
         return intent;
     }
 

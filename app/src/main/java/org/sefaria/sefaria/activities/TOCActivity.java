@@ -51,20 +51,16 @@ public class TOCActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setTheme(Settings.getTheme());
         setContentView(R.layout.activity_toc);
-        Log.d("TOCActivity", "TOCActivity started");
-
-
 
         if(savedInstanceState == null){//it's coming from a saved to ram state
             Intent intent = getIntent();
             book = intent.getParcelableExtra("currBook");
             pathDefiningNode = intent.getStringExtra("pathDefiningNode");
-            Log.d("TOCActivity", "Coming with getIntent");
         }else{
             book = savedInstanceState.getParcelable("currBook");
             pathDefiningNode = savedInstanceState.getString("pathDefiningNode");
             String bookTitle = savedInstanceState.getString("bookTitle");
-            Log.d("TOCActivity", "Coming back with savedInstanceState. book:" + book + ". pathDefiningNode: " + pathDefiningNode + ". bookTitle:" + bookTitle);
+            //Log.d("TOCActivity", "Coming back with savedInstanceState. book:" + book + ". pathDefiningNode: " + pathDefiningNode + ". bookTitle:" + bookTitle);
         }
         lang = Settings.getMenuLang();
         context = this;
