@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.widget.Toast;
 
@@ -125,7 +126,13 @@ public class MyApp extends Application {
             intent = startNewTab(intent);
         intent.putExtra("homeClicked",true);
         intent.putExtra("isPopup",true);
-        activity.startActivity(intent);
+
+        if (openNewTab) {
+            Bundle activityOptionsBundle = ActivityOptionsCompat.makeCustomAnimation(context,R.animator.slide_up,0).toBundle();
+            ActivityCompat.startActivity(activity,intent,activityOptionsBundle);
+        } else {
+            activity.startActivity(intent);
+        }
         //TODO if(openNewTab) start animation
     }
 
