@@ -7,6 +7,7 @@ import java.util.List;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
+import android.os.Build;
 import android.util.Log;
 
 public class Link {//implements Parcelable {
@@ -152,7 +153,10 @@ public class Link {//implements Parcelable {
             args = new String[]{linkFilter.enTitle};
         }
 
-        sql += " ORDER BY (case when B.commentsOn=" + text.bid  + " then 0 else 1 end), T.bid";
+        sql += " ORDER BY ";
+        if(Build.VERSION.SDK_INT >=21)
+            sql += " (case when B.commentsOn=" + text.bid  + " then 0 else 1 end), ";
+        sql += " T.bid";
 
 
         Cursor cursor = db.rawQuery(sql, args);

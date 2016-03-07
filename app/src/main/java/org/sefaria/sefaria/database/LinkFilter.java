@@ -145,22 +145,27 @@ public class LinkFilter {
         SQLiteDatabase db = dbHandler.getReadableDatabase();
 
         String sql;
+        /*
         if(Build.VERSION.SDK_INT >= 21) {
             sql = "SELECT B.title, B.heTitle FROM Books B, Links_small L, Texts T WHERE (" +
                     "((L.tid1 BETWEEN " + chapStart + " AND " + chapEnd + ") AND L.tid2=T._id AND T.bid= B._id AND B.commentsOn=" + bid + ")"
                     + " OR ((L.tid2 BETWEEN " + chapStart + " AND " + chapEnd + ") AND L.tid1=T._id AND T.bid= B._id AND B.commentsOn=" + bid + ")"  //TODO make work for jeli's phone
                     + ") GROUP BY B._id ORDER BY B._id"
             ;
-        }else {
-            sql = "SELECT B.title, B.heTitle, B._id FROM Books B, Links_small L, Texts T WHERE (" +
-                    "((L.tid1 BETWEEN " + chapStart + " AND " + chapEnd + ") AND L.tid2=T._id AND T.bid= B._id AND B.commentsOn=" + bid + ")"
-                    + ") " +
-                    "UNION" +
-                    " SELECT B.title, B.heTitle, B._id FROM Books B, Links_small L, Texts T WHERE (" +
-                    " ((L.tid2 BETWEEN " + chapStart + " AND " + chapEnd + ") AND L.tid1=T._id AND T.bid= B._id AND B.commentsOn=" + bid + ")"  //TODO make work for jeli's phone
-                    + ") GROUP BY B._id ORDER BY B._id"
-            ;
-        }
+        }else {*/
+        sql = " SELECT B.title, B.heTitle, B._id FROM Books B, Texts T WHERE tid=T._id AND T.bid= B._id AND B.commentsOn=" + bid + " AND  T._id in (" +
+                "SELECT L.tid2 as tid FROM Links_small L WHERE (" +
+                "L.tid1 BETWEEN " + chapStart + " AND " + chapEnd
+                + ") UNION " +
+                "SELECT L.tid1 as tid FROM Links_small L WHERE (" +
+                " L2.tid2 BETWEEN " + chapStart + " AND " + chapEnd
+                + ") GROUP BY B._id ORDER BY B._id"
+        ;
+        sql = "SELECT B.title, B.heTitle, B._id FROM Books B, Texts T, (" +
+                "SELECT L.tid2 as tid FROM Links_small L WHERE L.tid1 BETWEEN " + chapStart + " AND " + chapEnd
+                + " UNION SELECT L.tid1 as tid FROM Links_small L WHERE  L.tid2 BETWEEN " + chapStart + " AND " + chapEnd + ") as tmp" +
+                "  WHERE tmp.tid=T._id AND T.bid= B._id AND B.commentsOn=" + bid + " GROUP BY B._id ORDER BY B._id";
+
         Cursor cursor = db.rawQuery(sql, null);
 
         int count = 0;
@@ -194,6 +199,7 @@ public class LinkFilter {
 
 
     public static LinkFilter getFromLinks_small(Text text){
+        //Log.d("LinkFilter", text.levels[0] + " starting...");
         LinkFilter allLinkCounts = new LinkFilter(ALL_CONNECTIONS, 0, "הכל",DEPTH_TYPE.ALL);
         LinkFilter commentaryGroup = getCommentaryOnChap(text.tid - 11, text.tid + 11, text.bid);//getting all commentaries +-11 of the current text
 
@@ -208,30 +214,28 @@ public class LinkFilter {
         SQLiteDatabase db = dbHandler.getReadableDatabase();
         String sql;
 
-        if(Build.VERSION.SDK_INT >= 21) {//this works for newer androids
+        /*
+        if(Build.VERSION.SDK_INT >= 21 && true) {//this works for newer androids
             sql = "SELECT B.title, Count(*) as booksCount, B.heTitle, B.commentsOn, B.categories FROM Books B, Links_small L, Texts T WHERE (" +
                     "(L.tid1 = " + text.tid + " AND L.tid2=T._id AND T.bid= B._id)" +
                     " OR (L.tid2 = " + text.tid + " AND L.tid1=T._id AND T.bid= B._id)" +
                     " ) GROUP BY B._id ORDER BY B.categories, B._id"
             ;
-        }else {//this still doesn't work right
-            sql = "SELECT B.title, Count(*) as booksCount, B.heTitle, B.commentsOn, B.categories,B._id FROM Books B, Links_small L, Texts T WHERE (" +
-                    "(L.tid1 = " + text.tid + " AND L.tid2=T._id AND T.bid= B._id)" +
-                    " ) UNION ALL SELECT B.title, Count(*) as booksCount, B.heTitle, B.commentsOn, B.categories,B._id FROM Books B, Links_small L, Texts T WHERE (" +
-                    " (L.tid2 = " + text.tid + " AND L.tid1=T._id AND T.bid= B._id)" +
-                    " ) GROUP BY B._id ORDER BY B.categories, B._id"
-            ;
         }
-        Log.d("LinkFilter", ""+ text.levels[0]);
+        */
+        sql = "select B2.title, Count(*) as booksCount, B2.heTitle, B2.commentsOn, B2.categories FROM" +
+                " (SELECT ALL B._id FROM Books B, Links_small L, Texts T WHERE ((L.tid1 = " + text.tid + " AND L.tid2=T._id AND T.bid= B._id) )" +
+                " UNION ALL SELECT ALL B._id FROM Books B, Links_small L, Texts T WHERE ( (L.tid2 = " + text.tid + " AND L.tid1=T._id AND T.bid= B._id) )) as tmp, Books B2" +
+                " where tmp._id= B2._id GROUP BY tmp._id ORDER BY B2.categories, B2._id";
+
         Cursor cursor = db.rawQuery(sql, null);
 
         LinkFilter countGroups = null;
         String lastCategory = "";
         if (cursor.moveToFirst()) {
             do {
-                Log.d("LinkFilter", ""+ text.levels[0] + ": " + cursor.getString(4));
+                //Log.d("LinkFilter", ""+ text.levels[0] + ": " + cursor.getString(4));
                 String [] categories = Util.str2strArray(cursor.getString(4));
-                //TODO test length
                 if(categories.length == 0) continue;
                 if(countGroups == null || !categories[0].equals(lastCategory)){
                     if(countGroups != null && countGroups.count >0) {
@@ -270,6 +274,7 @@ public class LinkFilter {
         if(commentaryGroup.count >0 || commentaryGroup.getChildren().size()>0)
             allLinkCounts.addChild(commentaryGroup,true);
 
+        //Log.d("LinkFilter", "...finished: " + allLinkCounts.count);
         return allLinkCounts;
     }
 
