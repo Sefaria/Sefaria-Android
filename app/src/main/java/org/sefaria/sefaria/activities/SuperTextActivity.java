@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MotionEventCompat;
+import android.support.v7.widget.PopupMenu;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -372,6 +373,8 @@ public abstract class SuperTextActivity extends FragmentActivity {
         }
         return new Text(node);
     }
+
+
 
     protected void toggleTextMenu() {
         textMenuRoot.bringToFront();
