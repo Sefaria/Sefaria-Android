@@ -435,9 +435,9 @@ public class HomeActivity extends Activity {
                 "mailto", email, null));
         emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Android App Feedback");
         emailIntent.putExtra(Intent.EXTRA_TEXT,
-                "\n\n\n\n\nApp Version data:\n"
-                + BuildConfig.VERSION_NAME + " ("  + BuildConfig.VERSION_CODE + ")" + "\n"
-                + "Database Internal Version:" + Database.getVersionInDB() + "\n"
+                "\n\n\n\n\n" +
+                "App Version data: " + BuildConfig.VERSION_NAME + " ("  + BuildConfig.VERSION_CODE + ")" + "\n"
+                + "Library Version: " + Util.convertDBnum(Database.getVersionInDB()) + "\n"
                 + GoogleTracker.randomID + "\n"
                 + Build.VERSION.RELEASE + " (" + Build.VERSION.SDK_INT + ")" + "\n"
 
