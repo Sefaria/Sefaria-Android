@@ -54,6 +54,8 @@ public class TOCNumBox extends TextView implements TOCElement {
         setPadding(1, 1, 1, 1);
         setTextSize(10);
         setGravity(Gravity.CENTER);
+        setBackgroundResource(Util.getDrawable(context,R.attr.button_selector_solid_drawable));
+        setTextColor(Util.getColor(context,R.attr.text_color_main));
 
         this.node = node;
         this.context = context;
