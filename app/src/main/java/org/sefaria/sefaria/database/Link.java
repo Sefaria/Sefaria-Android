@@ -143,8 +143,11 @@ public class Link {//implements Parcelable {
                 }else {
                     category = linkFilter.enTitle;
                 }
+
                 //get the string for categories start with the selected category
-                sql += " AND B.categories like printf('%s%s%s','[\"',?,'%') ";
+                //if(Build.VERSION.SDK_INT >= 21) sql += " AND B.categories like printf('%s%s%s','[\"',?,'%') "; else
+                sql += " AND B.categories like '[\"' || ? || '%' ";
+
                 args = new String[]{category};
 
             }
@@ -153,10 +156,8 @@ public class Link {//implements Parcelable {
             args = new String[]{linkFilter.enTitle};
         }
 
-        sql += " ORDER BY ";
-        if(Build.VERSION.SDK_INT >=21)
-            sql += " (case when B.commentsOn=" + text.bid  + " then 0 else 1 end), ";
-        sql += " T.bid";
+        sql += " ORDER BY (case when B.commentsOn=" + text.bid  + " then 0 else 1 end), T.bid";
+
 
 
         Cursor cursor = db.rawQuery(sql, args);
