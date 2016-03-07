@@ -209,12 +209,15 @@ public class HomeActivity extends Activity {
     }
 
     private void dealWithDatabaseStuff(){
+        long time = Settings.getDownloadSuccess(true);
+        if(time >0)
+            GoogleTracker.sendEvent("Download", "Update Finished",time);
 
         Util.deleteNonRecursiveDir(Downloader.FULL_DOWNLOAD_PATH); //remove any old temp downloads
         if(API.useAPI() || !Database.isValidDB()) {
             //Database.createAPIdb();
             Toast.makeText(this, "Starting Download", Toast.LENGTH_SHORT).show();
-            Downloader.updateLibrary(this);
+            Downloader.updateLibrary(this,false);
 
         }
     }
@@ -225,7 +228,7 @@ public class HomeActivity extends Activity {
         livingLibaryView.setTextSize(20);
         int livingPadding = 60;
         livingLibaryView.setPadding(3, livingPadding, 3, livingPadding);
-        livingLibaryView.setTextColor(Util.getColor(this,R.attr.text_color_main));
+        livingLibaryView.setTextColor(Util.getColor(this, R.attr.text_color_main));
         homeRoot.addView(livingLibaryView);
     }
 
@@ -263,8 +266,8 @@ public class HomeActivity extends Activity {
                     menuDirectRef.setLongClickPinning();
                     recentTexts.add(menuDirectRef);
                     recentRow.addView(menuDirectRef);
-                } catch (Book.BookNotFoundException e) {
-                    e.printStackTrace();
+                } catch (Exception e) {
+                    Log.e("HomeActivity", "Problem getting Recent Texts:" + e.getMessage());
                 }
 
             }
@@ -434,7 +437,6 @@ public class HomeActivity extends Activity {
         emailIntent.putExtra(Intent.EXTRA_TEXT,
                 "\n\n\n\n\nApp Version data:\n"
                 + BuildConfig.VERSION_NAME + " ("  + BuildConfig.VERSION_CODE + ")" + "\n"
-                + "Database Down Version:" + Database.getDBDownloadVersion() + "\n"
                 + "Database Internal Version:" + Database.getVersionInDB() + "\n"
                 + GoogleTracker.randomID + "\n"
                 + Build.VERSION.RELEASE + " (" + Build.VERSION.SDK_INT + ")" + "\n"

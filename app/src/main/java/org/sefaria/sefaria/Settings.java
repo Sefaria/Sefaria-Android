@@ -276,10 +276,24 @@ public class Settings {
 
     public static void setIsDebug(boolean isDebug){
         SharedPreferences.Editor editor = getGeneralSettings().edit();
-        editor.putBoolean("isDebug",isDebug);
+        editor.putBoolean("isDebug", isDebug);
         editor.commit();
     }
 
+
+    public static long getDownloadSuccess(boolean clearValue){
+        SharedPreferences settings = getGeneralSettings();
+        long time =  settings.getLong("DownloadSuccess",0);
+        if(clearValue)
+            setDownloadSuccess(0);
+        return time;
+    }
+
+    public static void setDownloadSuccess(long time){
+        SharedPreferences.Editor editor = getGeneralSettings().edit();
+        editor.putLong("DownloadSuccess",time);
+        editor.commit();
+    }
 
     public static class Link {
         static private SharedPreferences getLinkSettings() {
