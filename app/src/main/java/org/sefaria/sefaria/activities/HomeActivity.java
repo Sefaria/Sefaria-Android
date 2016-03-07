@@ -67,8 +67,11 @@ public class HomeActivity extends Activity {
     @Override
     protected void onCreate(Bundle in) {
         super.onCreate(in);
+        setTheme(Settings.getTheme());
         setContentView(R.layout.activity_home);
         Huffman.makeTree(true);
+
+
         Intent intent = getIntent();
 
         handleIncomingURL(intent);
@@ -222,7 +225,7 @@ public class HomeActivity extends Activity {
         livingLibaryView.setTextSize(20);
         int livingPadding = 60;
         livingLibaryView.setPadding(3, livingPadding, 3, livingPadding);
-        livingLibaryView.setTextColor(Color.parseColor("#000000"));
+        livingLibaryView.setTextColor(Util.getColor(this,R.attr.text_color_main));
         homeRoot.addView(livingLibaryView);
     }
 
@@ -322,6 +325,7 @@ public class HomeActivity extends Activity {
         textView.setPadding(paddingSide, paddingTop * 2, paddingSide, paddingTop);
         textView.setTextSize(20);
         textView.setFont(Util.Lang.EN, isSerif); //TODO change with system lang
+        textView.setTextColor(Util.getColor(this, R.attr.text_color_english));
         textView.setGravity(Gravity.CENTER);
         if (! isSerif && Build.VERSION.SDK_INT > 14) {
             textView.setAllCaps(true);

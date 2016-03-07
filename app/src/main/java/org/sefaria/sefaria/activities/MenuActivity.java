@@ -33,7 +33,9 @@ public class MenuActivity extends Activity {
     @Override
     protected void onCreate(Bundle in) {
         super.onCreate(in);
+        setTheme(Settings.getTheme());
         setContentView(R.layout.activity_menu);
+
 
         Intent intent = getIntent();
         menuState = intent.getParcelableExtra("menuState");

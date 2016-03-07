@@ -49,6 +49,7 @@ public class TOCActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTheme(Settings.getTheme());
         setContentView(R.layout.activity_toc);
         Log.d("TOCActivity", "TOCActivity started");
 

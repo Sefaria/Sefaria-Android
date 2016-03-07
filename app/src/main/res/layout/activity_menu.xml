@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="org.sefaria.sefaria.MenuActivity"
-    android:background="@color/menu_background">
+    android:background="?link_bg">
 
     <LinearLayout
         android:id="@+id/actionbarRoot"
