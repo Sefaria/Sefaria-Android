@@ -25,6 +25,7 @@ import org.sefaria.sefaria.database.Node;
 import org.sefaria.sefaria.activities.MenuActivity;
 import org.sefaria.sefaria.layouts.AutoResizeTextView;
 import org.sefaria.sefaria.MenuElements.MenuButton;
+import org.sefaria.sefaria.layouts.SefariaTextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +42,7 @@ public class TOCGrid extends LinearLayout {
 
     //the LinearLayout which contains the actual grid of buttons, as opposed to the tabs
     //which is useful for destroying the page and switching to a new tab
-    private TextView bookTitleView;
+    private SefariaTextView bookTitleView;
     private AutoResizeTextView currSectionTitleView;
     private LinearLayout tabRoot;
     private LinearLayout gridRoot;
@@ -49,6 +50,8 @@ public class TOCGrid extends LinearLayout {
     private List<Node> tocNodesRoots;
     private Util.Lang lang;
     private TOCTab lastActivatedTab;
+
+    private boolean flippedForHe;
 
     private double numColumns = 7.0;
 
@@ -67,7 +70,7 @@ public class TOCGrid extends LinearLayout {
         this.setOrientation(LinearLayout.VERTICAL);
         this.setPadding(10, 10, 10, 10);
         this.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-
+        this.flippedForHe = false;
 
 
 
@@ -76,9 +79,10 @@ public class TOCGrid extends LinearLayout {
         this.hasTabs = true;//lets assume for now... either with enough roots or with commentary
 
 
-        bookTitleView = new TextView(context);
-        bookTitleView.setTextSize(40);
-        bookTitleView.setTextColor(Color.BLACK);
+        bookTitleView = new SefariaTextView(context);
+        bookTitleView.setFont(lang,true);
+        bookTitleView.setTextSize(25);
+        bookTitleView.setTextColor(Util.getColor(context,R.attr.text_color_main));
         bookTitleView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
         bookTitleView.setGravity(Gravity.CENTER);
@@ -116,8 +120,13 @@ public class TOCGrid extends LinearLayout {
         this.addView(gridRoot, 3);
 
         TocTabList.get(defaultTab).setActive(true);//set it true, such that the setLang function will start the right tab
-        setLang(lang);
 
+
+        if (getLang() == Util.Lang.HE) {
+            flippedForHe = true;
+            flipViews();
+        }
+        setLang(lang);
     }
 
     /* saving method for SDK VERSION < 14 */
@@ -333,12 +342,30 @@ public class TOCGrid extends LinearLayout {
         this.lang = lang;
         bookTitleView.setText(book.getTitle(lang));
         //TODO also setLang of all the Header feilds
+        if ((lang == Util.Lang.HE && !flippedForHe) ||
+                (lang == Util.Lang.EN && flippedForHe)) {
+
+            flippedForHe = lang == Util.Lang.HE;
+            flipViews();
+        }
         for (TOCTab tempTocTab : TocTabList) {
             if(tempTocTab.getActive()){
                 activateTab(tempTocTab);
             }
+            tempTocTab.setLang(lang);
         }
 
+    }
+
+    private void flipViews() {
+        if (tabRoot != null) {
+            int numChildren = tabRoot.getChildCount();
+            for (int i = 0; i < numChildren; i++) {
+                View tempView = tabRoot.getChildAt(numChildren - 1);
+                tabRoot.removeViewAt(numChildren - 1);
+                tabRoot.addView(tempView, i);
+            }
+        }
     }
 
 
