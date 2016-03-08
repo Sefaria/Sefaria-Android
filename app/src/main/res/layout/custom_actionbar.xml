@@ -106,10 +106,10 @@
 
         <FrameLayout
             android:id="@+id/search_btn"
-            android:layout_toRightOf="@+id/close_btn"
+            android:layout_toLeftOf="@+id/menu_btn"
             android:layout_width="@dimen/custom_action_bar_button_frame_width"
             android:layout_height="match_parent"
-            android:paddingLeft="@dimen/custom_action_bar_button_to_side_padding"
+            android:paddingRight="@dimen/custom_action_bar_button_to_side_padding"
             android:layout_margin="0dp"
             >
             <ImageView
