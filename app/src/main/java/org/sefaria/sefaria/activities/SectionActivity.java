@@ -419,7 +419,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
     protected void onFinishLinkFragOpen() {
         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        lp.addRule(RelativeLayout.ALIGN_TOP, R.id.useless);
+        lp.addRule(RelativeLayout.BELOW, R.id.actionbarRoot);
         lp.addRule(RelativeLayout.ABOVE,R.id.linkRoot);
 
         listView.setLayoutParams(lp);
@@ -431,7 +431,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
     protected void onStartLinkFragClose() {
         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        lp.addRule(RelativeLayout.ALIGN_TOP,R.id.useless);
+        lp.addRule(RelativeLayout.BELOW,R.id.actionbarRoot);
         //lp.addRule(RelativeLayout.ABOVE,R.id.linkRoot);
 
         listView.setLayoutParams(lp);
