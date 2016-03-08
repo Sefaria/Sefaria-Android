@@ -54,6 +54,7 @@ public class UpdateService extends Service {
     public static int updatedVersionNum;
     public static int currentVersionNum;
     public static boolean userInitiated;
+    public static boolean evenOverWriteOldDatabase = false;
     public static boolean inUpdateStage3 = false;
     private static long startedUpdateTime = 0;
 
@@ -164,7 +165,7 @@ public class UpdateService extends Service {
         editor.apply();
 
         userInitiated = userInit;
-        currentVersionNum = Database.getDBDownloadVersion();
+        currentVersionNum = Database.getVersionInDB();
 
         postUpdateStage1();
 
@@ -203,7 +204,7 @@ public class UpdateService extends Service {
             }//else just continue to check if there's an update
 
             //check versions before continuing
-            if (updatedVersionNum > currentVersionNum && userInitiated) {
+            if ((updatedVersionNum > currentVersionNum && userInitiated) || evenOverWriteOldDatabase ) {
                 DialogManager.dismissCurrentDialog();
                 DialogManager.showDialog((Activity)MyApp.getContext(),DialogManager.UPDATE_STARTED);
                 updateStage2(zipUrl, indexURL);
@@ -246,9 +247,9 @@ public class UpdateService extends Service {
         //this guy calls a complete handler in Downloader to inform us we're down and move on to stage2
     }
 
-    //...which unzips update into the databse location.
+    //...which unzips update into the database location.
     public static void updateStage3() {
-        Log.d("up","stage 3 started");
+        Log.d("up", "stage 3 started");
         //if (!inUpdateStage3) {
         new Thread(new Runnable() {
             @Override
@@ -266,10 +267,10 @@ public class UpdateService extends Service {
                         //move index.json file into right location
                         Util.moveFile(Downloader.FULL_DOWNLOAD_PATH, Downloader.INDEX_JSON_NAME, Database.getInternalFolder(), MenuState.jsonIndexFileName);
 
-
-                        //success, set version num
-                        Database.setDBDownloadVersion(updatedVersionNum);
-
+                        long timeToCompleteUpdate = System.currentTimeMillis() - startedUpdateTime;
+                        if(startedUpdateTime != 0 && timeToCompleteUpdate > 0){
+                            Settings.setDownloadSuccess(timeToCompleteUpdate);
+                        }
                         Thread.sleep(200);
 
 
@@ -290,9 +291,6 @@ public class UpdateService extends Service {
                     //if (updateFile.exists()) updateFile.delete();
                     //Util.deleteNonRecursiveDir(Downloader.FULL_DOWNLOAD_PATH);
 
-                    long timeToCompleteUpdate = System.currentTimeMillis() - startedUpdateTime;
-                    if(startedUpdateTime != 0 && timeToCompleteUpdate > 0)
-                        GoogleTracker.sendEvent("Download", "Update Finished",timeToCompleteUpdate);
 
                     handler.sendEmptyMessage(UPDATE_STAGE_3_COMPLETE);
 
@@ -364,7 +362,7 @@ public class UpdateService extends Service {
         //total restart. To be safe, restart so the database is readable.
         Intent mStartActivity = new Intent(MyApp.getContext(), HomeActivity.class);
         int mPendingIntentId = 31415;
-        PendingIntent mPendingIntent = PendingIntent.getActivity(MyApp.getContext(), mPendingIntentId,    mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
+        PendingIntent mPendingIntent = PendingIntent.getActivity(MyApp.getContext(), mPendingIntentId,  mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
 
         AlarmManager mgr = (AlarmManager)MyApp.getContext().getSystemService(Context.ALARM_SERVICE);
         mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
