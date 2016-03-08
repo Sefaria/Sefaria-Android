@@ -170,7 +170,7 @@ public class HomeActivity extends Activity {
                         for (int i = 1; i < spots.length; i++) {
                             Node tempNode = node.getChild(spots[i]);
                             if (tempNode == null) {
-                                tempNode = node.getFirstDescendant();
+                                tempNode = node.getFirstDescendant(false);
                                 if (tempNode == node) {//you were already at the final level... I guess this number means it's the level1 value
                                     try {
                                         int num = Integer.valueOf(spots[i]);

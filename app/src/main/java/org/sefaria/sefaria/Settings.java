@@ -224,7 +224,7 @@ public class Settings {
             Node node = null;
             try {
                 node = book.getNodeFromPathStr(nodePathStr);
-                node = node.getFirstDescendant();//should be unneeded line, but in case there was a previous bug this should return a isTextSection() node to avoid bugs
+                node = node.getFirstDescendant(true);//should be unneeded line, but in case there was a previous bug this should return a isTextSection() node to avoid bugs
             } catch (Exception e) {
                 ;
             }

@@ -156,9 +156,16 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
         String url = text.getURL(true);
         if(url.length() <1){
             Toast.makeText(SectionActivity.this,"Unable to go to site",Toast.LENGTH_SHORT).show();
+            return;
         }
-        Intent intent = new Intent(Intent.ACTION_VIEW,Uri.parse(url));
-        startActivity(intent);
+        try{
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            startActivity(intent);
+        }catch (Exception e){
+            Log.e("SectionActivity", e.getMessage());
+            Toast.makeText(SectionActivity.this,"Unable to go to site",Toast.LENGTH_SHORT).show();
+            GoogleTracker.sendException(e,"URL:" + url);
+        }
     }
 
     private void share(Text text){
