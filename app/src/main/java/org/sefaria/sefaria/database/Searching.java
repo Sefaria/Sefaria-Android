@@ -10,6 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
@@ -291,8 +292,8 @@ public class Searching {
     }
 
 
-    public static List<Integer> findWordsInList(List<Text> list, String word, boolean enDBOverride, boolean removeLongText){
-        List<Integer> foundPositions = new ArrayList<Integer>();
+    public static List<Text> findWordsInList(List<Text> list, String word, boolean enDBOverride, boolean removeLongText){
+        List<Text> foundItems = new ArrayList<>();
         Text text = null;
 
         Pattern hePattern = nikkudlessRegEx(word,false);
@@ -315,7 +316,7 @@ public class Searching {
             if(m.find()){
                 text.setText(addRedToFoundWord(m, text.getText(Util.Lang.EN), removeLongText), Util.Lang.EN);
                 foundEn = true;
-                foundPositions.add(i);
+                foundItems.add(text);
             }
 
             ///TEST Hebrew words
@@ -324,12 +325,12 @@ public class Searching {
             if(m.find()){
                 text.setText(addRedToFoundWord(m, text.getText(lang), removeLongText), lang);
                 if(!foundEn){//didn't already add this to the list for found English
-                    foundPositions.add(i);
+                    foundItems.add(text);
                 }
             }
         }
 
-        return foundPositions;
+        return foundItems;
     }
 
     private static String addRedToFoundWord(Matcher m, String orgText, boolean removeLongText){
@@ -601,6 +602,16 @@ public class Searching {
         return textList;
     }
     */
+
+    public static List<Text>  findOnPage(Node node, String term){
+        List<Text> list;
+        try {
+            list = findWordsInList(node.getTexts(), term, false, false);
+        }catch(Exception e){
+            list = new ArrayList<>();
+        }
+        return list;
+    }
 
     private void fillSearchBuffer(){
         this.new FillSearchBufferAsync().execute();
