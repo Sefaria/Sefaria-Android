@@ -3,7 +3,10 @@ package org.sefaria.sefaria.activities;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -16,11 +19,14 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import org.sefaria.sefaria.BuildConfig;
 import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.TextElements.SectionAdapter;
 import org.sefaria.sefaria.Util;
+import org.sefaria.sefaria.database.API;
+import org.sefaria.sefaria.database.Database;
 import org.sefaria.sefaria.database.Text;
 import org.sefaria.sefaria.layouts.ListViewExt;
 
@@ -104,9 +110,19 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
 
         Text segment = sectionAdapter.getItem(info.position);
         //it sets the title of the menu to loc string
-        menu.setHeaderTitle(segment.getLocationString(getMenuLang()));
+        String header;
+        if(segment.isChapter())
+            header = segment.getText(getMenuLang());
+        else
+            header = segment.getLocationString(getMenuLang());
+        menu.setHeaderTitle(header);
         //menu.setHeaderIcon(something.getIcon());
         menu.add(0, v.getId(), 0, CONTEXT_MENU_COPY_TITLE);
+        if(!segment.isChapter()) {
+            menu.add(0, v.getId(), 1, CONTEXT_MENU_SEND_CORRECTION);
+            menu.add(0, v.getId(), 2, CONTEXT_MENU_SHARE);
+            menu.add(0, v.getId(), 3, CONTEXT_MENU_VISIT);
+        }
     }
 
     @Override
@@ -123,13 +139,83 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
         CharSequence title = item.getTitle();
 
         if (title == CONTEXT_MENU_COPY_TITLE) {
-            Toast.makeText(this,"yo",Toast.LENGTH_SHORT).show();
-        } else {
-
+            copyText(segment);
+        } else  if (title == CONTEXT_MENU_SEND_CORRECTION){
+            sendCorrection(segment);
+        } else  if (title == CONTEXT_MENU_SHARE){
+            share(segment);
+        } else  if (title == CONTEXT_MENU_VISIT){
+            visit(segment);
         }
 
         //stop processing menu event
         return true;
+    }
+
+    private void visit(Text text){
+        String url = text.getURL(true);
+        if(url.length() <1){
+            Toast.makeText(SectionActivity.this,"Unable to go to site",Toast.LENGTH_SHORT).show();
+        }
+        Intent intent = new Intent(Intent.ACTION_VIEW,Uri.parse(url));
+        startActivity(intent);
+    }
+
+    private void share(Text text){
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        String str = text.getURL(false) + "\n\n"// = text.getLocationString(menuLang) + "\n\n";
+                + text.getText(textLang);
+
+        sendIntent.putExtra(Intent.EXTRA_TEXT,str);
+        sendIntent.setType("text/plain");
+        startActivity(sendIntent);
+    }
+
+    private void sendCorrection(Text text){
+        String email = "android@sefaria.org";
+        Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+                "mailto", email, null));
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Sefaria Text Correction");
+        emailIntent.putExtra(Intent.EXTRA_TEXT,
+                "Describe the error: \n\n"
+                + text.getLocationString(Util.Lang.EN) + "\n\n"
+                + text.getText(Util.Lang.BI)
+                + HomeActivity.getEmailFooter()
+                );
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{email});
+        startActivity(Intent.createChooser(emailIntent, "Send email"));
+    }
+
+    private void copyText(Text text){
+        // Gets a handle to the clipboard service.
+        ClipboardManager clipboard = (ClipboardManager)
+                getSystemService(Context.CLIPBOARD_SERVICE);
+        // Creates a new text clip to put on the clipboard
+        String copiedText;
+        if(!text.isChapter()) {
+            copiedText = text.getText(textLang);
+        }else{
+            try {
+                List<Text> list = text.parentNode.getTexts();
+                StringBuilder wholeChap = new StringBuilder();
+                String url = null;
+                for(Text subText:list){
+                    if(url == null)
+                        url =  subText.getURL(false);
+                    wholeChap.append("(" + subText.levels[0] + ") " + subText.getText(textLang) + "\n\n\n");
+                }
+                copiedText = url + "\n\n\n" + wholeChap.toString();
+            } catch (API.APIException e) {
+                API.makeAPIErrorToast(SectionActivity.this);
+                copiedText = "";
+            }
+        }
+
+        ClipData clip = ClipData.newPlainText("Sefaria Text", copiedText);
+        // Set the clipboard's primary clip.
+        clipboard.setPrimaryClip(clip);
+        Toast.makeText(SectionActivity.this, "Copied to Clipboard", Toast.LENGTH_SHORT).show();
     }
 
     protected void setTextLang(Util.Lang textLang) {
@@ -260,27 +346,8 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
         }
     };
 
-    ListView.OnItemLongClickListener onItemLongClickListener = new AdapterView.OnItemLongClickListener() {
-        @Override
-        public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-            Log.d("SectionAct", "long click");
-            // Gets a handle to the clipboard service.
-            ClipboardManager clipboard = (ClipboardManager)
-                    getSystemService(Context.CLIPBOARD_SERVICE);
-            // Creates a new text clip to put on the clipboard
-            Text text = sectionAdapter.getItem(position);
-            String copiedText;
-            if(textLang == Util.Lang.BI)
-                copiedText = text.getText(Util.Lang.HE) + "\n" + text.getText(Util.Lang.EN);
-            else /*if(textLang == Util.Lang.EN || textLang == Util.Lang.HE)*/
-                copiedText = text.getText(textLang);
-            ClipData clip = ClipData.newPlainText("Sefaria Text", copiedText);
-            // Set the clipboard's primary clip.
-            clipboard.setPrimaryClip(clip);
-            Toast.makeText(SectionActivity.this, "Copied to Clipboard", Toast.LENGTH_SHORT).show();
-            return true;
-        }
-    };
+
+
 
     public class AsyncLoadSection extends AsyncTask<Void,Void,List<Text>> {
 
