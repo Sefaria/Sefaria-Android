@@ -56,9 +56,8 @@ public class Text implements Parcelable {
                     heText = Huffman.decode(heTextCompress,heTextLength);
             }
             return heText;
-        } else {
-            Log.e("Text","Input wrong lang into Text.getText(Util.lang)");
-            return "";
+        } else{// if(lang == Util.Lang.BI) {
+            return getText(Util.Lang.HE) + "\n" + getText(Util.Lang.EN);
         }
     }
 
@@ -171,6 +170,35 @@ public class Text implements Parcelable {
 
         numLinks = cursor.getInt(MAX_LEVELS+5);
         parentNID = cursor.getInt(MAX_LEVELS+6);
+    }
+
+    public String getURL(){
+        return getURL(false);
+    }
+    public String getURL(boolean useHTTPS){
+        if(parentNID != 0)
+            return "";
+
+
+        Book book = new Book(bid);
+        StringBuilder str = new StringBuilder();
+        if(useHTTPS)
+            str.append("https");
+        else
+            str.append("http");
+        str.append("://www.sefaria.org/" + book.getTitle(Util.Lang.EN));
+        int sectionNum = book.sectionNamesL2B.length-1;
+        for(int i=levels.length-1;i>=0;i--){
+            int num = levels[i];
+            if(num == 0) continue;
+            boolean isDaf = false;
+            if(book.sectionNamesL2B.length > sectionNum && sectionNum >0) {
+                isDaf = (book.sectionNamesL2B[sectionNum].equals("Daf"));
+            }
+            str.append("." +  Header.getNiceGridNum(Util.Lang.EN,num,isDaf));
+            sectionNum--;
+        }
+        return str.toString();
     }
 
     public String getLocationString(Util.Lang lang){

@@ -55,6 +55,9 @@ public abstract class SuperTextActivity extends FragmentActivity {
     public static int MAX_LINK_FRAG_SNAP_DISTANCE = 230;
     protected static int LINK_FRAG_ANIM_TIME = 300; //ms
     protected static CharSequence CONTEXT_MENU_COPY_TITLE = "Copy";
+    protected static CharSequence CONTEXT_MENU_SEND_CORRECTION = "Report Mistake";
+    protected static CharSequence CONTEXT_MENU_SHARE = "Share";
+    protected static CharSequence CONTEXT_MENU_VISIT = "View on Site";
     public static final int PREV_CHAP_DRAWN = 234234;
     public static final int TOC_CHAPTER_CLICKED_CODE = 3456;
     protected static final int LOAD_PIXEL_THRESHOLD = 500; //num pixels before the bottom (or top) of a segment after (before) which the next (previous) segment will be loaded
@@ -207,7 +210,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
         if (customActionbar == null) {
             MenuNode menuNode = new MenuNode("a","b",null); //TODO possibly replace this object with a more general bilinual node
             int catColor = book.getCatColor();
-            customActionbar = new CustomActionbar(this, menuNode, menuLang,homeClick,homeLongClick, null,searchClick,titleClick,menuClick,backClick,catColor); //TODO.. I'm not actually sure this should be lang.. instead it shuold be MENU_LANG from Util.S
+            customActionbar = new CustomActionbar(this, menuNode, menuLang,homeClick,homeLongClick, null,null,titleClick,menuClick,backClick,catColor); //TODO.. I'm not actually sure this should be lang.. instead it shuold be MENU_LANG from Util.S
             LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
             abRoot.addView(customActionbar);
             customActionbar.setLang(menuLang);
