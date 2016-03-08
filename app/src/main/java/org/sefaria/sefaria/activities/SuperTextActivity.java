@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MotionEventCompat;
+import android.support.v7.util.AsyncListUtil;
 import android.support.v7.widget.PopupMenu;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -29,6 +30,7 @@ import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Node;
+import org.sefaria.sefaria.database.Searching;
 import org.sefaria.sefaria.database.Text;
 import org.sefaria.sefaria.layouts.CustomActionbar;
 import org.sefaria.sefaria.layouts.LinkDraggerView;
@@ -204,7 +206,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
         if (customActionbar == null) {
             MenuNode menuNode = new MenuNode("a","b",null); //TODO possibly replace this object with a more general bilinual node
             int catColor = book.getCatColor();
-            customActionbar = new CustomActionbar(this, menuNode, menuLang,homeClick,homeLongClick, null,null,titleClick,menuClick,backClick,catColor); //TODO.. I'm not actually sure this should be lang.. instead it shuold be MENU_LANG from Util.S
+            customActionbar = new CustomActionbar(this, menuNode, menuLang,homeClick,homeLongClick, null,searchClick,titleClick,menuClick,backClick,catColor); //TODO.. I'm not actually sure this should be lang.. instead it shuold be MENU_LANG from Util.S
             LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
             abRoot.addView(customActionbar);
             customActionbar.setLang(menuLang);
@@ -395,6 +397,28 @@ public abstract class SuperTextActivity extends FragmentActivity {
             Settings.BookSettings.setSavedBook(book, currNode, currText, textLang);
             MyApp.homeClick(SuperTextActivity.this, true);
             return true;
+        }
+    };
+
+    private List<Text> searchList;
+    private int spotInSearching = 0;
+
+    View.OnClickListener searchClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Log.d("TextAct","here");
+            if(searchList == null) {
+                List<Text> list = Searching.findOnPage(currNode, "the");
+
+                searchList = new ArrayList<>();
+                searchList.addAll(list);
+            }
+            if(spotInSearching < searchList.size())
+                jumpToText(searchList.get(spotInSearching++));
+            else{
+                Toast.makeText(SuperTextActivity.this,"No more results.",Toast.LENGTH_SHORT).show();
+            }
+
         }
     };
 
