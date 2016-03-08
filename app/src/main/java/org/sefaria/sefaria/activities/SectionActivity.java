@@ -6,6 +6,8 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -45,6 +47,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
             return;
         }
         setContentView(R.layout.activity_section);
+
         init();
     }
 
@@ -59,7 +62,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
         listView.setDivider(null);
 
         listView.setOnItemClickListener(onItemClickListener);
-        listView.setOnItemLongClickListener(onItemLongClickListener);
+        //listView.setOnItemLongClickListener(onItemLongClickListener);
         listView.setOnScrollStoppedListener(new ListViewExt.OnScrollStoppedListener() {
 
             public void onScrollStopped() {
@@ -72,7 +75,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
 
 
 
-
+        registerForContextMenu(listView);
 
 
     }
@@ -84,6 +87,49 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
             menuLang = Settings.getMenuLang();
             sectionAdapter.notifyDataSetChanged();
         }
+    }
+
+    /*CONTEXT MENU */
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v,
+                                    ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        AdapterView.AdapterContextMenuInfo info;
+        try {
+            info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+        } catch (ClassCastException e) {
+            Log.e("SectionActivity", "bad menuInfo", e);
+            return;
+        }
+
+        Text segment = sectionAdapter.getItem(info.position);
+        //it sets the title of the menu to loc string
+        menu.setHeaderTitle(segment.getLocationString(getMenuLang()));
+        //menu.setHeaderIcon(something.getIcon());
+        menu.add(0, v.getId(), 0, CONTEXT_MENU_COPY_TITLE);
+    }
+
+    @Override
+    public boolean onMenuItemSelected(int featureId, MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info;
+        try {
+            info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        } catch (ClassCastException e) {
+            Log.e("SectionActivity", "bad menuInfo", e);
+            return false;
+        }
+
+        Text segment = sectionAdapter.getItem(info.position);
+        CharSequence title = item.getTitle();
+
+        if (title == CONTEXT_MENU_COPY_TITLE) {
+            Toast.makeText(this,"yo",Toast.LENGTH_SHORT).show();
+        } else {
+
+        }
+
+        //stop processing menu event
+        return true;
     }
 
     protected void setTextLang(Util.Lang textLang) {

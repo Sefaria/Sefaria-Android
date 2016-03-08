@@ -52,6 +52,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
     public static int SEGMENT_SELECTOR_LINE_FROM_TOP = 150; //pixels from top of layout
     public static int MAX_LINK_FRAG_SNAP_DISTANCE = 230;
     protected static int LINK_FRAG_ANIM_TIME = 300; //ms
+    protected static CharSequence CONTEXT_MENU_COPY_TITLE = "Copy";
     public static final int PREV_CHAP_DRAWN = 234234;
     public static final int TOC_CHAPTER_CLICKED_CODE = 3456;
     protected static final int LOAD_PIXEL_THRESHOLD = 500; //num pixels before the bottom (or top) of a segment after (before) which the next (previous) segment will be loaded
