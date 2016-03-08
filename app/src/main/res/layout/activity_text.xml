@@ -16,15 +16,10 @@
 
     <!--funny story actually...I was on a reallly long flight from Israel and wanted to align the top of s/t to the bottom
     of s/t else...this is what I came up with -->
-    <View
-        android:id="@+id/useless"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_alignBottom="@id/actionbarRoot"></View>
     <LinearLayout
         android:id="@+id/textMenuRoot"
         android:orientation="horizontal"
-        android:layout_alignTop="@id/useless"
+        android:layout_below="@id/actionbarRoot"
         android:layout_width="match_parent"
         android:translationZ="20dp"
         android:background="@color/menu_background"
@@ -33,7 +28,7 @@
         android:id="@+id/textScrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignTop="@id/useless"
+        android:layout_below="@id/actionbarRoot"
         android:paddingLeft="10dp"
         android:paddingRight="10dp">
         <LinearLayout
