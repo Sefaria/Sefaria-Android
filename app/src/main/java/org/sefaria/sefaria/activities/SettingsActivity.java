@@ -81,7 +81,10 @@ public class SettingsActivity extends Activity {
         TextView appInfo = (TextView) findViewById(R.id.appInfo);
         appInfo.setText("App Version: " + BuildConfig.VERSION_NAME + debugVer);
         TextView databaseInfo = (TextView) findViewById(R.id.databaseInfo);
-        databaseInfo.setText("Library Version: " + Util.convertDBnum(Database.getDBDownloadVersion()));
+        databaseInfo.setText("Library Version: " + Util.convertDBnum(Database.getVersionInDB()));
+
+        View updateLibraryButton = findViewById(R.id.update_library);
+        updateLibraryButton.setOnLongClickListener(longUpdateLibrary);
 
 
     }
@@ -118,8 +121,17 @@ public class SettingsActivity extends Activity {
 
     public void updateLibrary(View v){
         Toast.makeText(this, "Checking for updates", Toast.LENGTH_SHORT).show();
-        Downloader.updateLibrary(this);
+        Downloader.updateLibrary(this,false);
     }
+
+    View.OnLongClickListener longUpdateLibrary = new View.OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+            Toast.makeText(SettingsActivity.this, "Downloading Library (even if it's not a new version).", Toast.LENGTH_SHORT).show();
+            Downloader.updateLibrary(SettingsActivity.this,true);
+            return true;
+        }
+    };
 
     public void clearAllBookSettings(View v){
         Settings.BookSettings.clearAllBookSettings();

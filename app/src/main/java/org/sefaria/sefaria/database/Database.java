@@ -62,10 +62,7 @@ public class Database extends SQLiteOpenHelper{
     }
 
     static public boolean isValidDB(){
-        if(getDBDownloadVersion() > 0)
-            return getVersionInDB()>= MIN_DB_VERSION && getDBDownloadVersion() >= MIN_DB_VERSION;
-        else
-            return  getVersionInDB()>= MIN_DB_VERSION;
+        return  getVersionInDB()>= MIN_DB_VERSION;
     }
 
 
@@ -291,16 +288,6 @@ public class Database extends SQLiteOpenHelper{
         return versionNum;
     }
 
-    public static int getDBDownloadVersion(){
-        SharedPreferences settings = Settings.getGeneralSettings();
-        return settings.getInt("versionNum", -1);
-    }
-    public static void setDBDownloadVersion(int updatedVersionNum){
-        SharedPreferences settings = Settings.getGeneralSettings();
-        SharedPreferences.Editor edit = settings.edit();
-        edit.putInt("versionNum", updatedVersionNum);
-        edit.apply();
-    }
 
     public void openDataBase() throws SQLException{
 
