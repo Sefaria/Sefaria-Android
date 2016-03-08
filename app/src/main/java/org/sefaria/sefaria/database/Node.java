@@ -206,7 +206,21 @@ public class Node implements  Parcelable{
         return root.tocRootsNum;
     }
 
-    public Node getFirstDescendant(){
+    public Node getFirstDescendant(boolean checkForTexts) throws API.APIException {
+        Node node = getFirstDescendant();
+        if(checkForTexts){
+            while(node.getTexts().size() <1) {
+                try {
+                    node = node.getNextTextNode();
+                }catch (Node.LastNodeException e){
+                    break;
+                }
+            }
+        }
+        return node;
+    }
+
+    private Node getFirstDescendant(){
         Node node = this;
         while(node.getChildren().size() > 0){
             node = node.getChildren().get(0);

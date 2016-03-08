@@ -152,7 +152,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
                             return;
                         }
                         Node root = TOCroots.get(0);
-                        firstLoadedNode = root.getFirstDescendant();
+                        firstLoadedNode = root.getFirstDescendant(true);
                         GoogleTracker.sendEvent(GoogleTracker.CATEGORY_OPEN_NEW_BOOK_ACTION,"Opened New Book");
                         openedNewBook = System.currentTimeMillis();
                     }
