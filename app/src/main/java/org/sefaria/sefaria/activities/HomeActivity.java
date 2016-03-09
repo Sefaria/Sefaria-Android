@@ -434,17 +434,17 @@ public class HomeActivity extends Activity {
         Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
                 "mailto", email, null));
         emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Android App Feedback");
-        emailIntent.putExtra(Intent.EXTRA_TEXT, getEmailFooter());
+        emailIntent.putExtra(Intent.EXTRA_TEXT, getEmailHeader());
         emailIntent.putExtra(Intent.EXTRA_EMAIL, new String [] {email});
         startActivity(Intent.createChooser(emailIntent, "Send email"));
     }
 
-    public static String getEmailFooter(){
-        return "\n\n\n\n\n" +
-                "App Version data: " + BuildConfig.VERSION_NAME + " ("  + BuildConfig.VERSION_CODE + ")" + "\n"
+    public static String getEmailHeader(){
+        return  "App Version: " + BuildConfig.VERSION_NAME + " ("  + BuildConfig.VERSION_CODE + ")" + "\n"
                 + "Library Version: " + Util.convertDBnum(Database.getVersionInDB()) + "\n"
                 + GoogleTracker.randomID + "\n"
-                + Build.VERSION.RELEASE + " (" + Build.VERSION.SDK_INT + ")" + "\n";
+                + Build.VERSION.RELEASE + " (" + Build.VERSION.SDK_INT + ")" + "\n"
+                +"\n\n\n";
     }
 
     public void siteClick(View v){

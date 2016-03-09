@@ -87,6 +87,31 @@
 
             </RadioGroup>
 
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="20dp"
+                android:orientation="horizontal"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/font_size"/>
+
+
+                <EditText
+                    android:layout_marginLeft="5dp"
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:ems="10"
+                    android:id="@+id/fontSize"
+                    android:text="20.0"
+
+                    />
+            </LinearLayout>
+
             <!--
             <Button
                 android:layout_width="match_parent"

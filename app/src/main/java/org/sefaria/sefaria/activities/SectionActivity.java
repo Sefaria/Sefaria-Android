@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuItem;
@@ -171,8 +172,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
     private void share(Text text){
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
-        String str = text.getURL(false) + "\n\n"// = text.getLocationString(menuLang) + "\n\n";
-                + text.getText(textLang);
+        String str = text.getURL() + "\n\n" + Html.fromHtml(text.getText(textLang));
 
         sendIntent.putExtra(Intent.EXTRA_TEXT,str);
         sendIntent.setType("text/plain");
@@ -185,10 +185,11 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
                 "mailto", email, null));
         emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Sefaria Text Correction");
         emailIntent.putExtra(Intent.EXTRA_TEXT,
-                "Describe the error: \n\n"
-                + text.getLocationString(Util.Lang.EN) + "\n\n"
-                + text.getText(Util.Lang.BI)
-                + HomeActivity.getEmailFooter()
+
+                HomeActivity.getEmailHeader()
+                + text.getURL() + "\n\n"
+                + Html.fromHtml(text.getText(Util.Lang.BI))
+                + "\n\nDescribe the error: \n\n"
                 );
         emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{email});
         startActivity(Intent.createChooser(emailIntent, "Send email"));
@@ -201,7 +202,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
         // Creates a new text clip to put on the clipboard
         String copiedText;
         if(!text.isChapter()) {
-            copiedText = text.getText(textLang);
+            copiedText = Html.fromHtml(text.getText(textLang)).toString();
         }else{
             try {
                 List<Text> list = text.parentNode.getTexts();
@@ -209,8 +210,8 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
                 String url = null;
                 for(Text subText:list){
                     if(url == null)
-                        url =  subText.getURL(false);
-                    wholeChap.append("(" + subText.levels[0] + ") " + subText.getText(textLang) + "\n\n\n");
+                        url =  subText.getURL();
+                    wholeChap.append("(" + subText.levels[0] + ") " + Html.fromHtml(subText.getText(textLang)) + "\n\n\n");
                 }
                 copiedText = url + "\n\n\n" + wholeChap.toString();
             } catch (API.APIException e) {
@@ -245,10 +246,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
     }
 
     protected void incrementTextSize(boolean isIncrement) {
-        float increment = getResources().getDimension(R.dimen.text_font_size_increment);
-        if (isIncrement) textSize  += increment;
-        else textSize -= increment;
-
+        super.incrementTextSize(isIncrement);
         sectionAdapter.notifyDataSetChanged();
     }
 

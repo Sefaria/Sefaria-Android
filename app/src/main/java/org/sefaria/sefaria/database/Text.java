@@ -57,7 +57,7 @@ public class Text implements Parcelable {
             }
             return heText;
         } else{// if(lang == Util.Lang.BI) {
-            return getText(Util.Lang.HE) + "\n" + getText(Util.Lang.EN);
+            return getText(Util.Lang.HE) + "<br>\n" + getText(Util.Lang.EN);
         }
     }
 
@@ -172,21 +172,27 @@ public class Text implements Parcelable {
         parentNID = cursor.getInt(MAX_LEVELS+6);
     }
 
+
+
+
     public String getURL(){
         return getURL(false);
     }
     public String getURL(boolean useHTTPS){
-        if(parentNID != 0)
-            return "";
-
-
         Book book = new Book(bid);
         StringBuilder str = new StringBuilder();
         if(useHTTPS)
-            str.append("https");
+            str.append("https://www.sefaria.org/");
         else
-            str.append("http");
-        str.append("://www.sefaria.org/" + book.getTitle(Util.Lang.EN));
+            str.append("http://www.sefaria.org/");
+        str.append(book.getTitle(Util.Lang.EN));
+
+        if(parentNID != 0){
+            String path = parentNode.getPath() + "." + levels[0];
+            return (str + path).replace(" ","_");
+        }
+
+
         int sectionNum = book.sectionNamesL2B.length-1;
         for(int i=levels.length-1;i>=0;i--){
             int num = levels[i];
@@ -198,14 +204,14 @@ public class Text implements Parcelable {
             str.append("." +  Header.getNiceGridNum(Util.Lang.EN,num,isDaf));
             sectionNum--;
         }
-        return str.toString();
+        return str.toString().replace(" ","_");
     }
 
     public String getLocationString(Util.Lang lang){
         Book book = new Book(bid);
         String str = book.getTitle(lang);
-        if(parentNID != 0){ //It's a regular non-Complex text
-            str += " <complex> ";
+        if(parentNID != 0){ //It's a complex text
+            str += parentNode.getPath();
         }
         int sectionNum = book.sectionNamesL2B.length-1;
         boolean useSpace = true; //starting true so has space after book.title
@@ -554,7 +560,7 @@ public class Text implements Parcelable {
         try {
             for (int i = 0; i < levels.length; i++)
                 string += "." + levels[i];
-            string += " " + getText(Util.Lang.EN) + " " + getText(Util.Lang.HE);
+            string += " " + getText(Util.Lang.BI);
         }catch (Exception e){
             ;
         }
