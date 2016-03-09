@@ -280,6 +280,22 @@ public class Settings {
         editor.commit();
     }
 
+    public static float getDefaultFontSize(){
+        SharedPreferences settings = getGeneralSettings();
+        return settings.getFloat("defaultFontSize",MyApp.getContext().getResources().getDimension(R.dimen.default_text_font_size));
+    }
+
+    public static void setDefaultFontSize(float size){
+        if(size > MyApp.getContext().getResources().getDimension(R.dimen.max_text_font_size)){
+            size = MyApp.getContext().getResources().getDimension(R.dimen.max_text_font_size);
+        }else if(size < MyApp.getContext().getResources().getDimension(R.dimen.min_text_font_size)){
+            size = MyApp.getContext().getResources().getDimension(R.dimen.min_text_font_size);
+        }
+        SharedPreferences.Editor editor = getGeneralSettings().edit();
+        editor.putFloat("defaultFontSize", size);
+        editor.commit();
+    }
+
 
     public static long getDownloadSuccess(boolean clearValue){
         SharedPreferences settings = getGeneralSettings();

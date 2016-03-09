@@ -10,6 +10,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -31,7 +32,7 @@ public class SettingsActivity extends Activity {
 
     private final int TOT_NUM_DEBUG_DB_CLICKS = 7;
     private int numDebugDBUnlockClicks;
-
+    private EditText fontSize;
 
 
     @Override
@@ -44,7 +45,13 @@ public class SettingsActivity extends Activity {
         CustomActionbar customActionbar = new CustomActionbar(this, new MenuNode("Settings","Settings (he)", null), Settings.getSystemLang(),homeClick,homeLongClick,null,null,null,null,backClick,-1);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(customActionbar);
+        fontSize   = (EditText)findViewById(R.id.fontSize);
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         RadioButton defaultTextButton;
         Util.Lang defaultTextLang = Settings.getDefaultTextLang();
         switch (defaultTextLang){
@@ -73,6 +80,10 @@ public class SettingsActivity extends Activity {
         menuLangButton.setChecked(true);
 
 
+        fontSize.setText(""+Settings.getDefaultFontSize());
+
+
+
 
         //LinearLayout gridRoot = (LinearLayout) findViewById(R.id.gridRoot);
         String debugVer = "";
@@ -86,17 +97,24 @@ public class SettingsActivity extends Activity {
         View updateLibraryButton = findViewById(R.id.update_library);
         updateLibraryButton.setOnLongClickListener(longUpdateLibrary);
 
-
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+    private void saveFontSize(){
+        Float value = 0f;
+        try{
+            value = Float.valueOf(fontSize.getText().toString());
+        }catch (Exception e){
+            ;
+        }
+        if(value != 0f){
+            Settings.setDefaultFontSize(value);
+        }
     }
 
     View.OnLongClickListener homeLongClick = new View.OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
+            saveFontSize();
             MyApp.homeClick(SettingsActivity.this, true);
             return true;
         }
@@ -105,12 +123,20 @@ public class SettingsActivity extends Activity {
     View.OnClickListener homeClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            saveFontSize();
             Intent returnIntent = new Intent();
             returnIntent.putExtra("homeClicked",true);
             setResult(0, returnIntent);
             finish();
         }
     };
+
+
+    @Override
+    public void onBackPressed() {
+        saveFontSize();
+        super.onBackPressed();
+    }
 
     View.OnClickListener backClick = new View.OnClickListener() {
         @Override
@@ -138,6 +164,7 @@ public class SettingsActivity extends Activity {
     }
 
     public void done(View v){
+        saveFontSize();
         finish();
     }
 

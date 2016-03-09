@@ -182,7 +182,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
         if(textLang == null)
             textLang = Settings.BookSettings.getSavedBook(book).lang;
-        textSize = getResources().getDimension(R.dimen.default_text_font_size);
+        textSize = Settings.getDefaultFontSize();
         //end defaults
         isLoadingInit = false;
         menuLang = Settings.getMenuLang();
@@ -505,15 +505,13 @@ public abstract class SuperTextActivity extends FragmentActivity {
                 case R.id.small_btn:
 
 
-                    if (textSize >= getResources().getDimension(R.dimen.min_text_font_size)-getResources().getDimension(R.dimen.text_font_size_increment)) {
-                        textSize -= getResources().getDimension(R.dimen.text_font_size_increment);
+                    if (textSize > getResources().getDimension(R.dimen.min_text_font_size)) {
                         incrementTextSize(false);
                         updatedTextSize = true;
                     }
                     break;
                 case R.id.big_btn:
-                    if (textSize <= getResources().getDimension(R.dimen.max_text_font_size)+getResources().getDimension(R.dimen.text_font_size_increment)) {
-                        textSize += getResources().getDimension(R.dimen.text_font_size_increment);
+                    if (textSize < getResources().getDimension(R.dimen.max_text_font_size)) {
                         incrementTextSize(true);
                         updatedTextSize = true;
                     }
@@ -566,8 +564,16 @@ public abstract class SuperTextActivity extends FragmentActivity {
     protected void setIsSideBySide(boolean isSideBySide){
         this.isSideBySide = isSideBySide;
         Settings.setIsSideBySide(isSideBySide);
-    };
-    protected abstract void incrementTextSize(boolean isIncrement);
+    }
+
+    protected void incrementTextSize(boolean isIncrement){
+        float increment = getResources().getDimension(R.dimen.text_font_size_increment);
+        if (isIncrement) textSize  += increment;
+        else textSize -= increment;
+        Settings.setDefaultFontSize(textSize);
+    }
+
+
     protected abstract void jumpToText(Text text);
     protected abstract void updateFocusedSegment();
 

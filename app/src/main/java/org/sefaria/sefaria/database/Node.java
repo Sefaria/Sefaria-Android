@@ -442,7 +442,20 @@ public class Node implements  Parcelable{
 
     }
 
-    private Node getAncestorRoot(){
+    public String getPath(){
+        String path = "";
+        Node node = this;
+        while(node.getParent() != null){//checking parent node so that don't get root (or book name) in there
+            if(node.isGridItem())
+                path = "." + node.getNiceGridNum(Util.Lang.EN) + path;
+            else
+                path = ", " + node.getTitle(Util.Lang.EN) + path;
+            node = node.getParent();
+        }
+        return path;
+    }
+
+    public Node getAncestorRoot(){
         Node node = this;
         while(node.parent != null){
             node = node.parent;
