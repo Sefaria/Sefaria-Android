@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.LinkElements.LinkMainAdapter;

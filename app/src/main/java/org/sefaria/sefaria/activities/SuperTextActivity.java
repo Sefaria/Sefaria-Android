@@ -1,19 +1,12 @@
 package org.sefaria.sefaria.activities;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.MotionEventCompat;
-import android.support.v7.util.AsyncListUtil;
-import android.support.v7.widget.PopupMenu;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
@@ -33,7 +26,6 @@ import org.sefaria.sefaria.database.Node;
 import org.sefaria.sefaria.database.Searching;
 import org.sefaria.sefaria.database.Text;
 import org.sefaria.sefaria.layouts.CustomActionbar;
-import org.sefaria.sefaria.layouts.LinkDraggerView;
 import org.sefaria.sefaria.layouts.PerekTextView;
 import org.sefaria.sefaria.layouts.ScrollViewExt;
 import org.sefaria.sefaria.MenuElements.MenuNode;
@@ -41,7 +33,6 @@ import org.sefaria.sefaria.MenuElements.MenuNode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by nss on 1/5/16.
