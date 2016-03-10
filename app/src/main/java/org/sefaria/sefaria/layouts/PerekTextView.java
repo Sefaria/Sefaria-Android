@@ -3,9 +3,7 @@ package org.sefaria.sefaria.layouts;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Message;
-import android.text.Html;
 import android.text.Layout;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
@@ -17,7 +15,6 @@ import android.util.Log;
 import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
-import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.TextElements.VerseSpannable;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.activities.TextActivity;
@@ -25,7 +22,6 @@ import org.sefaria.sefaria.database.Text;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Handler;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

@@ -3,12 +3,9 @@ package org.sefaria.sefaria.layouts;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.SystemClock;
-import android.util.Log;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.TextView;
-import android.view.ViewGroup;
 import android.view.View.OnTouchListener;
 import android.widget.LinearLayout;
 
