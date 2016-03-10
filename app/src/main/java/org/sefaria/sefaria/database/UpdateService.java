@@ -172,7 +172,7 @@ public class UpdateService extends Service {
 
     public static void postUpdateStage1() {
         try {
-            String csvData = API.getDataFromURL(Downloader.getCSVurl());
+            String csvData = API.getDataFromURL(Downloader.getCSVurl(),false);
             Log.d("Downloader", "postUpdateStage1 CSV: " + csvData);
             String[] firstLine = csvData.split(",");
             int dbVersion = Integer.parseInt(firstLine[0]);
