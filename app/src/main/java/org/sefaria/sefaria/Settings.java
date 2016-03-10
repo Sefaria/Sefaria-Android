@@ -224,7 +224,7 @@ public class Settings {
             Node node = null;
             try {
                 node = book.getNodeFromPathStr(nodePathStr);
-                node = node.getFirstDescendant();//should be unneeded line, but in case there was a previous bug this should return a isTextSection() node to avoid bugs
+                node = node.getFirstDescendant(true);//should be unneeded line, but in case there was a previous bug this should return a isTextSection() node to avoid bugs
             } catch (Exception e) {
                 ;
             }
@@ -277,6 +277,22 @@ public class Settings {
     public static void setIsDebug(boolean isDebug){
         SharedPreferences.Editor editor = getGeneralSettings().edit();
         editor.putBoolean("isDebug", isDebug);
+        editor.commit();
+    }
+
+    public static float getDefaultFontSize(){
+        SharedPreferences settings = getGeneralSettings();
+        return settings.getFloat("defaultFontSize",MyApp.getContext().getResources().getDimension(R.dimen.default_text_font_size));
+    }
+
+    public static void setDefaultFontSize(float size){
+        if(size > MyApp.getContext().getResources().getDimension(R.dimen.max_text_font_size)){
+            size = MyApp.getContext().getResources().getDimension(R.dimen.max_text_font_size);
+        }else if(size < MyApp.getContext().getResources().getDimension(R.dimen.min_text_font_size)){
+            size = MyApp.getContext().getResources().getDimension(R.dimen.min_text_font_size);
+        }
+        SharedPreferences.Editor editor = getGeneralSettings().edit();
+        editor.putFloat("defaultFontSize", size);
         editor.commit();
     }
 

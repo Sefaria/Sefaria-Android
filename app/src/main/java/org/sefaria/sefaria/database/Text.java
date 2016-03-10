@@ -56,9 +56,8 @@ public class Text implements Parcelable {
                     heText = Huffman.decode(heTextCompress,heTextLength);
             }
             return heText;
-        } else {
-            Log.e("Text","Input wrong lang into Text.getText(Util.lang)");
-            return "";
+        } else{// if(lang == Util.Lang.BI) {
+            return getText(Util.Lang.HE) + "<br>\n" + getText(Util.Lang.EN);
         }
     }
 
@@ -173,11 +172,46 @@ public class Text implements Parcelable {
         parentNID = cursor.getInt(MAX_LEVELS+6);
     }
 
+
+
+
+    public String getURL(){
+        return getURL(false);
+    }
+    public String getURL(boolean useHTTPS){
+        Book book = new Book(bid);
+        StringBuilder str = new StringBuilder();
+        if(useHTTPS)
+            str.append("https://www.sefaria.org/");
+        else
+            str.append("http://www.sefaria.org/");
+        str.append(book.getTitle(Util.Lang.EN));
+
+        if(parentNID != 0){
+            String path = parentNode.getPath() + "." + levels[0];
+            return (str + path).replace(" ","_");
+        }
+
+
+        int sectionNum = book.sectionNamesL2B.length-1;
+        for(int i=levels.length-1;i>=0;i--){
+            int num = levels[i];
+            if(num == 0) continue;
+            boolean isDaf = false;
+            if(book.sectionNamesL2B.length > sectionNum && sectionNum >0) {
+                isDaf = (book.sectionNamesL2B[sectionNum].equals("Daf"));
+            }
+            str.append("." +  Header.getNiceGridNum(Util.Lang.EN,num,isDaf));
+            sectionNum--;
+        }
+        return str.toString().replace(" ","_");
+    }
+
     public String getLocationString(Util.Lang lang){
         Book book = new Book(bid);
         String str = book.getTitle(lang);
-        if(parentNID != 0){ //It's a regular non-Complex text
-            str += " <complex> ";
+        if(parentNID != 0){ //It's a complex text
+            str += parentNode.getPath();
         }
         int sectionNum = book.sectionNamesL2B.length-1;
         boolean useSpace = true; //starting true so has space after book.title
@@ -277,7 +311,7 @@ public class Text implements Parcelable {
         try {
             if(API.useAPI()){
                 if(parentNID <=0) //TODO make it work for API with NID
-                    textList = API.getTextsFromAPI(Book.getTitle(bid), levels);
+                    textList = API.getTextsFromAPI1(Book.getTitle(bid), levels);
             }else{
                 textList = getFromDB(bid,levels,parentNID);
             }
@@ -526,7 +560,7 @@ public class Text implements Parcelable {
         try {
             for (int i = 0; i < levels.length; i++)
                 string += "." + levels[i];
-            string += " " + getText(Util.Lang.EN) + " " + getText(Util.Lang.HE);
+            string += " " + getText(Util.Lang.BI);
         }catch (Exception e){
             ;
         }

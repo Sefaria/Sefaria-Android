@@ -206,7 +206,21 @@ public class Node implements  Parcelable{
         return root.tocRootsNum;
     }
 
-    public Node getFirstDescendant(){
+    public Node getFirstDescendant(boolean checkForTexts) throws API.APIException {
+        Node node = getFirstDescendant();
+        if(checkForTexts){
+            while(node.getTexts().size() <1) {
+                try {
+                    node = node.getNextTextNode();
+                }catch (Node.LastNodeException e){
+                    break;
+                }
+            }
+        }
+        return node;
+    }
+
+    private Node getFirstDescendant(){
         Node node = this;
         while(node.getChildren().size() > 0){
             node = node.getChildren().get(0);
@@ -428,7 +442,30 @@ public class Node implements  Parcelable{
 
     }
 
-    private Node getAncestorRoot(){
+    public String getPath(){
+        return getPath(false,false);
+    }
+
+    public String getPath(boolean includeBook, boolean replaceSpaces){
+        String path = "";
+
+        Node node = this;
+        while(node.getParent() != null){//checking parent node so that don't get root (or book name) in there
+            if(node.isGridItem())
+                path = "." + node.getNiceGridNum(Util.Lang.EN) + path;
+            else
+                path = ", " + node.getTitle(Util.Lang.EN) + path;
+            node = node.getParent();
+        }
+        if(includeBook){
+            path = (new Book(this.bid)).getTitle(Util.Lang.EN) + path;
+        }
+        if(replaceSpaces)
+            path = path.replace(" ", "_");
+        return path;
+    }
+
+    public Node getAncestorRoot(){
         Node node = this;
         while(node.parent != null){
             node = node.parent;
@@ -613,6 +650,10 @@ public class Node implements  Parcelable{
     }
 
 
+    public List<Text> getTexts1() throws API.APIException{
+        return getTexts();
+    }
+
     /**
      *  Get texts for complex texts
      *
@@ -643,8 +684,8 @@ public class Node implements  Parcelable{
                 return textList;
             }
             if(API.useAPI()){
-                textList =  new ArrayList<>();
-                //TODO deal with this
+                textList =  API.getTextsFromAPI2(this);
+                //TODO deal with this API
             }else if(startTid>0 && endTid >0) {
                 textList = Text.getWithTids(startTid, endTid);
             }
@@ -695,7 +736,7 @@ public class Node implements  Parcelable{
      * ex. chap 4 and verse 7 would be {7,3}
      * return levels
      */
-    private int [] getLevels(){
+    public int [] getLevels(){
         //TODO make work for more than 2 levels
 
         List<Integer> levels = new ArrayList<>();

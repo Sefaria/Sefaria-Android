@@ -226,8 +226,8 @@ public class Database extends SQLiteOpenHelper{
     }
 
     public static void createAPIdb(){
-        Database myDbHelper = new Database(MyApp.getContext());
         Log.d("api", "trying to create db");
+        Database myDbHelper = new Database(MyApp.getContext());
         myDbHelper.getReadableDatabase();
         try {
             myDbHelper.unzipDatabase("UpdateForSefariaMobileDatabase.zip.jar", Database.getDbPath(),true);
