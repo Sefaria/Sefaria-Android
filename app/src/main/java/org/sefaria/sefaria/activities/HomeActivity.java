@@ -1,13 +1,8 @@
 package org.sefaria.sefaria.activities;
 
-import android.Manifest;
 import android.app.Activity;
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,11 +17,9 @@ import org.sefaria.sefaria.database.DailyLearning;
 import org.sefaria.sefaria.database.Database;
 import org.sefaria.sefaria.database.Downloader;
 import org.sefaria.sefaria.database.Huffman;
-import org.sefaria.sefaria.database.LinkFilter;
 import org.sefaria.sefaria.database.Node;
 import org.sefaria.sefaria.database.Searching;
 import org.sefaria.sefaria.database.Text;
-import org.sefaria.sefaria.database.UpdateService;
 import org.sefaria.sefaria.layouts.CustomActionbar;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
@@ -36,19 +29,15 @@ import org.sefaria.sefaria.MenuElements.MenuNode;
 import org.sefaria.sefaria.MenuElements.MenuState;
 import org.sefaria.sefaria.layouts.SefariaTextView;
 
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.util.Pair;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -141,7 +130,7 @@ public class HomeActivity extends Activity {
 
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         CustomActionbar cab = new CustomActionbar(this,new MenuNode("Sefaria","ספאריה",null),
-                Settings.getSystemLang(),null,null,tempCloseClick,null,null,menuClick,null,-1);
+                Settings.getSystemLang(),null,null,tempCloseClick,searchClick,null,menuClick,null,-1);
         abRoot.addView(cab);
 
         dealWithDatabaseStuff();
@@ -378,6 +367,8 @@ public class HomeActivity extends Activity {
     View.OnClickListener searchClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+
+
         }
     };
 
