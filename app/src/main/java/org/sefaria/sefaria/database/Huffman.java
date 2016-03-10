@@ -258,7 +258,6 @@ public class Huffman {
         @Override
         protected void onPostExecute(String result) {
             startedTree = false;
-
         }
     }
 

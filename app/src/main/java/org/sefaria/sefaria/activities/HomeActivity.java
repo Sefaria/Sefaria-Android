@@ -170,7 +170,7 @@ public class HomeActivity extends Activity {
                         for (int i = 1; i < spots.length; i++) {
                             Node tempNode = node.getChild(spots[i]);
                             if (tempNode == null) {
-                                tempNode = node.getFirstDescendant();
+                                tempNode = node.getFirstDescendant(false);
                                 if (tempNode == node) {//you were already at the final level... I guess this number means it's the level1 value
                                     try {
                                         int num = Integer.valueOf(spots[i]);
@@ -214,8 +214,9 @@ public class HomeActivity extends Activity {
             GoogleTracker.sendEvent("Download", "Update Finished",time);
 
         Util.deleteNonRecursiveDir(Downloader.FULL_DOWNLOAD_PATH); //remove any old temp downloads
+
         if(API.useAPI() || !Database.isValidDB()) {
-            //Database.createAPIdb();
+            Database.createAPIdb();
             Toast.makeText(this, "Starting Download", Toast.LENGTH_SHORT).show();
             Downloader.updateLibrary(this,false);
 
@@ -224,12 +225,12 @@ public class HomeActivity extends Activity {
 
     private void addHeader(LinearLayout homeRoot){
         //Living Library
-        TextView livingLibaryView = createTypeTitle("A Living Library of Jewish Texts",true);
-        livingLibaryView.setTextSize(20);
+        TextView livingLibraryView = createTypeTitle("A Living Library of Jewish Texts",true);
+        livingLibraryView.setTextSize(20);
         int livingPadding = 60;
-        livingLibaryView.setPadding(3, livingPadding, 3, livingPadding);
-        livingLibaryView.setTextColor(Util.getColor(this, R.attr.text_color_main));
-        homeRoot.addView(livingLibaryView);
+        livingLibraryView.setPadding(3, livingPadding, 3, livingPadding);
+        livingLibraryView.setTextColor(Util.getColor(this, R.attr.text_color_main));
+        homeRoot.addView(livingLibraryView);
     }
 
     private void addRecentTexts(LinearLayout homeRoot){
@@ -434,16 +435,17 @@ public class HomeActivity extends Activity {
         Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
                 "mailto", email, null));
         emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Android App Feedback");
-        emailIntent.putExtra(Intent.EXTRA_TEXT,
-                "\n\n\n\n\n" +
-                "App Version data: " + BuildConfig.VERSION_NAME + " ("  + BuildConfig.VERSION_CODE + ")" + "\n"
+        emailIntent.putExtra(Intent.EXTRA_TEXT, getEmailHeader());
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, new String [] {email});
+        startActivity(Intent.createChooser(emailIntent, "Send email"));
+    }
+
+    public static String getEmailHeader(){
+        return  "App Version: " + BuildConfig.VERSION_NAME + " ("  + BuildConfig.VERSION_CODE + ")" + "\n"
                 + "Library Version: " + Util.convertDBnum(Database.getVersionInDB()) + "\n"
                 + GoogleTracker.randomID + "\n"
                 + Build.VERSION.RELEASE + " (" + Build.VERSION.SDK_INT + ")" + "\n"
-
-        );
-        emailIntent.putExtra(Intent.EXTRA_EMAIL, new String [] {email});
-        startActivity(Intent.createChooser(emailIntent, "Send email"));
+                +"\n\n\n";
     }
 
     public void siteClick(View v){
