@@ -3,14 +3,13 @@ package org.sefaria.sefaria.MenuElements;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.sefaria.sefaria.MyApp;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.sefaria.sefaria.Util;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -57,17 +56,17 @@ public class MenuState implements Parcelable {
     private static boolean isMenuInited() {return rootNode != null;}
 
     private static void initMenu() {
-        ObjectMapper om = new ObjectMapper(); //for jackson
         try {
-            InputStream is = MyApp.getContext().getResources().getAssets().open("index.json");
-            JsonNode jsonRoot = om.readTree(is);
+            JSONArray jsonRoot = Util.openJSONArrayFromAssets(jsonIndexFileName);
             createChildrenNodes(jsonRoot, null, true);
         } catch (IOException e) {
             //Log.d("IO", "JSON not loaded");
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 
-    private static void createChildrenNodes(JsonNode node, MenuNode parent, boolean isRoot) {
+    private static void createChildrenNodes(JSONArray node, MenuNode parent, boolean isRoot) throws JSONException {
 
         //make sure to save the root
         if (isRoot) {
@@ -75,26 +74,23 @@ public class MenuState implements Parcelable {
             parent = rootNode;
         }
 
-        for (int i = 0; i < node.size(); i++) {
+        for (int i = 0; i < node.length(); i++) {
             //this is a book, so add its bid
-            JsonNode tempNode = node.get(i);
-            JsonNode tempChildNode = tempNode.findPath("contents");
             String enTitle;
             String heTitle;
             MenuNode tempMenuNode;
-            if (tempChildNode.isMissingNode()) { //this is a book
-                enTitle = tempNode.findPath("title").textValue();
-                heTitle = tempNode.findPath("heTitle").textValue();
-                new MenuNode(enTitle, heTitle, parent);
-
-            } else {
-                //recurse
-                enTitle = tempNode.findPath("category").textValue();
-                heTitle = tempNode.findPath("heCategory").textValue();
+            JSONObject tempNode = node.getJSONObject(i);
+            try {
+                JSONArray tempChildNode = tempNode.getJSONArray("contents");
+                enTitle = tempNode.getString("category");
+                heTitle = tempNode.getString("heCategory");
                 tempMenuNode = new MenuNode(enTitle, heTitle, parent);
-                createChildrenNodes(tempChildNode, tempMenuNode,false);
+                createChildrenNodes(tempChildNode, tempMenuNode, false);
+            }catch (JSONException e){//This means it didn't find contents and it's at a book
+                enTitle = tempNode.getString("title");
+                heTitle = tempNode.getString("heTitle");
+                new MenuNode(enTitle, heTitle, parent);
             }
-
         }
 
         if (isRoot) {
