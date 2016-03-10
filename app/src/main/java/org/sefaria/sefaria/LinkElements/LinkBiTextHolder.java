@@ -1,7 +1,6 @@
 package org.sefaria.sefaria.LinkElements;
 
 import android.view.View;
-import android.widget.TextView;
 
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.activities.SuperTextActivity;

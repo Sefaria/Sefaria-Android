@@ -3,9 +3,7 @@ package org.sefaria.sefaria.TOCElements;
 
 import android.content.Context;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
-import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.Node;
