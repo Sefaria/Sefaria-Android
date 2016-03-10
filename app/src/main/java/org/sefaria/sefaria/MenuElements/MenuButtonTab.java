@@ -1,9 +1,7 @@
 package org.sefaria.sefaria.MenuElements;
 
 import android.content.Context;
-import android.widget.TextView;
 
-import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.layouts.SefariaTextView;
