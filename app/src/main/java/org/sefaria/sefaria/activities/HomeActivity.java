@@ -198,6 +198,7 @@ public class HomeActivity extends Activity {
     }
 
     private void dealWithDatabaseStuff(){
+        Log.d("HomeActi", "dealWithDatabaseStuff");
         long time = Settings.getDownloadSuccess(true);
         if(time >0)
             GoogleTracker.sendEvent("Download", "Update Finished",time);
@@ -205,7 +206,7 @@ public class HomeActivity extends Activity {
         Util.deleteNonRecursiveDir(Downloader.FULL_DOWNLOAD_PATH); //remove any old temp downloads
 
         if(API.useAPI() || !Database.isValidDB()) {
-            Database.createAPIdb();
+            //Database.createAPIdb();
             Toast.makeText(this, "Starting Download", Toast.LENGTH_SHORT).show();
             Downloader.updateLibrary(this,false);
 

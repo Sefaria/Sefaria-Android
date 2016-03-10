@@ -47,8 +47,8 @@ public class API {
 
     private boolean sendJSON = false;
     String sefariaData = null;
-    final static int READ_TIMEOUT = 3000;
-    final static int CONNECT_TIMEOUT = 3000;
+    final static int READ_TIMEOUT = 10000;
+    final static int CONNECT_TIMEOUT = 10000;
     final static int SPIN_TIMEOUT = 8000;
     //TODO determine good times
     private static int useAPI = -1;
@@ -114,14 +114,14 @@ public class API {
             //TODO handle timeouts ... messages, or maybe increase timeout time, etc.
         } catch (MalformedURLException e) {
             e.printStackTrace();
-            Log.d("ERROR", "malformed url");
+            Log.d("API", "malformed url");
             status = STATUS_ERROR;
         } catch (IOException e) {
             e.printStackTrace();
-            Log.d("ERROR", "io exception");
+            Log.d("API", "io exception");
             status = STATUS_ERROR;
         }
-        Log.d("api", "in fetchData: " + url + "data length: " + data.length());
+        Log.d("api", "in fetchData: " + url + "  data length: " + data.length());
         return data;
     }
 
@@ -207,6 +207,10 @@ public class API {
 
     //static methods
 
+    public static String getDataFromURL(String url) throws APIException{
+        return getDataFromURL(url,true);
+    }
+
     /**
      * This function will wait until it gets the data from the Internet to return.
      * It is possible that it will take a while if you are asking for lots of data or bad connection.
@@ -216,21 +220,19 @@ public class API {
      * @return data as String from url request
      * @throws APIException
      */
-    public static String getDataFromURL(String url) throws APIException{
+    public static String getDataFromURL(String url, boolean useCache) throws APIException{
        String data;
         try{//try to get the data with the current thread.  This will only work if it's on a background thread.
             API api = new API();
-            data= api.fetchData(url);
+            data = api.fetchData(url);
         }catch (NetworkOnMainThreadException e){//if it was running on main thread, create our own background thread to handle it
+            Log.d("API", "starting background async data pull");
             API api = getDataFromURLAsync(url);//creating an instance of api which will fetch data
             data = api.getData();//waiting for data to be returned from internet
         }
 
-
-
-
         Log.d("api","in getDataFromURL: data length: " + data.length() );
-        if(true)
+        if(!useCache)
             return data;
         /*
         Cache cache = null;//Cache.getCache(url);
