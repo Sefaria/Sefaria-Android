@@ -36,19 +36,15 @@ import org.sefaria.sefaria.MenuElements.MenuNode;
 import org.sefaria.sefaria.MenuElements.MenuState;
 import org.sefaria.sefaria.layouts.SefariaTextView;
 
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.util.Pair;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -141,7 +137,7 @@ public class HomeActivity extends Activity {
 
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         CustomActionbar cab = new CustomActionbar(this,new MenuNode("Sefaria","ספאריה",null),
-                Settings.getSystemLang(),null,null,tempCloseClick,null,null,menuClick,null,-1);
+                Settings.getSystemLang(),null,null,tempCloseClick,searchClick,null,menuClick,null,-1);
         abRoot.addView(cab);
 
         dealWithDatabaseStuff();
@@ -378,6 +374,8 @@ public class HomeActivity extends Activity {
     View.OnClickListener searchClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+
+
         }
     };
 
