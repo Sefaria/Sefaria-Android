@@ -1,15 +1,11 @@
 package org.sefaria.sefaria.database;
 import org.sefaria.sefaria.GoogleTracker;
-import org.sefaria.sefaria.MyApp;
-
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.sefaria.sefaria.Util;
 
-
-import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;

@@ -1,16 +1,9 @@
 package org.sefaria.sefaria.database;
 
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import org.sefaria.sefaria.BuildConfig;
 import org.sefaria.sefaria.GoogleTracker;
-import org.sefaria.sefaria.MyApp;
 
 import java.io.File;
 import java.io.FileInputStream;

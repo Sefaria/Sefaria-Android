@@ -11,7 +11,6 @@ import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
 import java.util.Random;
-import java.util.Set;
 
 public class GoogleTracker extends MyApp {
 

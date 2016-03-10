@@ -2,16 +2,12 @@ package org.sefaria.sefaria.database;
 
 
 import android.content.Context;
-import android.util.Log;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.sefaria.sefaria.MenuElements.MenuDirectRef;
-import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;

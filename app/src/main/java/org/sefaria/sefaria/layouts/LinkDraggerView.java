@@ -1,29 +1,20 @@
 package org.sefaria.sefaria.layouts;
 
 import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Canvas;
 import android.support.v4.view.MotionEventCompat;
-import android.support.v4.view.VelocityTrackerCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
-import android.view.VelocityTracker;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 
 import org.sefaria.sefaria.R;
-import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.activities.SuperTextActivity;
 
 import java.util.Calendar;
-import java.util.LinkedList;
-import java.util.Queue;
 
 /**
  * Created by nss on 2/8/16.

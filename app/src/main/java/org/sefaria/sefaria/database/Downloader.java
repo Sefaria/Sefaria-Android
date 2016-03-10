@@ -2,9 +2,7 @@ package org.sefaria.sefaria.database;
 
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Set;
 
 import android.Manifest;
 import android.app.Activity;

@@ -1,11 +1,9 @@
 package org.sefaria.sefaria.TOCElements;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayout;
 import android.util.Log;
 import android.view.Gravity;

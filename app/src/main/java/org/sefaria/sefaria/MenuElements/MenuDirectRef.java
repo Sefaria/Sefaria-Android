@@ -1,20 +1,15 @@
 package org.sefaria.sefaria.MenuElements;
 
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Color;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.sefaria.sefaria.GoogleTracker;
-import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.activities.SuperTextActivity;
-import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Node;
 import org.sefaria.sefaria.database.Text;

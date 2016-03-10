@@ -1,13 +1,8 @@
 package org.sefaria.sefaria.MenuElements;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 
-import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.layouts.SefariaTextView;
