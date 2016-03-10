@@ -326,7 +326,7 @@ public class MenuGrid extends LinearLayout {
             boolean goToTOC = false;
             Book book = null;
             try {
-                if(API.useAPI()){ //There's no DB //TODO make it work with API
+                if(false && API.useAPI()){ //There's no DB //TODO make it work with API
                     Toast.makeText(context,context.getString(R.string.need_library),Toast.LENGTH_SHORT).show();
                     return;
                 }

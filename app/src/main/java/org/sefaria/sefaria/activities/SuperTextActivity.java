@@ -152,6 +152,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
                             return;
                         }
                         Node root = TOCroots.get(0);
+                        Log.d("SuperTextAct", "getFirstDescent... api: and going to get Node.textList");
                         firstLoadedNode = root.getFirstDescendant(true);
                         GoogleTracker.sendEvent(GoogleTracker.CATEGORY_OPEN_NEW_BOOK_ACTION,"Opened New Book");
                         openedNewBook = System.currentTimeMillis();
@@ -623,6 +624,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
         List<Text> textsList;
         try {
+            Log.d("SuperTextAct", "trying to getTexts");
             textsList = newNode.getTexts();
             return textsList;
         } catch (API.APIException e) {

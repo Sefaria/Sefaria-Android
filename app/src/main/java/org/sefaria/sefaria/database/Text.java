@@ -311,7 +311,7 @@ public class Text implements Parcelable {
         try {
             if(API.useAPI()){
                 if(parentNID <=0) //TODO make it work for API with NID
-                    textList = API.getTextsFromAPI(Book.getTitle(bid), levels);
+                    textList = API.getTextsFromAPI1(Book.getTitle(bid), levels);
             }else{
                 textList = getFromDB(bid,levels,parentNID);
             }

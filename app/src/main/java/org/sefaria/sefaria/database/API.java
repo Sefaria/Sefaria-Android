@@ -19,6 +19,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.NetworkOnMainThreadException;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -47,8 +48,9 @@ public class API {
 
     private boolean sendJSON = false;
     String sefariaData = null;
-    final static int READ_TIMEOUT = 10000;
-    final static int CONNECT_TIMEOUT = 10000;
+    final static int READ_TIMEOUT = 3000;
+    final static int CONNECT_TIMEOUT = 3000;
+    final static int SPIN_TIMEOUT = 8000;
     //TODO determine good times
     private static int useAPI = -1;
 
@@ -120,6 +122,7 @@ public class API {
             Log.d("ERROR", "io exception");
             status = STATUS_ERROR;
         }
+        Log.d("api", "in fetchData: " + url + "data length: " + data.length());
         return data;
     }
 
@@ -153,9 +156,14 @@ public class API {
      */
     public void waitForComplete(){
         try {
+            long startTime = System.currentTimeMillis();
             while(!isDone){
-                //TODO maybe use something smarter to do this - make a timeout just in case
-                Thread.sleep(10);
+                if(System.currentTimeMillis() - startTime > SPIN_TIMEOUT){
+                    Log.e("api","Spin time out");
+                    isDone = true;
+                    status = STATUS_ERROR;
+                }
+                Thread.sleep(20);
             }
         }catch (InterruptedException e) {
             e.printStackTrace();
@@ -210,15 +218,23 @@ public class API {
      * @throws APIException
      */
     public static String getDataFromURL(String url) throws APIException{
-        API api = getDataFromURLAsync(url);//creating an instance of api which will fetch data
-        Cache cache = null;//Cache.getCache(url);
-        String data;
+       String data;
+        try{//try to get the data with the current thread.  This will only work if it's on a background thread.
+            API api = new API();
+            data= api.fetchData(url);
+        }catch (NetworkOnMainThreadException e){//if it was running on main thread, create our own background thread to handle it
+            API api = getDataFromURLAsync(url);//creating an instance of api which will fetch data
+            data = api.getData();//waiting for data to be returned from internet
+        }
 
-        data = api.getData();//waiting for data to be returned from internet
+
+
+
         Log.d("api","in getDataFromURL: data length: " + data.length() );
         if(true)
             return data;
-
+        /*
+        Cache cache = null;//Cache.getCache(url);
         if(cache != null  &&  !cache.isExpired()){
             data = cache.data;
         }
@@ -233,6 +249,7 @@ public class API {
                 }
             }
         }
+        */
 
 
         Log.d("api","in getDataFromURL: data length: " + data.length() );
@@ -241,7 +258,9 @@ public class API {
 
 
     private static List<Text> parseJSON(String in,int [] levels, int bid) {
-        List<Text> textList = new ArrayList<Text>();
+        List<Text> textList = new ArrayList<>();
+        if(in.length()==0)
+            return textList;
 
         try {
             JSONObject jsonData = new JSONObject(in);
@@ -299,7 +318,7 @@ public class API {
             Database dbHandler = Database.getInstance();
             SQLiteDatabase db = dbHandler.getReadableDatabase();
             Cursor cursor = db.query(Text.TABLE_TEXTS, null, "_id" + "=?",
-                    new String[] { String.valueOf(1) }, null, null, null, null);
+                    new String[]{String.valueOf(1)}, null, null, null, null);
             Log.d("api", "got here without problems" + cursor);
             useAPI = 0;
             return false;
@@ -434,15 +453,28 @@ public class API {
      * @return textList
      * @throws APIException
      */
-    static public List<Text> getTextsFromAPI(String bookTitle, int[] levels) throws APIException{ //(String booktitle, int []levels)
+    static public List<Text> getTextsFromAPI1(String bookTitle, int[] levels) throws APIException{ //(String booktitle, int []levels)
         Log.d("API","getTextsFromAPI called");
         String place = createPlace(bookTitle, levels);
         String completeUrl = TEXT_URL + place + "?" + ZERO_CONTEXT + ZERO_COMMENTARY;
         String data = getDataFromURL(completeUrl);
-        Log.d("API","getTextsFromAPI got data.size)" + data.length());
+        Log.d("API","getTextsFromAPI got data.size:" + data.length());
         List<Text> textList = parseJSON(data,levels,Book.getBid(bookTitle));
         //for(int i=0;i<levels.length;i++)
           //  Log.d("api", "in getTextsFromAPI: levels" + i + ". "  + levels[i] );
+        Log.d("api", "in getTextsFromAPI: api.textlist:" + textList.size());
+        return textList;
+    }
+
+    static public List<Text> getTextsFromAPI2(Node node) throws APIException{ //(String booktitle, int []levels)
+        Log.d("API","getTextsFromAPI2 called");
+        String completeUrl = TEXT_URL + node.getPath(true,true) + "?" + ZERO_CONTEXT + ZERO_COMMENTARY;
+
+        String data = getDataFromURL(completeUrl);
+        Log.d("API","getTextsFromAPI got data.size:" + data.length());
+        List<Text> textList = parseJSON(data,node.getLevels(),node.getBid());
+        //for(int i=0;i<levels.length;i++)
+        //  Log.d("api", "in getTextsFromAPI: levels" + i + ". "  + levels[i] );
         Log.d("api", "in getTextsFromAPI: api.textlist:" + textList.size());
         return textList;
     }

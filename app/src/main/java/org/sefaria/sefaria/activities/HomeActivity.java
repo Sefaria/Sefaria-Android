@@ -214,8 +214,9 @@ public class HomeActivity extends Activity {
             GoogleTracker.sendEvent("Download", "Update Finished",time);
 
         Util.deleteNonRecursiveDir(Downloader.FULL_DOWNLOAD_PATH); //remove any old temp downloads
+
         if(API.useAPI() || !Database.isValidDB()) {
-            //Database.createAPIdb();
+            Database.createAPIdb();
             Toast.makeText(this, "Starting Download", Toast.LENGTH_SHORT).show();
             Downloader.updateLibrary(this,false);
 
@@ -224,12 +225,12 @@ public class HomeActivity extends Activity {
 
     private void addHeader(LinearLayout homeRoot){
         //Living Library
-        TextView livingLibaryView = createTypeTitle("A Living Library of Jewish Texts",true);
-        livingLibaryView.setTextSize(20);
+        TextView livingLibraryView = createTypeTitle("A Living Library of Jewish Texts",true);
+        livingLibraryView.setTextSize(20);
         int livingPadding = 60;
-        livingLibaryView.setPadding(3, livingPadding, 3, livingPadding);
-        livingLibaryView.setTextColor(Util.getColor(this, R.attr.text_color_main));
-        homeRoot.addView(livingLibaryView);
+        livingLibraryView.setPadding(3, livingPadding, 3, livingPadding);
+        livingLibraryView.setTextColor(Util.getColor(this, R.attr.text_color_main));
+        homeRoot.addView(livingLibraryView);
     }
 
     private void addRecentTexts(LinearLayout homeRoot){
