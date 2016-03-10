@@ -405,13 +405,22 @@ public class Util {
     }
 
     public static JSONArray openJSONArrayFromAssets(String file) throws IOException, JSONException {
+        JSONArray jsonObject = new JSONArray(getStringFromAssets(file));
+        return jsonObject;
+    }
+
+    public static String getStringFromAssets(String file)throws IOException, JSONException {
         InputStream is = MyApp.getContext().getAssets().open(file);
         int size = is.available();
         byte[] buffer = new byte[size];
         is.read(buffer);
         is.close();
         String bufferString = new String(buffer);
-        JSONArray jsonObject = new JSONArray(bufferString);
+        return bufferString;
+    }
+
+    public static JSONObject openJSONObjectFromAssets(String file) throws IOException, JSONException {
+        JSONObject jsonObject = new JSONObject(getStringFromAssets(file));
         return jsonObject;
     }
 
