@@ -25,7 +25,7 @@ public class TOCCommentary extends LinearLayout implements TOCElement {
 
     public TOCCommentary(Context context, Book commentary, Book mainBook, Util.Lang lang){
         super(context);
-        Log.d("TOCCommentary", "TOCCommentary starting");
+        //Log.d("TOCCommentary", "TOCCommentary starting");
         inflate(context, R.layout.toc_commentary, this);
         this.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, 1f));
         final int padding = 2;
