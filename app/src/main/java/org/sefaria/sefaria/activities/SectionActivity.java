@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
@@ -20,14 +19,12 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import org.sefaria.sefaria.BuildConfig;
 import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.TextElements.SectionAdapter;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.API;
-import org.sefaria.sefaria.database.Database;
 import org.sefaria.sefaria.database.Text;
 import org.sefaria.sefaria.layouts.ListViewExt;
 
