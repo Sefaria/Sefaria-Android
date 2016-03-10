@@ -2,21 +2,16 @@ package org.sefaria.sefaria;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.annotation.NonNull;
 import android.util.Log;
 import android.util.Pair;
 
-import org.sefaria.sefaria.activities.SuperTextActivity;
-import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.LinkFilter;
 import org.sefaria.sefaria.database.Node;
 import org.sefaria.sefaria.database.Text;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;

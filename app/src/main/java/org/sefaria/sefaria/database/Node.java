@@ -8,7 +8,6 @@ import android.os.Parcelable;
 import android.util.Log;
 
 import org.sefaria.sefaria.GoogleTracker;
-import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
 

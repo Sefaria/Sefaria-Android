@@ -1,17 +1,12 @@
 package org.sefaria.sefaria.TextElements;
 
 import android.app.Activity;
-import android.graphics.Color;
-import android.support.v4.content.ContextCompat;
 import android.text.Html;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.TextView;
 
-import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.activities.SectionActivity;

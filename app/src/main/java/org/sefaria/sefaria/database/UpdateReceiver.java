@@ -3,9 +3,6 @@ package org.sefaria.sefaria.database;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.WakefulBroadcastReceiver;
-import android.widget.Toast;
-
-import org.sefaria.sefaria.MyApp;
 
 public class UpdateReceiver extends WakefulBroadcastReceiver {
     @Override
