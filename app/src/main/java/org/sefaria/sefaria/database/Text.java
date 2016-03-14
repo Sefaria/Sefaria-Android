@@ -175,20 +175,20 @@ public class Text implements Parcelable {
         return getURL(false);
     }
     public String getURL(boolean useHTTPS){
-        Book book = new Book(bid);
+
         StringBuilder str = new StringBuilder();
         if(useHTTPS)
             str.append("https://www.sefaria.org/");
         else
             str.append("http://www.sefaria.org/");
-        str.append(book.getTitle(Util.Lang.EN));
 
-        if(parentNID != 0){
-            String path = parentNode.getPath() + "." + levels[0];
-            return (str + path).replace(" ","_");
+        if(parentNID != 0 && parentNode != null){
+            String path = parentNode.getPath(true,true,true) + "." + levels[0];
+            return str + path;
         }
 
-
+        Book book = new Book(bid);
+        str.append(book.getTitle(Util.Lang.EN));
         int sectionNum = book.sectionNamesL2B.length-1;
         for(int i=levels.length-1;i>=0;i--){
             int num = levels[i];
@@ -206,8 +206,11 @@ public class Text implements Parcelable {
     public String getLocationString(Util.Lang lang){
         Book book = new Book(bid);
         String str = book.getTitle(lang);
-        if(parentNID != 0){ //It's a complex text
-            str += parentNode.getPath();
+        if(parentNode != null){ //It's a complex text
+            Log.d("Text", "getLocationStri using getPath()");
+            str = parentNode.getPath(false,true,false);
+
+            return str;
         }
         int sectionNum = book.sectionNamesL2B.length-1;
         boolean useSpace = true; //starting true so has space after book.title
