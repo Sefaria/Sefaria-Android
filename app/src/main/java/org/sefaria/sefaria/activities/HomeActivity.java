@@ -38,8 +38,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
+
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class HomeActivity extends Activity {
 
@@ -366,7 +369,15 @@ public class HomeActivity extends Activity {
         @Override
         public void onClick(View v) {
 
+            /*String connectionUrl = API.SEARCH_URL;
+            JestClientFactory factory = new JestClientFactory();
+            factory.setDroidClientConfig(new DroidClientConfig
+                    .Builder(connectionUrl)
+                    .multiThreaded(true)
+                    .build());
+            JestClient client = factory.getObject();
 
+            SearchSour*/
         }
     };
 

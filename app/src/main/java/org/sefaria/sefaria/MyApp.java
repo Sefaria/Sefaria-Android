@@ -20,7 +20,6 @@ import java.util.Arrays;
  */
 public class MyApp extends Application {
 
-
     public static final String[] CAT_NAMES = {"Tanach","Mishnah","Talmud",
             "Tosefta","Liturgy","Tefillah",
             "Philosophy","Chasidut","Musar",
