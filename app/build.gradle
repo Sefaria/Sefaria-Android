@@ -6,14 +6,15 @@ android {
 
     defaultConfig {
         applicationId "org.sefaria.sefaria"
-        minSdkVersion 11
+        minSdkVersion 16
         targetSdkVersion 23
         versionCode 222
         versionName "2.22d"
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -34,6 +35,7 @@ dependencies {
     compile 'com.android.support:design:23.1.1'
     compile 'com.android.support:recyclerview-v7:23.1.1'
     compile 'com.google.android.gms:play-services-analytics:8.4.0'
+    compile 'com.silverforge.elastic:elasticsearchrawclient:1.1.1'
 
 }
 
