@@ -441,24 +441,26 @@ public class Node implements  Parcelable{
 
     }
 
-    public String getPath(){
-        return getPath(false,false);
-    }
 
-    public String getPath(boolean includeBook, boolean replaceSpaces){
+    public String getPath(boolean useURLSeparator, boolean includeBook, boolean replaceSpaces){
         String path = "";
 
         Node node = this;
+        String separator;
+        if(useURLSeparator)
+            separator = ".";
+        else
+            separator = ":";
+
         while(node.getParent() != null){//checking parent node so that don't get root (or book name) in there
             if(node.isGridItem())
-                path = "." + node.getNiceGridNum(Util.Lang.EN) + path;
+                path = separator + node.getNiceGridNum(Util.Lang.EN) + path;
             else
                 path = ", " + node.getTitle(Util.Lang.EN) + path;
             node = node.getParent();
         }
-        if(includeBook){
+        if(includeBook)
             path = (new Book(this.bid)).getTitle(Util.Lang.EN) + path;
-        }
         if(replaceSpaces)
             path = path.replace(" ", "_");
         return path;

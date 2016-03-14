@@ -87,13 +87,12 @@ public class API {
                 //wr.writeBytes(otherParametersUrServiceNeed);
 
 
-                try {
-
+                try{
                     JSONObject jsonParam = new JSONObject(
-                            //"{\"sort\":[{\"order\":{}}],\"highlight\":{\"pre_tags\":[\"<b>\"],\"post_tags\":[\"</b>\"],\"fields\":{\"content\":{\"fragment_size\":200}}},\"query\":{\"query_string\":{\"query\":\"fish\",\"default_operator\":\"AND\",\"fields\":[\"content\"]}},\"aggs\":{\"category\":{\"terms\":{\"field\":\"path\",\"size\":0}}}}"
-                            //"{\"sort\":[{\"order\":{}}],\"highlight\":{\"pre_tags\":[\"<b>\"],\"post_tags\":[\"</b>\"],\"fields\":{\"content\":{\"fragment_size\":200}}},\"query\":{\"filtered\":{\"query\":{\"query_string\":{\"query\":\"fish\",\"default_operator\":\"AND\",\"fields\":[\"content\"]}},\"filter\":{\"or\":[{\"regexp\":{\"path\":\"Tosefta.*\"}}]}}}}"
-                            //"\"{\"sort\":[{\"order\":{}}],\"highlight\":{\"pre_tags\":[\"<b>\"],\"post_tags\":[\"</b>\"],\"fields\":{\"content\":{\"fragment_size\":200}}},\"query\":{\"query_string\":{\"query\":\"Moshe\",\"default_operator\":\"AND\",\"fields\":[\"content\"]}},\"aggs\":{\"category\":{\"terms\":{\"field\":\"path\",\"size\":0}}}}\""
-                            "\"{\"sort\":[{\"order\":{}}],\"highlight\":{\"pre_tags\":[\"<b>\"],\"post_tags\":[\"</b>\"],\"fields\":{\"content\":{\"fragment_size\":200}}},\"query\":{\"query_string\":{\"query\":\"Moshe\",\"default_operator\":\"AND\",\"fields\":[\"content\"]}}}\""
+                        //"{\"sort\":[{\"order\":{}}],\"highlight\":{\"pre_tags\":[\"<b>\"],\"post_tags\":[\"</b>\"],\"fields\":{\"content\":{\"fragment_size\":200}}},\"query\":{\"query_string\":{\"query\":\"fish\",\"default_operator\":\"AND\",\"fields\":[\"content\"]}},\"aggs\":{\"category\":{\"terms\":{\"field\":\"path\",\"size\":0}}}}"
+                        //"{\"sort\":[{\"order\":{}}],\"highlight\":{\"pre_tags\":[\"<b>\"],\"post_tags\":[\"</b>\"],\"fields\":{\"content\":{\"fragment_size\":200}}},\"query\":{\"filtered\":{\"query\":{\"query_string\":{\"query\":\"fish\",\"default_operator\":\"AND\",\"fields\":[\"content\"]}},\"filter\":{\"or\":[{\"regexp\":{\"path\":\"Tosefta.*\"}}]}}}}"
+                        //"\"{\"sort\":[{\"order\":{}}],\"highlight\":{\"pre_tags\":[\"<b>\"],\"post_tags\":[\"</b>\"],\"fields\":{\"content\":{\"fragment_size\":200}}},\"query\":{\"query_string\":{\"query\":\"Moshe\",\"default_operator\":\"AND\",\"fields\":[\"content\"]}},\"aggs\":{\"category\":{\"terms\":{\"field\":\"path\",\"size\":0}}}}\""
+                        "\"{\"sort\":[{\"order\":{}}],\"highlight\":{\"pre_tags\":[\"<b>\"],\"post_tags\":[\"</b>\"],\"fields\":{\"content\":{\"fragment_size\":200}}},\"query\":{\"query_string\":{\"query\":\"Moshe\",\"default_operator\":\"AND\",\"fields\":[\"content\"]}}}\""
                     );
                     wr.writeBytes(jsonParam.toString());
                 } catch (JSONException e) {
@@ -469,7 +468,7 @@ public class API {
 
     static public List<Text> getTextsFromAPI2(Node node) throws APIException{ //(String booktitle, int []levels)
         Log.d("API","getTextsFromAPI2 called");
-        String completeUrl = TEXT_URL + node.getPath(true,true) + "?" + ZERO_CONTEXT + ZERO_COMMENTARY;
+        String completeUrl = TEXT_URL + node.getPath(true,true,true) + "?" + ZERO_CONTEXT + ZERO_COMMENTARY;
 
         String data = getDataFromURL(completeUrl);
         Log.d("API","getTextsFromAPI got data.size:" + data.length());
