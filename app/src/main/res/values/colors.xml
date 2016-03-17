@@ -60,6 +60,7 @@
     <color name="text_verse_selected_bg_w">#eaeaea</color>
     <color name="text_verse_num_color_w">#666666</color>
     <color name="link_bg_w">#f9f9f7</color>
+    <color name="link_selector_bar_bg_w">#eaeaea</color>
 
     <color name="button_bg_b">#333331</color>
     <color name="button_clicked_b">#666666</color>      <!-- this is only while touching button -->
@@ -75,6 +76,7 @@
     <color name="text_verse_selected_bg_b">#444444</color>
     <color name="text_verse_num_color_b">#dddddd</color>
     <color name="link_bg_b">#2d2d2b</color>
+    <color name="link_selector_bar_bg_b">#333</color>
 
 
 </resources>

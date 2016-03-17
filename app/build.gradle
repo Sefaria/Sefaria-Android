@@ -10,6 +10,8 @@ android {
         targetSdkVersion 23
         versionCode 222
         versionName "2.22d"
+        // Enabling multidex support.
+        //multiDexEnabled true
     }
     buildTypes {
         release {
@@ -24,22 +26,23 @@ android {
         exclude 'META-INF/LICENSE'
         exclude 'META-INF/NOTICE'
     }
-
 }
 
 dependencies {
 
-
-    compile 'com.android.support:appcompat-v7:23.1.1'
+    //compile 'com.android.support:multidex:1.0.1'
     compile 'com.android.support:gridlayout-v7:23.1.0'
-    compile 'com.android.support:design:23.1.1'
-    compile 'com.android.support:recyclerview-v7:23.1.1'
+    compile 'com.android.support:design:23.1.0'
+    compile 'com.android.support:recyclerview-v7:23.1.0'
     compile 'com.google.android.gms:play-services-analytics:8.4.0'
     compile 'com.silverforge.elastic:elasticsearchrawclient:1.1.1'
 
 }
 
 apply plugin: 'com.google.gms.google-services'
+
+
+
 
 
 

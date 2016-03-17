@@ -30,12 +30,15 @@ public class LinkSelectorBarButton extends SefariaTextView {
 
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         lp.gravity = Gravity.CENTER_VERTICAL;
-        lp.leftMargin = 10;
+        lp.leftMargin = 5;
+        lp.rightMargin = 5;
+        lp.topMargin = 0;
+        lp.bottomMargin = 0;
         this.setLayoutParams(lp);
 
         int padding = 15;
         this.setPadding(padding, padding, padding, padding);
-        this.setFont(lang, true);
+        this.setFont(lang, false);
         this.setTextColor(Util.getColor(context, R.attr.text_color_main));
         this.setBackgroundResource(Util.getDrawable(context, R.attr.button_selector_transparent_drawable));
     }
