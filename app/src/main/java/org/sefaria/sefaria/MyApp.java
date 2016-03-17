@@ -20,6 +20,13 @@ import java.util.Arrays;
  */
 public class MyApp extends Application {
 
+
+    /*@Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
+    }*/
+
     public static final String[] CAT_NAMES = {"Tanach","Mishnah","Talmud",
             "Tosefta","Liturgy","Tefillah",
             "Philosophy","Chasidut","Musar",

@@ -49,6 +49,15 @@ public class GoogleTracker extends MyApp {
     }
 
 
+    /*private static void setTrackerID() {};
+    synchronized  void getTracker() {};
+    static public void sendEvent(String cat, String act, long value) {};
+    static public void sendEvent(String cat, String act) {};
+    static public void sendScreen(String screenName){};
+    static public void sendException(Exception e){};
+    static public void sendException(Exception e, String addedText){};*/
+
+
     private static void setTrackerID(){
         if(randomID == null){
             SharedPreferences settings = Settings.getGeneralSettings();
@@ -92,7 +101,7 @@ public class GoogleTracker extends MyApp {
             //Toast.makeText(context, "Made tracker.", Toast.LENGTH_SHORT).show();
         } catch (Exception e){
             e.printStackTrace();
-            //sendException(e);
+            sendException(e);
         }
         return;
     }

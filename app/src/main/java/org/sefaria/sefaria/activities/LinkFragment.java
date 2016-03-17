@@ -45,6 +45,7 @@ public class LinkFragment extends android.support.v4.app.Fragment {
     private LinkMainAdapter linkMainAdapter;
     private LinkTextAdapter linkTextAdapter;
     private LinkSelectorBar linkSelectorBar;
+    private SefariaTextView linkSelectorBarTitle;
     private RecyclerView linkRecycler;
 
     private SuperTextActivity activity;
@@ -102,7 +103,8 @@ public class LinkFragment extends android.support.v4.app.Fragment {
 
 
         LinearLayout linkSelectorBarRoot = (LinearLayout) view.findViewById(R.id.link_selector_bar_root);
-
+        linkSelectorBarTitle = (SefariaTextView) view.findViewById(R.id.link_selector_bar_title);
+        linkSelectorBarTitle.setFont(activity.getMenuLang(),false);
 
         linkSelectorBar = new LinkSelectorBar(activity,linkSelectorBarButtonClick,linkSelectorBackClick);
         linkSelectorBarRoot.addView(linkSelectorBar);
@@ -158,13 +160,16 @@ public class LinkFragment extends android.support.v4.app.Fragment {
             updateFragment(segment);
 
             //make all buttons gray
-            linkSelectorBar.update(null, activity.getMenuLang());
-
+            //linkSelectorBar.update(null, activity.getMenuLang());
+            linkSelectorBar.setVisibility(View.GONE);
+            linkSelectorBarTitle.setVisibility(View.VISIBLE);
 
         } else { //CAT and BOOK are very similar
             view.setBackgroundColor(Util.getColor(activity,R.attr.text_bg));
 
             //update linkSelectorQueue
+            linkSelectorBarTitle.setVisibility(View.GONE);
+            linkSelectorBar.setVisibility(View.VISIBLE);
             linkSelectorBar.add(linkCount, activity.getMenuLang());
             linkBackButton.setVisibility(View.VISIBLE);
 

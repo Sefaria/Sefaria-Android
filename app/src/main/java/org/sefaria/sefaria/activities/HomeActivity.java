@@ -39,7 +39,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -369,8 +369,24 @@ public class HomeActivity extends Activity {
         @Override
         public void onClick(View v) {
 
-            /*String connectionUrl = API.SEARCH_URL;
-            JestClientFactory factory = new JestClientFactory();
+            String connectionUrl = API.SEARCH_URL;
+
+            /*ElasticClient client;
+            try {
+                ConnectorSettings settings
+                        = ConnectorSettings
+                        .builder()
+                        .baseUrl(API.SEARCH_URL)
+                        .build();
+
+                client = new ElasticClient(settings);
+                List<String> yo = client.search("{\"query\":{\"match_all\": {}}}", String.class);
+                Log.d("HomeActivity", ""+yo.size());
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+                Log.e("HomeActivity", e.getMessage());
+            }*/
+            /*JestClientFactory factory = new JestClientFactory();
             factory.setDroidClientConfig(new DroidClientConfig
                     .Builder(connectionUrl)
                     .multiThreaded(true)
