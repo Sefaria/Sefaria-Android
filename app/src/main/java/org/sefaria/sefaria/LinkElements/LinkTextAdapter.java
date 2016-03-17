@@ -100,6 +100,8 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextHolder> {
             monoHolder.monoTv.setText(Html.fromHtml(text));
             monoHolder.monoTv.setFont(lang,true);
             monoHolder.monoTv.setTextSize(activity.getTextSize());
+            monoHolder.monoTv.setLangGravity(lang);
+
         } else if (holder instanceof LinkBiTextHolder) {
             LinkBiTextHolder biHolder = (LinkBiTextHolder) holder;
 

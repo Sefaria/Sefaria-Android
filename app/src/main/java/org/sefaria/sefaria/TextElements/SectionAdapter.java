@@ -145,7 +145,7 @@ public class SectionAdapter extends ArrayAdapter<Text> {
 
         } else { //Hebrew or English
             SefariaTextView tv = (SefariaTextView      ) view.findViewById(R.id.mono);
-
+            tv.setLangGravity(lang);
             if (segment.isChapter()) {
                 //view.setClickable(true);
 
@@ -180,6 +180,8 @@ public class SectionAdapter extends ArrayAdapter<Text> {
                         heNum.setText("");
                     heNum.setAlpha(1);
                     heNum.setFont(Util.Lang.HE, true);
+
+
                 } else /*if (lang == Util.Lang.EN)*/ {
                     tv.setText(Html.fromHtml(monoText));
                     if(segment.displayNum)

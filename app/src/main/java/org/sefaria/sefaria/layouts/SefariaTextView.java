@@ -2,6 +2,7 @@ package org.sefaria.sefaria.layouts;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.widget.TextView;
 
 import org.sefaria.sefaria.MyApp;
@@ -27,7 +28,7 @@ public class SefariaTextView extends TextView {
 
 
     public void setFont(Util.Lang lang, boolean isSerif) {
-        setFont(lang,isSerif,-1);
+        setFont(lang, isSerif, -1);
     }
 
 
@@ -57,6 +58,12 @@ public class SefariaTextView extends TextView {
             setLineSpacing(0, 1.3f);
         }
         setTypeface(MyApp.getFont(font));
+    }
+
+    //set text alignment correctly depending on language (only a problem when both languages appear in the text)
+    public void setLangGravity(Util.Lang lang) {
+        if (lang == Util.Lang.HE) setGravity(Gravity.RIGHT);
+        else if (lang == Util.Lang.EN) setGravity(Gravity.LEFT);
     }
 
 
