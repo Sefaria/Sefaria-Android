@@ -207,9 +207,9 @@ public class Text implements Parcelable {
         Book book = new Book(bid);
         String str = book.getTitle(lang);
         if(parentNode != null){ //It's a complex text
-            Log.d("Text", "getLocationStri using getPath()");
-            str = parentNode.getPath(false,true,false);
 
+            str = parentNode.getPath(false,true,false);
+            Log.d("Text", "getLocationStri using getPath()" + str);
             return str;
         }
         int sectionNum = book.sectionNamesL2B.length-1;
