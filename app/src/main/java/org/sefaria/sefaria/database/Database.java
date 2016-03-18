@@ -1,6 +1,7 @@
 package org.sefaria.sefaria.database;
 import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MyApp;
+import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
 
 import java.io.File;
@@ -25,6 +26,7 @@ public class Database extends SQLiteOpenHelper{
 
     private static Database sInstance;
     public static String DB_NAME = "UpdateForSefariaMobileDatabase";
+    public static String API_DB_NAME = "API_UpdateForSefariaMobileDatabase";
     static int DB_VERSION = 1;
 
     private static final int MIN_DB_VERSION = 135;
@@ -38,8 +40,18 @@ public class Database extends SQLiteOpenHelper{
      * Takes and keeps a reference of the passed context in order to access to the application assets and resources.
      * @param context
      */
-    public Database(Context context) {
-        super(context, getDbPath() + DB_NAME + ".db", null, DB_VERSION);
+    public Database(Context context){
+        super(context,getDbPath() + DB_NAME + ".db" , null, DB_VERSION);
+        this.myContext = context;
+    }
+
+    /**
+     * Constructor
+     * Takes and keeps a reference of the passed context in order to access to the application assets and resources.
+     * @param context
+     */
+    public Database(Context context, int useAPI) {
+        super(context, getDbPath() + API_DB_NAME + ".db", null, DB_VERSION);
         this.myContext = context;
     }
 
@@ -128,10 +140,20 @@ public class Database extends SQLiteOpenHelper{
         // Use the application context, which will ensure that you
         // don't accidentally leak an Activity's context.
         // See this article for more information: http://bit.ly/6LRzfx
+        boolean useAPI = Settings.getUseAPI();
         if (sInstance == null) {
-            sInstance = new Database(context.getApplicationContext());
+            if(!useAPI)
+                sInstance = new Database(context.getApplicationContext());
+            else {
+                Database.createAPIdb();
+                sInstance = new Database(context.getApplicationContext(), 1);
+            }
         }
         return sInstance;
+    }
+
+    public static void clearInstance(){
+        sInstance = null;
     }
 
     public static SQLiteDatabase getDB(){
@@ -146,7 +168,7 @@ public class Database extends SQLiteOpenHelper{
             String myPath = getDbPath() + DB_NAME + ".db";
             checkDB = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
         }catch(Exception e){
-            GoogleTracker.sendException(e, "database does't exist");
+            GoogleTracker.sendException(e, "database doesn't exist");
             //database does't exist yet.
 
         }
@@ -224,7 +246,7 @@ public class Database extends SQLiteOpenHelper{
         Database myDbHelper = new Database(MyApp.getContext());
         myDbHelper.getReadableDatabase();
         try {
-            myDbHelper.unzipDatabase("UpdateForSefariaMobileDatabase.zip.jar", Database.getDbPath(),true);
+            myDbHelper.unzipDatabase("API_UpdateForSefariaMobileDatabase.zip", Database.getDbPath(),true);
         } catch (IOException e) {
             Log.e("api",e.toString());
         }

@@ -71,6 +71,15 @@ public class SettingsActivity extends Activity {
         }
         menuLangButton.setChecked(true);
 
+        RadioButton useDBButton;
+        boolean useAPI = Settings.getUseAPI();
+        if (useAPI){
+            useDBButton = (RadioButton) findViewById(R.id.DB_use_API);
+        }else{
+            useDBButton = (RadioButton) findViewById(R.id.DB_use_full);
+        }
+        useDBButton.setChecked(true);
+
 
         fontSize.setText(""+Settings.getDefaultFontSize());
 
@@ -139,7 +148,7 @@ public class SettingsActivity extends Activity {
 
     public void updateLibrary(View v){
         Toast.makeText(this, "Checking for updates", Toast.LENGTH_SHORT).show();
-        Downloader.updateLibrary(this,false);
+        Downloader.updateLibrary(this, false);
     }
 
     View.OnLongClickListener longUpdateLibrary = new View.OnLongClickListener() {
@@ -160,6 +169,22 @@ public class SettingsActivity extends Activity {
         finish();
     }
 
+    public void onUseDB(View view){
+        // Is the button now checked?
+        boolean checked = ((RadioButton) view).isChecked();
+
+        // Check which radio button was clicked
+        switch(view.getId()) {
+            case R.id.DB_use_API:
+                if (checked)
+                    Settings.setUseAPI(true);
+                break;
+            case R.id.DB_use_full:
+                if (checked)
+                    Settings.setUseAPI(false);
+                break;
+        }
+    }
 
     public void onRadioButtonClicked(View view) {
         // Is the button now checked?

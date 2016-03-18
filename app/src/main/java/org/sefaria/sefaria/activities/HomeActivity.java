@@ -208,11 +208,9 @@ public class HomeActivity extends Activity {
 
         Util.deleteNonRecursiveDir(Downloader.FULL_DOWNLOAD_PATH); //remove any old temp downloads
 
-        if(API.useAPI() || !Database.isValidDB()) {
-            //Database.createAPIdb();
+        if((!Settings.getUseAPI() && API.useAPI())|| !Database.isValidDB()) { //API.useAPI()
             Toast.makeText(this, "Starting Download", Toast.LENGTH_SHORT).show();
             Downloader.updateLibrary(this,false);
-
         }
     }
 

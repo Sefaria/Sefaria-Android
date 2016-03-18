@@ -51,7 +51,7 @@ public class API {
     final static int CONNECT_TIMEOUT = 10000;
     final static int SPIN_TIMEOUT = 8000;
     //TODO determine good times
-    private static int useAPI = -1;
+    public static int useAPI = -1;
 
     public static void makeAPIErrorToast(Context context){
         Toast.makeText(context, "Problem getting data from Internet",Toast.LENGTH_SHORT).show();
