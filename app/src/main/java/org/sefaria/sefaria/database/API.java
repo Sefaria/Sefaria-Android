@@ -13,6 +13,7 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.sefaria.sefaria.Util;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -26,8 +27,8 @@ public class API {
     final static String TEXT_URL = "http://www.sefaria.org/api/texts/";
     final static String COUNT_URL = "http://www.sefaria.org/api/counts/";
     public final static String SEARCH_URL = "https://search.sefaria.org:788/sefaria/_search/";
-    final static String LINK_URL = "http://staging.sefaria.org/api/links/";
-    final static String LINK_ZERO_TEXT = "?text=0";
+    final static String LINK_URL = "http://jos.sefaria.org/api/links/";
+    final static String LINK_ZERO_TEXT = "?with_text=0";
     final static String ZERO_CONTEXT = "&context=0";
     final static String ZERO_COMMENTARY = "&commentary=0";
 
@@ -271,7 +272,7 @@ public class API {
             JSONArray heArray = jsonData.getJSONArray("he");
 
 
-            int maxLength = Math.max(textArray.length(),heArray.length());
+            int maxLength = Math.max(textArray.length(), heArray.length());
             //Log.d("api",textArray.toString() + " " + heArray.toString());
             for (int i = 0; i < maxLength; i++) {
                 //get the texts if i is less it's within the length (otherwise use "")
@@ -390,8 +391,33 @@ public class API {
 
     }
 
-    public static List<Text> getLinks(Text text, LinkFilter linkFilter) {
-        List<Text> texts = new ArrayList<Text>();
+    public static List<Text> getLinks(Text text, LinkFilter linkFilter) throws APIException {
+        List<Text> texts = new ArrayList<>();
+        String place = text.getURL(false, false);
+        String url = LINK_URL +place;
+        String data = getDataFromURL(url);
+        Book book = new Book(text.bid);
+        List<Text> textList = new ArrayList<>();
+        if(data.length()==0)
+            return textList;
+        try {
+            JSONArray linksArray = new JSONArray(data);
+            //Log.d("api", "jsonData:" + jsonData.toString());
+            for(int i=0;i<linksArray.length();i++){
+                JSONObject jsonLink = linksArray.getJSONObject(i);
+                String sourceRef = jsonLink.getString("sourceRef");
+                if(sourceRef.startsWith(book.getTitle(Util.Lang.EN))|| true){
+                    Text tempText = new Text(
+                            jsonLink.getString("text") ,jsonLink.getString("he"));
+                    tempText.bid = new Book(jsonLink.getString("index_title")).bid;
+
+                }
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
 
         return texts;
     }
@@ -468,7 +494,7 @@ public class API {
 
     static public List<Text> getTextsFromAPI2(Node node) throws APIException{ //(String booktitle, int []levels)
         Log.d("API","getTextsFromAPI2 called");
-        String completeUrl = TEXT_URL + node.getPath(true,true,true) + "?" + ZERO_CONTEXT + ZERO_COMMENTARY;
+        String completeUrl = TEXT_URL + node.getPath(Util.Lang.EN,true,true,true) + "?" + ZERO_CONTEXT + ZERO_COMMENTARY;
 
         String data = getDataFromURL(completeUrl);
         Log.d("API","getTextsFromAPI got data.size:" + data.length());
