@@ -19,6 +19,7 @@ import org.sefaria.sefaria.LinkElements.LinkTextAdapter;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
+import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.database.Link;
 import org.sefaria.sefaria.database.LinkFilter;
 import org.sefaria.sefaria.database.Text;
@@ -185,7 +186,12 @@ public class LinkFragment extends android.support.v4.app.Fragment {
             noLinksTV.setVisibility(View.VISIBLE);
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(activity,LinearLayoutManager.VERTICAL,false);
 
-            List<Text> linkList = Link.getLinkedTexts(segment,linkCount);
+            List<Text> linkList = null;
+            try {
+                linkList = Link.getLinkedTexts(segment, linkCount);
+            } catch (API.APIException e) {
+                API.makeAPIErrorToast(activity);
+            }
 
             linkTextAdapter = new LinkTextAdapter(activity,linkList,noLinksTV);
             linkRecycler.setLayoutManager(linearLayoutManager);
@@ -225,7 +231,13 @@ public class LinkFragment extends android.support.v4.app.Fragment {
 
                 linkMainAdapter.setItemList(LinkFilter.getList(linkFilterAll));
             } else if (currState == State.BOOK || currState == State.CAT) { //change visibilty of links
-                linkTextAdapter.setItemList(Link.getLinkedTexts(segment,linkTextAdapter.getCurrLinkCount()));
+                try {
+                    linkTextAdapter.setItemList(Link.getLinkedTexts(segment,linkTextAdapter.getCurrLinkCount()));
+                } catch (API.APIException e) {
+                    linkTextAdapter.setItemList(new ArrayList<Text>());
+                    API.makeAPIErrorToast(activity);
+
+                }
             } else { //CAT load new cat links
 
             }

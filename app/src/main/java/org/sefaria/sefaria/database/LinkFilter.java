@@ -4,10 +4,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.sun.scenario.Settings;
-
 import org.sefaria.sefaria.MenuElements.MenuNode;
 import org.sefaria.sefaria.MenuElements.MenuState;
+import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
 
 import java.util.ArrayList;
@@ -204,7 +203,9 @@ public class LinkFilter {
 
     public static LinkFilter getFromLinks_small(Text text){
         //Log.d("LinkFilter", text.levels[0] + " starting...");
-        //if(Set
+        if(Settings.getUseAPI()){
+            return getFromLinks_API(text);
+        }
         LinkFilter allLinkCounts = new LinkFilter(ALL_CONNECTIONS, 0, "הכל",DEPTH_TYPE.ALL);
         LinkFilter commentaryGroup = getCommentaryOnChap(text.tid - 11, text.tid + 11, text.bid);//getting all commentaries +-11 of the current text
 
