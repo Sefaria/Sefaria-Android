@@ -27,7 +27,7 @@ public class API {
     final static String TEXT_URL = "http://www.sefaria.org/api/texts/";
     final static String COUNT_URL = "http://www.sefaria.org/api/counts/";
     public final static String SEARCH_URL = "https://search.sefaria.org:788/sefaria/_search/";
-    final static String LINK_URL = "http://jos.sefaria.org/api/links/";
+    final static String LINK_URL = "http://www.sefaria.org/api/links/";
     final static String LINK_ZERO_TEXT = "?with_text=0";
     final static String ZERO_CONTEXT = "&context=0";
     final static String ZERO_COMMENTARY = "&commentary=0";
@@ -392,14 +392,17 @@ public class API {
     }
 
     public static List<Text> getLinks(Text text, LinkFilter linkFilter) throws APIException {
+        Log.d("API.Link","got starting LinksAPI");
         List<Text> texts = new ArrayList<>();
         String place = text.getURL(false, false);
         String url = LINK_URL +place;
         String data = getDataFromURL(url);
+        Log.d("API.Link","got data");
         Book book = new Book(text.bid);
         List<Text> textList = new ArrayList<>();
         if(data.length()==0)
             return textList;
+
         try {
             JSONArray linksArray = new JSONArray(data);
             //Log.d("api", "jsonData:" + jsonData.toString());
@@ -407,10 +410,9 @@ public class API {
                 JSONObject jsonLink = linksArray.getJSONObject(i);
                 String sourceRef = jsonLink.getString("sourceRef");
                 if(sourceRef.startsWith(book.getTitle(Util.Lang.EN))|| true){
-                    Text tempText = new Text(
-                            jsonLink.getString("text") ,jsonLink.getString("he"));
-                    tempText.bid = new Book(jsonLink.getString("index_title")).bid;
-
+                    Text tempText = new Text(jsonLink.getString("text"),jsonLink.getString("he"));
+                    tempText.bid = book.bid;//1;//new Book(jsonLink.getString("index_title")).bid;
+                    texts.add(tempText);
                 }
             }
 
@@ -418,7 +420,7 @@ public class API {
             e.printStackTrace();
         }
 
-
+        Log.d("API.Link","finished LinksAPI");
         return texts;
     }
 
