@@ -311,13 +311,13 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
         listView.setSelection(index);
     }
 
-    public void jumpSection(View view) {
+    /*public void jumpSection(View view) {
         if (view.getId() == R.id.jump_section_down) {
             Log.d("SectionActivity","DOWN");
         } else if (view.getId() == R.id.jump_section_up) {
             Log.d("SectionActivity","UP");
         }
-    }
+    }*/
 
     //YOU actually need this function implemented because you're implementing AbsListView, but it's stupid...
     @Override

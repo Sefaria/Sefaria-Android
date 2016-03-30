@@ -46,7 +46,7 @@ public class API {
     private int status = STATUS_NONE;
     private boolean isDone = false;
 
-    private boolean sendJSON = false;
+    private String jsonString; //if null, no json to send. if not null send this jsonObject along with url request
     String sefariaData = null;
     final static int READ_TIMEOUT = 10000;
     final static int CONNECT_TIMEOUT = 10000;
@@ -64,7 +64,7 @@ public class API {
         String data = "";
         this.url = urlString;
         try {
-            if(!sendJSON) {//!use JSON post
+            if(jsonString == null) {//!use JSON post
                 URL url = new URL(urlString);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setReadTimeout(READ_TIMEOUT);
@@ -89,16 +89,18 @@ public class API {
 
 
                 try{
-                    JSONObject jsonParam = new JSONObject(
+                    JSONObject jsonObject = new JSONObject(
                         //"{\"sort\":[{\"order\":{}}],\"highlight\":{\"pre_tags\":[\"<b>\"],\"post_tags\":[\"</b>\"],\"fields\":{\"content\":{\"fragment_size\":200}}},\"query\":{\"query_string\":{\"query\":\"fish\",\"default_operator\":\"AND\",\"fields\":[\"content\"]}},\"aggs\":{\"category\":{\"terms\":{\"field\":\"path\",\"size\":0}}}}"
                         //"{\"sort\":[{\"order\":{}}],\"highlight\":{\"pre_tags\":[\"<b>\"],\"post_tags\":[\"</b>\"],\"fields\":{\"content\":{\"fragment_size\":200}}},\"query\":{\"filtered\":{\"query\":{\"query_string\":{\"query\":\"fish\",\"default_operator\":\"AND\",\"fields\":[\"content\"]}},\"filter\":{\"or\":[{\"regexp\":{\"path\":\"Tosefta.*\"}}]}}}}"
                         //"\"{\"sort\":[{\"order\":{}}],\"highlight\":{\"pre_tags\":[\"<b>\"],\"post_tags\":[\"</b>\"],\"fields\":{\"content\":{\"fragment_size\":200}}},\"query\":{\"query_string\":{\"query\":\"Moshe\",\"default_operator\":\"AND\",\"fields\":[\"content\"]}},\"aggs\":{\"category\":{\"terms\":{\"field\":\"path\",\"size\":0}}}}\""
-                        "\"{\"sort\":[{\"order\":{}}],\"highlight\":{\"pre_tags\":[\"<b>\"],\"post_tags\":[\"</b>\"],\"fields\":{\"content\":{\"fragment_size\":200}}},\"query\":{\"query_string\":{\"query\":\"Moshe\",\"default_operator\":\"AND\",\"fields\":[\"content\"]}}}\""
+                        //"\"{\"sort\":[{\"order\":{}}],\"highlight\":{\"pre_tags\":[\"<b>\"],\"post_tags\":[\"</b>\"],\"fields\":{\"content\":{\"fragment_size\":200}}},\"query\":{\"query_string\":{\"query\":\"Moshe\",\"default_operator\":\"AND\",\"fields\":[\"content\"]}}}\""
+                        getJsonString()
                     );
-                    wr.writeBytes(jsonParam.toString());
+                    wr.writeBytes(jsonObject.toString());
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+
                 wr.flush();
                 wr.close();
                 connection.setReadTimeout(READ_TIMEOUT);
@@ -204,11 +206,22 @@ public class API {
         return scanner.hasNext() ? scanner.next() : "";
     }
 
+    private void setJsonString(String jsonString) {
+        this.jsonString = jsonString;
+    }
+
+    private String getJsonString() { return jsonString; }
 
     //static methods
 
     public static String getDataFromURL(String url) throws APIException{
         return getDataFromURL(url,true);
+    }
+
+
+
+    public static String getDataFromURL(String url, boolean useCache) throws APIException {
+        return getDataFromURL(url,null,useCache);
     }
 
     /**
@@ -220,10 +233,11 @@ public class API {
      * @return data as String from url request
      * @throws APIException
      */
-    public static String getDataFromURL(String url, boolean useCache) throws APIException{
+    public static String getDataFromURL(String url, String jsonString, boolean useCache) throws APIException{
        String data;
         try{//try to get the data with the current thread.  This will only work if it's on a background thread.
             API api = new API();
+            api.setJsonString(jsonString);
             data = api.fetchData(url);
         }catch (NetworkOnMainThreadException e){//if it was running on main thread, create our own background thread to handle it
             Log.d("API", "starting background async data pull");
