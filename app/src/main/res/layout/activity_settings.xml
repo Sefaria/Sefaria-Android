@@ -126,12 +126,12 @@
                 <RadioButton android:id="@+id/DB_use_API"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Use API"
+                    android:text="Use Internet"
                     android:onClick="onUseDB"/>
                 <RadioButton android:id="@+id/DB_use_full"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Use Full"
+                    android:text="Use Offline Library"
                     android:onClick="onUseDB"/>
 
             </RadioGroup>

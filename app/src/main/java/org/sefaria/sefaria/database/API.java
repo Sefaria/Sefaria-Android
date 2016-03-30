@@ -379,7 +379,7 @@ public class API {
      * @throws APIException
      */
     public static List<Text> getChapLinks(Text dummyChapText, int limit, int offset) {
-        List<Text> texts = new ArrayList<Text>();
+        List<Text> texts = new ArrayList<>();
         String place = createPlace(Book.getTitle(dummyChapText.bid), dummyChapText.levels);
         String url = LINK_URL + place + LINK_ZERO_TEXT;
 
@@ -390,6 +390,7 @@ public class API {
         return texts;
 
     }
+
 
     public static List<Text> getLinks(Text text, LinkFilter linkFilter) throws APIException {
         Log.d("API.Link","got starting LinksAPI");
@@ -408,10 +409,14 @@ public class API {
             //Log.d("api", "jsonData:" + jsonData.toString());
             for(int i=0;i<linksArray.length();i++){
                 JSONObject jsonLink = linksArray.getJSONObject(i);
-                String sourceRef = jsonLink.getString("sourceRef");
-                if(sourceRef.startsWith(book.getTitle(Util.Lang.EN))|| true){
+                String enTitle = jsonLink.getString("index_title");
+                String category = jsonLink.getString("category");
+                if(     linkFilter.depth_type == LinkFilter.DEPTH_TYPE.ALL ||
+                        (linkFilter.depth_type == LinkFilter.DEPTH_TYPE.CAT && category.equals(linkFilter.enTitle))||
+                        (linkFilter.depth_type == LinkFilter.DEPTH_TYPE.BOOK && enTitle.equals(linkFilter.enTitle))
+                         ){
                     Text tempText = new Text(jsonLink.getString("text"),jsonLink.getString("he"));
-                    tempText.bid = book.bid;//1;//new Book(jsonLink.getString("index_title")).bid;
+                    tempText.bid = new Book(enTitle).bid;
                     texts.add(tempText);
                 }
             }

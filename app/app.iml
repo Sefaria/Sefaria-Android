@@ -94,8 +94,8 @@
     <orderEntry type="jdk" jdkName="Android API 23 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="guava-19.0" level="project" />
-    <orderEntry type="library" exported="" name="jackson-annotations-2.6.0-rc3" level="project" />
     <orderEntry type="library" exported="" name="rxandroid-0.24.0" level="project" />
+    <orderEntry type="library" exported="" name="jackson-annotations-2.6.0-rc3" level="project" />
     <orderEntry type="library" exported="" name="gridlayout-v7-23.1.0" level="project" />
     <orderEntry type="library" exported="" name="jackson-databind-2.6.0-rc3" level="project" />
     <orderEntry type="library" exported="" name="lombok-1.16.4" level="project" />

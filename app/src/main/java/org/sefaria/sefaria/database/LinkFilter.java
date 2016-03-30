@@ -4,13 +4,17 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.sefaria.sefaria.MenuElements.MenuNode;
 import org.sefaria.sefaria.MenuElements.MenuState;
 import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class LinkFilter {
@@ -93,6 +97,9 @@ public class LinkFilter {
         else
             children.add(child);
         child.parent = this;
+        if(this.parent != null){
+            parent.count += child.count;
+        }
     }
 
     public static String getStringTree(LinkFilter lc,int tabs, boolean printToLog){
@@ -196,17 +203,91 @@ public class LinkFilter {
         this.addChild(linkCount);
     }
 
-    public static LinkFilter getFromLinks_API(Text text){
-        LinkFilter allLinkCounts = new LinkFilter(ALL_CONNECTIONS, 0, "הכל",DEPTH_TYPE.ALL);
+    private void addCount(){
+        count += 1;
+        if(parent != null){
+            parent.count +=1;
+            if(parent.parent != null){
+                parent.parent.count +=1;
+            }
+        }
+    }
+
+    public static LinkFilter getFromLinks_API(Text text) throws API.APIException {
+        LinkFilter allLinkCounts = makeAllLinkCounts();
+
+
+        Log.d("API.Link","got starting LinksAPI");
+        List<Text> texts = new ArrayList<>();
+        String place = text.getURL(false, false);
+        String url = API.LINK_URL + place + API.LINK_ZERO_TEXT;
+        String data = API.getDataFromURL(url);
+        if(data.length()==0)
+            return allLinkCounts;
+
+
+        try {
+            JSONArray linksArray = new JSONArray(data);
+            //Log.d("api", "jsonData:" + jsonData.toString());
+
+            Map<String,LinkFilter> booksMap = new HashMap<>();
+
+            for(int i=0;i<linksArray.length();i++){
+                JSONObject jsonLink = linksArray.getJSONObject(i);
+                String enTitle = jsonLink.getString("index_title");
+                LinkFilter bookFilter = booksMap.get(enTitle);
+                if(bookFilter != null){
+                    bookFilter.addCount();
+                    continue;
+                }
+                String category = jsonLink.getString("category");
+                String heTitle = jsonLink.getString("heTitle");
+                LinkFilter linkCount = new LinkFilter(enTitle,1,heTitle,DEPTH_TYPE.BOOK);
+                booksMap.put(enTitle,linkCount);
+                String heCategory;
+                LinkFilter groupFilter = null;
+                for(LinkFilter groupFilterTemp:allLinkCounts.getChildren()){
+                    if(category.equals(groupFilterTemp.enTitle)){
+                        groupFilter = groupFilterTemp;
+                        break;
+                    }
+                }
+                if(groupFilter == null){//didn't find the group already
+                    if(category.equals(QUOTING_COMMENTARY)) {
+                        heCategory = "מפרשים מצטטים";
+                    }
+                    else {
+                        heCategory = category;
+                        //the real he titles will be added in sortLinkCountCategories() if it finds match
+                    }
+                    groupFilter = new LinkFilter(category,0,heCategory ,DEPTH_TYPE.CAT);
+                    allLinkCounts.addChild(groupFilter);
+                }
+
+                groupFilter.addChild(linkCount);
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        allLinkCounts = allLinkCounts.sortLinkCountCategories();
+
+
         return allLinkCounts;
     }
 
-    public static LinkFilter getFromLinks_small(Text text){
-        //Log.d("LinkFilter", text.levels[0] + " starting...");
+    public static LinkFilter makeAllLinkCounts(){
+        return new LinkFilter(ALL_CONNECTIONS, 0, "הכל",DEPTH_TYPE.ALL);
+    }
+
+
+    public static LinkFilter getFromLinks_small(Text text) throws API.APIException {
+        //Log.d("LinkFilter", text.levels[0] + " starting...")
         if(Settings.getUseAPI()){
             return getFromLinks_API(text);
         }
-        LinkFilter allLinkCounts = new LinkFilter(ALL_CONNECTIONS, 0, "הכל",DEPTH_TYPE.ALL);
+        LinkFilter allLinkCounts = makeAllLinkCounts();
         LinkFilter commentaryGroup = getCommentaryOnChap(text.tid - 11, text.tid + 11, text.bid);//getting all commentaries +-11 of the current text
 
 
@@ -301,10 +382,14 @@ public class LinkFilter {
                 }
             }
         }
+
+
+
         //if there's any categories left out them back in
         for(LinkFilter child:getChildren()){
-            newLinkCount.addChild(child);
+            newLinkCount.addChild(child,child.enTitle.equals(COMMENTARY));
         }
+
 
         return newLinkCount;
     }

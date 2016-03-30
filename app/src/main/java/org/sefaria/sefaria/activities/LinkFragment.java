@@ -225,7 +225,13 @@ public class LinkFragment extends android.support.v4.app.Fragment {
 
 
             if (currState == State.MAIN) { //load new linkCounts
-                LinkFilter linkFilterAll = LinkFilter.getFromLinks_small(segment);
+                LinkFilter linkFilterAll = null;
+                try {
+                    linkFilterAll = LinkFilter.getFromLinks_small(segment);
+                } catch (API.APIException e) {
+                    API.makeAPIErrorToast(activity);
+                    linkFilterAll = LinkFilter.makeAllLinkCounts();
+                }
                 if (!linkSelectorBar.getHasBeenInitialized())
                     linkSelectorBar.initialUpdate(linkFilterAll,activity.getMenuLang());
 
