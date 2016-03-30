@@ -13,7 +13,11 @@ import android.widget.Toast;
 import org.sefaria.sefaria.activities.HomeActivity;
 import org.sefaria.sefaria.database.LinkFilter;
 
+import java.io.InputStream;
+import java.security.KeyStore;
 import java.util.Arrays;
+
+import javax.net.ssl.SSLSocketFactory;
 
 /**
  * Created by nss on 9/16/15.
@@ -148,5 +152,7 @@ public class MyApp extends Application {
         intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         return intent;
     }
+
+
 
 }
