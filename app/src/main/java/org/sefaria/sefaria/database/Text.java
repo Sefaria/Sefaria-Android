@@ -169,21 +169,23 @@ public class Text implements Parcelable {
     }
 
 
-
-
-    public String getURL(){
-        return getURL(false);
-    }
-    public String getURL(boolean useHTTPS){
+    /**
+     *
+     * @param prependDomain if you want to go to the GUI site
+     * @param useHTTPS if you want to bypass the Intent calling the app again
+     * @return
+     */
+    public String getURL(boolean prependDomain, boolean useHTTPS){
 
         StringBuilder str = new StringBuilder();
-        if(useHTTPS)
-            str.append("https://www.sefaria.org/");
-        else
-            str.append("http://www.sefaria.org/");
-
+        if(prependDomain) {
+            if (useHTTPS)
+                str.append("https://www.sefaria.org/");
+            else
+                str.append("http://www.sefaria.org/");
+        }
         if(parentNID != 0 && parentNode != null){
-            String path = parentNode.getPath(true,true,true) + "." + levels[0];
+            String path = parentNode.getPath(Util.Lang.EN,true, true, true) + "." + levels[0];
             return str + path;
         }
 
@@ -206,12 +208,17 @@ public class Text implements Parcelable {
     public String getLocationString(Util.Lang lang){
         Book book = new Book(bid);
         String str = book.getTitle(lang);
-        if(parentNode != null){ //It's a complex text
-            Log.d("Text", "getLocationStri using getPath()");
-            str = parentNode.getPath(false,true,false);
+        if(parentNode != null){ //It's a complex text... I Don't think it's always complex text... it could also be just from the Popupmenu for example
 
+            str = parentNode.getPath(lang,false, true, false);
+            if(str.charAt(str.length()-1) == '.' || str.charAt(str.length()-1) == ':')// it ends in a daf
+                str += " " + levels[0];
+            else
+                str += ":" + levels[0];
+            Log.d("Text", "getLocationStri using getPath()" + str);
             return str;
         }
+        Log.d("Text", "getLocationStri using levels");
         int sectionNum = book.sectionNamesL2B.length-1;
         boolean useSpace = true; //starting true so has space after book.title
         for(int i=levels.length-1;i>=0;i--){
@@ -221,7 +228,7 @@ public class Text implements Parcelable {
 
             if(book.sectionNamesL2B.length > sectionNum && sectionNum >0) {
                 isDaf = (book.sectionNamesL2B[sectionNum].equals("Daf"));
-                //str += " " + book.sectionNamesL2B[sectionNum];
+                //str += " " + book.psectionNamesL2B[sectionNum];
             }
             if(useSpace)
                 str +=  " " +  Header.getNiceGridNum(lang,num,isDaf);

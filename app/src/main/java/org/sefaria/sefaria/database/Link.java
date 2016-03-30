@@ -9,6 +9,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.util.Log;
 
+import org.sefaria.sefaria.Settings;
+
 public class Link {//implements Parcelable {
 
     public Link(Cursor cursor){
@@ -97,19 +99,13 @@ public class Link {//implements Parcelable {
      * @param linkFilter null if no filter or linkCount containing anything you want included in the filter (including LinkFilter linkfiler's children)
      * @return List<Text> for texts links to the input text
      */
-    public static List<Text> getLinkedTexts(Text text, LinkFilter linkFilter) {
+    public static List<Text> getLinkedTexts(Text text, LinkFilter linkFilter) throws API.APIException {
         List<Text> linkList = new ArrayList<Text>();
-        try{
-            linkList = getLinkedTextsFromDB(text, linkFilter);
-        }catch(SQLiteException e){
-            if(!e.toString().contains(API.NO_TEXT_MESSAGE)){
-                throw e; //don't know what the problem is so throw it back out
-            }
+        if(Settings.getUseAPI()){
             linkList = API.getLinks(text,linkFilter);
-        }catch(Exception e){
-            e.printStackTrace();
+        }else{
+            linkList = getLinkedTextsFromDB(text, linkFilter);
         }
-
         return linkList;
     }
 

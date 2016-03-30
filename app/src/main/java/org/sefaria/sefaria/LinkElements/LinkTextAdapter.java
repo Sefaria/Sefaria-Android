@@ -10,11 +10,13 @@ import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.activities.SuperTextActivity;
+import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.database.Link;
 import org.sefaria.sefaria.database.LinkFilter;
 import org.sefaria.sefaria.database.Text;
 import org.sefaria.sefaria.layouts.SefariaTextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -151,7 +153,12 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextHolder> {
         if (!linkCount.equals(currLinkCount)) {
             currLinkCount = linkCount;
             if (segment != null) //o/w no need to update itemList. You probably just initialized LinkTextAdapter
-                setItemList(Link.getLinkedTexts(segment, currLinkCount));
+                try {
+                    setItemList(Link.getLinkedTexts(segment, currLinkCount));
+                } catch (API.APIException e) {
+                    setItemList(new ArrayList<Text>());
+                    API.makeAPIErrorToast(activity);
+                }
         }
     }
     public LinkFilter getCurrLinkCount() { return currLinkCount; }
