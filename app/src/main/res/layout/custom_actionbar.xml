@@ -103,7 +103,6 @@
 
         </FrameLayout>
 
-
         <FrameLayout
             android:id="@+id/search_btn"
             android:layout_toLeftOf="@+id/menu_btn"
@@ -121,7 +120,12 @@
                 />
         </FrameLayout>
 
-
+        <!--<EditText
+            android:id="@+id/search_box"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_toRightOf="@+id/search_btn"/>-->
 
         <FrameLayout
             android:id="@+id/menu_btn"
