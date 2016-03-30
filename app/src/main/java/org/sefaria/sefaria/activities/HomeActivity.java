@@ -7,6 +7,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
+import org.apache.http.params.HttpParams;
+import org.json.JSONObject;
 import org.sefaria.sefaria.BuildConfig;
 import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MenuElements.MenuDirectRef;
@@ -29,6 +31,7 @@ import org.sefaria.sefaria.MenuElements.MenuNode;
 import org.sefaria.sefaria.MenuElements.MenuState;
 import org.sefaria.sefaria.layouts.SefariaTextView;
 
+import android.os.StrictMode;
 import android.util.Log;
 import android.util.Pair;
 import android.view.Gravity;
@@ -38,8 +41,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -366,10 +367,44 @@ public class HomeActivity extends Activity {
     View.OnClickListener searchClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            String jsonString = "{" +
+                        "\"sort\": [{" +
+                            "\"order\": {}" +
+                        "}]," +
+                        "\"query\": {" +
+                            "\"query_string\": {" +
+                                "\"query\": \"love\"," +
+                                "\"default_operator\": \"AND\"," +
+                                "\"fields\": [\"content\"]" +
+                            "}" +
+                        "}," +
+                        "\"highlight\": {" +
+                        "\"pre_tags\": [\"<b>\"]," +
+                        "\"post_tags\": [\"</b>\"]," +
+                        "\"fields\": {" +
+                            "\"content\": {\"fragment_size\": 200}" +
+                            "}" +
+                        "}" +
+                    "}";
+            try {
+                String yo = API.getDataFromURL(API.SEARCH_URL, jsonString, false);
+
+                Log.d("search",yo);
+            } catch (API.APIException e) {
+                e.printStackTrace();
+            }
+            /*final SchemeRegistry schemeRegistry = new SchemeRegistry();
+            schemeRegistry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
+            schemeRegistry.register(new Scheme("https", MyApp.createSefariaSSLSocketFactory(), 443));
+
+            // and then however you create your connection manager, I use ThreadSafeClientConnManager
+            final HttpParams params = new BasicHttpParams();
+            final PoolingClientConnManager cm = new PoolingClientConnManager(params,schemeRegistry);
 
             String connectionUrl = API.SEARCH_URL;
-
-            /*ElasticClient client;
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+            ElasticClient client;
             try {
                 ConnectorSettings settings
                         = ConnectorSettings
