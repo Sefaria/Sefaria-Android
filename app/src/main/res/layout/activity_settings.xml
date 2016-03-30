@@ -112,6 +112,31 @@
                     />
             </LinearLayout>
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Library Type"/>
+            <RadioGroup
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="10dp"
+                android:gravity="center"
+                >
+                <RadioButton android:id="@+id/DB_use_API"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Use API"
+                    android:onClick="onUseDB"/>
+                <RadioButton android:id="@+id/DB_use_full"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Use Full"
+                    android:onClick="onUseDB"/>
+
+            </RadioGroup>
+
+
             <!--
             <Button
                 android:layout_width="match_parent"

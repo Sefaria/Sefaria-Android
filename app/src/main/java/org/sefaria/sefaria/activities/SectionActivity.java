@@ -151,7 +151,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
     }
 
     private void visit(Text text){
-        String url = text.getURL(true);
+        String url = text.getURL(true,true);
         if(url.length() <1){
             Toast.makeText(SectionActivity.this,"Unable to go to site",Toast.LENGTH_SHORT).show();
             return;
@@ -169,7 +169,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
     private void share(Text text){
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
-        String str = text.getURL() + "\n\n" + Html.fromHtml(text.getText(textLang));
+        String str = text.getURL(true,false) + "\n\n" + Html.fromHtml(text.getText(textLang));
 
         sendIntent.putExtra(Intent.EXTRA_TEXT,str);
         sendIntent.setType("text/plain");
@@ -184,7 +184,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
         emailIntent.putExtra(Intent.EXTRA_TEXT,
 
                 HomeActivity.getEmailHeader()
-                + text.getURL() + "\n\n"
+                + text.getURL(true,false) + "\n\n"
                 + Html.fromHtml(text.getText(Util.Lang.BI))
                 + "\n\nDescribe the error: \n\n"
                 );
@@ -207,7 +207,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
                 String url = null;
                 for(Text subText:list){
                     if(url == null)
-                        url =  subText.getURL();
+                        url =  subText.getURL(true,false);
                     wholeChap.append("(" + subText.levels[0] + ") " + Html.fromHtml(subText.getText(textLang)) + "\n\n\n");
                 }
                 copiedText = url + "\n\n\n" + wholeChap.toString();

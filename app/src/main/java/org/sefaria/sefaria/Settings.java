@@ -5,7 +5,9 @@ import android.content.SharedPreferences;
 import android.util.Log;
 import android.util.Pair;
 
+import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.database.Book;
+import org.sefaria.sefaria.database.Database;
 import org.sefaria.sefaria.database.LinkFilter;
 import org.sefaria.sefaria.database.Node;
 import org.sefaria.sefaria.database.Text;
@@ -277,7 +279,7 @@ public class Settings {
 
     public static float getDefaultFontSize(){
         SharedPreferences settings = getGeneralSettings();
-        return settings.getFloat("defaultFontSize",MyApp.getContext().getResources().getDimension(R.dimen.default_text_font_size));
+        return settings.getFloat("defaultFontSize", MyApp.getContext().getResources().getDimension(R.dimen.default_text_font_size));
     }
 
     public static void setDefaultFontSize(float size){
@@ -294,7 +296,7 @@ public class Settings {
 
     public static long getDownloadSuccess(boolean clearValue){
         SharedPreferences settings = getGeneralSettings();
-        long time =  settings.getLong("DownloadSuccess",0);
+        long time =  settings.getLong("DownloadSuccess", 0);
         if(clearValue)
             setDownloadSuccess(0);
         return time;
@@ -302,8 +304,21 @@ public class Settings {
 
     public static void setDownloadSuccess(long time){
         SharedPreferences.Editor editor = getGeneralSettings().edit();
-        editor.putLong("DownloadSuccess",time);
+        editor.putLong("DownloadSuccess", time);
         editor.commit();
+    }
+
+    public static boolean getUseAPI(){
+        SharedPreferences settings = getGeneralSettings();
+        return  settings.getBoolean("useAPI",false);
+    }
+
+    public static void setUseAPI(boolean useAPI){
+        SharedPreferences.Editor editor = getGeneralSettings().edit();
+        editor.putBoolean("useAPI",useAPI);
+        editor.commit();
+        Database.clearInstance();//so that it will use the right database when you try
+        API.useAPI = -1;
     }
 
     public static class Link {
