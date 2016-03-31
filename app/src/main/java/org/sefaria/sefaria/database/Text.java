@@ -546,6 +546,9 @@ public class Text implements Parcelable {
             return false;
 
         Text text = (Text) o;
+        if(text.tid == 0 && this.tid ==0){
+            return super.equals(text);
+        }
         return text.tid == this.tid;
     }
 
