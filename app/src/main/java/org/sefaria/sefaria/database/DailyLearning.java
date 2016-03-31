@@ -108,15 +108,15 @@ public class DailyLearning {
 
     public static List<MenuDirectRef> getDailyLearnings(Context context){
         List<MenuDirectRef> dailyLearnings = new ArrayList<>();
-        MenuDirectRef dafMenu = getDafYomi(context);
-        if(dafMenu !=null){
-            dailyLearnings.add(dafMenu);
-        }
 
         for(MenuDirectRef menuDirectRef:getParsha(context)) {
             dailyLearnings.add(menuDirectRef);
         }
 
+        MenuDirectRef dafMenu = getDafYomi(context);
+        if(dafMenu !=null){
+            dailyLearnings.add(dafMenu);
+        }
 
         return dailyLearnings;
     }
