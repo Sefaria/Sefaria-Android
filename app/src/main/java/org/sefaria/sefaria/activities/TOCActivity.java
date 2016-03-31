@@ -15,6 +15,7 @@ import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.TOCElements.TOCGrid;
 import org.sefaria.sefaria.Util;
+import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Huffman;
 import org.sefaria.sefaria.database.Node;
@@ -76,7 +77,14 @@ public class TOCActivity extends AppCompatActivity {
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(cab);
 
-        List<Node> tocNodesRoots = book.getTOCroots();
+        List<Node> tocNodesRoots = null;
+        try {
+            tocNodesRoots = book.getTOCroots();
+        } catch (API.APIException e) {
+            API.makeAPIErrorToast(context);
+            finish();
+            return;
+        }
         Log.d("toc", "ROOTs SIZE " + tocNodesRoots.size());
         List<Book> commentaries = book.getAllCommentaries();
 

@@ -66,14 +66,9 @@ public class Book implements Parcelable {
      *  returns a list of roots to trees that respresent the Table of Contents for a book.
      * @return roots
      */
-    public List<Node> getTOCroots(){
+    public List<Node> getTOCroots() throws API.APIException {
         List<Node> TOCroots;
-        try {
-            TOCroots = Node.getRoots(this);
-        }catch (API.APIException e){
-            TOCroots = new ArrayList<>();
-            Log.e("api", "api exception getting node TOC");
-        }
+        TOCroots = Node.getRoots(this);
         return TOCroots;
     }
 

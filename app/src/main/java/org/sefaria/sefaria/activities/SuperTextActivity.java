@@ -616,10 +616,14 @@ public abstract class SuperTextActivity extends FragmentActivity {
         List<Text> textsList;
         try {
             Log.d("SuperTextAct", "trying to getTexts");
+            if(newNode == null){//This error occurs when using API and the book no longer exists in Sefaria (it could also happen other times we don't know about)
+                //TODO add error text into the list.
+                finish();
+                return new ArrayList<>();
+            }
             textsList = newNode.getTexts();
             return textsList;
         } catch (API.APIException e) {
-            Toast.makeText(SuperTextActivity.this, "API Exception!!!", Toast.LENGTH_SHORT).show();
             return new ArrayList<>();
         }
 
