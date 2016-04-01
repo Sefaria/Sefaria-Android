@@ -34,6 +34,7 @@ public class Text implements Parcelable {
     private byte [] heTextCompress;
     private boolean isChapter = false;
     private int parentNID;
+    private String ref = null;
 
     public String getText(Util.Lang lang)
     {
@@ -104,11 +105,12 @@ public class Text implements Parcelable {
     }
 
     // NEW CONSTRUCTOR FOR API:
-    public Text(String enText, String heText) {
+    public Text(String enText, String heText, int bid, String ref) {
         this.enText = enText;
         this.heText = heText;
         this.tid = 0;
-        this.bid = 0;
+        this.bid = bid;
+        this.ref = ref;
         levels = new int [MAX_LEVELS];
         this.displayNum = true;//unless we know otherwise, we'll default to display the verse Number
     }
@@ -207,6 +209,8 @@ public class Text implements Parcelable {
     }
 
     public String getLocationString(Util.Lang lang){
+        if(ref != null)
+            return ref;
         Book book = new Book(bid);
         String str = book.getTitle(lang);
         if(parentNode != null){ //It's a complex text... I Don't think it's always complex text... it could also be just from the Popupmenu for example

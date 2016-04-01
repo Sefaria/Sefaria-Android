@@ -21,7 +21,10 @@ import org.sefaria.sefaria.database.Text;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by nss on 3/31/16.
@@ -32,7 +35,7 @@ public class SearchAdapter extends ArrayAdapter<Text> {
     private Context context;
 
     public SearchAdapter(Context context, int resourceId, List<Text> results) {
-        super(context,resourceId);
+        super(context, resourceId);
         this.context = context;
         this.results = results;
     }
@@ -61,22 +64,23 @@ public class SearchAdapter extends ArrayAdapter<Text> {
         //TODO parse refs
         results.clear();
         clear();
+        Set<String> refSet = new HashSet<>();
         for (int i = 0; i < resultStrings.length(); i++) {
             JSONObject source = resultStrings.getJSONObject(i).getJSONObject("_source");
             String ref = source.getString("ref");
+            if(refSet.contains(ref)) {
+                continue;
+            }else {
+                refSet.add(ref);
+            }
+
             String content = resultStrings.getJSONObject(i).getJSONObject("highlight").getJSONArray("content").getString(0);
             String title = ref.replaceAll("\\s[0-9]+.*$", "");
-            Book book;
-            try {
-                book = new Book(title);
-                Text text = new Text(content,"");
-                text.bid = book.bid;
-                //TODO deal with levels stuff
 
-                results.add(text);
-            } catch (Book.BookNotFoundException e) {
-                continue;
-            }
+
+            Text text = new Text(content,"",Book.getBid(title),ref);
+            //TODO deal with levels stuff
+            results.add(text);
 
         }
         addAll(results);
