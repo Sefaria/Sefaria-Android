@@ -110,6 +110,7 @@
             android:layout_height="match_parent"
             android:paddingRight="@dimen/custom_action_bar_button_to_side_padding"
             android:layout_margin="0dp"
+            android:background="?selectableItemBackgroundBorderless"
             >
             <ImageView
                 android:layout_width="@dimen/custom_action_bar_pic_size"

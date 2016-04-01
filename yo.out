@@ -1,0 +1,114 @@
+{
+  "took" : 3,
+  "timed_out" : false,
+  "_shards" : {
+    "total" : 5,
+    "successful" : 5,
+    "failed" : 0
+  },
+  "hits" : {
+    "total" : 1871,
+    "max_score" : null,
+    "hits" : [ {
+      "_index" : "sefaria",
+      "_type" : "text",
+      "_id" : "Genesis 17:2 (The Rashi chumash by Rabbi Shraga Silverstein [en])",
+      "_score" : null,
+      "_source":{"he_content": "", "path": "Tanach/Torah/Genesis", "titleVariants": ["Beresheet", "Bereshit", "Genesis", "Gen.", "Ber", "Breishit", "Bereishit", "Ber.", "Gen"], "heRef": "\u05d1\u05e8\u05d0\u05e9\u05d9\u05ea \u05d9\u05f4\u05d6:\u05d1\u05f3", "categories": ["Tanach", "Torah"], "lang": "en", "title": "Genesis Chapter 17 Verse 2 (The Rashi chumash by Rabbi Shraga Silverstein)", "content": "\tAnd I shall set My covenant [of love and of inheritance of the land (through the mitzvah of circumcision)] between Me and you, and I will increase you exceedingly.", "version": "The Rashi chumash by Rabbi Shraga Silverstein", "ref": "Genesis 17:2", "order": "A00000000170002"},
+      "highlight" : {
+        "content" : [ "\tAnd I shall set My covenant [of <b>love</b> and of inheritance of the land (through the mitzvah of circumcision)] between Me and you, and I will increase you exceedingly." ]
+      },
+      "sort" : [ "A00000000170002" ]
+    }, {
+      "_index" : "sefaria",
+      "_type" : "text",
+      "_id" : "Genesis 22:2 (Sefaria Community Translation [en])",
+      "_score" : null,
+      "_source":{"he_content": "", "path": "Tanach/Torah/Genesis", "titleVariants": ["Beresheet", "Bereshit", "Genesis", "Gen.", "Ber", "Breishit", "Bereishit", "Ber.", "Gen"], "heRef": "\u05d1\u05e8\u05d0\u05e9\u05d9\u05ea \u05db\u05f4\u05d1:\u05d1\u05f3", "categories": ["Tanach", "Torah"], "lang": "en", "title": "Genesis Chapter 22 Verse 2 (Sefaria Community Translation)", "content": "[Elohim] said, \u201cPlease take your son, your only one, who you love \u2014 Yitzhak \u2014 and go to the land of Moriah", "version": "Sefaria Community Translation", "ref": "Genesis 22:2", "order": "A00000000220002"},
+      "highlight" : {
+        "content" : [ "[Elohim] said, “Please take your son, your only one, who you <b>love</b> — Yitzhak — and go to the land of Moriah" ]
+      },
+      "sort" : [ "A00000000220002" ]
+    }, {
+      "_index" : "sefaria",
+      "_type" : "text",
+      "_id" : "Genesis 22:2 (Modernized Tanakh - Based on JPS 1917, Edited by Adam Cohn [en])",
+      "_score" : null,
+      "_source":{"he_content": "", "path": "Tanach/Torah/Genesis", "titleVariants": ["Beresheet", "Bereshit", "Genesis", "Gen.", "Ber", "Breishit", "Bereishit", "Ber.", "Gen"], "heRef": "\u05d1\u05e8\u05d0\u05e9\u05d9\u05ea \u05db\u05f4\u05d1:\u05d1\u05f3", "categories": ["Tanach", "Torah"], "lang": "en", "title": "Genesis Chapter 22 Verse 2 (Modernized Tanakh - Based on JPS 1917, Edited by Adam Cohn)", "content": "And He said: \u2018Take now your son, your only son, who you love, Isaac, and go to the land of Moriah; and offer him there for a burnt-offering on one of the mountains which I will tell you.\u2019", "version": "Modernized Tanakh - Based on JPS 1917, Edited by Adam Cohn", "ref": "Genesis 22:2", "order": "A00000000220002"},
+      "highlight" : {
+        "content" : [ "And He said: ‘Take now your son, your only son, who you <b>love</b>, Isaac, and go to the land of Moriah; and offer him there for a burnt-offering on one of the mountains which I will tell you.’" ]
+      },
+      "sort" : [ "A00000000220002" ]
+    }, {
+      "_index" : "sefaria",
+      "_type" : "text",
+      "_id" : "Genesis 22:2 (The Rashi chumash by Rabbi Shraga Silverstein [en])",
+      "_score" : null,
+      "_source":{"he_content": "", "path": "Tanach/Torah/Genesis", "titleVariants": ["Beresheet", "Bereshit", "Genesis", "Gen.", "Ber", "Breishit", "Bereishit", "Ber.", "Gen"], "heRef": "\u05d1\u05e8\u05d0\u05e9\u05d9\u05ea \u05db\u05f4\u05d1:\u05d1\u05f3", "categories": ["Tanach", "Torah"], "lang": "en", "title": "Genesis Chapter 22 Verse 2 (The Rashi chumash by Rabbi Shraga Silverstein)", "content": "\tAnd He said: Take, I pray you, [(Stand firm for Me in this trial)] your son [(Abraham: I have two sons)], your only one [(Abraham: Each is the only one of his mother)], whom you love [(Abraham: I love them both)] \u2014 Isaac [(All this, so as not to overwhelm Abraham by springing the command upon him, and, also, to endear the mitzvah to him)], and go to the land of Moriah [Jerusalem], and bring him up there as a burnt-offering on one of the mountains that I shall indicate to you.", "version": "The Rashi chumash by Rabbi Shraga Silverstein", "ref": "Genesis 22:2", "order": "A00000000220002"},
+      "highlight" : {
+        "content" : [ "\tAnd He said: Take, I pray you, [(Stand firm for Me in this trial)] your son [(Abraham: I have two sons)], your only one [(Abraham: Each is the only one of his mother)], whom you <b>love</b> [(Abraham: I", " <b>love</b> them both)] — Isaac [(All this, so as not to overwhelm Abraham by springing the command upon him, and, also, to endear the mitzvah to him)], and go to the land of Moriah [Jerusalem], and bring him up there as a burnt-offering on one of the mountains that I shall indicate to you." ]
+      },
+      "sort" : [ "A00000000220002" ]
+    }, {
+      "_index" : "sefaria",
+      "_type" : "text",
+      "_id" : "Genesis 22:2 (Rabbi Mike Feuer, Jerusalem Anthology [en])",
+      "_score" : null,
+      "_source":{"he_content": "", "path": "Tanach/Torah/Genesis", "titleVariants": ["Beresheet", "Bereshit", "Genesis", "Gen.", "Ber", "Breishit", "Bereishit", "Ber.", "Gen"], "heRef": "\u05d1\u05e8\u05d0\u05e9\u05d9\u05ea \u05db\u05f4\u05d1:\u05d1\u05f3", "categories": ["Tanach", "Torah"], "lang": "en", "title": "Genesis Chapter 22 Verse 2 (Rabbi Mike Feuer, Jerusalem Anthology)", "content": "And He said, \"Please take your son, your only one, whom you love, yea, Isaac, and go away to the land of Moriah and bring him up there for a burnt offering on one of the mountains, of which I will tell you.\"", "version": "Rabbi Mike Feuer, Jerusalem Anthology", "ref": "Genesis 22:2", "order": "A00000000220002"},
+      "highlight" : {
+        "content" : [ "And He said, \"Please take your son, your only one, whom you <b>love</b>, yea, Isaac, and go away to the land of Moriah and bring him up there for a burnt offering on one of the mountains, of which I will tell you.\"" ]
+      },
+      "sort" : [ "A00000000220002" ]
+    }, {
+      "_index" : "sefaria",
+      "_type" : "text",
+      "_id" : "Genesis 27:4 (The Holy Scriptures: A New Translation (JPS 1917) [en])",
+      "_score" : null,
+      "_source":{"he_content": "", "path": "Tanach/Torah/Genesis", "titleVariants": ["Beresheet", "Bereshit", "Genesis", "Gen.", "Ber", "Breishit", "Bereishit", "Ber.", "Gen"], "heRef": "\u05d1\u05e8\u05d0\u05e9\u05d9\u05ea \u05db\u05f4\u05d6:\u05d3\u05f3", "categories": ["Tanach", "Torah"], "lang": "en", "title": "Genesis Chapter 27 Verse 4 (The Holy Scriptures: A New Translation (JPS 1917))", "content": "and make me savoury food, such as I love, and bring it to me, that I may eat; that my soul may bless thee before I die.\u2019", "version": "The Holy Scriptures: A New Translation (JPS 1917)", "ref": "Genesis 27:4", "order": "A00000000270004"},
+      "highlight" : {
+        "content" : [ "and make me savoury food, such as I <b>love</b>, and bring it to me, that I may eat; that my soul may bless thee before I die.’" ]
+      },
+      "sort" : [ "A00000000270004" ]
+    }, {
+      "_index" : "sefaria",
+      "_type" : "text",
+      "_id" : "Genesis 27:4 (Modernized Tanakh - Based on JPS 1917, Edited by Adam Cohn [en])",
+      "_score" : null,
+      "_source":{"he_content": "", "path": "Tanach/Torah/Genesis", "titleVariants": ["Beresheet", "Bereshit", "Genesis", "Gen.", "Ber", "Breishit", "Bereishit", "Ber.", "Gen"], "heRef": "\u05d1\u05e8\u05d0\u05e9\u05d9\u05ea \u05db\u05f4\u05d6:\u05d3\u05f3", "categories": ["Tanach", "Torah"], "lang": "en", "title": "Genesis Chapter 27 Verse 4 (Modernized Tanakh - Based on JPS 1917, Edited by Adam Cohn)", "content": "and make me tasty food, that I love, and bring it to me, so I may eat; that my soul may bless you before I die.\u2019", "version": "Modernized Tanakh - Based on JPS 1917, Edited by Adam Cohn", "ref": "Genesis 27:4", "order": "A00000000270004"},
+      "highlight" : {
+        "content" : [ "and make me tasty food, that I <b>love</b>, and bring it to me, so I may eat; that my soul may bless you before I die.’" ]
+      },
+      "sort" : [ "A00000000270004" ]
+    }, {
+      "_index" : "sefaria",
+      "_type" : "text",
+      "_id" : "Genesis 29:20 (Modernized Tanakh - Based on JPS 1917, Edited by Adam Cohn [en])",
+      "_score" : null,
+      "_source":{"he_content": "", "path": "Tanach/Torah/Genesis", "titleVariants": ["Beresheet", "Bereshit", "Genesis", "Gen.", "Ber", "Breishit", "Bereishit", "Ber.", "Gen"], "heRef": "\u05d1\u05e8\u05d0\u05e9\u05d9\u05ea \u05db\u05f4\u05d8:\u05db\u05f3", "categories": ["Tanach", "Torah"], "lang": "en", "title": "Genesis Chapter 29 Verse 20 (Modernized Tanakh - Based on JPS 1917, Edited by Adam Cohn)", "content": "And Jacob served seven years for Rachel; and they seemed to him but a few days, for the love he had for her.", "version": "Modernized Tanakh - Based on JPS 1917, Edited by Adam Cohn", "ref": "Genesis 29:20", "order": "A00000000290020"},
+      "highlight" : {
+        "content" : [ "And Jacob served seven years for Rachel; and they seemed to him but a few days, for the <b>love</b> he had for her." ]
+      },
+      "sort" : [ "A00000000290020" ]
+    }, {
+      "_index" : "sefaria",
+      "_type" : "text",
+      "_id" : "Genesis 29:20 (The Holy Scriptures: A New Translation (JPS 1917) [en])",
+      "_score" : null,
+      "_source":{"he_content": "", "path": "Tanach/Torah/Genesis", "titleVariants": ["Beresheet", "Bereshit", "Genesis", "Gen.", "Ber", "Breishit", "Bereishit", "Ber.", "Gen"], "heRef": "\u05d1\u05e8\u05d0\u05e9\u05d9\u05ea \u05db\u05f4\u05d8:\u05db\u05f3", "categories": ["Tanach", "Torah"], "lang": "en", "title": "Genesis Chapter 29 Verse 20 (The Holy Scriptures: A New Translation (JPS 1917))", "content": "And Jacob served seven years for Rachel; and they seemed unto him but a few days, for the love he had to her.", "version": "The Holy Scriptures: A New Translation (JPS 1917)", "ref": "Genesis 29:20", "order": "A00000000290020"},
+      "highlight" : {
+        "content" : [ "And Jacob served seven years for Rachel; and they seemed unto him but a few days, for the <b>love</b> he had to her." ]
+      },
+      "sort" : [ "A00000000290020" ]
+    }, {
+      "_index" : "sefaria",
+      "_type" : "text",
+      "_id" : "Genesis 29:20 (The Rashi chumash by Rabbi Shraga Silverstein [en])",
+      "_score" : null,
+      "_source":{"he_content": "", "path": "Tanach/Torah/Genesis", "titleVariants": ["Beresheet", "Bereshit", "Genesis", "Gen.", "Ber", "Breishit", "Bereishit", "Ber.", "Gen"], "heRef": "\u05d1\u05e8\u05d0\u05e9\u05d9\u05ea \u05db\u05f4\u05d8:\u05db\u05f3", "categories": ["Tanach", "Torah"], "lang": "en", "title": "Genesis Chapter 29 Verse 20 (The Rashi chumash by Rabbi Shraga Silverstein)", "content": "\tAnd Jacob served seven years for Rachel, and they were in his eyes like several days in his love for her.", "version": "The Rashi chumash by Rabbi Shraga Silverstein", "ref": "Genesis 29:20", "order": "A00000000290020"},
+      "highlight" : {
+        "content" : [ "\tAnd Jacob served seven years for Rachel, and they were in his eyes like several days in his <b>love</b> for her." ]
+      },
+      "sort" : [ "A00000000290020" ]
+    } ]
+  }
+}

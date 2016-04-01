@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -90,20 +91,8 @@ public class API {
                 DataOutputStream wr = new DataOutputStream(connection.getOutputStream ());
                 //wr.writeBytes(otherParametersUrServiceNeed);
 
-
-                try{
-                    JSONObject jsonObject = new JSONObject(
-                        //"{\"sort\":[{\"order\":{}}],\"highlight\":{\"pre_tags\":[\"<b>\"],\"post_tags\":[\"</b>\"],\"fields\":{\"content\":{\"fragment_size\":200}}},\"query\":{\"query_string\":{\"query\":\"fish\",\"default_operator\":\"AND\",\"fields\":[\"content\"]}},\"aggs\":{\"category\":{\"terms\":{\"field\":\"path\",\"size\":0}}}}"
-                        //"{\"sort\":[{\"order\":{}}],\"highlight\":{\"pre_tags\":[\"<b>\"],\"post_tags\":[\"</b>\"],\"fields\":{\"content\":{\"fragment_size\":200}}},\"query\":{\"filtered\":{\"query\":{\"query_string\":{\"query\":\"fish\",\"default_operator\":\"AND\",\"fields\":[\"content\"]}},\"filter\":{\"or\":[{\"regexp\":{\"path\":\"Tosefta.*\"}}]}}}}"
-                        //"\"{\"sort\":[{\"order\":{}}],\"highlight\":{\"pre_tags\":[\"<b>\"],\"post_tags\":[\"</b>\"],\"fields\":{\"content\":{\"fragment_size\":200}}},\"query\":{\"query_string\":{\"query\":\"Moshe\",\"default_operator\":\"AND\",\"fields\":[\"content\"]}},\"aggs\":{\"category\":{\"terms\":{\"field\":\"path\",\"size\":0}}}}\""
-                        //"\"{\"sort\":[{\"order\":{}}],\"highlight\":{\"pre_tags\":[\"<b>\"],\"post_tags\":[\"</b>\"],\"fields\":{\"content\":{\"fragment_size\":200}}},\"query\":{\"query_string\":{\"query\":\"Moshe\",\"default_operator\":\"AND\",\"fields\":[\"content\"]}}}\""
-                        getJsonString()
-                    );
-                    wr.writeBytes(jsonObject.toString());
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
+                byte[] buf = jsonString.getBytes("UTF-8");
+                wr.write(buf, 0, buf.length);
                 wr.flush();
                 wr.close();
                 connection.setReadTimeout(READ_TIMEOUT);
@@ -205,12 +194,6 @@ public class API {
         return scanner.hasNext() ? scanner.next() : "";
     }
 
-    private void setJsonString(String jsonString) {
-        this.jsonString = jsonString;
-    }
-
-    private String getJsonString() { return jsonString; }
-
     //static methods
 
     public static String getDataFromURL(String url) throws APIException{
@@ -236,11 +219,12 @@ public class API {
        String data;
         try{//try to get the data with the current thread.  This will only work if it's on a background thread.
             API api = new API();
-            api.setJsonString(jsonString);
+            api.jsonString = jsonString;
             data = api.fetchData(url);
         }catch (NetworkOnMainThreadException e){//if it was running on main thread, create our own background thread to handle it
             API api = getDataFromURLAsync(url);//creating an instance of api which will fetch data
             api.alreadyDisplayedURL = true;
+            api.jsonString = jsonString;
             data = api.getData();//waiting for data to be returned from internet
         }
 
