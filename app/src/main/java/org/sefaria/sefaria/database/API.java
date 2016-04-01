@@ -133,8 +133,9 @@ public class API {
      * @param url
      * @return api;
      */
-    public static API getDataFromURLAsync(String url){
+    public static API getDataFromURLAsync(String url, String jsonString){
         API api = new API();
+        api.jsonString = jsonString;
         api.new GetDataTask().execute(url);
         return api;
     }
@@ -222,9 +223,8 @@ public class API {
             api.jsonString = jsonString;
             data = api.fetchData(url);
         }catch (NetworkOnMainThreadException e){//if it was running on main thread, create our own background thread to handle it
-            API api = getDataFromURLAsync(url);//creating an instance of api which will fetch data
+            API api = getDataFromURLAsync(url,jsonString);//creating an instance of api which will fetch data
             api.alreadyDisplayedURL = true;
-            api.jsonString = jsonString;
             data = api.getData();//waiting for data to be returned from internet
         }
 
