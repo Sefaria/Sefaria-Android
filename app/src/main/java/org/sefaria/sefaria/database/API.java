@@ -288,6 +288,10 @@ public class API {
 
             int stop = Math.max(textArrayBig.length(), heArrayBig.length());
 
+            int startLevel1 = levels[0];
+            if(startLevel1 == 0)
+                startLevel1 = 1;
+
             for (int k = 0; k < stop; k++) {
                 JSONArray textArray;
                 JSONArray heArray;
@@ -323,11 +327,16 @@ public class API {
                     for (int j = 0; j < levels.length; j++) {
                         text.levels[j] = levels[j]; //TODO get full level info in there
                     }
-                    text.levels[0] = i + 1;
+
+                    //only do it at the 2nd level, but currently this can only haddle at this level, but can't handle 3 levels of depth in a ref.
+                    text.levels[1] += k;
+
+                    text.levels[0] = i + startLevel1;
 
 
                     textList.add(text);
                 }
+                startLevel1 = 1;
             }
         }catch(JSONException e){
             e.printStackTrace();
