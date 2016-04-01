@@ -478,7 +478,7 @@ public class Searching {
         return tidMinMax;
     }
 
-
+/*
     private ArrayList<Text> APISearch(String query, String[] filterArray) throws API.APIException{
         int offset = 10;
         ArrayList<Text> resultsList = API.getSearchResults(query, filterArray, APIStart, offset);
@@ -487,7 +487,7 @@ public class Searching {
             isDoneSearching = true;
         return resultsList;
     }
-
+*/
     private static final int SEARCH_BUFFER_SIZE = 4;
 
 

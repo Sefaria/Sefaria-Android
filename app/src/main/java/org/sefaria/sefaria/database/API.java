@@ -49,7 +49,6 @@ public class API {
     private boolean alreadyDisplayedURL = false;
 
     private String jsonString; //if null, no json to send. if not null send this jsonObject along with url request
-    String sefariaData = null;
     final static int READ_TIMEOUT = 10000;
     final static int CONNECT_TIMEOUT = 10000;
     final static int SPIN_TIMEOUT = 8000;
@@ -302,9 +301,7 @@ public class API {
                     } catch (JSONException e) {
                         Log.d("api", e.toString());
                     }
-                    Text text = new Text(enText, heText);
-
-                    text.bid = bid;
+                    Text text = new Text(enText, heText,bid,null);
                     for (int j = 0; j < levels.length; j++) {
                         text.levels[j] = levels[j]; //TODO get full level info in there
                     }
@@ -350,7 +347,7 @@ public class API {
         }
     }
 
-
+/*
     public static ArrayList<Text> getSearchResults(String query,String[] filterArray, int from, int offset) throws APIException {
         Log.d("Searching", "starting api");
         ArrayList<Text> texts = new ArrayList<>();
@@ -390,7 +387,7 @@ public class API {
 
     }
 
-
+*/
     /**
      * Get links that are tied to the whole chapter, but not to a specific verse.
      * @param dummyChapText
@@ -438,12 +435,12 @@ public class API {
                 JSONObject jsonLink = linksArray.getJSONObject(i);
                 String enTitle = jsonLink.getString("index_title");
                 String category = jsonLink.getString("category");
+                String ref = jsonLink.getString("ref");
                 if(     linkFilter.depth_type == LinkFilter.DEPTH_TYPE.ALL ||
                         (linkFilter.depth_type == LinkFilter.DEPTH_TYPE.CAT && category.equals(linkFilter.enTitle))||
                         (linkFilter.depth_type == LinkFilter.DEPTH_TYPE.BOOK && enTitle.equals(linkFilter.enTitle))
                          ){
-                    Text tempText = new Text(removeEmpty(jsonLink.getString("text")),removeEmpty(jsonLink.getString("he")));
-                    tempText.bid = new Book(enTitle).bid;
+                    Text tempText = new Text(removeEmpty(jsonLink.getString("text")),removeEmpty(jsonLink.getString("he")),Book.getBid(enTitle),ref);
                     texts.add(tempText);
                 }
             }
