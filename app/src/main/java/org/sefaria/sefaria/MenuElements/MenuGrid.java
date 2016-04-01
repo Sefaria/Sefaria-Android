@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
+import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.activities.MenuActivity;
 import org.sefaria.sefaria.activities.SuperTextActivity;
 import org.sefaria.sefaria.activities.TOCActivity;
@@ -322,9 +323,10 @@ public class MenuGrid extends LinearLayout {
             boolean goToTOC = false;
             Book book = null;
             try {
-                if(false && API.useAPI()){ //There's no DB //TODO make it work with API
-                    Toast.makeText(context,context.getString(R.string.need_library),Toast.LENGTH_SHORT).show();
-                    return;
+                if(!Settings.getUseAPI() && API.useAPI()){ //There's no DB //TODO make it work with API
+                    Settings.setUseAPI(true);
+                    //Toast.makeText(context,context.getString(R.string.need_library),Toast.LENGTH_SHORT).show();
+                    //return;
                 }
                 book = new Book(newMenuState.getCurrNode().getTitle(Util.Lang.EN));
                 if(goToTOC){
