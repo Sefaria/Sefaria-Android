@@ -42,7 +42,8 @@ public class Node implements  Parcelable{
     private int textDepth;
     private int startTid;
     private int endTid;
-    private String extraTids;
+    private String extraTidsRef;
+    private String startLevels;
     private List<Node> children;
     private List<Text> textList;
     private boolean isTextSection = false;
@@ -110,6 +111,7 @@ public class Node implements  Parcelable{
     }
 
     public Node getParent(){return parent;}
+    public String getExtraTidsRef() {return extraTidsRef;}
 
     /**
      * @param lang
@@ -309,13 +311,17 @@ public class Node implements  Parcelable{
             textDepth = cursor.getInt(10);
             startTid = cursor.getInt(11);
             endTid = cursor.getInt(12);
-            extraTids = cursor.getString(13);
+            extraTidsRef = cursor.getString(13);
+            try{ //this is to make it work with databases older than version 150
+                startLevels = cursor.getString(14);//This might crash on old DBs
+            }catch (Exception e2){}
 
             setFlagsFromNodeType(nodeType, siblingNum);
+
         }
         catch(Exception e){
             GoogleTracker.sendException(e);
-            Log.e("Node", e.toString());
+            Log.e("Node", "failure to pull from DB" +  e.toString());
             nid = 0;
             return;
         }
@@ -698,7 +704,7 @@ public class Node implements  Parcelable{
                 textList = Text.getWithTids(startTid, endTid);
             }
             else{
-                Log.e("Node.getTexts", "My start and end TIDs are no good for trying to get ref. TID:" + startTid + "-" + endTid + " ref:" + extraTids);
+                Log.e("Node.getTexts", "My start and end TIDs are no good for trying to get ref. TID:" + startTid + "-" + endTid + " ref:" + extraTidsRef);
                 textList = new ArrayList<>();
             }
         }else if(isComplex){
@@ -748,20 +754,29 @@ public class Node implements  Parcelable{
         //TODO make work for more than 2 levels
 
         List<Integer> levels = new ArrayList<>();
-        levels.add(0);
-        if(isGridItem) {
-            levels.add(gridNum);
-        }
-        Node parent = this.parent;
-        while(parent.nid == NID_CHAP_NO_NID) {
-            levels.add(parent.gridNum);
-            parent = parent.parent;
-        }
 
+        if(isRef){
+            String [] strArray = Util.str2strArray(startLevels.replace(" ",""));
+            for(String level: strArray){
+                Log.d("Node", "start.level: " + level);
+                levels.add(Integer.valueOf(level));
+            }
+        }else {
+            levels.add(0);
+            if (isGridItem) {
+                levels.add(gridNum);
+            }
+            Node parent = this.parent;
+            while (parent.nid == NID_CHAP_NO_NID) {
+                levels.add(parent.gridNum);
+                parent = parent.parent;
+            }
+        }
         int [] levels2 = new int [levels.size()];
         for(int i=0;i<levels.size();i++){
             levels2[i] = levels.get(i);
-        }return levels2;
+        }
+        return levels2;
     }
 
     /**
@@ -925,7 +940,7 @@ public class Node implements  Parcelable{
 
     @Override
     public String toString() {
-        String str = "{"+  nid + ",bid:" + bid + ",titles:" + enTitle + " " + heTitle + ",sections:" + Util.array2str(sectionNames) + "," + Util.array2str(heSectionNames) + ",structN:" + structNum + ",textD:" + textDepth + ",tids:" + startTid + "-" + endTid + ",ref:" + extraTids;
+        String str = "{"+  nid + ",bid:" + bid + ",titles:" + enTitle + " " + heTitle + ",sections:" + Util.array2str(sectionNames) + "," + Util.array2str(heSectionNames) + ",structN:" + structNum + ",textD:" + textDepth + ",tids:" + startTid + "-" + endTid + ",ref:" + extraTidsRef;
         str += ",gridN:" + getNiceGridNum(Util.Lang.EN);
         //str +=  ",siblingN:" + siblingNum;
         str += getNodeTypeFlagsStr();

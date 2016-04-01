@@ -225,7 +225,13 @@ public class LinkFragment extends android.support.v4.app.Fragment {
 
 
             if (currState == State.MAIN) { //load new linkCounts
-                LinkFilter linkFilterAll = LinkFilter.getFromLinks_small(segment);
+                LinkFilter linkFilterAll = null;
+                try {
+                    linkFilterAll = LinkFilter.getFromLinks_small(segment);
+                } catch (API.APIException e) {
+                    API.makeAPIErrorToast(activity);
+                    linkFilterAll = LinkFilter.makeAllLinkCounts();
+                }
                 if (!linkSelectorBar.getHasBeenInitialized())
                     linkSelectorBar.initialUpdate(linkFilterAll,activity.getMenuLang());
 
@@ -241,7 +247,7 @@ public class LinkFragment extends android.support.v4.app.Fragment {
             } else { //CAT load new cat links
 
             }
-            if(!segment.isChapter()) Log.d("frag", "UPDATE FRAG TEXT " + segment.levels[0]);
+            //if(!segment.isChapter()) Log.d("frag", "UPDATE FRAG TEXT " + segment.levels[0]);
             linkRecycler.scrollToPosition(0); //reset scroll to top
 
         } else {

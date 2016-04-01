@@ -282,41 +282,67 @@ public class API {
             //Log.d("api", "jsonData:" + jsonData.toString());
 
             //TODO make work for 1 and 3 (or more) levels of depth (exs. Hadran, Arbaah Turim)
-            JSONArray textArray = jsonData.getJSONArray("text");
-            JSONArray heArray = jsonData.getJSONArray("he");
+            JSONArray textArrayBig = jsonData.getJSONArray("text");
+            JSONArray heArrayBig = jsonData.getJSONArray("he");
 
 
-            int maxLength = Math.max(textArray.length(), heArray.length());
-            //Log.d("api",textArray.toString() + " " + heArray.toString());
-            for (int i = 0; i < maxLength; i++) {
-                //get the texts if i is less it's within the length (otherwise use "")
-                String enText = "";
-                try{
-                    enText = textArray.getString(i);
-                }catch(JSONException e){
-                    Log.d("api",e.toString());
+            int stop = Math.max(textArrayBig.length(), heArrayBig.length());
+
+            int startLevel1 = levels[0];
+            if(startLevel1 == 0)
+                startLevel1 = 1;
+
+            for (int k = 0; k < stop; k++) {
+                JSONArray textArray;
+                JSONArray heArray;
+                try {
+                    textArray = textArrayBig.getJSONArray(k);
+                    heArray = heArrayBig.getJSONArray(k);
+                } catch (JSONException e1) {
+                    Log.d("API","didn't find sub arrays in text");
+                    textArray = textArrayBig;
+                    heArray = heArrayBig;
+                    stop = 0;
                 }
-                String heText = "";
-                try{
-                    heText = heArray.getString(i);
-                }catch(JSONException e){
-                    Log.d("api",e.toString());
+
+                int maxLength = Math.max(textArray.length(), heArray.length());
+                //Log.d("api",textArray.toString() + " " + heArray.toString());
+                for (int i = 0; i < maxLength; i++) {
+                    //get the texts if i is less it's within the length (otherwise use "")
+                    String enText = "";
+                    try {
+                        enText = textArray.getString(i);
+                    } catch (JSONException e) {
+                        Log.d("api", e.toString());
+                    }
+                    String heText = "";
+                    try {
+                        heText = heArray.getString(i);
+                    } catch (JSONException e) {
+                        Log.d("api", e.toString());
+                    }
+                    Text text = new Text(enText, heText);
+
+                    text.bid = bid;
+                    for (int j = 0; j < levels.length; j++) {
+                        text.levels[j] = levels[j]; //TODO get full level info in there
+                    }
+
+                    //only do it at the 2nd level, but currently this can only haddle at this level, but can't handle 3 levels of depth in a ref.
+                    text.levels[1] += k;
+
+                    text.levels[0] = i + startLevel1;
+
+
+                    textList.add(text);
                 }
-                Text text = new Text(enText, heText);
-
-                text.bid = bid;
-                for(int j=0;j<levels.length;j++){
-                    text.levels[j] = levels[j]; //TODO get full level info in there
-                }
-                text.levels[0] = i+1;
-
-
-                textList.add(text);
+                startLevel1 = 1;
             }
-        } catch (JSONException e) {
+        }catch(JSONException e){
             e.printStackTrace();
             Log.e("api", "error processing json data");
         }
+
         return textList;
 
     }
@@ -393,7 +419,7 @@ public class API {
      * @throws APIException
      */
     public static List<Text> getChapLinks(Text dummyChapText, int limit, int offset) {
-        List<Text> texts = new ArrayList<Text>();
+        List<Text> texts = new ArrayList<>();
         String place = createPlace(Book.getTitle(dummyChapText.bid), dummyChapText.levels);
         String url = LINK_URL + place + LINK_ZERO_TEXT;
 
@@ -403,6 +429,13 @@ public class API {
 
         return texts;
 
+    }
+
+    private static String removeEmpty(String str){
+        if(str.equals("[]"))
+            return "";
+        else
+            return str;
     }
 
     public static List<Text> getLinks(Text text, LinkFilter linkFilter) throws APIException {
@@ -422,10 +455,14 @@ public class API {
             //Log.d("api", "jsonData:" + jsonData.toString());
             for(int i=0;i<linksArray.length();i++){
                 JSONObject jsonLink = linksArray.getJSONObject(i);
-                String sourceRef = jsonLink.getString("sourceRef");
-                if(sourceRef.startsWith(book.getTitle(Util.Lang.EN))|| true){
-                    Text tempText = new Text(jsonLink.getString("text"),jsonLink.getString("he"));
-                    tempText.bid = book.bid;//1;//new Book(jsonLink.getString("index_title")).bid;
+                String enTitle = jsonLink.getString("index_title");
+                String category = jsonLink.getString("category");
+                if(     linkFilter.depth_type == LinkFilter.DEPTH_TYPE.ALL ||
+                        (linkFilter.depth_type == LinkFilter.DEPTH_TYPE.CAT && category.equals(linkFilter.enTitle))||
+                        (linkFilter.depth_type == LinkFilter.DEPTH_TYPE.BOOK && enTitle.equals(linkFilter.enTitle))
+                         ){
+                    Text tempText = new Text(removeEmpty(jsonLink.getString("text")),removeEmpty(jsonLink.getString("he")));
+                    tempText.bid = new Book(enTitle).bid;
                     texts.add(tempText);
                 }
             }
@@ -450,9 +487,26 @@ public class API {
         String url = COUNT_URL + place;
         String data = getDataFromURL(url);
         Log.d("api", "getChaps data.len: " + data.length());
-        ArrayList<Integer> chapList = new ArrayList<Integer>();
+        ArrayList<Integer> chapList = new ArrayList<>();
+
+        JSONObject jsonData = null;
+        try{
+            jsonData = new JSONObject(data);
+        }catch (JSONException e2){
+            return chapList;
+        }
+
+        try{
+            jsonData.getString("error");
+            Log.e("API","Book doesn't exist in Sefaria");
+            API api = new API();
+            //throw api.new APIException();
+            //chapList.add(-1);
+            return chapList;
+        }catch (JSONException e2){
+
+        }
         try {
-            JSONObject jsonData = new JSONObject(data);
             JSONArray counts = jsonData.getJSONObject("_all").getJSONArray("availableTexts");
             for(int i=levels.length-1;i>=0;i--){
                 if(levels[i] == 0)
@@ -468,7 +522,7 @@ public class API {
                     chapList.add(i+1);
                 }
             }
-        }catch(Exception e){
+        } catch(Exception e){
             Log.e("api","Error: " + e.toString());
         }
         return chapList;
@@ -514,6 +568,7 @@ public class API {
 
         String data = getDataFromURL(completeUrl);
         Log.d("API","getTextsFromAPI got data.size:" + data.length());
+        Log.d("API","Node.levels:" + node.getLevels());
         List<Text> textList = parseJSON(data,node.getLevels(),node.getBid());
         //for(int i=0;i<levels.length;i++)
         //  Log.d("api", "in getTextsFromAPI: levels" + i + ". "  + levels[i] );
