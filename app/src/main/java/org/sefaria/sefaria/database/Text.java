@@ -459,7 +459,7 @@ public class Text implements Parcelable {
      * @param levels
      * @return
      * @throws API.APIException
-     */
+
     public static ArrayList<Integer> getChaps(int bid, int[] levels) throws API.APIException {
         Database dbHandler = Database.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
@@ -484,13 +484,9 @@ public class Text implements Parcelable {
 
         }
 
-		/*//LOGING:
-	        for(int i = 0; i < chapList.size(); i++)
-	            Log.d("sql_chapList" , chapList.get(i).toString());
-		 */
         return chapList;
     }
-
+    */
 
     /**
      *  makes a where statement for getting the texts from a book with a id (as bid) or with text that have a parentNode with nid of id

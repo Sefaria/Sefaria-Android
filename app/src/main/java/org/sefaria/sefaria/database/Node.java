@@ -7,6 +7,9 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
@@ -590,6 +593,83 @@ public class Node implements  Parcelable{
         return tempNode;
     }
 
+
+    private void addSubChaps(Node upperNode, int chapNum, int depth, JSONArray counts){
+    }
+
+    /**
+     *
+     * @param bookTitle
+     * @throws API.APIException
+     */
+    private void getChaps_API(String bookTitle) throws API.APIException {
+        String place = bookTitle.replace(" ", "_");
+        String url = API.COUNT_URL + place;
+        String data = API.getDataFromURL(url);
+        Log.d("api", "getChaps data.len: " + data.length());
+
+
+        try {
+            JSONObject jsonData = new JSONObject(data);
+
+            if(jsonData.has("error")){
+                Log.e("API","Book doesn't exist in Sefaria");
+                API api = new API();
+                //throw api.new APIException();
+                //addChapChild(-1);
+                return;
+            }
+
+            JSONArray counts = jsonData.getJSONObject("_all").getJSONArray("availableTexts");
+            int totalChaps = counts.length();
+            if(textDepth == 1) {//this function shouldn't have been called here
+                addChapChild(0);
+            }else if(textDepth == 2) {
+                for (int i = 0; i < totalChaps; i++) {
+                    if (counts.getJSONArray(i).length() > 0) {
+                        this.addChapChild(i + 1);
+                    }
+                }
+            }else if(textDepth ==3){
+                for (int i = 0; i < totalChaps; i++) {
+                    JSONArray subArray = counts.getJSONArray(i);
+                    if (subArray.length() > 0) {
+                        Node tempNode = createTempNode(i+1);
+                        for (int j = 0; j < subArray.length(); j++) {
+                            JSONArray subArray2 = subArray.getJSONArray(j);
+                            if(subArray2.length()>0)
+                                tempNode.addChapChild(j+1);
+                        }
+                    }
+                }
+            } else if(textDepth ==4){
+                for (int i = 0; i < totalChaps; i++) {
+                    JSONArray subArray = counts.getJSONArray(i);
+                    if (subArray.length() > 0) {
+                        Node tempNode = createTempNode(i+1);
+                        for (int j = 0; j < subArray.length(); j++) {
+                            JSONArray subArray2 = subArray.getJSONArray(j);
+                            if(subArray2.length()>0){
+                                Node tempNode2 = tempNode.createTempNode(j + 1);
+                                for (int k = 0; k < subArray2.length(); k++) {
+                                    JSONArray subArray3 = subArray2.getJSONArray(k);
+                                    if(subArray3.length()>0)
+                                        tempNode2.addChapChild(k+1);
+                                }
+                            }
+
+                        }
+                    }
+                }
+            }
+        } catch(Exception e){
+            Log.e("api","Error: " + e.toString());
+        }
+        return;
+
+    }
+
+
     private void setAllChaps(boolean useNID) throws API.APIException {
         if(textDepth == 1){
             addChapChild(0);
@@ -600,9 +680,7 @@ public class Node implements  Parcelable{
         }
 
         if(API.useAPI()){
-            ArrayList<Integer> chapList = API.getChaps(Book.getTitle(bid), new int [textDepth]);
-            for(Integer chap: chapList)
-                addChapChild(chap);
+            getChaps_API(Book.getTitle(bid));
             return;
         }
         Database dbHandler = Database.getInstance();
