@@ -260,6 +260,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
                     int currInd = i + listView.getFirstVisiblePosition();
                     Text currSeg = sectionAdapter.getItem(currInd);
 
+                    Log.d("SectionAct", currSeg.isChapter() + "---" + currSeg.toString());
                     if (currSeg.isChapter()) {//TODO maybe make this select the chapter links...but not actually
                         currSeg = sectionAdapter.getItem(currInd + 1);
                     }

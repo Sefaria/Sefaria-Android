@@ -100,7 +100,7 @@ public class Link {//implements Parcelable {
      * @return List<Text> for texts links to the input text
      */
     public static List<Text> getLinkedTexts(Text text, LinkFilter linkFilter) throws API.APIException {
-        List<Text> linkList = new ArrayList<Text>();
+        List<Text> linkList;
         if(Settings.getUseAPI()){
             linkList = API.getLinks(text,linkFilter);
         }else{
