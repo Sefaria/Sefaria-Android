@@ -422,6 +422,12 @@ public class API {
 
     }
 
+    private static String removeEmpty(String str){
+        if(str.equals("[]"))
+            return "";
+        else
+            return str;
+    }
 
     public static List<Text> getLinks(Text text, LinkFilter linkFilter) throws APIException {
         Log.d("API.Link","got starting LinksAPI");
@@ -446,7 +452,7 @@ public class API {
                         (linkFilter.depth_type == LinkFilter.DEPTH_TYPE.CAT && category.equals(linkFilter.enTitle))||
                         (linkFilter.depth_type == LinkFilter.DEPTH_TYPE.BOOK && enTitle.equals(linkFilter.enTitle))
                          ){
-                    Text tempText = new Text(jsonLink.getString("text"),jsonLink.getString("he"));
+                    Text tempText = new Text(removeEmpty(jsonLink.getString("text")),removeEmpty(jsonLink.getString("he")));
                     tempText.bid = new Book(enTitle).bid;
                     texts.add(tempText);
                 }
