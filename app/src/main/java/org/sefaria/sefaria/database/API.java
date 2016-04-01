@@ -475,59 +475,7 @@ public class API {
         return texts;
     }
 
-    /**
-     *
-     * @param bookTitle
-     * @param levels
-     * @return chapList (a list of all the chapter numbers)
-     * @throws APIException
-     */
-    public static ArrayList<Integer> getChaps(String bookTitle, int [] levels) throws APIException{
-        String place = bookTitle.replace(" ", "_");
-        String url = COUNT_URL + place;
-        String data = getDataFromURL(url);
-        Log.d("api", "getChaps data.len: " + data.length());
-        ArrayList<Integer> chapList = new ArrayList<>();
 
-        JSONObject jsonData = null;
-        try{
-            jsonData = new JSONObject(data);
-        }catch (JSONException e2){
-            return chapList;
-        }
-
-        try{
-            jsonData.getString("error");
-            Log.e("API","Book doesn't exist in Sefaria");
-            API api = new API();
-            //throw api.new APIException();
-            //chapList.add(-1);
-            return chapList;
-        }catch (JSONException e2){
-
-        }
-        try {
-            JSONArray counts = jsonData.getJSONObject("_all").getJSONArray("availableTexts");
-            for(int i=levels.length-1;i>=0;i--){
-                if(levels[i] == 0)
-                    continue;
-                counts = counts.getJSONArray(levels[i]-1);//-1 b/c the first chap of levels is 1, the array is zero indexed
-            }
-            int totalChaps = counts.length();
-            for(int i=0;i<totalChaps;i++){
-                try{
-                    if(counts.getJSONArray(i).length()>0)
-                        chapList.add(i+1);
-                }catch(JSONException e){//most likely it's b/c it only has one level
-                    chapList.add(i+1);
-                }
-            }
-        } catch(Exception e){
-            Log.e("api","Error: " + e.toString());
-        }
-        return chapList;
-
-    }
 
 
     static private String createPlace(String bookTitle, int[] levels){

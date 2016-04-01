@@ -290,7 +290,7 @@ public class Header implements Parcelable {
         return tempHeader;
     }
 
-
+    /*
     public static ArrayList<Header> getHeaderChaps(Book book, int[] levels) throws API.APIException {
         ArrayList<Header> headerList = getChapHeaders(book.bid, levels);
         ArrayList <Integer> chapList = Text.getChaps(book.bid, levels);
@@ -321,6 +321,7 @@ public class Header implements Parcelable {
 
         return combinedList;
     }
+    */
 
     private static ArrayList<Header> getChapHeaders(int bid, int[] levels) {
 
