@@ -367,32 +367,9 @@ public class HomeActivity extends Activity {
     View.OnClickListener searchClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            String jsonString = "{" +
-                        "\"sort\": [{" +
-                            "\"order\": {}" +
-                        "}]," +
-                        "\"query\": {" +
-                            "\"query_string\": {" +
-                                "\"query\": \"love\"," +
-                                "\"default_operator\": \"AND\"," +
-                                "\"fields\": [\"content\"]" +
-                            "}" +
-                        "}," +
-                        "\"highlight\": {" +
-                        "\"pre_tags\": [\"<b>\"]," +
-                        "\"post_tags\": [\"</b>\"]," +
-                        "\"fields\": {" +
-                            "\"content\": {\"fragment_size\": 200}" +
-                            "}" +
-                        "}" +
-                    "}";
-            try {
-                String yo = API.getDataFromURL(API.SEARCH_URL, jsonString, false);
 
-                Log.d("search",yo);
-            } catch (API.APIException e) {
-                e.printStackTrace();
-            }
+            Intent intent = new Intent(HomeActivity.this,SearchActivity.class);
+            startActivity(intent);
             /*final SchemeRegistry schemeRegistry = new SchemeRegistry();
             schemeRegistry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
             schemeRegistry.register(new Scheme("https", MyApp.createSefariaSSLSocketFactory(), 443));

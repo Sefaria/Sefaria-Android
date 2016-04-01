@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="20dp">
+
+    <org.sefaria.sefaria.layouts.SefariaTextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:textSize="20sp"
+        android:textColor="?text_color_english"
+        android:text="Genesis 10:5"/>
+    <org.sefaria.sefaria.layouts.SefariaTextView
+        android:id="@+id/mono"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:textSize="20sp"
+        android:textColor="?text_color_main"
+        android:text="And there was Noah!!"/>
+
+</LinearLayout>
