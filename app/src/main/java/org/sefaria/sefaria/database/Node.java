@@ -127,14 +127,22 @@ public class Node implements  Parcelable{
     private String getWholeTitle(Util.Lang lang, boolean doSectionName){
         String str = "";
         Node node = this;
+        boolean usedSpaceAlready = true;
         while(node.parent != null) {
             if (str.length() == 0){
                 str = node.getWholeTitleForOnly1Node(lang,doSectionName);
             }else {
                 if (node.isComplex && !node.isGridItem)
                     str = node.getWholeTitleForOnly1Node(lang,doSectionName) + ", " + str;
-                else
-                    str = node.getWholeTitleForOnly1Node(lang,doSectionName) + " " + str;
+                else {
+                    String separator;
+                    if(usedSpaceAlready && !node.isDaf() && !doSectionName)
+                        separator = ":";
+                    else
+                        separator = " ";
+                    str = node.getWholeTitleForOnly1Node(lang, doSectionName) + separator + str;
+                    usedSpaceAlready = true;
+                }
             }
             node = node.parent;
         }
@@ -211,9 +219,16 @@ public class Node implements  Parcelable{
     }
 
     public Node getFirstDescendant(boolean checkForTexts) throws API.APIException {
+        final int MAX_TEXTS = 5;
         Node node = getFirstDescendant();
+        int failedTexts = 0;
         if(checkForTexts){
             while(node.getTexts().size() <1) {
+                if(failedTexts++ > MAX_TEXTS){
+                    Log.e("Node","getFirstDescendant: Couldn't find texts after looking at " + MAX_TEXTS);
+                    break;
+                }
+
                 try {
                     node = node.getNextTextNode();
                 }catch (Node.LastNodeException e){
@@ -451,7 +466,7 @@ public class Node implements  Parcelable{
     }
 
 
-    public String getPath(Util.Lang lang, boolean useURLSeparator, boolean includeBook, boolean replaceSpaces){
+    public String getPath(Util.Lang lang, boolean forURL, boolean includeBook, boolean replaceSpaces){
         String path = "";
 
         Node node = this;
@@ -459,19 +474,21 @@ public class Node implements  Parcelable{
         boolean addSpace = true;
 
         while(node.getParent() != null){//checking parent node so that don't get root (or book name) in there
-            if(useURLSeparator)
+            if(forURL)
                 separator = ".";
             else if(!addSpace)
                 separator = ":";
             else
                 separator = " ";
 
-            if(node.isGridItem())
-                path = separator + node.getNiceGridNum(lang) + path;
-            else
+            if(!node.isGridItem() && (forURL && isComplex || !forURL)) //TODO tech this is wrong. B/c if it forURL && isComplex and it 3 or more levels of depth then it shouldn't be using the comma
                 path = ", " + node.getTitle(lang) + path;
+            else
+                path = separator + node.getNiceGridNum(lang) + path;
 
-            addSpace = node.isDaf() && (lang == Util.Lang.HE) && !useURLSeparator;
+
+
+            addSpace = node.isDaf() && (lang == Util.Lang.HE) && !forURL;
 
             node = node.getParent();
         }
@@ -553,12 +570,13 @@ public class Node implements  Parcelable{
 
                 // add chap count (if it's a leaf with 2 or more levels):
                 if(node.textDepth >= 2 && !node.isTextSection) {
-                    node.setAllChaps(true);
+                    node.setAllChapsDB(true);
                 }
             }
 
         }
 
+        root.setAllChaps_API();
         return root;
     }
 
@@ -594,24 +612,71 @@ public class Node implements  Parcelable{
     }
 
 
-    private void addSubChaps(Node upperNode, int chapNum, int depth, JSONArray counts){
+    private static void addSubChaps(Node upperNode, int currDepth, JSONObject jsonObject) throws JSONException {
+        JSONArray counts;
+        try {
+            counts = jsonObject.getJSONObject("_all").getJSONArray("availableTexts");
+        } catch (JSONException e) {
+            counts = null;
+        }
+        if(counts != null)
+            addSubChaps(upperNode, currDepth, counts);
+    }
+
+    private static void addSubChaps(Node upperNode, int currDepth, JSONArray counts) throws JSONException {
+        Log.d("Node", "addSubChaps" + upperNode + "__" + currDepth);
+        if(currDepth == 1) {
+            if(!upperNode.isComplex)
+                upperNode.addChapChild(0);
+            return;
+        }
+        for (int i = 0; i < counts.length(); i++) {
+            JSONArray subCounts = counts.getJSONArray(i);
+            if (subCounts.length() > 0) {
+                if(currDepth == 2)
+                    upperNode.addChapChild(i + 1);
+                else{
+                    Node tempNode = upperNode.createTempNode(i + 1);
+                    addSubChaps(tempNode,currDepth-1,subCounts);
+                }
+            }
+        }
+    }
+
+
+    private static void setChaps_API(Node node, JSONObject jsonData) {
+        Log.d("Node", "setChaps_API" + node);
+        for(Node child:node.getChildren()){
+            try{
+                JSONObject subObject = jsonData.getJSONObject(child.enTitle);
+                setChaps_API(child,subObject);
+            }catch (JSONException e){
+                Log.e("Node", child.enTitle + "__didn't get subJSON_" + child);
+            }
+        }
+        try {
+            addSubChaps(node, node.textDepth, jsonData);
+        } catch (JSONException e) {
+            Log.e("Node", "addSubChaps fail: " + node);
+        }
     }
 
     /**
      *
-     * @param bookTitle
      * @throws API.APIException
      */
-    private void getChaps_API(String bookTitle) throws API.APIException {
+    private void setAllChaps_API() throws API.APIException {
+        if(!Settings.getUseAPI())
+            return;
+
+        Log.i("Node","settAllChaps_API: " + this);
+        String bookTitle = Book.getTitle(bid);
+
         String place = bookTitle.replace(" ", "_");
         String url = API.COUNT_URL + place;
         String data = API.getDataFromURL(url);
-        Log.d("api", "getChaps data.len: " + data.length());
-
-
         try {
             JSONObject jsonData = new JSONObject(data);
-
             if(jsonData.has("error")){
                 Log.e("API","Book doesn't exist in Sefaria");
                 API api = new API();
@@ -619,58 +684,20 @@ public class Node implements  Parcelable{
                 //addChapChild(-1);
                 return;
             }
-
-            JSONArray counts = jsonData.getJSONObject("_all").getJSONArray("availableTexts");
-            int totalChaps = counts.length();
-            if(textDepth == 1) {//this function shouldn't have been called here
-                addChapChild(0);
-            }else if(textDepth == 2) {
-                for (int i = 0; i < totalChaps; i++) {
-                    if (counts.getJSONArray(i).length() > 0) {
-                        this.addChapChild(i + 1);
-                    }
-                }
-            }else if(textDepth ==3){
-                for (int i = 0; i < totalChaps; i++) {
-                    JSONArray subArray = counts.getJSONArray(i);
-                    if (subArray.length() > 0) {
-                        Node tempNode = createTempNode(i+1);
-                        for (int j = 0; j < subArray.length(); j++) {
-                            JSONArray subArray2 = subArray.getJSONArray(j);
-                            if(subArray2.length()>0)
-                                tempNode.addChapChild(j+1);
-                        }
-                    }
-                }
-            } else if(textDepth ==4){
-                for (int i = 0; i < totalChaps; i++) {
-                    JSONArray subArray = counts.getJSONArray(i);
-                    if (subArray.length() > 0) {
-                        Node tempNode = createTempNode(i+1);
-                        for (int j = 0; j < subArray.length(); j++) {
-                            JSONArray subArray2 = subArray.getJSONArray(j);
-                            if(subArray2.length()>0){
-                                Node tempNode2 = tempNode.createTempNode(j + 1);
-                                for (int k = 0; k < subArray2.length(); k++) {
-                                    JSONArray subArray3 = subArray2.getJSONArray(k);
-                                    if(subArray3.length()>0)
-                                        tempNode2.addChapChild(k+1);
-                                }
-                            }
-
-                        }
-                    }
-                }
-            }
+            setChaps_API(this, jsonData);
+            //addSubChaps(this, textDepth, jsonData);
         } catch(Exception e){
-            Log.e("api","Error: " + e.toString());
+            Log.e("api", "Error: " + e.toString());
         }
         return;
 
     }
 
 
-    private void setAllChaps(boolean useNID) throws API.APIException {
+    private void setAllChapsDB(boolean useNID) throws API.APIException {
+        if(Settings.getUseAPI())
+            return;
+
         if(textDepth == 1){
             addChapChild(0);
             return;
@@ -679,13 +706,8 @@ public class Node implements  Parcelable{
             return;
         }
 
-        if(API.useAPI()){
-            getChaps_API(Book.getTitle(bid));
-            return;
-        }
         Database dbHandler = Database.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
-
 
         String levels = "";
         for(int i=textDepth;i>1;i--){
@@ -741,11 +763,6 @@ public class Node implements  Parcelable{
         return;
     }
 
-
-    public List<Text> getTexts1() throws API.APIException{
-        return getTexts();
-    }
-
     /**
      *  Get texts for complex texts
      *
@@ -763,22 +780,24 @@ public class Node implements  Parcelable{
             textList = new ArrayList<>();
             return textList;
         }
+        if(Settings.getUseAPI()) {
+            textList = API.getTextsFromAPI2(this);
+            return textList;
+        }
+
         if(!isComplex && !isGridItem){
             Log.e("Node", "It thinks (!isComplex() && !isGridItem())... I don't know how.");
             textList = new ArrayList<>();
             return textList;
         }else if(!isComplex && isGridItem && !isRef){
-            textList =  Text.get(getBid(),getLevels(),0);
+            textList =  Text.getFromDB(bid,getLevels(),0);
         }else if(isRef()){
             if(!isComplex){
                 Log.e("Node", "It thinks (!isComplex && isRef)... I don't know how.");
                 textList = new ArrayList<>();
                 return textList;
             }
-            if(API.useAPI()){
-                textList =  API.getTextsFromAPI2(this);
-                //TODO deal with this API
-            }else if(startTid>0 && endTid >0) {
+            if(startTid>0 && endTid >0) {
                 textList = Text.getWithTids(startTid, endTid);
             }
             else{
@@ -786,13 +805,11 @@ public class Node implements  Parcelable{
                 textList = new ArrayList<>();
             }
         }else if(isComplex){
-            //TODO make sure this works
-            // && isGridItem()
             //levels will be diff based on if it's a gridItem
             if(isGridItem)
-                textList = Text.get(bid, getLevels(), getNodeInDBParentNID());
+                textList = Text.getFromDB(bid, getLevels(), getNodeInDBParentNID());
             else
-                textList = Text.get(bid, getLevels(), nid);
+                textList = Text.getFromDB(bid, getLevels(), nid);
         }
         else{
             Log.e("Node", "In Node.getText() and I'm confused. NodeTypeFlags: " + getNodeTypeFlagsStr());
@@ -962,7 +979,10 @@ public class Node implements  Parcelable{
          */
         root = new Node(book);
         root.nid = NID_NON_COMPLEX;
-        root.setAllChaps(false);
+        root.setAllChapsDB(false);
+        if(!root.isComplex && Settings.getUseAPI())
+            root.setAllChaps_API();
+
         if(root.getChildren().size()>0) {
             root.tocRootsNum = allRoots.size();
             allRoots.add(root);
@@ -1019,6 +1039,7 @@ public class Node implements  Parcelable{
     @Override
     public String toString() {
         String str = "{"+  nid + ",bid:" + bid + ",titles:" + enTitle + " " + heTitle + ",sections:" + Util.array2str(sectionNames) + "," + Util.array2str(heSectionNames) + ",structN:" + structNum + ",textD:" + textDepth + ",tids:" + startTid + "-" + endTid + ",ref:" + extraTidsRef;
+        str += ", child.len:" + getChildren().size();
         str += ",gridN:" + getNiceGridNum(Util.Lang.EN);
         //str +=  ",siblingN:" + siblingNum;
         str += getNodeTypeFlagsStr();

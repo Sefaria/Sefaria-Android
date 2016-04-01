@@ -308,9 +308,14 @@ public class Settings {
         editor.commit();
     }
 
+
+    private static Boolean useAPI = null;
     public static boolean getUseAPI(){
+        if(useAPI != null)
+            return useAPI;
         SharedPreferences settings = getGeneralSettings();
-        return  settings.getBoolean("useAPI",false);
+        useAPI = settings.getBoolean("useAPI",false);
+        return useAPI;
     }
 
     public static void setUseAPI(boolean useAPI){
@@ -319,6 +324,7 @@ public class Settings {
         editor.commit();
         Database.clearInstance();//so that it will use the right database when you try
         API.useAPI = -1;
+        Settings.useAPI = useAPI;
     }
 
     public static class Link {

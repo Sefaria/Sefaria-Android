@@ -4,6 +4,7 @@ import org.sefaria.sefaria.GoogleTracker;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
 
 import android.database.Cursor;
@@ -244,14 +245,12 @@ public class Text implements Parcelable {
         return str;
     }
 
-    private static List<Text> get(Book book, int[] levels) throws API.APIException {
-
+    private static List<Text> getFromDB(Book book, int[] levels) throws API.APIException {
         if(book.textDepth != levels.length){
             Log.e("Error_sql", "wrong size of levels.");
-            //return new ArrayList<Text>();
+            return new ArrayList<>();
         }
-        //else
-        return get(book.bid, levels,0);
+        return getFromDB(book.bid, levels,0);
     }
 
 
@@ -269,8 +268,8 @@ public class Text implements Parcelable {
 
 
 
-    private static List<Text> getFromDB(int bid, int[] levels, int parentNID) {
-        List<Text> textList = new ArrayList<Text>();
+    public static List<Text> getFromDB(int bid, int[] levels, int parentNID) {
+        List<Text> textList = new ArrayList<>();
         Database dbHandler = Database.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
 
@@ -290,17 +289,8 @@ public class Text implements Parcelable {
 
 
 
-    /**
-     *
-     * @param id
-     * @param levels
-     *
-     *
-     * @return textList
-     * @throws API.APIException
-     */
 
-    /**
+    /*
      *
      * @param bid
      * @param levels
@@ -311,11 +301,11 @@ public class Text implements Parcelable {
      * 	Text.get(1, levels,false); //get book bid 1 everything in chap 12.
      * @return textList
      * @throws API.APIException
-     */
+
     public static List<Text> get(int bid, int[] levels, int parentNID) throws API.APIException {
         List<Text> textList = new ArrayList<>();
         try {
-            if(API.useAPI()){
+            if(Settings.getUseAPI()){
                 if(parentNID <=0) //TODO make it work for API with NID
                     textList = API.getTextsFromAPI1(Book.getTitle(bid), levels);
             }else{
@@ -330,6 +320,7 @@ public class Text implements Parcelable {
 
         return textList;
     }
+    */
 
     public static List<Text> getWithTids(int startTID,int endTID){
         List<Text> textList = new ArrayList<Text>();
