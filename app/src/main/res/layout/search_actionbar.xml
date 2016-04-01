@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <!-- thin bar which changes color based on top-level section -->
+    <View
+        android:id="@+id/color_bar"
+        android:layout_width="match_parent"
+        android:layout_height="8dp"
+        android:background="@color/tanach"></View>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:minHeight="51dp"
+        android:paddingRight="@dimen/custom_action_bar_button_to_side_padding"
+        android:background="?custom_actionbar_bg">
+
+
+        <FrameLayout
+            android:id="@+id/close_btn"
+            android:layout_width="@dimen/custom_action_bar_button_frame_width"
+            android:layout_height="match_parent"
+            android:paddingLeft="@dimen/custom_action_bar_button_to_side_padding"
+            android:layout_margin="0dp"
+            android:background="?selectableItemBackgroundBorderless"
+            >
+            <ImageView
+                android:layout_width="@dimen/custom_action_bar_pic_size"
+                android:layout_height="@dimen/custom_action_bar_pic_size"
+                android:src="@drawable/close47"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center"
+                />
+
+        </FrameLayout>
+
+
+        <FrameLayout
+            android:id="@+id/search_btn"
+            android:layout_toRightOf="@+id/close_btn"
+            android:layout_width="@dimen/custom_action_bar_button_frame_width"
+            android:layout_height="match_parent"
+            android:paddingRight="@dimen/custom_action_bar_button_to_side_padding"
+            android:layout_margin="0dp"
+            android:background="?selectableItemBackgroundBorderless"
+            >
+            <ImageView
+                android:layout_width="@dimen/custom_action_bar_pic_size"
+                android:layout_height="@dimen/custom_action_bar_pic_size"
+                android:src="@drawable/search100"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center"
+                />
+        </FrameLayout>
+
+        <EditText
+            android:id="@+id/search_box"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@+id/search_btn"
+            android:inputType="text"
+            android:imeOptions="actionSearch"
+            android:hint="Search"/>
+
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?custom_actionbar_border"
+        android:layout_gravity="bottom|center"
+        ></View>
+
+    <!-- small grey bar at the bottom of actionbar -->
+
+</LinearLayout>
