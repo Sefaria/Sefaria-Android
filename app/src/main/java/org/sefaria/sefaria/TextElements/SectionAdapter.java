@@ -102,7 +102,7 @@ public class SectionAdapter extends ArrayAdapter<Text> {
             SefariaTextView heTv = (SefariaTextView) view.findViewById(R.id.he);
 
             if (segment.isChapter()) {
-                //view.setClickable(true); //TODO why is this so weird?! I'm literally setting this to the opposite of what I want and it works
+                view.setClickable(true); //TODO why is this so weird?! I'm literally setting this to the opposite of what I want and it works
 
                 tch.setVisibility(View.VISIBLE);
                 enTv.setVisibility(View.GONE);
@@ -113,7 +113,7 @@ public class SectionAdapter extends ArrayAdapter<Text> {
                 tch.setSectionTitle(segment);
                 tch.setTextSize(activity.getTextSize());
             } else {
-                //view.setClickable(false);
+                view.setClickable(false);
 
                 tch.setVisibility(View.GONE);
                 enTv.setVisibility(View.VISIBLE);

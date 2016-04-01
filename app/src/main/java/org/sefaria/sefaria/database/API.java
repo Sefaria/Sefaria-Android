@@ -45,6 +45,7 @@ public class API {
     private String url = "";
     private int status = STATUS_NONE;
     private boolean isDone = false;
+    private boolean alreadyDisplayedURL = false;
 
     private String jsonString; //if null, no json to send. if not null send this jsonObject along with url request
     String sefariaData = null;
@@ -63,6 +64,8 @@ public class API {
     private String fetchData(String urlString){
         String data = "";
         this.url = urlString;
+        if(!alreadyDisplayedURL)
+            Log.d("api","URL: " + url);
         try {
             if(jsonString == null) {//!use JSON post
                 URL url = new URL(urlString);
@@ -108,8 +111,6 @@ public class API {
                 connection.connect();
                 InputStream stream = connection.getInputStream();
                 data = convertStreamToString(stream);
-                Log.d("API", "finsihed json get data: " + data.length());
-                Log.d("API", "finsihed json get data: " + data);
             }
 
 
@@ -123,7 +124,6 @@ public class API {
             Log.d("API", "io exception");
             status = STATUS_ERROR;
         }
-        Log.d("api", "in fetchData: " + url + "  data length: " + data.length());
         return data;
     }
 
@@ -145,7 +145,6 @@ public class API {
      * @return api;
      */
     public static API getDataFromURLAsync(String url){
-        Log.d("api","URL:" + url);
         API api = new API();
         api.new GetDataTask().execute(url);
         return api;
@@ -240,8 +239,8 @@ public class API {
             api.setJsonString(jsonString);
             data = api.fetchData(url);
         }catch (NetworkOnMainThreadException e){//if it was running on main thread, create our own background thread to handle it
-            Log.d("API", "starting background async data pull");
             API api = getDataFromURLAsync(url);//creating an instance of api which will fetch data
+            api.alreadyDisplayedURL = true;
             data = api.getData();//waiting for data to be returned from internet
         }
 
@@ -266,8 +265,6 @@ public class API {
         }
         */
 
-
-        Log.d("api","in getDataFromURL: data length: " + data.length() );
         return data;
     }
 
@@ -490,13 +487,14 @@ public class API {
         return place;
     }
 
-    /**
+
+    /*
      * Will only return after response from web is complete.
      * @param bookTitle
      * @param levels
      * @return textList
      * @throws APIException
-     */
+
     static public List<Text> getTextsFromAPI1(String bookTitle, int[] levels) throws APIException{ //(String booktitle, int []levels)
         Log.d("API","getTextsFromAPI called");
         String place = createPlace(bookTitle, levels);
@@ -509,6 +507,7 @@ public class API {
         Log.d("api", "in getTextsFromAPI: api.textlist:" + textList.size());
         return textList;
     }
+    */
 
     static public List<Text> getTextsFromAPI2(Node node) throws APIException{ //(String booktitle, int []levels)
         Log.d("API","getTextsFromAPI2 called");
