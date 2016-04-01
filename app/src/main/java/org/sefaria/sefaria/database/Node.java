@@ -754,10 +754,15 @@ public class Node implements  Parcelable{
         //TODO make work for more than 2 levels
 
         List<Integer> levels = new ArrayList<>();
-        levels.add(0);
-        if(isRef){
 
+        if(isRef){
+            String [] strArray = Util.str2strArray(startLevels.replace(" ",""));
+            for(String level: strArray){
+                Log.d("Node", "start.level: " + level);
+                levels.add(Integer.valueOf(level));
+            }
         }else {
+            levels.add(0);
             if (isGridItem) {
                 levels.add(gridNum);
             }
@@ -770,7 +775,8 @@ public class Node implements  Parcelable{
         int [] levels2 = new int [levels.size()];
         for(int i=0;i<levels.size();i++){
             levels2[i] = levels.get(i);
-        }return levels2;
+        }
+        return levels2;
     }
 
     /**
