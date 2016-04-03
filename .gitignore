@@ -45,5 +45,10 @@ proguard/
 .idea/vcs.xml
 .idea/workspace.xml
 
+#yo curl files
+yo.out
+yo1.out
+yo.json
+
 
 .DS_Store
