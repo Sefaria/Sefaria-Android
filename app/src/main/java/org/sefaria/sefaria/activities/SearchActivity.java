@@ -21,6 +21,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.SearchElements.SearchAdapter;
+import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.SearchElements.SearchActionbar;
 import org.sefaria.sefaria.database.SearchAPI;
@@ -77,7 +78,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
         listView.setAdapter(adapter);
         listView.setOnScrollListener(this);
         numResultsTV = (SefariaTextView) findViewById(R.id.numResults);
-
+        numResultsTV.setFont(Settings.getMenuLang(),false);
         isLoadingSearch = false;
     }
 

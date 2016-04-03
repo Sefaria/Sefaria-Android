@@ -19,8 +19,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/actionbarRoot"
-        android:layout_margin="20dp"
-        android:text="1,046 Results"/>
+        android:layout_margin="15dp"
+        android:text="yoyoyoyo"/>
     <org.sefaria.sefaria.layouts.ListViewExt
         android:id="@+id/listview"
         android:layout_width="match_parent"
