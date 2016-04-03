@@ -18,6 +18,7 @@ import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Text;
+import org.sefaria.sefaria.layouts.SefariaTextView;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -43,46 +44,40 @@ public class SearchAdapter extends ArrayAdapter<Text> {
     @Override
     public View getView(int position, View view, ViewGroup parent) {
         Text text = results.get(position);
+        //Language is exclusively either Hebrew or Enlgihs, depending on which exists in the text
+        Util.Lang lang;
+        if (text.getText(Util.Lang.EN) == "") lang = Util.Lang.HE;
+        else /*if (text.getText(Util.Lang.HE) == "")*/ lang = Util.Lang.EN;
+
 
         if (view == null) {
             LayoutInflater inflater = (LayoutInflater)
                     context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.search_item_mono,null);
         }
-        TextView title = (TextView) view.findViewById(R.id.title);
-        TextView mono = (TextView) view.findViewById(R.id.mono);
+        SefariaTextView title = (SefariaTextView) view.findViewById(R.id.title);
+        SefariaTextView mono = (SefariaTextView) view.findViewById(R.id.mono);
 
         title.setText(text.getLocationString(Settings.getMenuLang()));
-        mono.setText(Html.fromHtml(text.getText(Util.Lang.EN)));
+        mono.setText(Html.fromHtml(text.getText(lang)));
+
+        title.setFont(Settings.getMenuLang(), true);
+        mono.setFont(lang, true);
+
+
         return view;
     }
-    /**
-     *
-     * @param resultStrings - raw results array from ElasticSearch query. refs still need to be parsed
-     */
-    public void setResults( JSONArray resultStrings) throws JSONException {
+
+    public void setResults(List<Text> results, boolean reset) {
         //TODO parse refs
-        results.clear();
-        clear();
-        Set<String> refSet = new HashSet<>();
-        for (int i = 0; i < resultStrings.length(); i++) {
-            JSONObject source = resultStrings.getJSONObject(i).getJSONObject("_source");
-            String ref = source.getString("ref");
-            if(refSet.contains(ref)) {
-                continue;
-            }else {
-                refSet.add(ref);
-            }
-
-            String content = resultStrings.getJSONObject(i).getJSONObject("highlight").getJSONArray("content").getString(0);
-            String title = ref.replaceAll("\\s[0-9]+.*$", "");
-
-
-            Text text = new Text(content,"",Book.getBid(title),ref);
-            //TODO deal with levels stuff
-            results.add(text);
-
+        if (reset) {
+            this.results.clear();
+            clear();
+            this.results = results;
+        } else {
+            this.results.addAll(results);
         }
+
         addAll(results);
         notifyDataSetChanged();
     }
