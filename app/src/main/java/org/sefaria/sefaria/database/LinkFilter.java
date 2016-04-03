@@ -147,9 +147,7 @@ public class LinkFilter {
 
         LinkFilter commentaryGroup = new LinkFilter(COMMENTARY,0, "מפרשים",DEPTH_TYPE.CAT);
 
-        Database dbHandler = Database.getInstance();
-        SQLiteDatabase db = dbHandler.getReadableDatabase();
-
+        SQLiteDatabase db = Database.getDB();
         String sql;
         /*
         if(Build.VERSION.SDK_INT >= 21) {
@@ -297,8 +295,7 @@ public class LinkFilter {
             return allLinkCounts;
         }
 
-        Database dbHandler = Database.getInstance();
-        SQLiteDatabase db = dbHandler.getReadableDatabase();
+        SQLiteDatabase db = Database.getDB();
         String sql;
 
         /*

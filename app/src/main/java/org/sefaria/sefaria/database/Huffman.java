@@ -137,13 +137,15 @@ public class Huffman {
     }
 
     private static boolean makeTree(){
+        if(!Database.hasOfflineDB())
+            return false;
         Log.d("Huffman", "getTree started");
         long startTime= System.currentTimeMillis();
         try {
             String path = Database.getDbPath() + "/SefariaHuffmanDeflated.txt";
             String deflated = readFile(path);
 
-            int size = Database.getDBSetting("huffmanSize");
+            int size = Database.getDBSetting("huffmanSize",false);
             if(size == Database.BAD_SETTING_GET) {
                 Log.e("Huffman", "BAD_SETTING_GET" + size);
                 size = ((int) Math.ceil(deflated.length() / 2.5));

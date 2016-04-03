@@ -706,8 +706,7 @@ public class Node implements  Parcelable{
             return;
         }
 
-        Database dbHandler = Database.getInstance();
-        SQLiteDatabase db = dbHandler.getReadableDatabase();
+        SQLiteDatabase db = Database.getDB();
 
         String levels = "";
         for(int i=textDepth;i>1;i--){
@@ -952,8 +951,7 @@ public class Node implements  Parcelable{
         }
 
         allRoots = new ArrayList<>();
-        Database dbHandler = Database.getInstance();
-        SQLiteDatabase db = dbHandler.getReadableDatabase();
+        SQLiteDatabase db = Database.getDB();
         Cursor cursor = db.query(NODE_TABLE, null, "bid" + "=?",
                 new String[]{String.valueOf(book.bid)}, null, null, "structNum,_id", null); //structNum, parentNode, siblingNum
         Node root;

@@ -163,7 +163,7 @@ public class UpdateService extends Service {
         editor.apply();
 
         userInitiated = userInit;
-        currentVersionNum = Database.getVersionInDB();
+        currentVersionNum = Database.getVersionInDB(false);
 
         postUpdateStage1();
 

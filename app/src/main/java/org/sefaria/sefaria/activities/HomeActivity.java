@@ -437,7 +437,9 @@ public class HomeActivity extends Activity {
 
     public static String getEmailHeader(){
         return  "App Version: " + BuildConfig.VERSION_NAME + " ("  + BuildConfig.VERSION_CODE + ")" + "\n"
-                + "Library Version: " + Util.convertDBnum(Database.getVersionInDB()) + "\n"
+                + "Online Library Version: " + Util.convertDBnum(Database.getVersionInDB(true)) + "\n"
+                + "Offline Library Version: " + Util.convertDBnum(Database.getVersionInDB(false)) + "\n"
+                + "Using " + (Settings.getUseAPI()? "Online":"Offline") + " Library" + "\n"
                 + GoogleTracker.randomID + "\n"
                 + Build.VERSION.RELEASE + " (" + Build.VERSION.SDK_INT + ")" + "\n"
                 +"\n\n\n";
