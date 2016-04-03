@@ -65,6 +65,8 @@ public class Downloader {
     private static boolean receiverRegistered = false;
     private static Context registeredContext;
 
+    public static Activity activity;
+
     public static int downloadErrorNum;
 
     public static String getCSVurl(){
@@ -79,6 +81,8 @@ public class Downloader {
                 == PackageManager.PERMISSION_GRANTED);
     }
 
+
+
     public static void updateLibrary(Activity activity, boolean evenOverwriteOldDB) {
         UpdateService.evenOverWriteOldDatabase = evenOverwriteOldDB;
         UpdateService.lockOrientation(activity);
@@ -91,7 +95,7 @@ public class Downloader {
             Toast.makeText(activity,"Can't download Library without storage permissions.", Toast.LENGTH_SHORT).show();
             return;
         }
-
+        Downloader.activity = activity;
         Intent intent = new Intent(activity,UpdateReceiver.class);
         intent.putExtra("isPre", true);
         intent.putExtra("userInit",true);
@@ -265,7 +269,7 @@ public class Downloader {
 
     }
 
-    protected static int getNetworkStatus()
+    public static int getNetworkStatus()
     {
         final ConnectivityManager connMgr = (ConnectivityManager)
                 MyApp.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);

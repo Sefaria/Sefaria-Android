@@ -145,7 +145,7 @@ public class SettingsActivity extends Activity {
     @Override
     public void onBackPressed() {
         saveFontSize();
-        Database.checkAndSwitchToAPIIfNeed(this);
+        Database.checkAndSwitchToNeededDB(this);
         super.onBackPressed();
     }
 
@@ -183,7 +183,7 @@ public class SettingsActivity extends Activity {
 
     public void done(View v){
         saveFontSize();
-        Database.checkAndSwitchToAPIIfNeed(this);
+        Database.checkAndSwitchToNeededDB(this);
         finish();
     }
 
