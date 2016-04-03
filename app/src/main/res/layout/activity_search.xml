@@ -14,11 +14,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
     </LinearLayout>
+    <org.sefaria.sefaria.layouts.SefariaTextView
+        android:id="@+id/numResults"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/actionbarRoot"
+        android:layout_margin="20dp"
+        android:text="1,046 Results"/>
     <org.sefaria.sefaria.layouts.ListViewExt
         android:id="@+id/listview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/actionbarRoot">
+        android:layout_below="@+id/numResults">
     </org.sefaria.sefaria.layouts.ListViewExt>
 
 </RelativeLayout>
