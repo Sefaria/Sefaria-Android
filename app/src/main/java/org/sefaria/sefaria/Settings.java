@@ -323,7 +323,6 @@ public class Settings {
         editor.putBoolean("useAPI",useAPI);
         editor.commit();
         Database.clearInstance();//so that it will use the right database when you try
-        API.useAPI = -1;
         Settings.useAPI = useAPI;
     }
 

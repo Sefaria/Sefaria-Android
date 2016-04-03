@@ -25,6 +25,7 @@ import org.sefaria.sefaria.TextElements.TextMenuBar;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.database.Book;
+import org.sefaria.sefaria.database.Database;
 import org.sefaria.sefaria.database.Node;
 import org.sefaria.sefaria.database.Searching;
 import org.sefaria.sefaria.database.Text;
@@ -127,9 +128,13 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
         if(book == null && openToText == null && nodeHash == NO_HASH_NODE){
             Log.d("SuperTextActi","appIsFirstOpening");
+            //MyApp.dealWithDatabaseStuff(this);
+            if(!Settings.getUseAPI() && !Database.hasOfflineDB()){ //There's no DB
+                Log.d("SuperTextAct","Set to use API");
+                Settings.setUseAPI(true);
+            }
             MyApp.homeClick(this, false, true);
             try {
-                MyApp.dealWithDatabaseStuff(this);
                 book = new Book(Settings.getLastBook());
             } catch (Book.BookNotFoundException e) {
                 Toast.makeText(this,"Problem getting book",Toast.LENGTH_SHORT).show();

@@ -17,6 +17,7 @@ import android.widget.Toast;
 import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
+import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
 
 public class Searching {
@@ -493,7 +494,7 @@ public class Searching {
 
 
     private ArrayList<Text> searchDBheTexts() throws API.APIException {
-        if(API.useAPI()){
+        if(Settings.getUseAPI()){
             return new ArrayList<>();//APISearch(query, filterArray);
         }
 
