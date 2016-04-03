@@ -27,7 +27,6 @@ import android.widget.Toast;
 public class API {
     final static String TEXT_URL = "http://www.sefaria.org/api/texts/";
     final static String COUNT_URL = "http://www.sefaria.org/api/counts/";
-    public final static String SEARCH_URL = "http://search.sefaria.org:788/sefaria/_search/";
     final static String LINK_URL = "http://www.sefaria.org/api/links/";
     final static String LINK_ZERO_TEXT = "?with_text=0";
     final static String ZERO_CONTEXT = "&context=0";
