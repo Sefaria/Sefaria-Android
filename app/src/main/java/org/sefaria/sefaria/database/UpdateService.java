@@ -123,9 +123,9 @@ public class UpdateService extends Service {
 
         int netStat = Downloader.getNetworkStatus();
         if (netStat == Downloader.NO_INTERNET) {
-            DialogManager.showDialog((Activity)MyApp.getContext(),DialogManager.NO_INTERNET);
+            DialogManager.showDialog(Downloader.activity,DialogManager.NO_INTERNET);
         } else if (netStat == Downloader.DATA_CONNECTED) {
-            DialogManager.showDialog((Activity)MyApp.getContext(),DialogManager.USING_DATA);
+            DialogManager.showDialog(Downloader.activity,DialogManager.USING_DATA);
         } else if (netStat == Downloader.WIFI_CONNECTED) {
             updateLibrary(userInit);
         }

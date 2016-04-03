@@ -599,6 +599,7 @@ public class Text implements Parcelable {
         dest.writeString(heText);
         dest.writeIntArray(levels);
         dest.writeInt(displayNum ? 1 : 0);
+        dest.writeString(ref);
     }
 
     private Text(Parcel in) {
@@ -608,5 +609,6 @@ public class Text implements Parcelable {
         heText = in.readString();
         levels = in.createIntArray();
         displayNum = in.readInt() != 0;
+        ref = in.readString();
     }
 }

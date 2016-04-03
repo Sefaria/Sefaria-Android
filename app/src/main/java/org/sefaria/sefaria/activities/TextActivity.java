@@ -31,8 +31,8 @@ public class TextActivity extends SuperTextActivity {
     @Override
     protected void onCreate(Bundle in) {
         super.onCreate(in);
-        if(badOnCreate){
-            finish();
+        if(!goodOnCreate){
+            //finish();
             return;
         }
         setContentView(R.layout.activity_text);

@@ -64,6 +64,11 @@ public class API {
         this.url = urlString;
         if(!alreadyDisplayedURL)
             Log.d("api","URL: " + url);
+
+        if(Downloader.getNetworkStatus() == Downloader.NO_INTERNET){
+            this.status = STATUS_ERROR;
+            return data;
+        }
         try {
             if(jsonString == null) {//!use JSON post
                 URL url = new URL(urlString);
@@ -110,6 +115,10 @@ public class API {
             Log.d("API", "io exception");
             status = STATUS_ERROR;
         }
+
+        if(status == STATUS_NONE && data.length() >0)
+            status = STATUS_GOOD;
+
         return data;
     }
 
@@ -215,17 +224,23 @@ public class API {
      */
     public static String getDataFromURL(String url, String jsonString, boolean useCache) throws APIException{
        String data;
+        API api = new API();
         try{//try to get the data with the current thread.  This will only work if it's on a background thread.
-            API api = new API();
             api.jsonString = jsonString;
             data = api.fetchData(url);
         }catch (NetworkOnMainThreadException e){//if it was running on main thread, create our own background thread to handle it
-            API api = getDataFromURLAsync(url,jsonString);//creating an instance of api which will fetch data
+            api = getDataFromURLAsync(url,jsonString);//creating an instance of api which will fetch data
             api.alreadyDisplayedURL = true;
             data = api.getData();//waiting for data to be returned from internet
         }
 
         Log.d("api","in getDataFromURL: data length: " + data.length() );
+
+        if(api.status != API.STATUS_GOOD){
+            Log.e("api","throwing apiexception");
+            throw api.new APIException();
+        }
+
         if(!useCache)
             return data;
         /*
@@ -235,14 +250,7 @@ public class API {
         }
         else{
             data = api.getData();//waiting for data to be returned from intern
-            if(api.status != API.STATUS_GOOD){
-                if(cache != null)
-                    data  = cache.data;
-                else{
-                    Log.e("api","throwing apiexception");
-                    throw api.new APIException();
-                }
-            }
+
         }
         */
 
@@ -486,8 +494,6 @@ public class API {
         protected String doInBackground(String... params) {
             String result = fetchData(params[0]);
             data = result;//put into data so that the static function can pull the data
-            if(status == STATUS_NONE && data.length() >0)
-                status = STATUS_GOOD;
             isDone = true;
 
             if(status == STATUS_GOOD && data.length() >0){

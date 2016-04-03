@@ -122,11 +122,18 @@ public class Database extends SQLiteOpenHelper{
         return hasOfflineDB;
     }
 
-    public static void checkAndSwitchToAPIIfNeed(Context context){
-        if(!Settings.getUseAPI() && !Database.hasOfflineDB()){ //There's no DB
+    public static void checkAndSwitchToNeededDB(Context context){
+        boolean hasInternet = (Downloader.getNetworkStatus() != Downloader.NO_INTERNET);
+
+        if(!Database.hasOfflineDB()){ //There's no DB
             Toast.makeText(context,MyApp.getRString(R.string.switching_to_api),Toast.LENGTH_SHORT).show();
             Settings.setUseAPI(true);
+        } else if(Settings.getUseAPI() && !hasInternet && Database.hasOfflineDB()){
+            Toast.makeText(context,MyApp.getRString(R.string.NO_INTERNET_TITLE) + " - " + MyApp.getRString(R.string.switching_to_offline),Toast.LENGTH_SHORT).show();
+            Settings.setUseAPI(false);
         }
+
+
     }
 
 

@@ -46,7 +46,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
     @Override
     protected void onCreate(Bundle in) {
         super.onCreate(in);
-        if(badOnCreate){
+        if(!goodOnCreate){
             finish();
             return;
         }
