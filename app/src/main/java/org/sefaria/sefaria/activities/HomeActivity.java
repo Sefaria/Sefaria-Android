@@ -63,7 +63,7 @@ public class HomeActivity extends Activity {
         setTheme(Settings.getTheme());
         setContentView(R.layout.activity_home);
         Huffman.makeTree(true);
-
+        Log.d("HomeAct", "running onCreate");
 
         Intent intent = getIntent();
 
@@ -75,32 +75,6 @@ public class HomeActivity extends Activity {
         if (in != null) {
             menuState = in.getParcelable("menuState");
         }
-
-        init();
-    }
-
-    private boolean veryFirstTime = true;
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if(!veryFirstTime) {
-            Huffman.makeTree(true);
-            addRecentTexts(null);
-            setLang(Settings.getMenuLang());
-        }else
-            veryFirstTime = false;
-        GoogleTracker.sendScreen("HomeActivity");
-
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        handleIncomingURL(intent);
-    }
-
-    private void init() {
 
         if (menuState == null) {
             menuState = new MenuState();
@@ -129,7 +103,7 @@ public class HomeActivity extends Activity {
 
         //toggle closeClick, depending on if menu is popup or not
         View.OnClickListener tempCloseClick = null;
-        //if (isPopup) tempCloseClick = closeClick; //Removing the close click for now to test without it
+        if (isPopup) tempCloseClick = closeClick; //Removing the close click for now to test without it
 
 
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
@@ -137,8 +111,33 @@ public class HomeActivity extends Activity {
                 Settings.getSystemLang(),null,null,tempCloseClick,searchClick,null,menuClick,null,-1);
         abRoot.addView(cab);
 
-        dealWithDatabaseStuff();
+        if(intent.getBooleanExtra("hideOpening",false)){
+            onBackPressed();
+        }
+
     }
+
+    private boolean veryFirstTime = true;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(!veryFirstTime) {
+            Huffman.makeTree(true);
+            addRecentTexts(null);
+            setLang(Settings.getMenuLang());
+        }else
+            veryFirstTime = false;
+        GoogleTracker.sendScreen("HomeActivity");
+
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        handleIncomingURL(intent);
+    }
+
 
     private void handleIncomingURL(Intent intent){
         try {
@@ -201,19 +200,6 @@ public class HomeActivity extends Activity {
         }
     }
 
-    private void dealWithDatabaseStuff(){
-        Log.d("HomeActi", "dealWithDatabaseStuff");
-        long time = Settings.getDownloadSuccess(true);
-        if(time >0)
-            GoogleTracker.sendEvent("Download", "Update Finished",time);
-
-        Util.deleteNonRecursiveDir(Downloader.FULL_DOWNLOAD_PATH); //remove any old temp downloads
-
-        if((!Settings.getUseAPI() && API.useAPI())|| !Database.isValidDB()) {
-            Toast.makeText(this, "Starting Download", Toast.LENGTH_SHORT).show();
-            Downloader.updateLibrary(this,false);
-        }
-    }
 
     private void addHeader(LinearLayout homeRoot){
         //Living Library
@@ -344,25 +330,7 @@ public class HomeActivity extends Activity {
         out.putParcelable("menuState", menuState);
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case MyApp.REQUEST_WRITE_STORAGE: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    dealWithDatabaseStuff();
-                } else {
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                }
-                return;
-            }
 
-            // other 'case' lines to check for other
-            // permissions this app might request
-        }
-    }
 
     View.OnClickListener searchClick = new View.OnClickListener() {
         @Override
@@ -413,6 +381,7 @@ public class HomeActivity extends Activity {
         @Override
         public void onClick(View v) {
             finish();
+            overridePendingTransition(R.animator.stay, R.animator.slide_left);
         }
     };
 

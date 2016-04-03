@@ -21,22 +21,7 @@
         <activity
             android:name=".activities.HomeActivity"
             android:label="@string/app_name"
-
-            android:taskAffinity=""
-
-            >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="http" android:host="sefaria.org"/>
-                <data android:scheme="http" android:host="www.sefaria.org"/>
-            </intent-filter>
+        >
 
 
         </activity>
@@ -66,7 +51,24 @@
         </activity>
         <activity
             android:name=".activities.SectionActivity"
-            android:label="@string/app_name"></activity>
+            android:label="@string/app_name"
+
+            android:taskAffinity=""
+
+            >
+                <intent-filter>
+                    <action android:name="android.intent.action.MAIN" />
+                    <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
+                    <category android:name="android.intent.category.LAUNCHER" />
+                </intent-filter>
+                <intent-filter>
+                    <action android:name="android.intent.action.VIEW" />
+                    <category android:name="android.intent.category.DEFAULT" />
+                    <category android:name="android.intent.category.BROWSABLE" />
+                    <data android:scheme="http" android:host="sefaria.org"/>
+                    <data android:scheme="http" android:host="www.sefaria.org"/>
+                </intent-filter>
+            </activity>
         <activity
             android:name=".activities.AboutActivity"
             android:label="@string/app_name"></activity>
