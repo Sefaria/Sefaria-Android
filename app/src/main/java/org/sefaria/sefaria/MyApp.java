@@ -170,7 +170,7 @@ public class MyApp extends Application {
 
         Util.deleteNonRecursiveDir(Downloader.FULL_DOWNLOAD_PATH); //remove any old temp downloads
 
-        if((!Settings.getUseAPI() && API.useAPI())|| !Database.isValidDB()) {
+        if(!Settings.getUseAPI() && (!Database.isValidDB()|| !Database.hasOfflineDB())) {
             Toast.makeText(activity, "Starting Download", Toast.LENGTH_SHORT).show();
             Downloader.updateLibrary(activity,false);
         }

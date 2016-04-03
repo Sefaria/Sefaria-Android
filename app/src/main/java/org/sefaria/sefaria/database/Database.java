@@ -45,6 +45,8 @@ public class Database extends SQLiteOpenHelper{
         this.myContext = context;
     }
 
+
+
     /**
      * Constructor
      * Takes and keeps a reference of the passed context in order to access to the application assets and resources.
@@ -70,6 +72,31 @@ public class Database extends SQLiteOpenHelper{
     static public boolean isValidDB(){
         return  getVersionInDB()>= MIN_DB_VERSION;
     }
+
+
+
+    private static Boolean hasOfflineDB;
+    /**
+     *
+     * @return false if there's a Text table in the db. true if not (and should be using API)
+     */
+    public static boolean hasOfflineDB(){
+        if(hasOfflineDB != null)
+            return hasOfflineDB;
+        //TODO maybe check the settings table instead (api should be 1)
+        try{
+            Database dbHandler = Database.getInstance();
+            SQLiteDatabase db = dbHandler.getReadableDatabase();
+            Cursor cursor = db.query(Text.TABLE_TEXTS, null, "_id" + "=?",
+                    new String[]{String.valueOf(1)}, null, null, null, null);
+            Log.d("api", "got here without problems" + cursor);
+            hasOfflineDB = true;
+        }catch(Exception e){
+            hasOfflineDB = false;
+        }
+        return hasOfflineDB;
+    }
+
 
 
     static public String getInternalFolder(){

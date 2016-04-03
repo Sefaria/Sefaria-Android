@@ -22,6 +22,7 @@ import org.sefaria.sefaria.activities.TOCActivity;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.database.Book;
+import org.sefaria.sefaria.database.Database;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -323,10 +324,8 @@ public class MenuGrid extends LinearLayout {
             boolean goToTOC = false;
             Book book = null;
             try {
-                if(!Settings.getUseAPI() && API.useAPI()){ //There's no DB //TODO make it work with API
+                if(!Settings.getUseAPI() && !Database.hasOfflineDB()){ //There's no DB //TODO make it work with API
                     Settings.setUseAPI(true);
-                    //Toast.makeText(context,context.getString(R.string.need_library),Toast.LENGTH_SHORT).show();
-                    //return;
                 }
                 book = new Book(newMenuState.getCurrNode().getTitle(Util.Lang.EN));
                 if(goToTOC){

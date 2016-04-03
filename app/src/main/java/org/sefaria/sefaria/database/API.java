@@ -53,7 +53,6 @@ public class API {
     final static int CONNECT_TIMEOUT = 10000;
     final static int SPIN_TIMEOUT = 8000;
     //TODO determine good times
-    public static int useAPI = -1;
 
     public static void makeAPIErrorToast(Context context){
         Toast.makeText(context, "Problem getting data from Internet",Toast.LENGTH_SHORT).show();
@@ -325,27 +324,6 @@ public class API {
 
     }
 
-    /**
-     *
-     * @return false if there's a Text table in the db. true if not (and should be using API)
-     */
-    public static boolean useAPI(){
-        if(useAPI == 1) return true;
-        if(useAPI == 0) return false;
-        //TODO maybe check the settings table instead (api should be 1)
-        try{
-            Database dbHandler = Database.getInstance();
-            SQLiteDatabase db = dbHandler.getReadableDatabase();
-            Cursor cursor = db.query(Text.TABLE_TEXTS, null, "_id" + "=?",
-                    new String[]{String.valueOf(1)}, null, null, null, null);
-            Log.d("api", "got here without problems" + cursor);
-            useAPI = 0;
-            return false;
-        }catch(Exception e){
-            useAPI = 1;
-            return true;
-        }
-    }
 
 /*
     public static ArrayList<Text> getSearchResults(String query,String[] filterArray, int from, int offset) throws APIException {
