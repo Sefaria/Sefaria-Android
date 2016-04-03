@@ -129,6 +129,9 @@ public class MyApp extends Application {
         return color;
     }
 
+    public static String getRString(int R_string){
+        return getContext().getString(R_string);
+    }
 
     public static Context getContext() { return context; }
     public static void setContext(Context newContext) { context = newContext; }
@@ -162,19 +165,7 @@ public class MyApp extends Application {
     }
 
 
-    public static void dealWithDatabaseStuff(Activity activity){
-        Log.d("MyApp", "dealWithDatabaseStuff");
-        long time = Settings.getDownloadSuccess(true);
-        if(time >0)
-            GoogleTracker.sendEvent("Download", "Update Finished",time);
 
-        Util.deleteNonRecursiveDir(Downloader.FULL_DOWNLOAD_PATH); //remove any old temp downloads
-
-        if(!Settings.getUseAPI() && (!Database.isValidDB()|| !Database.hasOfflineDB())) {
-            Toast.makeText(activity, "Starting Download", Toast.LENGTH_SHORT).show();
-            Downloader.updateLibrary(activity,false);
-        }
-    }
 
 
 

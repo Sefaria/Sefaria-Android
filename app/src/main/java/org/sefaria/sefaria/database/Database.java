@@ -1,6 +1,7 @@
 package org.sefaria.sefaria.database;
 import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MyApp;
+import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
 
@@ -13,18 +14,20 @@ import java.io.OutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-
+import android.widget.Toast;
 
 
 public class Database extends SQLiteOpenHelper{
 
-    private static Database sInstance;
+    private static Database APIInstance;
+    private static Database offlineInstance;
     public static String DB_NAME = "UpdateForSefariaMobileDatabase";
     public static String API_DB_NAME = "API_UpdateForSefariaMobileDatabase";
     static int DB_VERSION = 1;
@@ -69,11 +72,26 @@ public class Database extends SQLiteOpenHelper{
         return (folder.mkdirs() ||  folder.isDirectory());
     }
 
-    static public boolean isValidDB(){
-        return  getVersionInDB()>= MIN_DB_VERSION;
+    static public boolean isValidOfflineDB(){
+        return  getVersionInDB(false)>= MIN_DB_VERSION;
     }
 
+    public static void dealWithStartupDatabaseStuff(Activity activity){
+        Log.d("MyApp", "dealWithDatabaseStuff");
+        long time = Settings.getDownloadSuccess(true);
+        if(time >0)
+            GoogleTracker.sendEvent("Download", "Update Finished",time);
 
+        Util.deleteNonRecursiveDir(Downloader.FULL_DOWNLOAD_PATH); //remove any old temp downloads
+        Database.getOfflineDB(activity,false);
+    }
+
+    static public void getOfflineDB(Activity activity, boolean evenIfUsingAPI){
+        if((evenIfUsingAPI || !Settings.getUseAPI()) && (!Database.isValidOfflineDB()|| !Database.hasOfflineDB())) {
+            Toast.makeText(activity, "Starting Download", Toast.LENGTH_SHORT).show();
+            Downloader.updateLibrary(activity,false);
+        }
+    }
 
     private static Boolean hasOfflineDB;
     /**
@@ -85,7 +103,7 @@ public class Database extends SQLiteOpenHelper{
             return hasOfflineDB;
         //TODO maybe check the settings table instead (api should be 1)
         try{
-            Database dbHandler = Database.getInstance();
+            Database dbHandler = Database.getInstance(false);
             SQLiteDatabase db = dbHandler.getReadableDatabase();
             Cursor cursor = db.query(Text.TABLE_TEXTS, null, "_id" + "=?",
                     new String[]{String.valueOf(1)}, null, null, null, null);
@@ -97,6 +115,12 @@ public class Database extends SQLiteOpenHelper{
         return hasOfflineDB;
     }
 
+    public static void checkAndSwitchToAPIIfNeed(Context context){
+        if(!Settings.getUseAPI() && !Database.hasOfflineDB()){ //There's no DB
+            Toast.makeText(context,MyApp.getRString(R.string.switching_to_api),Toast.LENGTH_SHORT).show();
+            Settings.setUseAPI(true);
+        }
+    }
 
 
     static public String getInternalFolder(){
@@ -162,29 +186,37 @@ public class Database extends SQLiteOpenHelper{
         }
     }
 
-    public static Database getInstance() {
+    private static Database getInstance(Boolean forAPI) {
         Context context = MyApp.getContext();
         // Use the application context, which will ensure that you
         // don't accidentally leak an Activity's context.
         // See this article for more information: http://bit.ly/6LRzfx
-        boolean useAPI = Settings.getUseAPI();
-        if (sInstance == null) {
-            if(!useAPI)
-                sInstance = new Database(context.getApplicationContext());
-            else {
+        Database instance;
+        if(forAPI == null){
+            forAPI = Settings.getUseAPI();
+        }
+        if(!forAPI)
+            instance = offlineInstance;
+        else {
+            instance = APIInstance;
+        }
+
+        if (instance == null) {
+            if(!forAPI) {
+                offlineInstance = new Database(context.getApplicationContext());
+                return offlineInstance;
+            }else {
                 Database.createAPIdb();
-                sInstance = new Database(context.getApplicationContext(), 1);
+                APIInstance = new Database(context.getApplicationContext(), 1);
+                return APIInstance;
             }
         }
-        return sInstance;
+        return instance;
     }
 
-    public static void clearInstance(){
-        sInstance = null;
-    }
 
     public static SQLiteDatabase getDB(){
-        return getInstance().getReadableDatabase();
+        return getInstance(null).getReadableDatabase();
     }
 
     public static boolean checkDataBase(){
@@ -251,10 +283,10 @@ public class Database extends SQLiteOpenHelper{
     }
 
     final static int BAD_SETTING_GET = -12349;
-    public static int getDBSetting(String key){
+    public static int getDBSetting(String key, Boolean forAPI){
         int value = BAD_SETTING_GET;
         try {
-            Database dbHandler = Database.getInstance();
+            Database dbHandler = Database.getInstance(forAPI);
             SQLiteDatabase db = dbHandler.getReadableDatabase();
             Cursor cursor = db.query("Settings", null, "_id" + "=?",
                     new String[]{key}, null, null, null, null);
@@ -324,8 +356,8 @@ public class Database extends SQLiteOpenHelper{
         zis.close();
     }
 
-    public static int getVersionInDB(){
-        int versionNum = getDBSetting("version");
+    public static int getVersionInDB(Boolean forAPI){
+        int versionNum = getDBSetting("version",forAPI);
         if(versionNum == BAD_SETTING_GET)
             versionNum = -1;
         return versionNum;

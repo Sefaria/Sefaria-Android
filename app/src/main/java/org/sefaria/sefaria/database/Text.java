@@ -116,9 +116,7 @@ public class Text implements Parcelable {
     }
 
     public Text(int tid) {
-        Database dbHandler = Database.getInstance();
-        SQLiteDatabase db = dbHandler.getReadableDatabase();
-
+        SQLiteDatabase db = Database.getDB();
         try{
             Cursor cursor = db.query(TABLE_TEXTS, null, "_id" + "=?",
                     new String[] { String.valueOf(tid) }, null, null, null, null);
@@ -274,8 +272,7 @@ public class Text implements Parcelable {
 
     public static List<Text> getFromDB(int bid, int[] levels, int parentNID) {
         List<Text> textList = new ArrayList<>();
-        Database dbHandler = Database.getInstance();
-        SQLiteDatabase db = dbHandler.getReadableDatabase();
+        SQLiteDatabase db = Database.getDB();
 
         String sql = "SELECT DISTINCT * FROM "+ TABLE_TEXTS +" " + fullWhere(bid, levels, parentNID) + " ORDER BY " + orderBy(levels);
         Cursor cursor = db.rawQuery(sql, null);
@@ -328,8 +325,7 @@ public class Text implements Parcelable {
 
     public static List<Text> getWithTids(int startTID,int endTID){
         List<Text> textList = new ArrayList<Text>();
-        Database dbHandler = Database.getInstance();
-        SQLiteDatabase db = dbHandler.getReadableDatabase();
+        SQLiteDatabase db = Database.getDB();
 
         String sql = "SELECT * FROM "+ TABLE_TEXTS +" where _id BETWEEN ? AND ? ORDER BY _id";
         Cursor cursor = db.rawQuery(sql, new String [] {"" + startTID,"" + endTID});
@@ -385,8 +381,7 @@ public class Text implements Parcelable {
             public void run() {
                 try {
                     int chunkSize = 5000;
-                    Database dbHandler = Database.getInstance();
-                    SQLiteDatabase db = dbHandler.getReadableDatabase();
+                    SQLiteDatabase db = Database.getDB();
 
                     List<Text> textList = new ArrayList<Text>();
 

@@ -93,7 +93,11 @@
                 android:layout_height="wrap_content"
                 android:minHeight="20dp"
                 android:orientation="horizontal"
-                android:gravity="center">
+                android:gravity="center"
+
+                android:visibility="gone"
+
+                >
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -112,6 +116,7 @@
                     />
             </LinearLayout>
 
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -126,12 +131,12 @@
                 <RadioButton android:id="@+id/DB_use_API"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Use Internet"
+                    android:text="@string/online_only_Library"
                     android:onClick="onUseDB"/>
                 <RadioButton android:id="@+id/DB_use_full"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Use Offline Library"
+                    android:text="@string/offline_Library"
                     android:onClick="onUseDB"/>
 
             </RadioGroup>

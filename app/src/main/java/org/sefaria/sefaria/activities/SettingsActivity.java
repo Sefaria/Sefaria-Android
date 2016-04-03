@@ -3,6 +3,7 @@ package org.sefaria.sefaria.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -93,8 +94,10 @@ public class SettingsActivity extends Activity {
         TextView appInfo = (TextView) findViewById(R.id.appInfo);
         appInfo.setText("App Version: " + BuildConfig.VERSION_NAME + debugVer);
         TextView databaseInfo = (TextView) findViewById(R.id.databaseInfo);
-        databaseInfo.setText("Library Version: " + Util.convertDBnum(Database.getVersionInDB()));
-
+        databaseInfo.setText(
+            "Online Library Version: " + Util.convertDBnum(Database.getVersionInDB(true)) + "\n"
+            + "Offline Library Version: " + Util.convertDBnum(Database.getVersionInDB(false))
+        );
         View updateLibraryButton = findViewById(R.id.update_library);
         updateLibraryButton.setOnLongClickListener(longUpdateLibrary);
 
@@ -136,6 +139,7 @@ public class SettingsActivity extends Activity {
     @Override
     public void onBackPressed() {
         saveFontSize();
+        Database.checkAndSwitchToAPIIfNeed(this);
         super.onBackPressed();
     }
 
@@ -166,6 +170,7 @@ public class SettingsActivity extends Activity {
 
     public void done(View v){
         saveFontSize();
+        Database.checkAndSwitchToAPIIfNeed(this);
         finish();
     }
 
@@ -182,6 +187,7 @@ public class SettingsActivity extends Activity {
             case R.id.DB_use_full:
                 if (checked)
                     Settings.setUseAPI(false);
+                    Database.getOfflineDB(this,true);
                 break;
         }
     }

@@ -127,12 +127,9 @@ public abstract class SuperTextActivity extends FragmentActivity {
         }
 
         if(book == null && openToText == null && nodeHash == NO_HASH_NODE){
-            Log.d("SuperTextActi","appIsFirstOpening");
-            //MyApp.dealWithDatabaseStuff(this);
-            if(!Settings.getUseAPI() && !Database.hasOfflineDB()){ //There's no DB
-                Log.d("SuperTextAct","Set to use API");
-                Settings.setUseAPI(true);
-            }
+            Log.d("SuperTextActi", "appIsFirstOpening");
+            Database.dealWithStartupDatabaseStuff(this);
+            Database.checkAndSwitchToAPIIfNeed(this);
             MyApp.homeClick(this, false, true);
             try {
                 book = new Book(Settings.getLastBook());
@@ -380,10 +377,11 @@ public abstract class SuperTextActivity extends FragmentActivity {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    MyApp.dealWithDatabaseStuff(this);
+                    Database.dealWithStartupDatabaseStuff(this);
                 } else {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
+                    Settings.setUseAPI(true);
                 }
                 return;
             }

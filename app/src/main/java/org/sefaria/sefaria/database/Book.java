@@ -218,8 +218,7 @@ public class Book implements Parcelable {
     }
 
     public void get(String title)throws BookNotFoundException{
-        Database dbHandler = Database.getInstance();
-        SQLiteDatabase db = dbHandler.getReadableDatabase();
+        SQLiteDatabase db = Database.getDB();
         Cursor cursor = db.query(TABLE_BOOKS, null, Ktitle + "=?",
                 new String[] { title }, null, null, null, null);
 
@@ -231,10 +230,9 @@ public class Book implements Parcelable {
     }
 
     public void get(int bid){
-        Database dbHandler = Database.getInstance();
-        SQLiteDatabase	db = dbHandler.getReadableDatabase();
+        SQLiteDatabase db = Database.getDB();
         Cursor cursor = db.query(TABLE_BOOKS, null, "_id" + "=?",
-                new String[] { String.valueOf(bid) }, null, null, null, null);
+                new String[]{String.valueOf(bid)}, null, null, null, null);
 
         if (cursor != null){
             cursor.moveToFirst();
@@ -246,13 +244,9 @@ public class Book implements Parcelable {
 
     }
 
-    public static int getBid(String title){
-        Database dbHandler = Database.getInstance();
-        SQLiteDatabase db = dbHandler.getReadableDatabase();
-        return getBid(title, db);
-    }
 
-    public static int getBid(String title, SQLiteDatabase db){
+    public static int getBid(String title){
+        SQLiteDatabase db = Database.getDB();
         Cursor cursor = db.query(TABLE_BOOKS, new String[]{"_id"}, Ktitle + "=?",
                 new String[]{title}, null, null, null, null);
 
@@ -270,8 +264,7 @@ public class Book implements Parcelable {
     }
 
     public static String getTitle(int bid){
-        Database dbHandler = Database.getInstance();
-        SQLiteDatabase db = dbHandler.getReadableDatabase();
+        SQLiteDatabase db = Database.getDB();
         Cursor cursor = db.query(TABLE_BOOKS, new String[]{"title"}, "_id=?",
                 new String[]{String.valueOf(bid)}, null, null, null, null);
 
@@ -290,8 +283,7 @@ public class Book implements Parcelable {
 
     //I'm not sure if this function is ever used.
     private static int getNum(String title, String type){
-        Database dbHandler = Database.getInstance();
-        SQLiteDatabase db = dbHandler.getReadableDatabase();
+        SQLiteDatabase db = Database.getDB();
 
         Cursor cursor = db.query(TABLE_BOOKS, new String[]{type}, Ktitle + "=?",
                 new String[]{title}, null, null, null, null);
@@ -313,11 +305,10 @@ public class Book implements Parcelable {
     public List<Book> getAllCommentaries(){
         if(allCommentaries != null)
             return allCommentaries;
-        Database dbHandler = Database.getInstance();
-        List<Book> bookList = new ArrayList<Book>();
+        SQLiteDatabase db = Database.getDB();
+        List<Book> bookList = new ArrayList<>();
         String selectQuery = "SELECT  * FROM " + TABLE_BOOKS + " WHERE commentsOn = ?";
 
-        SQLiteDatabase db = dbHandler.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, new String[]{"" + this.bid});
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
@@ -345,12 +336,11 @@ public class Book implements Parcelable {
     }
 
     public static List<Book> getAll() {
-        Database dbHandler = Database.getInstance();
+        SQLiteDatabase db = Database.getDB();
         List<Book> bookList = new ArrayList<Book>();
         // Select All Query
         String selectQuery = "SELECT  * FROM " + TABLE_BOOKS;
 
-        SQLiteDatabase db = dbHandler.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
@@ -368,11 +358,10 @@ public class Book implements Parcelable {
     }
 
     public static ArrayList<String> getAllBookNames(boolean isHebrew) {
-        Database dbHandler = Database.getInstance();
+        SQLiteDatabase db = Database.getDB();
         // Select All Query
         String selectQuery = "SELECT  * FROM " + TABLE_BOOKS;
 
-        SQLiteDatabase db = dbHandler.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         // looping through all rows and adding to list
         ArrayList<String> bookNameList = new ArrayList<String>(cursor.getCount());

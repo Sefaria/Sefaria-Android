@@ -111,8 +111,7 @@ public class Link {//implements Parcelable {
 
 
     private static List<Text> getLinkedTextsFromDB(Text text, LinkFilter linkFilter) {
-        Database dbHandler = Database.getInstance();
-        SQLiteDatabase db = dbHandler.getReadableDatabase();
+        SQLiteDatabase db = Database.getDB();
         List<Text> linkList = new ArrayList<Text>();
 
         //Log.d("getLinksTextsFromDB", "Started ... linkFiler:" + linkFilter);

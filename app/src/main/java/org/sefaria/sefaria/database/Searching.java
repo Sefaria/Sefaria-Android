@@ -153,8 +153,7 @@ public class Searching {
     }
 
     private static ArrayList<Integer> getSearchingChunks(String query) throws SQLException{
-        Database dbHandler = Database.getInstance();
-        SQLiteDatabase db = dbHandler.getReadableDatabase();
+        SQLiteDatabase db = Database.getDB();
         String [] words =  getWords(query);
         ArrayList<Integer> list = new ArrayList<Integer>();
         String likeStatement = "_id LIKE ? ";

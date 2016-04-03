@@ -322,7 +322,6 @@ public class Settings {
         SharedPreferences.Editor editor = getGeneralSettings().edit();
         editor.putBoolean("useAPI",useAPI);
         editor.commit();
-        Database.clearInstance();//so that it will use the right database when you try
         Settings.useAPI = useAPI;
     }
 

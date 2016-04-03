@@ -16,6 +16,9 @@
     <string name="need_library">You need to download library to open book. Go to Setting on bottom of Home screen to download.</string>
     <string name="cannot_parse_link">Cannot parse link</string>
     <string name="opening_new_task">Opening New Tab</string>
+    <string name="switching_to_api">Switching to Online only Library</string>
+    <string name="online_only_Library">Use Online only Library</string>
+    <string name="offline_Library">Use Offline Library (recommended)</string>
 
     <string name="action_bookmarks">Bookmarks</string>
     <string name="activity_filterlinks">Filter Sources</string>
