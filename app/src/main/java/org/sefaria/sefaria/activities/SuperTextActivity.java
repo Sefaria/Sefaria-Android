@@ -2,6 +2,7 @@ package org.sefaria.sefaria.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
@@ -12,6 +13,8 @@ import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
+
+import net.simonvt.menudrawer.MenuDrawer;
 
 import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MyApp;
@@ -94,24 +97,53 @@ public abstract class SuperTextActivity extends FragmentActivity {
     protected boolean reportedNewBookBack = false;
     protected boolean reportedNewBookTOC = false;
     protected boolean reportedNewBookScroll = false;
+    private static final int NO_HASH_NODE = -1;
 
+    private MenuDrawer menuDrawer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        /*
+        menuDrawer = MenuDrawer.attach(this);
+        menuDrawer.setContentView(R.layout.activity_section);
+        menuDrawer.setMenuView(R.layout.activity_home);
+        */
 
+        Log.d("SuperTextActi", "onCreate");
         Intent intent = getIntent();
-        Integer nodeHash;
+        Integer nodeHash = NO_HASH_NODE;
+
         if (savedInstanceState != null) {//it's coming back after it cleared the activity from ram
             linkFragment = (LinkFragment) getSupportFragmentManager().getFragment(savedInstanceState,LINK_FRAG_TAG);
-            nodeHash = savedInstanceState.getInt("nodeHash", -1);
+            nodeHash = savedInstanceState.getInt("nodeHash", NO_HASH_NODE);
             book = savedInstanceState.getParcelable("currBook");
             openToText = savedInstanceState.getParcelable("incomingLinkText");
         }else{
-            nodeHash = intent.getIntExtra("nodeHash", -1);
+            nodeHash = intent.getIntExtra("nodeHash", NO_HASH_NODE);
             book = intent.getParcelableExtra("currBook");
             openToText = intent.getParcelableExtra("incomingLinkText");
+        }
 
+        if(book == null && openToText == null && nodeHash == NO_HASH_NODE){
+            Log.d("SuperTextActi","appIsFirstOpening");
+            MyApp.homeClick(this, false, true);
+            try {
+                MyApp.dealWithDatabaseStuff(this);
+                book = new Book(Settings.getLastBook());
+            } catch (Book.BookNotFoundException e) {
+                Toast.makeText(this,"Problem getting book",Toast.LENGTH_SHORT).show();
+                try{
+                    book = new Book("Genesis");
+                }catch (Book.BookNotFoundException e1) {
+                    e.printStackTrace();
+                    badOnCreate = true;
+                    return;
+                }
+            }
+        }
+
+        if(linkFragment == null){
             //LINK FRAGMENT
             linkFragment = new LinkFragment();
             //Bundle args = new Bundle();
@@ -158,11 +190,13 @@ public abstract class SuperTextActivity extends FragmentActivity {
         }
         else { // no book means it came in from TOC
             firstLoadedNode = Node.getSavedNode(nodeHash);
+            /*
             if(firstLoadedNode == null){//there's a problem with getting the Node from hash. This happens when there's mutli tabs and restores from ram.
-                MyApp.homeClick(this, false);
+                MyApp.homeClick(this, false,false);
+                badOnCreate = true;
                 finish();
                 return;
-            }
+            }*/
             book = new Book(firstLoadedNode.getBid());
         }
         //These vars are specifically initialized here and not in init() so that they don't get overidden when coming from TOC
@@ -180,6 +214,8 @@ public abstract class SuperTextActivity extends FragmentActivity {
         menuLang = Settings.getMenuLang();
         if(customActionbar != null)//it's already been set
             customActionbar.setLang(menuLang);
+
+        Settings.setLastBook(book.title);
     }
 
     protected void init() {
@@ -234,6 +270,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
         outState.putParcelable("currBook", book);
         getSupportFragmentManager().putFragment(outState, LINK_FRAG_TAG, linkFragment);
     }
+
 
     /**
      * used for pressing on link
@@ -331,6 +368,26 @@ public abstract class SuperTextActivity extends FragmentActivity {
     }
     */
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MyApp.REQUEST_WRITE_STORAGE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    MyApp.dealWithDatabaseStuff(this);
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
+
 
     @Override
     public void onBackPressed() {
@@ -391,7 +448,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
         @Override
         public boolean onLongClick(View v) {
             Settings.BookSettings.setSavedBook(book, currNode, currText, textLang);
-            MyApp.homeClick(SuperTextActivity.this, true);
+            MyApp.homeClick(SuperTextActivity.this, true,false);
             return true;
         }
     };
@@ -422,9 +479,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
         @Override
         public void onClick(View v) {
             Settings.BookSettings.setSavedBook(book, currNode, currText, textLang);
-            finish();
-            MyApp.homeClick(SuperTextActivity.this, false);
-
+            MyApp.homeClick(SuperTextActivity.this, false,false);
         }
     };
 
