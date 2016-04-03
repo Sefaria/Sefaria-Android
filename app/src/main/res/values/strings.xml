@@ -46,7 +46,7 @@
     <string name="FIRST_UPDATE_FAIL_TITLE" translatable="false">Can\'t download library</string>
     <string name="OK" translatable="false">OK</string>
     <string name="NO_NEW_UPDATE_TITLE" translatable="false">No New Update</string>
-    <string name="UPDATE_STARTED_TITLE">Updating Library</string>
+    <string name="UPDATE_STARTED_TITLE">Installing New Offline Library</string>
     <string name="MESSAGE_CANT_STOP_NOW" translatable="false">The update cannot be canceled at this point. Please wait for it to finish.</string>
     <string name="FIRST_TIME_TEXT_MESSAGE" translatable="false">Go through the help dialogs to learn about the app</string>
     <string name="FIRST_TIME_TEXT_TITLE" translatable="false">Welcome to Sefaria!</string>

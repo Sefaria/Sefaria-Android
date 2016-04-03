@@ -2,12 +2,16 @@ package org.sefaria.sefaria.MenuElements;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
+import org.sefaria.sefaria.database.Database;
+import org.sefaria.sefaria.database.UpdateService;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -57,9 +61,22 @@ public class MenuState implements Parcelable {
 
     private static void initMenu() {
         try {
-            JSONArray jsonRoot = Util.openJSONArrayFromAssets(jsonIndexFileName);
+            JSONArray jsonRoot;
+            if(!Settings.getUseAPI()){
+                try {
+                    jsonRoot = new JSONArray(Util.readFile(Database.getInternalFolder() + MenuState.jsonIndexFileName));
+                }catch (Exception e1){
+                    e1.printStackTrace();
+                    jsonRoot = Util.openJSONArrayFromAssets(jsonIndexFileName);
+                }
+            }else{
+                jsonRoot = Util.openJSONArrayFromAssets(jsonIndexFileName);
+            }
+
+
             createChildrenNodes(jsonRoot, null, true);
         } catch (IOException e) {
+            e.printStackTrace();
             //Log.d("IO", "JSON not loaded");
         } catch (JSONException e) {
             e.printStackTrace();

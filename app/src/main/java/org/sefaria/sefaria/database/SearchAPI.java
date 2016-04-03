@@ -37,8 +37,8 @@ public class SearchAPI {
                         "}" +
                         "}," +
                         "\"highlight\": {" +
-                        "\"pre_tags\": [\"<b>\"]," +
-                        "\"post_tags\": [\"</b>\"]," +
+                        "\"pre_tags\": [\"<font color='#ff5566'>\"]," +
+                        "\"post_tags\": [\"</font>\"]," +
                         "\"fields\": {" +
                         "\"content\": {\"fragment_size\": 200}" +
                         "}" +
@@ -75,10 +75,10 @@ public class SearchAPI {
 
                 String heText = "";
                 String enText = "";
-                if (id.contains("[en]")) {
-                    enText = content;
-                } else /* if (id.contains("[he]")) */ {
+                if (id.contains("[he]")) {
                     heText = content;
+                } else /* if (id.contains("[en]") || "french" || whatever) */ {
+                    enText = content;
                 }
 
                 Text text = new Text(enText, heText, Book.getBid(title), ref);

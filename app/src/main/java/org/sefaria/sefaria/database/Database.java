@@ -11,6 +11,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -79,8 +80,12 @@ public class Database extends SQLiteOpenHelper{
     public static void dealWithStartupDatabaseStuff(Activity activity){
         Log.d("MyApp", "dealWithDatabaseStuff");
         long time = Settings.getDownloadSuccess(true);
-        if(time >0)
-            GoogleTracker.sendEvent("Download", "Update Finished",time);
+        if(time >0) {
+            GoogleTracker.sendEvent("Download", "Update Finished", time);
+            if(hasOfflineDB()){
+                Settings.setUseAPI(false);
+            }
+        }
 
         Util.deleteNonRecursiveDir(Downloader.FULL_DOWNLOAD_PATH); //remove any old temp downloads
         Database.getOfflineDB(activity,false);
@@ -90,7 +95,9 @@ public class Database extends SQLiteOpenHelper{
         if((evenIfUsingAPI || !Settings.getUseAPI()) && (!Database.isValidOfflineDB()|| !Database.hasOfflineDB())) {
             Toast.makeText(activity, "Starting Download", Toast.LENGTH_SHORT).show();
             Downloader.updateLibrary(activity,false);
+            return;
         }
+        return;
     }
 
     private static Boolean hasOfflineDB;

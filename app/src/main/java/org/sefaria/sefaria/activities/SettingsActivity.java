@@ -35,7 +35,7 @@ public class SettingsActivity extends Activity {
 
         numDebugDBUnlockClicks = 0;
 
-        CustomActionbar customActionbar = new CustomActionbar(this, new MenuNode("Settings","Settings (he)", null), Settings.getSystemLang(),homeClick,homeLongClick,null,null,null,null,backClick,-1);
+        CustomActionbar customActionbar = new CustomActionbar(this, new MenuNode("Settings","Settings (he)", null), Settings.getSystemLang(),null,null,closeClick,null,null,null,backClick,-1);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(customActionbar);
         fontSize   = (EditText)findViewById(R.id.fontSize);
@@ -88,19 +88,24 @@ public class SettingsActivity extends Activity {
 
 
         //LinearLayout gridRoot = (LinearLayout) findViewById(R.id.gridRoot);
-        String debugVer = "";
-        if (Settings.getIsDebug()) debugVer = "D";
+
 
         TextView appInfo = (TextView) findViewById(R.id.appInfo);
-        appInfo.setText("App Version: " + BuildConfig.VERSION_NAME + debugVer);
-        TextView databaseInfo = (TextView) findViewById(R.id.databaseInfo);
-        databaseInfo.setText(
-            "Online Library Version: " + Util.convertDBnum(Database.getVersionInDB(true)) + "\n"
-            + "Offline Library Version: " + Util.convertDBnum(Database.getVersionInDB(false))
-        );
+        appInfo.setText("App Version: " + BuildConfig.VERSION_NAME);
+        setDatabaseInfo();
         View updateLibraryButton = findViewById(R.id.update_library);
         updateLibraryButton.setOnLongClickListener(longUpdateLibrary);
 
+    }
+
+    private void setDatabaseInfo(){
+        String debugVer = "";
+        if (Settings.getIsDebug()) debugVer = "D ";
+        TextView databaseInfo = (TextView) findViewById(R.id.databaseInfo);
+        databaseInfo.setText(
+                "Online Library Version: " + Util.convertDBnum(Database.getVersionInDB(true)) + "\n"
+                        + "Offline Library Version: " + debugVer + Util.convertDBnum(Database.getVersionInDB(false))
+        );
     }
 
     private void saveFontSize(){
@@ -136,12 +141,20 @@ public class SettingsActivity extends Activity {
     };
 
 
+
     @Override
     public void onBackPressed() {
         saveFontSize();
         Database.checkAndSwitchToAPIIfNeed(this);
         super.onBackPressed();
     }
+
+    View.OnClickListener closeClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            done(v);
+        }
+    };
 
     View.OnClickListener backClick = new View.OnClickListener() {
         @Override
@@ -234,6 +247,7 @@ public class SettingsActivity extends Activity {
         if (numDebugDBUnlockClicks >= TOT_NUM_DEBUG_DB_CLICKS) {
             numDebugDBUnlockClicks = 0;
             Settings.setIsDebug(!Settings.getIsDebug()); //toggle
+            setDatabaseInfo();
             Toast.makeText(this,"DB isDebug == " + Settings.getIsDebug(),Toast.LENGTH_SHORT).show();
 
         } else {

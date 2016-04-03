@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import org.sefaria.sefaria.GoogleTracker;
+import org.sefaria.sefaria.Util;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -143,7 +144,7 @@ public class Huffman {
         long startTime= System.currentTimeMillis();
         try {
             String path = Database.getDbPath() + "/SefariaHuffmanDeflated.txt";
-            String deflated = readFile(path);
+            String deflated = Util.readFile(path);
 
             int size = Database.getDBSetting("huffmanSize",false);
             if(size == Database.BAD_SETTING_GET) {
@@ -225,17 +226,7 @@ public class Huffman {
 
     }
 
-    static String readFile(String path) throws IOException
-    {
-        File file = new File(path);
-        FileInputStream fis = new FileInputStream(file);
-        byte[] data = new byte[(int) file.length()];
-        fis.read(data);
-        fis.close();
-        String str = new String(data, "UTF-8");
-        return str;
 
-    }
 
 
     private class makeTreeAsync extends AsyncTask<String, Void, String> {
