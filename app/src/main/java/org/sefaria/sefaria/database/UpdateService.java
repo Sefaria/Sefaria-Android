@@ -35,6 +35,8 @@ import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.MenuElements.MenuState;
+import org.sefaria.sefaria.activities.SectionActivity;
+import org.sefaria.sefaria.activities.SuperTextActivity;
 
 public class UpdateService extends Service {
     public static final int UPDATE_STAGE_2_COMPLETE = 1;
@@ -358,7 +360,7 @@ public class UpdateService extends Service {
         //Toast.makeText(MyApp.currActivityContext, "Installation complete. Enjoy the Torah!", Toast.LENGTH_SHORT).show();
         unlockOrientation((Activity)MyApp.getContext());
         //total restart. To be safe, restart so the database is readable.
-        Intent mStartActivity = new Intent(MyApp.getContext(), HomeActivity.class);
+        Intent mStartActivity = new Intent(MyApp.getContext(), SectionActivity.class);
         int mPendingIntentId = 31415;
         PendingIntent mPendingIntent = PendingIntent.getActivity(MyApp.getContext(), mPendingIntentId,  mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
 

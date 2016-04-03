@@ -69,7 +69,17 @@ public class Util {
         return Locale.getDefault().getLanguage().equals("iw");
     }
 
-    static String readFile(Context context, String path) throws IOException
+    public static String readFile(String path) throws IOException {
+        File file = new File(path);
+        FileInputStream fis = new FileInputStream(file);
+        byte[] data = new byte[(int) file.length()];
+        fis.read(data);
+        fis.close();
+        String str = new String(data, "UTF-8");
+        return str;
+    }
+
+    static String readFileFromAssets(Context context, String path) throws IOException
     {
         Resources resources = context.getResources();
         InputStream iS = resources.getAssets().open(path);
@@ -90,7 +100,7 @@ public class Util {
     }
 
     static JSONObject getJSON(Context context, String path) throws JSONException,IOException {
-        String jsonText = readFile(context,path);
+        String jsonText = readFileFromAssets(context,path);
         JSONObject object = (JSONObject) new JSONTokener(jsonText).nextValue();
         return object;
     }
@@ -284,7 +294,11 @@ public class Util {
 
 
 
+
+
     public static String convertDBnum(int DBnum){
+        if(DBnum == -1)
+            return MyApp.getRString(R.string.none);
         if(DBnum <= 0)
             return String.valueOf(DBnum);
         String passDot;
