@@ -26,6 +26,7 @@ import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Database;
+import org.sefaria.sefaria.database.Downloader;
 import org.sefaria.sefaria.database.Node;
 import org.sefaria.sefaria.database.Searching;
 import org.sefaria.sefaria.database.Text;
@@ -90,7 +91,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
     /**
      * hacky boolean so that if there's a problem with the on create, the subclasses know not to continue with init (after they call super.onCreate)
      */
-    protected boolean badOnCreate = false;
+    protected boolean goodOnCreate = false;
     private CustomActionbar customActionbar;
 
     protected long openedNewBook = 0; //this is used for Analytics for when someone first goes to a book
@@ -110,6 +111,12 @@ public abstract class SuperTextActivity extends FragmentActivity {
         menuDrawer.setContentView(R.layout.activity_section);
         menuDrawer.setMenuView(R.layout.activity_home);
         */
+        if(!Database.hasOfflineDB() && Downloader.NO_INTERNET == Downloader.getNetworkStatus()){
+            Toast.makeText(this,"No internet connection or Offline Library",Toast.LENGTH_SHORT).show();
+            MyApp.homeClick(this,false,false);
+            finish();
+            return;
+        }
 
         Log.d("SuperTextActi", "onCreate");
         Intent intent = getIntent();
@@ -128,20 +135,15 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
         if(book == null && openToText == null && nodeHash == NO_HASH_NODE){
             Log.d("SuperTextActi", "appIsFirstOpening");
+            Database.checkAndSwitchToNeededDB(this);
             Database.dealWithStartupDatabaseStuff(this);
-            Database.checkAndSwitchToAPIIfNeed(this);
             MyApp.homeClick(this, false, true);
             try {
                 book = new Book(Settings.getLastBook());
-            } catch (Book.BookNotFoundException e) {
+            } catch (Exception e) {
                 Toast.makeText(this,"Problem getting book",Toast.LENGTH_SHORT).show();
-                try{
-                    book = new Book("Genesis");
-                }catch (Book.BookNotFoundException e1) {
-                    e.printStackTrace();
-                    badOnCreate = true;
-                    return;
-                }
+                e.printStackTrace();
+                return;
             }
         }
 
@@ -173,7 +175,6 @@ public abstract class SuperTextActivity extends FragmentActivity {
                         List<Node> TOCroots = book.getTOCroots();
                         if (TOCroots.size() == 0) {
                             Toast.makeText(this, "Unable to load Table of Contents for this book", Toast.LENGTH_SHORT).show();
-                            badOnCreate = true;
                             return;
                         }
                         Node root = TOCroots.get(0);
@@ -184,8 +185,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
                     }
                 }
             }catch (API.APIException e) {
-                Toast.makeText(this,"Problem getting data from internet", Toast.LENGTH_SHORT).show();
-                badOnCreate = true;
+                API.makeAPIErrorToast(this);
                 return;
             }
             //lastLoadedNode = firstLoadedNode; PURPOSEFULLY NOT INITIALLIZING TO INDICATE THAT NOTHING HAS BEEN LOADED YET
@@ -218,6 +218,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
             customActionbar.setLang(menuLang);
 
         Settings.setLastBook(book.title);
+        goodOnCreate = true;
     }
 
     protected void init() {
@@ -257,6 +258,8 @@ public abstract class SuperTextActivity extends FragmentActivity {
     protected void onResume() {
         super.onResume();
         GoogleTracker.sendScreen("SuperTextActivity");
+        if(!goodOnCreate)
+            return;
         GoogleTracker.sendEvent(GoogleTracker.CATEGORY_NEW_TEXT, book.title, Settings.lang2Int(textLang));
         if(!veryFirstTime) {
             setMenuLang(Settings.getMenuLang());
@@ -268,6 +271,8 @@ public abstract class SuperTextActivity extends FragmentActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        if(book == null)
+            return;
         Settings.BookSettings.setSavedBook(book, currNode, currText, textLang);//data also saved with home click
         outState.putParcelable("currBook", book);
         getSupportFragmentManager().putFragment(outState, LINK_FRAG_TAG, linkFragment);
@@ -682,6 +687,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
             textsList = newNode.getTexts();
             return textsList;
         } catch (API.APIException e) {
+            API.makeAPIErrorToast(this);
             return new ArrayList<>();
         }
 

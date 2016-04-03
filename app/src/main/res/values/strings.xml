@@ -17,6 +17,7 @@
     <string name="cannot_parse_link">Cannot parse link</string>
     <string name="opening_new_task">Opening New Tab</string>
     <string name="switching_to_api">Switching to Online only Library</string>
+    <string name="switching_to_offline">Switching to Offline Library</string>
     <string name="online_only_Library">Use Online only Library</string>
     <string name="offline_Library">Use Offline Library (recommended)</string>
 
