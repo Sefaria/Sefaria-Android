@@ -327,6 +327,17 @@ public class Settings {
         Settings.useAPI = useAPI;
     }
 
+    public static void setLastBook(String title){
+        SharedPreferences.Editor editor = getGeneralSettings().edit();
+        editor.putString("lastBook",title);
+        editor.commit();
+    }
+
+    public static String getLastBook(){
+        SharedPreferences settings = getGeneralSettings();
+        return settings.getString("lastBook", "Genesis");
+    }
+
     public static class Link {
         static private SharedPreferences getLinkSettings() {
             return MyApp.getContext().getSharedPreferences("org.sefaria.sefaria.link_settings", Context.MODE_PRIVATE);

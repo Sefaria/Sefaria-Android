@@ -8,9 +8,13 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.util.Log;
 import android.widget.Toast;
 
 import org.sefaria.sefaria.activities.HomeActivity;
+import org.sefaria.sefaria.database.API;
+import org.sefaria.sefaria.database.Database;
+import org.sefaria.sefaria.database.Downloader;
 import org.sefaria.sefaria.database.LinkFilter;
 
 import java.io.InputStream;
@@ -132,18 +136,22 @@ public class MyApp extends Application {
 
     public static void killSwitch(){return; }//TODO remove function
 
-    public static void homeClick(Activity activity, boolean openNewTab){
+    public static void homeClick(Activity activity, boolean openNewTab,boolean hideOpening){
         Intent intent = new Intent(activity, HomeActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); //Clear Activity stack
-        intent.putExtra("homeClicked",true);
-        intent.putExtra("isPopup",true);
+        //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); //Clear Activity stack and put the Home screen as the only activity
+        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT); //bring the old Home menu to the front
+
+        //intent.putExtra("homeClicked",true);
+        intent.putExtra("isPopup",!openNewTab);
+        intent.putExtra("hideOpening",hideOpening);
 
         if (openNewTab) {
             intent = startNewTab(intent);
-            Bundle activityOptionsBundle = ActivityOptionsCompat.makeCustomAnimation(context,R.animator.slide_up,0).toBundle();
-            ActivityCompat.startActivity(activity,intent,activityOptionsBundle);
+            Bundle activityOptionsBundle = ActivityOptionsCompat.makeCustomAnimation(context,R.animator.slide_up,R.animator.stay).toBundle();
+            ActivityCompat.startActivity(activity, intent, activityOptionsBundle);
         } else {
             activity.startActivity(intent);
+            activity.overridePendingTransition(R.animator.slide_right, R.animator.stay);
         }
     }
 
@@ -151,6 +159,21 @@ public class MyApp extends Application {
         Toast.makeText(context, context.getString(R.string.opening_new_task), Toast.LENGTH_SHORT).show();
         intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         return intent;
+    }
+
+
+    public static void dealWithDatabaseStuff(Activity activity){
+        Log.d("MyApp", "dealWithDatabaseStuff");
+        long time = Settings.getDownloadSuccess(true);
+        if(time >0)
+            GoogleTracker.sendEvent("Download", "Update Finished",time);
+
+        Util.deleteNonRecursiveDir(Downloader.FULL_DOWNLOAD_PATH); //remove any old temp downloads
+
+        if((!Settings.getUseAPI() && API.useAPI())|| !Database.isValidDB()) {
+            Toast.makeText(activity, "Starting Download", Toast.LENGTH_SHORT).show();
+            Downloader.updateLibrary(activity,false);
+        }
     }
 
 
