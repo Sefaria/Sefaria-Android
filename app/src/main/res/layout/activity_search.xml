@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -10,7 +10,6 @@
     <LinearLayout
         android:id="@+id/actionbarRoot"
         android:orientation="horizontal"
-        android:layout_alignParentTop="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
     </LinearLayout>
@@ -18,14 +17,18 @@
         android:id="@+id/numResults"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/actionbarRoot"
         android:layout_margin="15dp"
-        android:text="yoyoyoyo"/>
+        android:text=""/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?actionBarDivider">
+
+    </View>
     <org.sefaria.sefaria.layouts.ListViewExt
         android:id="@+id/listview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/numResults">
+        android:layout_height="match_parent">
     </org.sefaria.sefaria.layouts.ListViewExt>
 
-</RelativeLayout>
+</LinearLayout>
