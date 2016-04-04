@@ -64,6 +64,12 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                     AsyncSearch asyncSearch = new AsyncSearch(0);
                     asyncSearch.execute();
+                    // Check if no view has focus:
+                    View view = SearchActivity.this.getCurrentFocus();
+                    if (view != null) {
+                        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    }
                     return true;
                 }
                 return false;
@@ -78,7 +84,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
         listView.setAdapter(adapter);
         listView.setOnScrollListener(this);
         numResultsTV = (SefariaTextView) findViewById(R.id.numResults);
-        numResultsTV.setFont(Settings.getMenuLang(),false);
+        numResultsTV.setFont(Settings.getSystemLang(),false);
         isLoadingSearch = false;
     }
 
@@ -95,6 +101,12 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
         public void onClick(View v) {
             AsyncSearch asyncSearch = new AsyncSearch(0);
             asyncSearch.execute();
+            // Check if no view has focus:
+            View view = SearchActivity.this.getCurrentFocus();
+            if (view != null) {
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
         }
     };
 
@@ -116,7 +128,6 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
                         preLast = lastItem;
                         currPageLoaded++;
                         AsyncSearch asyncSearch = new AsyncSearch(currPageLoaded);
-
                         asyncSearch.execute();
                     }
                 }
@@ -137,6 +148,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
         protected void onPreExecute() {
             super.onPreExecute();
             isLoadingSearch = true;
+            numResultsTV.setText("Loading...");
             query = searchBox.getText().toString();
         }
 

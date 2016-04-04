@@ -27,8 +27,8 @@ public class SearchAPI {
                         "\"from\": " + (pageNum * pageSize) + "," +
                         "\"size\": " + pageSize + "," +
                         "\"sort\": [{" +
-                        "\"order\": {}" +
-                        "}]," +
+                            "\"order\": {}" +
+                            "}]," +
                         "\"query\": {" +
                         "\"query_string\": {" +
                         "\"query\": \"" + query + "\"," +
