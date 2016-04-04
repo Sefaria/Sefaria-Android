@@ -265,8 +265,6 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
                 if (linkFragment.getIsOpen()) {
                     int currInd = i + listView.getFirstVisiblePosition();
                     Text currSeg = sectionAdapter.getItem(currInd);
-
-                    Log.d("SectionAct", currSeg.isChapter() + "---" + currSeg.toString());
                     if (currSeg.isChapter()) {//TODO maybe make this select the chapter links...but not actually
                         currSeg = sectionAdapter.getItem(currInd + 1);
                     }
@@ -312,9 +310,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
 
     @Override
     protected void jumpToText(Text text) {
-        Log.d("SectionAct", "calling jump to Text");
         int index = sectionAdapter.getPosition(text);
-        Log.d("sec","INDEX " + index);
         listView.setSelection(index);
     }
 
