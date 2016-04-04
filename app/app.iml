@@ -77,12 +77,12 @@
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.google.android.gms/play-services-analytics/8.4.0/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.google.android.gms/play-services-basement/8.4.0/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.google.android.gms/play-services-measurement/8.4.0/jars" />
-      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/net.simonvt.menudrawer/menudrawer/3.0.6/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/incremental" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/instant-run-support" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/jniLibs" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/manifests" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/pre-dexed" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/proguard-rules" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/res" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/restart-dex" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/rs" />
@@ -96,7 +96,6 @@
     <orderEntry type="library" exported="" name="recyclerview-v7-23.1.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-analytics-8.4.0" level="project" />
     <orderEntry type="library" exported="" name="gridlayout-v7-23.1.0" level="project" />
-    <orderEntry type="library" exported="" name="menudrawer-3.0.6" level="project" />
     <orderEntry type="library" exported="" name="support-v4-23.1.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-measurement-8.4.0" level="project" />
     <orderEntry type="library" exported="" name="design-23.1.0" level="project" />
