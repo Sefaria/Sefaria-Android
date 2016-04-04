@@ -20,6 +20,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import org.sefaria.sefaria.GoogleTracker;
+import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.TextElements.SectionAdapter;
@@ -179,7 +180,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
 
         sendIntent.putExtra(Intent.EXTRA_TEXT,str);
         sendIntent.setType("text/plain");
-        startActivity(sendIntent);
+        startActivity(Intent.createChooser(sendIntent, MyApp.getRString(R.string.send_to)));
     }
 
     private void sendCorrection(Text text){
