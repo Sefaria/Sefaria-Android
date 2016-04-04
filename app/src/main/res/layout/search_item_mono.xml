@@ -7,7 +7,7 @@
         android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
+        android:layout_margin="15dp"
         android:textSize="20sp"
         android:textColor="?text_color_english"
         android:text="Genesis 10:5"/>
@@ -15,7 +15,9 @@
         android:id="@+id/mono"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginBottom="15sp"
         android:textSize="20sp"
         android:textColor="?text_color_main"
         android:text="And there was Noah!!"/>
