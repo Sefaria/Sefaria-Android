@@ -17,6 +17,7 @@ import java.util.zip.ZipInputStream;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -134,6 +135,27 @@ public class Database extends SQLiteOpenHelper{
         }
 
 
+    }
+
+    public static void onRequestPermissionsResult(Activity activity,int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MyApp.REQUEST_WRITE_STORAGE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Downloader.updateLibrary(activity, false);
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    Toast.makeText(activity, MyApp.getRString(R.string.without_permission), Toast.LENGTH_LONG).show();
+                    Settings.setUseAPI(true);
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
     }
 
 
