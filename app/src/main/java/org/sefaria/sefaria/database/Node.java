@@ -468,6 +468,7 @@ public class Node implements  Parcelable{
 
     public String getPath(Util.Lang lang, boolean forURL, boolean includeBook, boolean replaceSpaces){
         String path = "";
+        Log.d("Node","getPath"+ this);
 
         Node node = this;
         String separator;
@@ -762,6 +763,83 @@ public class Node implements  Parcelable{
         return;
     }
 
+
+
+    private List<Text> getTextsFromAPI() throws API.APIException{ //(String booktitle, int []levels)
+        Log.d("API","getTextsFromAPI2 called");
+        String completeUrl = API.TEXT_URL + getPath(Util.Lang.EN, true, true, true) + "?" + API.ZERO_CONTEXT + API.ZERO_COMMENTARY;
+
+        String data = API.getDataFromURL(completeUrl);
+        List<Text> textList = new ArrayList<>();
+        if(data.length()==0)
+            return textList;
+
+        int [] levels = getLevels();
+        int bid = getBid();
+        try {
+            JSONObject jsonData = new JSONObject(data);
+            //Log.d("api", "jsonData:" + jsonData.toString());
+
+            //TODO make work for 1 and 3 (or more) levels of depth (exs. Hadran, Arbaah Turim)
+            JSONArray textArrayBig = jsonData.getJSONArray("text");
+            JSONArray heArrayBig = jsonData.getJSONArray("he");
+            int stop = Math.max(textArrayBig.length(), heArrayBig.length());
+
+            int startLevel1 = levels[0];
+            if(startLevel1 == 0)
+                startLevel1 = 1;
+
+            for (int k = 0; k < stop; k++) {
+                JSONArray textArray;
+                JSONArray heArray;
+                try {
+                    textArray = textArrayBig.getJSONArray(k);
+                    heArray = heArrayBig.getJSONArray(k);
+                } catch (JSONException e1) {
+                    Log.d("API","didn't find sub arrays in text");
+                    textArray = textArrayBig;
+                    heArray = heArrayBig;
+                    stop = 0;
+                }
+
+                int maxLength = Math.max(textArray.length(), heArray.length());
+                //Log.d("api",textArray.toString() + " " + heArray.toString());
+                for (int i = 0; i < maxLength; i++) {
+                    //get the texts if i is less it's within the length (otherwise use "")
+                    String enText = "";
+                    try {
+                        enText = textArray.getString(i);
+                    } catch (JSONException e) {
+                        Log.d("api", e.toString());
+                    }
+                    String heText = "";
+                    try {
+                        heText = heArray.getString(i);
+                    } catch (JSONException e) {
+                        Log.d("api", e.toString());
+                    }
+                    Text text = new Text(enText,heText,bid,null);
+                    text.parentNID = nid;
+                    for (int j = 0; j < levels.length; j++) {
+                        text.levels[j] = levels[j]; //TODO get full level info in there
+                    }
+                    //only do it at the 2nd level, but currently this can only handle at this level, but can't handle 3 levels of depth in a ref.
+                    text.levels[1] += k;
+                    text.levels[0] = i + startLevel1;
+
+                    textList.add(text);
+                }
+                startLevel1 = 1;
+            }
+        }catch(JSONException e){
+            e.printStackTrace();
+            Log.e("api", "error processing json data");
+        }
+
+
+        return textList;
+    }
+
     /**
      *  Get texts for complex texts
      *
@@ -777,26 +855,19 @@ public class Node implements  Parcelable{
         if(!isTextSection){
             Log.e("Node", "getTexts() was called when it's not a textSection!");
             textList = new ArrayList<>();
-            return textList;
-        }
-        if(Settings.getUseAPI()) {
-            textList = API.getTextsFromAPI2(this);
-            return textList;
-        }
-
-        if(!isComplex && !isGridItem){
+        }else if(Settings.getUseAPI()) {
+            textList = getTextsFromAPI();
+        }else if(!isComplex && !isGridItem){
             Log.e("Node", "It thinks (!isComplex() && !isGridItem())... I don't know how.");
             textList = new ArrayList<>();
-            return textList;
         }else if(!isComplex && isGridItem && !isRef){
             textList =  Text.getFromDB(bid,getLevels(),0);
         }else if(isRef()){
             if(!isComplex){
                 Log.e("Node", "It thinks (!isComplex && isRef)... I don't know how.");
                 textList = new ArrayList<>();
-                return textList;
             }
-            if(startTid>0 && endTid >0) {
+            else if(startTid>0 && endTid >0) {
                 textList = Text.getWithTids(startTid, endTid);
             }
             else{
@@ -811,6 +882,7 @@ public class Node implements  Parcelable{
                 textList = Text.getFromDB(bid, getLevels(), nid);
         }
         else{
+            textList = new ArrayList<>();
             Log.e("Node", "In Node.getText() and I'm confused. NodeTypeFlags: " + getNodeTypeFlagsStr());
         }
         //Log.d("Node", "finishing getTexts algo. textList.size():" + textList.size());
