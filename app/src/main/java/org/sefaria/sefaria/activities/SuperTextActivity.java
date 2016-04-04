@@ -14,7 +14,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import net.simonvt.menudrawer.MenuDrawer;
 
 import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MyApp;
@@ -101,7 +100,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
     protected boolean reportedNewBookScroll = false;
     private static final int NO_HASH_NODE = -1;
 
-    private MenuDrawer menuDrawer;
+    //private MenuDrawer menuDrawer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
