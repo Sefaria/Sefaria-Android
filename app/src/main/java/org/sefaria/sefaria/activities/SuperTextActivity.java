@@ -117,9 +117,12 @@ public abstract class SuperTextActivity extends FragmentActivity {
             return;
         }
 
+
+
         Log.d("SuperTextActi", "onCreate");
         Intent intent = getIntent();
         Integer nodeHash = NO_HASH_NODE;
+        MyApp.handleIncomingURL(this,intent);
 
         if (savedInstanceState != null) {//it's coming back after it cleared the activity from ram
             linkFragment = (LinkFragment) getSupportFragmentManager().getFragment(savedInstanceState,LINK_FRAG_TAG);
@@ -252,6 +255,8 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
     }
 
+
+
     protected boolean veryFirstTime = true;
     @Override
     protected void onResume() {
@@ -348,6 +353,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+        MyApp.handleIncomingURL(this, intent);
         comingFromTOC(intent);
     }
 

@@ -21,6 +21,8 @@
     <string name="online_only_Library">Use Online only Library</string>
     <string name="offline_Library">Use Offline Library (recommended)</string>
     <string name="without_permission">Without storage permissions, you cannot use the Offline Library. Go to Settings in the main menu of the app to download the offline Library.</string>
+    <string name="send_to">Share</string>
+
 
     <string name="action_bookmarks">Bookmarks</string>
     <string name="activity_filterlinks">Filter Sources</string>
