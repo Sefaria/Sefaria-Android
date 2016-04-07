@@ -1,4 +1,4 @@
-package org.sefaria.sefaria;
+/*package org.sefaria.sefaria;
 
 
 import android.app.Activity;
@@ -377,8 +377,6 @@ public class DialogManager {
                 //((ProgressDialog) dialog).setMax(100);
 
                 dialog.setCancelable(false);
-
-
                 dialog.setButton(DialogInterface.BUTTON_NEGATIVE, activity.getString(R.string.CANCEL),new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -547,4 +545,4 @@ public class DialogManager {
 
         return "";
     }
-}
+}*/
