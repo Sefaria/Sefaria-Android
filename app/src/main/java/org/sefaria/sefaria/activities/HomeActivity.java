@@ -10,6 +10,8 @@ import android.os.Bundle;
 import org.apache.http.params.HttpParams;
 import org.json.JSONObject;
 import org.sefaria.sefaria.BuildConfig;
+import org.sefaria.sefaria.DialogCallable;
+import org.sefaria.sefaria.DialogManager2;
 import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MenuElements.MenuDirectRef;
 import org.sefaria.sefaria.Settings;

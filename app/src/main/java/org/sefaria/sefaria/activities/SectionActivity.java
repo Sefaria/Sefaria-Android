@@ -19,6 +19,8 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import org.sefaria.sefaria.DialogCallable;
+import org.sefaria.sefaria.DialogManager2;
 import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
@@ -82,8 +84,6 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
 
 
         registerForContextMenu(listView);
-
-
     }
 
     @Override
