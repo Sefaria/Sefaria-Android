@@ -411,6 +411,12 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
             }
 
             if (openToText != null) {
+                try {
+                    Thread.sleep(50);
+                    //this is to help solve the race condition causing it to jump to the wrong place
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 jumpToText(openToText);
                 openToText = null;
             }
