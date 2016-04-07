@@ -127,7 +127,7 @@ public class Database extends SQLiteOpenHelper{
     public static void checkAndSwitchToNeededDB(Activity activity){
         boolean hasInternet = (Downloader.getNetworkStatus() != Downloader.NO_INTERNET);
 
-        if(!Database.hasOfflineDB()){ //There's no DB
+        if(!Database.hasOfflineDB() && !Settings.getUseAPI()){ //There's no DB
             Toast.makeText(activity,MyApp.getRString(R.string.switching_to_api),Toast.LENGTH_LONG).show();
             //DialogManager2.showDialog(activity, DialogManager2.DialogPreset.SWITCHING_TO_API);
             Settings.setUseAPI(true);

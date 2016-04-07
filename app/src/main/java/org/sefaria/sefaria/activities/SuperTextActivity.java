@@ -151,8 +151,6 @@ public abstract class SuperTextActivity extends FragmentActivity {
         if(book == null && openToText == null && nodeHash == NO_HASH_NODE){
             //Log.d("SuperTextActi", "appIsFirstOpening");
             //Database.dealWithStartupDatabaseStuff(this);
-
-
             Database.checkAndSwitchToNeededDB(this);
             MyApp.homeClick(this, false, true);
             try {
