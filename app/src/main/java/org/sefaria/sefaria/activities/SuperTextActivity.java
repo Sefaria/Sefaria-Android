@@ -117,9 +117,12 @@ public abstract class SuperTextActivity extends FragmentActivity {
             return;
         }
 
+
+
         Log.d("SuperTextActi", "onCreate");
         Intent intent = getIntent();
         Integer nodeHash = NO_HASH_NODE;
+        MyApp.handleIncomingURL(this,intent);
 
         if (savedInstanceState != null) {//it's coming back after it cleared the activity from ram
             linkFragment = (LinkFragment) getSupportFragmentManager().getFragment(savedInstanceState,LINK_FRAG_TAG);
@@ -134,8 +137,8 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
         if(book == null && openToText == null && nodeHash == NO_HASH_NODE){
             Log.d("SuperTextActi", "appIsFirstOpening");
-            Database.checkAndSwitchToNeededDB(this);
             Database.dealWithStartupDatabaseStuff(this);
+            Database.checkAndSwitchToNeededDB(this);
             MyApp.homeClick(this, false, true);
             try {
                 book = new Book(Settings.getLastBook());
@@ -252,6 +255,8 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
     }
 
+
+
     protected boolean veryFirstTime = true;
     @Override
     protected void onResume() {
@@ -348,6 +353,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+        MyApp.handleIncomingURL(this, intent);
         comingFromTOC(intent);
     }
 
@@ -376,23 +382,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case MyApp.REQUEST_WRITE_STORAGE: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Database.dealWithStartupDatabaseStuff(this);
-                } else {
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                    Settings.setUseAPI(true);
-                }
-                return;
-            }
-
-            // other 'case' lines to check for other
-            // permissions this app might request
-        }
+        Database.onRequestPermissionsResult(this,requestCode,permissions,grantResults);
     }
 
 

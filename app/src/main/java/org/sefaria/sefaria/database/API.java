@@ -258,78 +258,7 @@ public class API {
     }
 
 
-    private static List<Text> parseJSON(String in,int [] levels, int bid) {
-        List<Text> textList = new ArrayList<>();
-        if(in.length()==0)
-            return textList;
 
-        try {
-            JSONObject jsonData = new JSONObject(in);
-            //Log.d("api", "jsonData:" + jsonData.toString());
-
-            //TODO make work for 1 and 3 (or more) levels of depth (exs. Hadran, Arbaah Turim)
-            JSONArray textArrayBig = jsonData.getJSONArray("text");
-            JSONArray heArrayBig = jsonData.getJSONArray("he");
-
-
-            int stop = Math.max(textArrayBig.length(), heArrayBig.length());
-
-            int startLevel1 = levels[0];
-            if(startLevel1 == 0)
-                startLevel1 = 1;
-
-            for (int k = 0; k < stop; k++) {
-                JSONArray textArray;
-                JSONArray heArray;
-                try {
-                    textArray = textArrayBig.getJSONArray(k);
-                    heArray = heArrayBig.getJSONArray(k);
-                } catch (JSONException e1) {
-                    Log.d("API","didn't find sub arrays in text");
-                    textArray = textArrayBig;
-                    heArray = heArrayBig;
-                    stop = 0;
-                }
-
-                int maxLength = Math.max(textArray.length(), heArray.length());
-                //Log.d("api",textArray.toString() + " " + heArray.toString());
-                for (int i = 0; i < maxLength; i++) {
-                    //get the texts if i is less it's within the length (otherwise use "")
-                    String enText = "";
-                    try {
-                        enText = textArray.getString(i);
-                    } catch (JSONException e) {
-                        Log.d("api", e.toString());
-                    }
-                    String heText = "";
-                    try {
-                        heText = heArray.getString(i);
-                    } catch (JSONException e) {
-                        Log.d("api", e.toString());
-                    }
-                    Text text = new Text(enText, heText,bid,null);
-                    for (int j = 0; j < levels.length; j++) {
-                        text.levels[j] = levels[j]; //TODO get full level info in there
-                    }
-
-                    //only do it at the 2nd level, but currently this can only haddle at this level, but can't handle 3 levels of depth in a ref.
-                    text.levels[1] += k;
-
-                    text.levels[0] = i + startLevel1;
-
-
-                    textList.add(text);
-                }
-                startLevel1 = 1;
-            }
-        }catch(JSONException e){
-            e.printStackTrace();
-            Log.e("api", "error processing json data");
-        }
-
-        return textList;
-
-    }
 
 
 /*
@@ -454,40 +383,6 @@ public class API {
     }
 
 
-    /*
-     * Will only return after response from web is complete.
-     * @param bookTitle
-     * @param levels
-     * @return textList
-     * @throws APIException
-
-    static public List<Text> getTextsFromAPI1(String bookTitle, int[] levels) throws APIException{ //(String booktitle, int []levels)
-        Log.d("API","getTextsFromAPI called");
-        String place = createPlace(bookTitle, levels);
-        String completeUrl = TEXT_URL + place + "?" + ZERO_CONTEXT + ZERO_COMMENTARY;
-        String data = getDataFromURL(completeUrl);
-        Log.d("API","getTextsFromAPI got data.size:" + data.length());
-        List<Text> textList = parseJSON(data,levels,Book.getBid(bookTitle));
-        //for(int i=0;i<levels.length;i++)
-          //  Log.d("api", "in getTextsFromAPI: levels" + i + ". "  + levels[i] );
-        Log.d("api", "in getTextsFromAPI: api.textlist:" + textList.size());
-        return textList;
-    }
-    */
-
-    static public List<Text> getTextsFromAPI2(Node node) throws APIException{ //(String booktitle, int []levels)
-        Log.d("API","getTextsFromAPI2 called");
-        String completeUrl = TEXT_URL + node.getPath(Util.Lang.EN,true,true,true) + "?" + ZERO_CONTEXT + ZERO_COMMENTARY;
-
-        String data = getDataFromURL(completeUrl);
-        Log.d("API","getTextsFromAPI got data.size:" + data.length());
-        Log.d("API","Node.levels:" + node.getLevels());
-        List<Text> textList = parseJSON(data,node.getLevels(),node.getBid());
-        //for(int i=0;i<levels.length;i++)
-        //  Log.d("api", "in getTextsFromAPI: levels" + i + ". "  + levels[i] );
-        Log.d("api", "in getTextsFromAPI: api.textlist:" + textList.size());
-        return textList;
-    }
 
     private class GetDataTask extends AsyncTask <String, Void, String> {
         @Override

@@ -22,11 +22,13 @@ import android.widget.Toast;
 import org.sefaria.sefaria.DialogCallable;
 import org.sefaria.sefaria.DialogManager2;
 import org.sefaria.sefaria.GoogleTracker;
+import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.TextElements.SectionAdapter;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.API;
+import org.sefaria.sefaria.database.Database;
 import org.sefaria.sefaria.database.Text;
 import org.sefaria.sefaria.layouts.ListViewExt;
 
@@ -91,6 +93,11 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
             menuLang = Settings.getMenuLang();
             sectionAdapter.notifyDataSetChanged();
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        Database.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
     }
 
     /*CONTEXT MENU */
@@ -173,7 +180,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
 
         sendIntent.putExtra(Intent.EXTRA_TEXT,str);
         sendIntent.setType("text/plain");
-        startActivity(sendIntent);
+        startActivity(Intent.createChooser(sendIntent, MyApp.getRString(R.string.send_to)));
     }
 
     private void sendCorrection(Text text){
