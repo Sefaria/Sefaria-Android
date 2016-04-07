@@ -59,6 +59,7 @@ public class API {
     private int status = STATUS_NONE;
     private boolean isDone = false;
     private boolean alreadyDisplayedURL = false;
+    private boolean useCache = true;
 
     private String jsonString; //if null, no json to send. if not null send this jsonObject along with url request
     final static int READ_TIMEOUT = 10000;
@@ -133,7 +134,8 @@ public class API {
         long timeForAPI = System.currentTimeMillis() - startTime;
         if(status == STATUS_NONE && data.length() >0) {
             status = STATUS_GOOD;
-            Cache.add(url,jsonString,data); //cache data for later
+            if(useCache)
+                Cache.add(url,jsonString,data); //cache data for later
             GoogleTracker.sendEvent(GoogleTracker.CATEGORY_API_REQUEST, "good", timeForAPI);
         }else{
             GoogleTracker.sendEvent(GoogleTracker.CATEGORY_API_REQUEST, "error", timeForAPI);
@@ -294,14 +296,11 @@ public class API {
     //static methods
 
     public static String getDataFromURL(String url) throws APIException{
-        return getDataFromURL(url,true);
+        return getDataFromURL(url,null,true);
     }
 
 
 
-    public static String getDataFromURL(String url, boolean useCache) throws APIException {
-        return getDataFromURL(url,null,useCache);
-    }
 
     /**
      * This function will wait until it gets the data from the Internet to return.
@@ -312,7 +311,7 @@ public class API {
      * @return data as String from url request
      * @throws APIException
      */
-    public static String getDataFromURL(String url, String jsonString, boolean useCache) throws APIException{
+    public static String getDataFromURL(String url, String jsonString,boolean useCache) throws APIException{
         String data;
         if(useCache){
             data = Cache.getCache(url,jsonString);
@@ -323,10 +322,12 @@ public class API {
         API api = new API();
         try{//try to get the data with the current thread.  This will only work if it's on a background thread.
             api.jsonString = jsonString;
+            api.useCache = useCache;
             data = api.fetchData(url);
         }catch (NetworkOnMainThreadException e){//if it was running on main thread, create our own background thread to handle it
             api = getDataFromURLAsync(url,jsonString);//creating an instance of api which will fetch data
             api.alreadyDisplayedURL = true;
+            api.useCache = useCache;
             data = api.getData();//waiting for data to be returned from internet
         }
 
