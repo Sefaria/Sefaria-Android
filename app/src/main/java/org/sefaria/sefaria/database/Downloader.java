@@ -26,7 +26,8 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.Toast;
 
-import org.sefaria.sefaria.DialogManager;
+import org.sefaria.sefaria.DialogCallable;
+import org.sefaria.sefaria.DialogManager2;
 import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
@@ -98,11 +99,11 @@ public class Downloader {
         Downloader.activity = activity;
         Intent intent = new Intent(activity,UpdateReceiver.class);
         intent.putExtra("isPre", true);
-        intent.putExtra("userInit",true);
+        intent.putExtra("userInit", true);
 
         MyApp.setContext(activity);
         activity.sendBroadcast(intent);
-        DialogManager.showDialog(activity,DialogManager.CHECKING_FOR_UPDATE);
+        DialogManager2.showDialog(activity, DialogManager2.DialogPreset.CHECKING_FOR_UPDATE);
     }
 
     private static String getErrorReason(Cursor cursor){
@@ -341,10 +342,12 @@ public class Downloader {
                                     double newprogress = downloaded*100.0/size;
 
                                     int diff = (int) (0.4*(Math.floor(newprogress) - Math.floor(progress)));
-                                    if (DialogManager.isShowingDialog && oldprogress != progress) {
+
+                                    //SWITCH TO NEW DialogManager...
+                                    /*if (DialogManager.isShowingDialog && oldprogress != progress) {
 
                                         ((ProgressDialog)DialogManager.dialog).incrementProgressBy(diff);
-                                    }
+                                    }*/
                                     Log.d("dm","Diff: "+diff);
                                     Log.d("dm","Prog: " + progress);
                                     Log.d("dm","NPro: " + newprogress);

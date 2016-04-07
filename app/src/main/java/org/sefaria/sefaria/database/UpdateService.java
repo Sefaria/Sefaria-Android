@@ -27,7 +27,8 @@ import android.os.PowerManager;
 import android.util.Log;
 import android.widget.Toast;
 
-import org.sefaria.sefaria.DialogManager;
+import org.sefaria.sefaria.DialogCallable;
+import org.sefaria.sefaria.DialogManager2;
 import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.activities.HomeActivity;
@@ -123,9 +124,27 @@ public class UpdateService extends Service {
 
         int netStat = Downloader.getNetworkStatus();
         if (netStat == Downloader.NO_INTERNET) {
-            DialogManager.showDialog(Downloader.activity,DialogManager.NO_INTERNET);
+            DialogManager2.showDialog(Downloader.activity,
+                    new DialogCallable(MyApp.getRString(R.string.NO_INTERNET_TITLE),MyApp.getRString(R.string.NO_INTERNET_MESSAGE),
+                    null,MyApp.getRString(R.string.CANCEL),null, DialogCallable.DialogType.ALERT) {
+                @Override
+                public void negativeClick() {
+                    DialogManager2.dismissCurrentDialog();
+                    UpdateService.unlockOrientation(Downloader.activity);
+                    UpdateService.endService();
+                }
+            });
         } else if (netStat == Downloader.DATA_CONNECTED) {
-            DialogManager.showDialog(Downloader.activity,DialogManager.USING_DATA);
+            DialogManager2.showDialog(Downloader.activity,
+                    new DialogCallable(Downloader.activity.getString(R.string.NO_INTERNET_TITLE),Downloader.activity.getString(R.string.NO_INTERNET_MESSAGE),
+                            MyApp.getRString(R.string.CONTINUE),null,null, DialogCallable.DialogType.ALERT) {
+                        @Override
+                        public void negativeClick() {
+                            DialogManager2.dismissCurrentDialog();
+                            UpdateService.unlockOrientation(Downloader.activity);
+                            UpdateService.endService();
+                        }
+                    });
         } else if (netStat == Downloader.WIFI_CONNECTED) {
             updateLibrary(userInit);
         }
@@ -187,8 +206,7 @@ public class UpdateService extends Service {
             updatedVersionNum = dbVersion; //save this for later
 
             if((newestAppVersionNum > MyApp.getContext().getPackageManager().getPackageInfo(MyApp.getAppPackageName(), 0).versionCode)
-                    && !MyApp.askedForUpgradeThisTime
-                    ){
+                    && !MyApp.askedForUpgradeThisTime){
                 Toast.makeText(MyApp.getContext(), MyApp.getContext().getString(R.string.upgrade_to_newest) + " " + MyApp.APP_NAME, Toast.LENGTH_SHORT).show();
                 try {
                     MyApp.getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + MyApp.getAppPackageName())));
@@ -197,7 +215,7 @@ public class UpdateService extends Service {
                 }
                 MyApp.askedForUpgradeThisTime = true;
                 if(userInitiated)
-                    DialogManager.dismissCurrentDialog(); //dismiss progressDialog
+                    DialogManager2.dismissCurrentDialog(); //dismiss progressDialog
                 unlockOrientation((Activity)MyApp.getContext());
                 return;
 
@@ -205,15 +223,23 @@ public class UpdateService extends Service {
 
             //check versions before continuing
             if ((updatedVersionNum > currentVersionNum && userInitiated) || evenOverWriteOldDatabase ) {
-                DialogManager.dismissCurrentDialog();
-                DialogManager.showDialog((Activity)MyApp.getContext(),DialogManager.UPDATE_STARTED);
+                DialogManager2.dismissCurrentDialog();
+                DialogManager2.showDialog(Downloader.activity, DialogManager2.DialogPreset.UPDATE_STARTED);
                 updateStage2(zipUrl, indexURL);
             } else if (updatedVersionNum > currentVersionNum && !userInitiated) {
-                if (currentVersionNum == -1) DialogManager.showDialog((Activity)MyApp.getContext(),DialogManager.FIRST_UPDATE);
-                else DialogManager.showDialog((Activity)MyApp.getContext(),DialogManager.NEW_UPDATE);
+                if (currentVersionNum == -1) {
+                    //click yes very quickly...
+                    Intent intent = new Intent(Downloader.activity,UpdateReceiver.class);
+                    intent.putExtra("isPre",true);
+                    intent.putExtra("userInit",true);
+                    Downloader.activity.sendBroadcast(intent);
+                    DialogManager2.showDialog(Downloader.activity, DialogManager2.DialogPreset.CHECKING_FOR_UPDATE);
+                } else {
+                    DialogManager2.showDialog(Downloader.activity, DialogManager2.DialogPreset.NEW_UPDATE);
+                }
             } else if (updatedVersionNum <= currentVersionNum && userInitiated) {
-                DialogManager.dismissCurrentDialog(); //dismiss progressDialog
-                DialogManager.showDialog((Activity)MyApp.getContext(),DialogManager.NO_NEW_UPDATE);
+                DialogManager2.dismissCurrentDialog(); //dismiss progressDialog
+                DialogManager2.showDialog(MyApp.getContext(),DialogManager2.DialogPreset.NO_NEW_UPDATE);
                 //UpdateService.endService(); //PROBABLY NOT NECESSARY, BUT ADDED IN CASE OF FUTURE BUG (ES)
             } else {
                 //no new update and not user initiated
@@ -225,7 +251,7 @@ public class UpdateService extends Service {
         }catch (Exception e){
             e.printStackTrace();
             GoogleTracker.sendException(e, "postUpdateStage1");
-            if(userInitiated) DialogManager.dismissCurrentDialog();
+            if(userInitiated) DialogManager2.dismissCurrentDialog();
             unlockOrientation((Activity)MyApp.getContext());
             return;
         }
@@ -335,7 +361,13 @@ public class UpdateService extends Service {
                     break;
                 default:
                     endService();
-                    DialogManager.showDialog((Activity)MyApp.getContext(),"Download Error",messageMap.get(msg.what));
+                    DialogManager2.showDialog((Activity) MyApp.getContext(), new DialogCallable("Download Error",
+                            messageMap.get(msg.what),MyApp.getRString(R.string.OK),null,null, DialogCallable.DialogType.ALERT) {
+                        @Override
+                        public void positiveClick() {
+                            DialogManager2.dismissCurrentDialog();
+                        }
+                    });
                     break;
             }
         }
@@ -356,7 +388,7 @@ public class UpdateService extends Service {
     public static void restart() {
         inUpdateStage3 = false;
 
-        DialogManager.dismissCurrentDialog();
+        DialogManager2.dismissCurrentDialog();
         //Toast.makeText(MyApp.currActivityContext, "Installation complete. Enjoy the Torah!", Toast.LENGTH_SHORT).show();
         unlockOrientation((Activity)MyApp.getContext());
         //total restart. To be safe, restart so the database is readable.
