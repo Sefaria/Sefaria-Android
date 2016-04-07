@@ -686,8 +686,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
                 return new ArrayList<>();
             }
             textsList = newNode.getTexts();
-            if(searchingTerm != null)
-                Searching.findWordsInList(textsList,searchingTerm,false,false);
+            newNode.findWords(searchingTerm);
             return textsList;
         } catch (API.APIException e) {
             API.makeAPIErrorToast(this);

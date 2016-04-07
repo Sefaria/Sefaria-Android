@@ -60,6 +60,8 @@ public class Node implements  Parcelable{
     private int tocRootsNum = -1;
 
 
+    private String lastSearchedTerm;
+
 
     private static Map<Integer,Node> allSavedNodes = new HashMap<Integer, Node>();
 
@@ -475,6 +477,21 @@ public class Node implements  Parcelable{
     }
 
 
+    public void findWords(String searchingTerm){
+        if(searchingTerm == null)
+            return;
+        if(textList == null)
+            return;
+        if(searchingTerm.equals(lastSearchedTerm)){
+            return;
+        }
+        if(lastSearchedTerm != null){
+            Searching.removeRed(textList);
+        }
+
+        Searching.findWordsInList(textList,searchingTerm,false,false);
+    }
+
     public String getPath(Util.Lang lang, boolean forURL, boolean includeBook, boolean replaceSpaces){
         String path = "";
         Log.d("Node","getPath"+ this);
@@ -589,6 +606,8 @@ public class Node implements  Parcelable{
         root.setAllChaps_API();
         return root;
     }
+
+
 
     private Node createTempNode(int sectionNum){
         this.isTextSection = false;

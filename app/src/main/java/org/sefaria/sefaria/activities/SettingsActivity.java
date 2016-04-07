@@ -39,6 +39,7 @@ public class SettingsActivity extends Activity {
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(customActionbar);
         fontSize   = (EditText)findViewById(R.id.fontSize);
+        fontSize.clearFocus();
 
     }
 
