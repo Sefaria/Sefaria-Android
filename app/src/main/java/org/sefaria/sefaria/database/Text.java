@@ -595,18 +595,23 @@ public class Text implements Parcelable {
             return false;
 
         Text text = (Text) o;
-        if((text.tid == 0 && this.tid ==0) || (text.ref != null || this.ref != null)){
-            boolean isEqual = (
+        if(text.tid != 0 && this.tid != 0)
+            return text.tid == this.tid;
+
+        boolean isEqual = (
                 Arrays.equals(text.levels,this.levels)
-                &&
-                this.bid == text.bid
+                        &&
+                        this.bid == text.bid
                 //&& this.parentNode.equals(text.parentNode)
                 //TODO maybe needs stricter def... but for now this is fine
-            );
-            return isEqual;
+        );
+        return isEqual;
+        /*
+        if((text.tid == 0 && this.tid ==0) || (text.ref != null || this.ref != null)){
             //return super.equals(o);
         }
-        return text.tid == this.tid;
+        */
+
     }
 
     private static Text deepCopy(Text text) {
