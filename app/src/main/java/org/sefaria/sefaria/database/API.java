@@ -4,12 +4,18 @@ package org.sefaria.sefaria.database;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -413,22 +419,24 @@ public class API {
             return str;
     }
 
-    public static List<Text> getLinks(Text text, LinkFilter linkFilter) throws APIException {
+    public static List<Text> getLinks(Text orgText, LinkFilter linkFilter) throws APIException {
         Log.d("API.Link","got starting LinksAPI");
         List<Text> texts = new ArrayList<>();
-        String place = text.getURL(false, false);
+        String place = orgText.getURL(false, false);
         String url = LINK_URL +place;
         String data = getDataFromURL(url);
         Log.d("API.Link","got data");
+        Book book;
         try {
-            Book book = new Book(text.bid);
+            book = new Book(orgText.bid);
         } catch (Book.BookNotFoundException e) {
             return texts;
         }
-        List<Text> textList = new ArrayList<>();
         if(data.length()==0)
-            return textList;
+            return texts;
+        List<Text> commentaries = new ArrayList<>();
 
+        String commentOn = " on " + book.title;
         try {
             JSONArray linksArray = new JSONArray(data);
             //Log.d("api", "jsonData:" + jsonData.toString());
@@ -442,7 +450,10 @@ public class API {
                         (linkFilter.depth_type == LinkFilter.DEPTH_TYPE.BOOK && enTitle.equals(linkFilter.enTitle))
                          ){
                     Text tempText = new Text(removeEmpty(jsonLink.getString("text")),removeEmpty(jsonLink.getString("he")),Book.getBid(enTitle),ref);
-                    texts.add(tempText);
+                    if(category.equals("Commentary"))
+                        commentaries.add(tempText);
+                    else
+                        texts.add(tempText);
                 }
             }
 
@@ -450,11 +461,69 @@ public class API {
             e.printStackTrace();
         }
 
+        Collections.sort(commentaries,comp);
+        Collections.sort(texts, comp);
+        commentaries.addAll(texts);
+
         Log.d("API.Link","finished LinksAPI");
-        return texts;
+        return commentaries;
     }
 
+    static Comparator<Text> comp = new Comparator<Text>() {
+        @Override
+        public int compare(Text a, Text b) {
+            if(a.bid != b.bid)
+                return a.bid - b.bid;
+            return 0;
+            //return NumberAwareStringComparator.INSTANCE.compare(a.getRef(),b.getRef());
+            //return a.getRef().compareTo(b.getRef());
+        }
+    };
 
+    public static class NumberAwareStringComparator implements Comparator<CharSequence> {
+        public static final NumberAwareStringComparator INSTANCE =
+                new NumberAwareStringComparator();
+
+        private static final Pattern PATTERN = Pattern.compile("(\\D*)(\\d*)");
+
+        private NumberAwareStringComparator() {
+        }
+
+        public int compare(CharSequence s1, CharSequence s2) {
+            Matcher m1 = PATTERN.matcher(s1);
+            Matcher m2 = PATTERN.matcher(s2);
+
+            // The only way find() could fail is at the end of a string
+            while (m1.find() && m2.find()) {
+                // matcher.group(1) fetches any non-digits captured by the
+                // first parentheses in PATTERN.
+                int nonDigitCompare = m1.group(1).compareTo(m2.group(1));
+                if (0 != nonDigitCompare) {
+                    return nonDigitCompare;
+                }
+
+                // matcher.group(2) fetches any digits captured by the
+                // second parentheses in PATTERN.
+                if (m1.group(2).isEmpty()) {
+                    return m2.group(2).isEmpty() ? 0 : -1;
+                } else if (m2.group(2).isEmpty()) {
+                    return +1;
+                }
+
+                BigInteger n1 = new BigInteger(m1.group(2));
+                BigInteger n2 = new BigInteger(m2.group(2));
+                int numberCompare = n1.compareTo(n2);
+                if (0 != numberCompare) {
+                    return numberCompare;
+                }
+            }
+
+            // Handle if one string is a prefix of the other.
+            // Nothing comes before something.
+            return m1.hitEnd() && m2.hitEnd() ? 0 :
+                    m1.hitEnd()                ? -1 : +1;
+        }
+    };
 
 
     static private String createPlace(String bookTitle, int[] levels){
