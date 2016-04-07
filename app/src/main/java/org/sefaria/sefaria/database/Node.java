@@ -828,7 +828,7 @@ public class Node implements  Parcelable{
                         Log.d("api", e.toString());
                     }
                     Text text = new Text(enText,heText,bid,null);
-                    text.parentNID = nid;
+                    text.parentNode = this;
                     for (int j = 0; j < levels.length; j++) {
                         text.levels[j] = levels[j]; //TODO get full level info in there
                     }
@@ -1129,6 +1129,7 @@ public class Node implements  Parcelable{
     public void log(){
         Log.d("Node", this.toString());
     }
+
 
 
 
