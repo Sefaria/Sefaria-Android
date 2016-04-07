@@ -109,7 +109,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
         /*
         menuDrawer = MenuDrawer.attach(this);
         menuDrawer.setContentView(R.layout.activity_section);
-        menuDrawer.setMenuView(R.layout.activity_home);
+        menuDrawer.setMenuView(R.layout.fragment_home);
         */
 
 
@@ -138,9 +138,17 @@ public abstract class SuperTextActivity extends FragmentActivity {
             openToText = intent.getParcelableExtra("incomingLinkText");
         }
 
+        if (Settings.getIsFirstTimeOpened()) {
+            MyApp.firstTimeOpened = true;
+            DialogManager2.showDialog(this, DialogManager2.DialogPreset.FIRST_TIME_OPEN);
+            Settings.setIsFirstTimeOpened(false);
+        }
+
         if(book == null && openToText == null && nodeHash == NO_HASH_NODE){
-            Log.d("SuperTextActi", "appIsFirstOpening");
-            Database.dealWithStartupDatabaseStuff(this);
+            //Log.d("SuperTextActi", "appIsFirstOpening");
+            //Database.dealWithStartupDatabaseStuff(this);
+
+
             Database.checkAndSwitchToNeededDB(this);
             MyApp.homeClick(this, false, true);
             try {
@@ -225,10 +233,6 @@ public abstract class SuperTextActivity extends FragmentActivity {
         Settings.setLastBook(book.title);
         goodOnCreate = true;
 
-        if (Settings.getIsFirstTimeOpened()) {
-            DialogManager2.showDialog(this, DialogManager2.DialogPreset.FIRST_TIME_OPEN);
-            Settings.setIsFirstTimeOpened(false);
-        }
     }
 
     protected void init() {
