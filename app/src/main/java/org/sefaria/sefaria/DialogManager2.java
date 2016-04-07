@@ -170,8 +170,18 @@ public class DialogManager2 {
             case DATA_CONNECTED:
                 dismissCurrentDialog();
                 showDialog(Downloader.activity,
-                        new DialogCallable(Downloader.activity.getString(R.string.NO_INTERNET_TITLE),Downloader.activity.getString(R.string.NO_INTERNET_MESSAGE),
-                                MyApp.getRString(R.string.CONTINUE),null,null, DialogCallable.DialogType.ALERT) {
+                        new DialogCallable(Downloader.activity.getString(R.string.USING_DATA_TITLE), Downloader.activity.getString(R.string.USING_DATA_MESSAGE),
+                                MyApp.getRString(R.string.CONTINUE), MyApp.getRString(R.string.CANCEL), null, DialogCallable.DialogType.ALERT) {
+
+                            @Override
+                            public void positiveClick() {
+                                Intent intent = new Intent(activity,UpdateReceiver.class);
+                                intent.putExtra("isPre",false);
+                                intent.putExtra("userInit",true);
+                                activity.sendBroadcast(intent);
+                                showDialog(activity,DialogPreset.CHECKING_FOR_UPDATE);
+                            }
+
                             @Override
                             public void negativeClick() {
                                 dismissCurrentDialog();
