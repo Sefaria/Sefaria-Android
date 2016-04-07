@@ -158,7 +158,7 @@ public class API {
                 }
             }
             Log.d("API", "place:" + place);
-            String[] spots = place.split("[\\.:(,\\s)]");
+            String[] spots = place.split("[\\.:]|(,\\s)");
 
             if (placeRef.book == null)
                 throw (new Book()).new BookNotFoundException();
@@ -168,34 +168,36 @@ public class API {
                 return placeRef;
             }
 
-            Node node = placeRef.book.getTOCroots().get(0);
-            for (int i = 0; i < spots.length; i++) {
-                String spot = spots[i];
-                Log.d("API", "spot:" + spot);
-                if (spot.length() == 0)
-                    continue;
-                Node tempNode = node.getChild(spot);
-                Log.d("API", "tempNode: " + tempNode);
-                if (tempNode == null) {
-                    //it's a most likely a final number (such as a verse number) so that's why there's no Node for it
-                    //so, lets get the firstDescendant (which should just be the node itself, but just in case lets do it this way)
-                    node = node.getFirstDescendant(false);
-                    List<Text> texts = node.getTexts();
-                    int num = Util.convertDafOrIntegerToNum(spot);
-                    for (Text tempText : texts) {
-                        if (tempText.levels[0] == num) {
-                            placeRef.text = tempText;
-                            //Log.d("API","textLevel: " + num);
-                            break;
+            try {
+                placeRef.node = placeRef.book.getTOCroots().get(0);
+                for (int i = 0; i < spots.length; i++) {
+                    String spot = spots[i];
+                    Log.d("API", "spot1:" + spot);
+                    if (spot.length() == 0)
+                        continue;
+                    Node tempNode = placeRef.node.getChild(spot);
+                    Log.d("API", "tempNode: " + tempNode);
+                    if (tempNode == null) {
+                        //it's a most likely a final number (such as a verse number) so that's why there's no Node for it
+                        //so, lets get the firstDescendant (which should just be the node itself, but just in case lets do it this way)
+                        placeRef.node = placeRef.node.getFirstDescendant(false);
+                        List<Text> texts = placeRef.node.getTexts();
+                        int num = Util.convertDafOrIntegerToNum(spot);
+                        for (Text tempText : texts) {
+                            if (tempText.levels[0] == num) {
+                                placeRef.text = tempText;
+                                //Log.d("API","textLevel: " + num);
+                                break;
+                            }
                         }
+                        break;
                     }
-                    break;
+                    placeRef.node = tempNode;
                 }
-                node = tempNode;
+            }catch (Exception e){
+                if(placeRef.node != null)
+                    placeRef.node = placeRef.node.getFirstDescendant(false);
             }
-
-
-            placeRef.node = node;
             return placeRef;
         }
     }
