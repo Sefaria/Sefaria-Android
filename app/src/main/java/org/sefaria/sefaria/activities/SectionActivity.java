@@ -259,7 +259,6 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
         int numChildren = listView.getChildCount();
 
 
-
         for (int i = 0; i < numChildren; i++) {
             View v = listView.getChildAt(i);
             if (v.getTop() <= SEGMENT_SELECTOR_LINE_FROM_TOP && v.getBottom() > SEGMENT_SELECTOR_LINE_FROM_TOP) {
@@ -359,8 +358,6 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
     };
 
 
-
-
     public class AsyncLoadSection extends AsyncTask<Void,Void,List<Text>> {
 
         private TextEnums dir;
@@ -394,14 +391,14 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
                 sectionAdapter.addAll(textsList);
 
                 scrolledDownTimes++;
-                if(openedNewBook >0 && !reportedNewBookScroll && scrolledDownTimes==2 && (System.currentTimeMillis() - openedNewBook < 10000)){
+                if(openedNewBookTime >0 && !reportedNewBookScroll && scrolledDownTimes==2 && (System.currentTimeMillis() - openedNewBookTime < 10000)){
                     reportedNewBookScroll = true;
                     String category;
                     if(reportedNewBookTOC || reportedNewBookBack)
                         category = GoogleTracker.CATEGORY_OPEN_NEW_BOOK_ACTION_2;
                     else
                         category = GoogleTracker.CATEGORY_OPEN_NEW_BOOK_ACTION;
-                    GoogleTracker.sendEvent(category,"Scrolled down",scrolledDownTimes/openedNewBook);
+                    GoogleTracker.sendEvent(category,"Scrolled down",scrolledDownTimes/openedNewBookTime);
                 }
 
             } else if (dir == TextEnums.PREV_SECTION) {
