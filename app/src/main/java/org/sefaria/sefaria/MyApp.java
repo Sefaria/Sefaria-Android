@@ -170,7 +170,11 @@ public class MyApp extends Application {
         return intent;
     }
 
-
+    public static void openURLInBrowser(Activity activity, String url){
+        url = url.replaceFirst("http", "https");
+        Intent intent2 = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        activity.startActivity(intent2);
+    }
 
     public static void handleIncomingURL(Activity activity, Intent intent){
         try {
@@ -181,54 +185,19 @@ public class MyApp extends Application {
                 String url = intent.getDataString();
                 Log.d("HomeActivity", "Sefaria URL:" + url);
                 GoogleTracker.sendEvent(GoogleTracker.CATEGORY_OPENED_URL, url);
+                String place = url.replaceAll("(?i).*sefaria\\.org/?(s2/)?", "");
                 try {
-                    String place = url.replaceAll("(?i).*sefaria\\.org/?(s2/)?", "");
-                    Log.d("HomeActivity", "place:" + place);
-                    String[] spots = place.split("\\.");
-                    Book book = new Book(spots[0]);
-                    if (spots.length == 1) {
-                        SuperTextActivity.startNewTextActivityIntent(activity, book, true);
-                        activity.finish();
-                        return;
-                    } else {
-                        Node node = book.getTOCroots().get(0);
-                        for (int i = 1; i < spots.length; i++) {
-                            Node tempNode = node.getChild(spots[i]);
-                            if (tempNode == null) {
-                                tempNode = node.getFirstDescendant(false);
-                                if (tempNode == node) {//you were already at the final level... I guess this number means it's the level1 value
-                                    try {
-                                        int num = Integer.valueOf(spots[i]);
-                                        List<Text> texts = node.getTexts();
-                                        for (Text text : texts) {
-                                            if (text.levels[0] == num) {
-                                                SuperTextActivity.startNewTextActivityIntent(activity, book, text, node, true);
-                                                activity.finish();
-                                                return;
-                                            }
-                                        }
-                                    } catch (Exception e1) {
-
-                                    }
-                                }
-                                break;
-                            } else {
-                                node = tempNode;
-                            }
-                        }
-                        SuperTextActivity.startNewTextActivityIntent(activity, book, null, node,true);
-                        activity.finish();
-                        return;
-                    }
-                } catch (Exception e) {
-                    Toast.makeText(activity, getRString(R.string.cannot_parse_link), Toast.LENGTH_SHORT).show();
-                    Log.e("HomeActivity", "Parsing URL. " + e.getMessage());
-                    url = url.replaceFirst("http", "https");
-                    Intent intent2 = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                    activity.startActivity(intent2);
+                    API.PlaceRef placeRef = API.PlaceRef.getPlace(place);
+                    SuperTextActivity.startNewTextActivityIntent(activity, placeRef.book, placeRef.text, placeRef.node, true, null);
+                }catch (API.APIException e){
+                    openURLInBrowser(activity,url);
+                }catch (Book.BookNotFoundException  e2){
+                    openURLInBrowser(activity,url);
                 }
+                activity.finish();
             }
         }catch (Exception e){
+            //Toast.makeText(activity, MyApp.getRString(R.string.cannot_parse_link), Toast.LENGTH_SHORT).show();
             Log.e("HomeActivity","not able to open intent for URL parse " + e.getMessage());
         }
     }

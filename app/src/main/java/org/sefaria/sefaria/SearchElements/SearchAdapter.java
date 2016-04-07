@@ -7,7 +7,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -46,7 +48,7 @@ public class SearchAdapter extends ArrayAdapter<Text> {
         Text text = results.get(position);
         //Language is exclusively either Hebrew or Enlgihs, depending on which exists in the text
         Util.Lang lang;
-        if (text.getText(Util.Lang.EN) == "") lang = Util.Lang.HE;
+        if (text.getText(Util.Lang.EN).equals("")) lang = Util.Lang.HE;
         else /*if (text.getText(Util.Lang.HE) == "")*/ lang = Util.Lang.EN;
 
 
@@ -81,4 +83,6 @@ public class SearchAdapter extends ArrayAdapter<Text> {
         addAll(results);
         notifyDataSetChanged();
     }
+
+
 }

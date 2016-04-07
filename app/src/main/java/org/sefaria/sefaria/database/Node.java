@@ -437,20 +437,29 @@ public class Node implements  Parcelable{
     public Node getChild(String spot) {
         Log.d("Node","spot:" + spot);
         try {
-            int num = Integer.valueOf(spot);
-            Node lastChild = null;
-            for(Node child: getChildren()){
-                if(num == child.gridNum)
-                    return child;
-                else if(num < child.gridNum){
-                    if(lastChild == null)
-                        lastChild = child;
-                    return lastChild;
+            if (spot.matches("[0-9]+[ab]?")) {
+                int num = Util.convertDafOrIntegerToNum(spot);
+                Node lastChild = null;
+                for (Node child : getChildren()) {
+                    if (num == child.gridNum)
+                        return child;
+                    else if (num < child.gridNum) {
+                        if (lastChild == null)
+                            lastChild = child;
+                        return lastChild;
+                    }
+                    lastChild = child;
                 }
-                lastChild = child;
+            } else {
+                for (Node child : getChildren()) {
+                    if (child.getTitle(Util.Lang.EN).equals(spot)) {
+                        return child;
+                    }
+                }
             }
         }catch (Exception e){
             Log.d("Node",e.getMessage() + "...Complex string spot:" + spot);
+
         }
 
         return null;
@@ -1121,44 +1130,6 @@ public class Node implements  Parcelable{
         Log.d("Node", this.toString());
     }
 
-    public static Node getNodeFromText(Text text, Book book) throws API.APIException {
-        List<Node> roots = getRoots(book);
-        if(roots.size() == 0){
-            return null; //TODO deal with if can't find TOCRoots
-        }
-        Node node = roots.get(0);
-        try {
-            if (!node.isComplex) {
-                for (int i = text.levels.length-1; i > 0; i--) {
-                    if (text.levels[i] == 0)
-                        continue;
-                    int num = text.levels[i];
-                    boolean foundChild = false;
-                    for(Node child:node.getChildren()) {
-                        if(num == child.gridNum) {
-                            node = child;
-                            foundChild = true;
-                            break;
-                        }
-                    }
-                    if(!foundChild){
-                        Log.e("Node","Problem finding getNodeFromLink child. node" + node);
-                        return node.getFirstDescendant();
-                    }
-
-                }
-            }else{
-                Log.d("Node","not getting complex node yet");
-                return node.getFirstDescendant();
-            }
-        }catch (Exception e){
-            Log.d("Node",e.toString());
-            return null;
-        }
-
-        node = node.getFirstDescendant();
-        return node;
-    }
 
 
 

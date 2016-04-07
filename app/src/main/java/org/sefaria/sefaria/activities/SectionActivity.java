@@ -312,6 +312,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
     @Override
     protected void jumpToText(Text text) {
         int index = sectionAdapter.getPosition(text);
+        sectionAdapter.highlightIncomingText(text);
         listView.setSelection(index);
     }
 
@@ -345,16 +346,13 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
                 AnimateLinkFragClose(linkRoot);
 
             } else {
+                sectionAdapter.highlightIncomingText(null);
                 if (view.getTop() > 0) //don't auto-scroll if the text is super long.
                     listView.smoothScrollToPositionFromTop(position,SuperTextActivity.SEGMENT_SELECTOR_LINE_FROM_TOP,SuperTextActivity.LINK_FRAG_ANIM_TIME);
                 linkFragment.setClicked(true);
                 linkFragment.updateFragment(sectionAdapter.getItem(position));
                 //linkRoot.setVisibility(View.VISIBLE);
                 AnimateLinkFragOpen(linkRoot);
-
-
-
-
             }
 
         }

@@ -446,4 +446,16 @@ public class Util {
         return drawableVal.data;
     }
 
+    public static int convertDafOrIntegerToNum(String spot){
+        int num = 0;
+        if(spot.replaceFirst("[0-9]+[ab]","").length() == 0){
+            if(spot.contains("b"))
+                num +=1;
+            num += Integer.valueOf(spot.replaceAll("[ab]",""))*2-1;
+        }else{
+            num = Integer.valueOf(spot);
+        }
+        return num;
+    }
+
 }
