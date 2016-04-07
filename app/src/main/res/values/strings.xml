@@ -19,6 +19,9 @@
     <string name="switching_to_api">Switching to Online only Library</string>
     <string name="switching_to_offline">Switching to Offline Library</string>
     <string name="online_only_Library">Use Online only Library</string>
+    <string name="first_time_title">Welcome</string>
+    <string name="first_time_message">We recommend the offline-library for a better experience. It is approximately 250MB.</string>
+    <string name="first_time_positive">Download Now</string>
     <string name="offline_Library">Use Offline Library (recommended)</string>
     <string name="without_permission">Without storage permissions, you cannot use the Offline Library. Go to Settings in the main menu of the app to download the offline Library.</string>
     <string name="send_to">Share</string>

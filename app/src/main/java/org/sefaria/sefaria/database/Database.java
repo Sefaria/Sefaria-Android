@@ -1,4 +1,5 @@
 package org.sefaria.sefaria.database;
+import org.sefaria.sefaria.DialogManager2;
 import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
@@ -127,7 +128,8 @@ public class Database extends SQLiteOpenHelper{
         boolean hasInternet = (Downloader.getNetworkStatus() != Downloader.NO_INTERNET);
 
         if(!Database.hasOfflineDB()){ //There's no DB
-            Toast.makeText(context,MyApp.getRString(R.string.switching_to_api),Toast.LENGTH_SHORT).show();
+
+            DialogManager2.showDialog((Activity) MyApp.getContext(), DialogManager2.DialogPreset.SWITCHING_TO_API);
             Settings.setUseAPI(true);
         } else if(Settings.getUseAPI() && !hasInternet && Database.hasOfflineDB()){
             Toast.makeText(context,MyApp.getRString(R.string.NO_INTERNET_TITLE) + " - " + MyApp.getRString(R.string.switching_to_offline),Toast.LENGTH_SHORT).show();

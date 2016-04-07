@@ -15,6 +15,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 
+import org.sefaria.sefaria.DialogManager2;
 import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
@@ -110,6 +111,8 @@ public abstract class SuperTextActivity extends FragmentActivity {
         menuDrawer.setContentView(R.layout.activity_section);
         menuDrawer.setMenuView(R.layout.activity_home);
         */
+
+
         if(!Database.hasOfflineDB() && Downloader.NO_INTERNET == Downloader.getNetworkStatus()){
             Toast.makeText(this,"No internet connection or Offline Library",Toast.LENGTH_SHORT).show();
             MyApp.homeClick(this,false,false);
@@ -221,6 +224,11 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
         Settings.setLastBook(book.title);
         goodOnCreate = true;
+
+        if (Settings.getIsFirstTimeOpened()) {
+            DialogManager2.showDialog(this, DialogManager2.DialogPreset.FIRST_TIME_OPEN);
+            Settings.setIsFirstTimeOpened(false);
+        }
     }
 
     protected void init() {
