@@ -132,6 +132,18 @@ public class Settings {
         editor.commit();
     }
 
+    public static boolean getIsFirstTimeOpened(){
+        SharedPreferences generalSettings = getGeneralSettings();
+        return generalSettings.getBoolean("isFirstTimeOpened", true);
+    }
+
+    public static void setIsFirstTimeOpened(boolean isFirstTimeOpened){
+        SharedPreferences generalSettings = getGeneralSettings();
+        SharedPreferences.Editor editor = generalSettings.edit();
+        editor.putBoolean("isFirstTimeOpened", isFirstTimeOpened);
+        editor.commit();
+    }
+
     private static final int DEFAULT_THEME = R.style.SefariaTheme_White;
     public static int getTheme(){
         SharedPreferences generalSettings = getGeneralSettings();

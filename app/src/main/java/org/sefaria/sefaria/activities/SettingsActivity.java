@@ -164,7 +164,6 @@ public class SettingsActivity extends Activity {
     };
 
     public void updateLibrary(View v){
-        Toast.makeText(this, "Checking for updates", Toast.LENGTH_SHORT).show();
         Downloader.updateLibrary(this, false);
     }
 
