@@ -33,7 +33,7 @@ public class Text implements Parcelable {
     private int heTextLength = 0;
     private byte [] heTextCompress;
     private boolean isChapter = false;
-    private int parentNID;
+    protected int parentNID;
     private String ref = null;
 
     public String getText(Util.Lang lang)
