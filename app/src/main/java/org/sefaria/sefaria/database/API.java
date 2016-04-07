@@ -420,7 +420,11 @@ public class API {
         String url = LINK_URL +place;
         String data = getDataFromURL(url);
         Log.d("API.Link","got data");
-        Book book = new Book(text.bid);
+        try {
+            Book book = new Book(text.bid);
+        } catch (Book.BookNotFoundException e) {
+            return texts;
+        }
         List<Text> textList = new ArrayList<>();
         if(data.length()==0)
             return textList;

@@ -69,11 +69,12 @@ public abstract class SuperTextActivity extends FragmentActivity {
     protected List<PerekTextView> perekTextViews;
     protected List<TextChapterHeader> textChapterHeaders;
 
-    protected Node firstLoadedNode;
+    protected Node firstLoadedNode = null;
     protected Node currNode; // Node which you're currently up to in scrollView
     protected Text currText;
     protected Node lastLoadedNode;
     protected Text openToText;
+    private int textNum;
 
     protected Util.Lang menuLang;
     protected Util.Lang textLang = null;
@@ -94,26 +95,21 @@ public abstract class SuperTextActivity extends FragmentActivity {
     protected boolean goodOnCreate = false;
     private CustomActionbar customActionbar;
 
-    protected long openedNewBook = 0; //this is used for Analytics for when someone first goes to a book
+    protected long openedNewBookTime = 0; //this is used for Analytics for when someone first goes to a book
     protected int openedNewBookType = 0;
     protected boolean reportedNewBookBack = false;
     protected boolean reportedNewBookTOC = false;
     protected boolean reportedNewBookScroll = false;
     private static final int NO_HASH_NODE = -1;
 
+    private static boolean firstTimeOpeningAppThisSession = true;
 
     private String searchingTerm;
-    //private MenuDrawer menuDrawer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        /*
-        menuDrawer = MenuDrawer.attach(this);
-        menuDrawer.setContentView(R.layout.activity_section);
-        menuDrawer.setMenuView(R.layout.fragment_home);
-        */
-
+        Log.d("SuperTextActi", "onCreate");
 
         if(!Database.hasOfflineDB() && Downloader.getNetworkStatus() == Downloader.ConnectionType.NONE){
             Toast.makeText(this,"No internet connection or Offline Library",Toast.LENGTH_SHORT).show();
@@ -122,97 +118,33 @@ public abstract class SuperTextActivity extends FragmentActivity {
             return;
         }
 
-
-
-        Log.d("SuperTextActi", "onCreate");
-        Intent intent = getIntent();
-        Integer nodeHash = NO_HASH_NODE;
-        MyApp.handleIncomingURL(this,intent);
-
-        if (savedInstanceState != null) {//it's coming back after it cleared the activity from ram
-            linkFragment = (LinkFragment) getSupportFragmentManager().getFragment(savedInstanceState,LINK_FRAG_TAG);
-            nodeHash = savedInstanceState.getInt("nodeHash", NO_HASH_NODE);
-            book = savedInstanceState.getParcelable("currBook");
-            openToText = savedInstanceState.getParcelable("incomingLinkText");
-            searchingTerm = savedInstanceState.getString("searchingTerm");
-        }else{
-            nodeHash = intent.getIntExtra("nodeHash", NO_HASH_NODE);
-            book = intent.getParcelableExtra("currBook");
-            openToText = intent.getParcelableExtra("incomingLinkText");
-            searchingTerm = intent.getStringExtra("searchingTerm");
-        }
-
         if (Settings.getIsFirstTimeOpened()) {
             MyApp.firstTimeOpened = true;
             DialogManager2.showDialog(this, DialogManager2.DialogPreset.FIRST_TIME_OPEN);
             Settings.setIsFirstTimeOpened(false);
         }
 
-        if(book == null && openToText == null && nodeHash == NO_HASH_NODE){
-            //Log.d("SuperTextActi", "appIsFirstOpening");
-            //Database.dealWithStartupDatabaseStuff(this);
+        if(firstTimeOpeningAppThisSession){
+            firstTimeOpeningAppThisSession = false;
+            if(!MyApp.firstTimeOpened)
+                Database.dealWithStartupDatabaseStuff(this);
             Database.checkAndSwitchToNeededDB(this);
             MyApp.homeClick(this, false, true);
-            try {
-                book = new Book(Settings.getLastBook());
-            } catch (Exception e) {
-                Toast.makeText(this,"Problem getting book",Toast.LENGTH_SHORT).show();
-                e.printStackTrace();
-                return;
-            }
         }
 
-        if(linkFragment == null){
-            //LINK FRAGMENT
+        if(linkFragment == null){//LINK FRAGMENT
             linkFragment = new LinkFragment();
-            //Bundle args = new Bundle();
-            //args.putParcelable(LinkFragment.ARG_CURR_SECTION, sectionAdapter.getItem(position));
-            //linkFragment.setArguments(args);
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.add(R.id.linkRoot, linkFragment,LINK_FRAG_TAG);
             fragmentTransaction.commit();
         }
-        if(book != null){ //||nodeHash == -1){// that means it came in from the menu or the TOC commentary tab
-            try {
-                if (openToText != null) { //wants to go to specific text (for example, coming from Links or searching).
-                    try {
-                        firstLoadedNode = openToText.getNodeFromText(book);
-                    } catch (Book.BookNotFoundException e) {
-                        e.printStackTrace();
-                    }
-                    if(firstLoadedNode == null){
-                        Log.e("SuperTextAct", "firstLoadedNode is null");
-                    }
-                }else {
-                    Settings.BookSettings bookSettings = Settings.BookSettings.getSavedBook(book);
-                    textLang = bookSettings.lang;
-                    if(bookSettings.node != null) { //opening previously opened book
-                        openToText = new Text(bookSettings.tid);
-                        firstLoadedNode = bookSettings.node;
-                    }else {//couldn't get saved Node data (most likely you were never at the book, or possibly an error happened).
-                        Log.e("SuperTextAct", "Problem gettting saved book data");
-                        List<Node> TOCroots = book.getTOCroots();
-                        if (TOCroots.size() == 0) {
-                            Toast.makeText(this, "Unable to load Table of Contents for this book", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                        Node root = TOCroots.get(0);
-                        Log.d("SuperTextAct", "getFirstDescent... api: and going to get Node.textList");
-                        firstLoadedNode = root.getFirstDescendant(true);
-                        GoogleTracker.sendEvent(GoogleTracker.CATEGORY_OPEN_NEW_BOOK_ACTION,"Opened New Book");
-                        openedNewBook = System.currentTimeMillis();
-                    }
-                }
-            }catch (API.APIException e) {
-                API.makeAPIErrorToast(this);
-                return;
-            }
-            //lastLoadedNode = firstLoadedNode; PURPOSEFULLY NOT INITIALLIZING TO INDICATE THAT NOTHING HAS BEEN LOADED YET
+
+        int nodeHash = getValuesFromIntent(savedInstanceState);
+        if(!getAllNeededLocationVariables(nodeHash)){
+            return;
         }
-        else { // no book means it came in from TOC
-            firstLoadedNode = Node.getSavedNode(nodeHash);
-            book = new Book(firstLoadedNode.getBid());
-        }
+
+
         //These vars are specifically initialized here and not in init() so that they don't get overidden when coming from TOC
         //defaults
         isCts = false;
@@ -231,39 +163,93 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
         Settings.setLastBook(book.title);
         goodOnCreate = true;
-
     }
 
-    protected void init() {
-        isLoadingInit = true;
-        perekTextViews = new ArrayList<>();
-        textChapterHeaders = new ArrayList<>();
-
-        isTextMenuVisible = false;
-        textMenuRoot = (LinearLayout) findViewById(R.id.textMenuRoot);
-        textMenuBar = new TextMenuBar(SuperTextActivity.this,textMenuBtnClick);
-        textMenuBar.setState(textLang,isCts,isSideBySide,colorTheme);
-        textMenuRoot.addView(textMenuBar);
-        textMenuRoot.setVisibility(View.GONE);
-
-        textScrollView = (ScrollViewExt) findViewById(R.id.textScrollView);
-
-        //linkDraggerView = (LinkDraggerView) findViewById(R.id.link_dragger);
-
-        //this specifically comes before menugrid, b/c in tabs it menugrid does funny stuff to currnode
-        if (customActionbar == null) {
-            MenuNode menuNode = new MenuNode("a","b",null); //TODO possibly replace this object with a more general bilinual node
-            int catColor = book.getCatColor();
-            customActionbar = new CustomActionbar(this, menuNode, menuLang,homeClick,homeLongClick, null,null,titleClick,menuClick,backClick,catColor); //TODO.. I'm not actually sure this should be lang.. instead it shuold be MENU_LANG from Util.S
-            LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
-            abRoot.addView(customActionbar);
-            customActionbar.setLang(menuLang);
+    private int getValuesFromIntent(Bundle savedInstanceState){
+        Intent intent = getIntent();
+        MyApp.handleIncomingURL(this,intent);
+        int nodeHash;
+        if (savedInstanceState != null) {//it's coming back after it cleared the activity from ram
+            linkFragment = (LinkFragment) getSupportFragmentManager().getFragment(savedInstanceState,LINK_FRAG_TAG);
+            nodeHash = savedInstanceState.getInt("nodeHash", NO_HASH_NODE);
+            book = savedInstanceState.getParcelable("currBook");
+            openToText = savedInstanceState.getParcelable("incomingLinkText");
+            searchingTerm = savedInstanceState.getString("searchingTerm");
+            textNum = savedInstanceState.getInt("textNum",-1);
+        }else{
+            nodeHash = intent.getIntExtra("nodeHash", NO_HASH_NODE);
+            book = intent.getParcelableExtra("currBook");
+            openToText = intent.getParcelableExtra("incomingLinkText");
+            searchingTerm = intent.getStringExtra("searchingTerm");
+            textNum = intent.getIntExtra("textNum",-1);
         }
+        return nodeHash;
+    }
 
 
+    private boolean getAllNeededLocationVariables(int nodeHash){
+        try {
+            if (nodeHash != NO_HASH_NODE) {
+                firstLoadedNode = Node.getSavedNode(nodeHash);
+            }
 
-        setCurrNode(firstLoadedNode);
+            if (book == null) {
+                try {
+                    if (firstLoadedNode != null) {
+                        book = new Book(firstLoadedNode.getBid());
+                    } else if (openToText != null) {
+                        book = new Book(openToText.bid);
+                    } else {
+                        book = new Book(Settings.getLastBook());
+                    }
+                } catch (Book.BookNotFoundException e) {
+                    Log.e("SuperTextAct", e.getMessage());
+                    return false;
+                }
+            }
+            Settings.RecentTexts.addRecentText(book.title);
 
+            if (firstLoadedNode == null && openToText != null) {
+                try {
+                    firstLoadedNode = openToText.getNodeFromText(book);
+                } catch (Book.BookNotFoundException e) {
+                    Log.e("SuperTextAct", e.getMessage());
+                    return false;
+                }
+            }
+
+            Settings.BookSettings bookSettings = Settings.BookSettings.getSavedBook(book);
+            textLang = bookSettings.lang;
+            if (firstLoadedNode == null && bookSettings.node != null) { //opening previously opened book
+                firstLoadedNode = bookSettings.node;
+                textNum = bookSettings.textNum;
+            }
+
+            if (firstLoadedNode == null) {
+                List<Node> TOCroots = book.getTOCroots();
+                if (TOCroots.size() == 0) {
+                    Toast.makeText(this, "Unable to load Table of Contents for this book", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+                Node root = TOCroots.get(0);
+                firstLoadedNode = root.getFirstDescendant(true);
+                GoogleTracker.sendEvent(GoogleTracker.CATEGORY_OPEN_NEW_BOOK_ACTION, "Opened New Book");
+                openedNewBookTime = System.currentTimeMillis();
+            }
+
+
+            if (openToText == null && textNum > -1) {
+                try {
+                    openToText = firstLoadedNode.getTexts().get(textNum);
+                }catch (IndexOutOfBoundsException e1) {
+                    Log.e("SuperTextAct", e1.getMessage());
+                }
+            }
+        }catch (API.APIException apiE){
+            API.makeAPIErrorToast(this);
+            return false;
+        }
+        return true;
     }
 
 
@@ -300,8 +286,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
      * @param text
      */
     public static void startNewTextActivityIntent(Context context, Text text, boolean openNewTask){
-        Book book = new Book(text.bid);
-        startNewTextActivityIntent(context, book, text, null,openNewTask,null);
+        startNewTextActivityIntent(context, null, text, null, openNewTask, null, -1);
     }
 
 
@@ -311,8 +296,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
      * @param book
      */
     public static void startNewTextActivityIntent(Context context, Book book, boolean openNewTask){
-        Settings.RecentTexts.addRecentText(book.title);
-        startNewTextActivityIntent(context, book, null, null,openNewTask,null);
+        startNewTextActivityIntent(context, book, null, null,openNewTask,null,-1);
     }
 
     /**
@@ -323,7 +307,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
      */
 
 
-    public static void startNewTextActivityIntent(Context context, Book book, Text text, Node node,boolean openNewTask,String searchingTerm) {
+    public static void startNewTextActivityIntent(Context context, Book book, Text text, Node node,boolean openNewTask,String searchingTerm,int textNum) {
         List<String> cats = Arrays.asList(book.categories);
         boolean isCtsText = false;
         final String[] CTS_TEXT_CATS = {};// {"Tanach","Talmud"};//
@@ -350,14 +334,10 @@ public abstract class SuperTextActivity extends FragmentActivity {
         if(searchingTerm != null){
             intent.putExtra("searchingTerm",searchingTerm);
         }
+        if(textNum>-1){
+            intent.putExtra("textNum",textNum);
+        }
 
-        //lang replaced by general MyApp.getMenuLang() function
-
-
-        //trick to destroy all activities beforehand
-        //ComponentName cn = intent.getComponent();
-        //Intent mainIntent = IntentCompat.makeRestartActivityTask(cn);
-        //intent.putExtra("menuState", newMenuState);
         if(openNewTask){
             intent = MyApp.startNewTab(intent);
         }
@@ -371,11 +351,41 @@ public abstract class SuperTextActivity extends FragmentActivity {
         comingFromTOC(intent);
     }
 
+    protected void init(){
+        isLoadingInit = true;
+        perekTextViews = new ArrayList<>();
+        textChapterHeaders = new ArrayList<>();
+
+        isTextMenuVisible = false;
+        textMenuRoot = (LinearLayout) findViewById(R.id.textMenuRoot);
+        textMenuBar = new TextMenuBar(SuperTextActivity.this,textMenuBtnClick);
+        textMenuBar.setState(textLang,isCts,isSideBySide,colorTheme);
+        textMenuRoot.addView(textMenuBar);
+        textMenuRoot.setVisibility(View.GONE);
+
+        textScrollView = (ScrollViewExt) findViewById(R.id.textScrollView);
+
+        //linkDraggerView = (LinkDraggerView) findViewById(R.id.link_dragger);
+
+        //this specifically comes before menugrid, b/c in tabs it menugrid does funny stuff to currnode
+        if (customActionbar == null) {
+            MenuNode menuNode = new MenuNode("a","b",null); //TODO possibly replace this object with a more general bilinual node
+            int catColor = book.getCatColor();
+            customActionbar = new CustomActionbar(this, menuNode, menuLang,homeClick,homeLongClick, null,searchClick,titleClick,menuClick,backClick,catColor); //TODO.. I'm not actually sure this should be lang.. instead it shuold be MENU_LANG from Util.S
+            LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
+            abRoot.addView(customActionbar);
+            customActionbar.setLang(menuLang);
+        }
+
+        setCurrNode(firstLoadedNode);
+
+    }
+
     private void comingFromTOC(Intent intent){
         //lang = (Util.Lang) data.getSerializableExtra("lang"); TODO you might need to set lang here if user can change lang in TOC
         int nodeHash = intent.getIntExtra("nodeHash", -1);
         //TODO it might want to try to keep the old loaded sections and just go scroll to it if the new section is already loaded
-        firstLoadedNode = Node.getSavedNode(nodeHash);
+        getAllNeededLocationVariables(nodeHash);
         lastLoadedNode = null;
         init();
     }
@@ -402,8 +412,8 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
     @Override
     public void onBackPressed() {
-        if(openedNewBook >0 && !reportedNewBookBack){
-            long time = (System.currentTimeMillis() - openedNewBook);
+        if(openedNewBookTime >0 && !reportedNewBookBack){
+            long time = (System.currentTimeMillis() - openedNewBookTime);
             if(time <10000) {
                 String category;
                 if(reportedNewBookScroll || reportedNewBookTOC)
@@ -471,8 +481,20 @@ public abstract class SuperTextActivity extends FragmentActivity {
         @Override
         public void onClick(View v) {
             Log.d("TextAct","here");
+            Node oldNode = currNode;
             if(searchList == null) {
-                List<Text> list = Searching.findOnPage(currNode, "the");
+
+                List<Text> list = null;
+                while(list == null || list.size() ==0){
+                    try {
+                        if(list != null)
+                            currNode = currNode.getNextTextNode();
+                        list = Searching.findOnPage(currNode, "spoke");
+                    } catch (Node.LastNodeException e) {
+                        e.printStackTrace();
+                        break;
+                    }
+                }
 
                 searchList = new ArrayList<>();
                 searchList.addAll(list);
@@ -497,13 +519,13 @@ public abstract class SuperTextActivity extends FragmentActivity {
     View.OnClickListener titleClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if(openedNewBook >0 && !reportedNewBookTOC){
+            if(openedNewBookTime >0 && !reportedNewBookTOC){
                 String category;
                 if(reportedNewBookScroll || reportedNewBookBack)
                     category = GoogleTracker.CATEGORY_OPEN_NEW_BOOK_ACTION_2;
                 else
                     category = GoogleTracker.CATEGORY_OPEN_NEW_BOOK_ACTION;
-                GoogleTracker.sendEvent(category,"Opening TOC", (System.currentTimeMillis() - openedNewBook));
+                GoogleTracker.sendEvent(category,"Opening TOC", (System.currentTimeMillis() - openedNewBookTime));
                 reportedNewBookTOC = true;
             }
             Intent intent = TOCActivity.getStartTOCActivityIntent(SuperTextActivity.this, book,firstLoadedNode);
@@ -610,11 +632,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
     private void setColorTheme(int colorTheme) {
         Settings.setTheme(colorTheme);
         finish();
-        startNewTextActivityIntent(this,book,currText,currNode,false,searchingTerm);
-        /*Intent intent = new Intent(this, .class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);*/
+        startNewTextActivityIntent(this,book,currText,currNode,false,searchingTerm,-1);
     }
 
     protected abstract void setTextLang(Util.Lang textLang);

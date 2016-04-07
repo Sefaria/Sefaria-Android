@@ -57,7 +57,7 @@ public class Book implements Parcelable {
         get(title);
     }
 
-    public Book(int bid) {
+    public Book(int bid) throws BookNotFoundException {
         wherePage = DEFAULT_WHERE_PAGE;
         get(bid);
     }
@@ -229,7 +229,7 @@ public class Book implements Parcelable {
             throw new BookNotFoundException();
     }
 
-    public void get(int bid){
+    public void get(int bid) throws BookNotFoundException {
         SQLiteDatabase db = Database.getDB();
         Cursor cursor = db.query(TABLE_BOOKS, null, "_id" + "=?",
                 new String[]{String.valueOf(bid)}, null, null, null, null);
@@ -239,7 +239,7 @@ public class Book implements Parcelable {
             getFromCursor(cursor);
         }
         else
-            bid = 0;
+            throw new BookNotFoundException();
 
 
     }
