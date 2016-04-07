@@ -34,7 +34,7 @@ public class Text implements Parcelable {
     private int heTextLength = 0;
     private byte [] heTextCompress;
     private boolean isChapter = false;
-    protected int parentNID;
+    //protected int parentNID;
     private String ref = null;
 
     public String getText(Util.Lang lang)
@@ -167,7 +167,7 @@ public class Text implements Parcelable {
         }
 
         numLinks = cursor.getInt(MAX_LEVELS+5);
-        parentNID = cursor.getInt(MAX_LEVELS+6);
+        //parentNID = cursor.getInt(MAX_LEVELS+6);
     }
 
 
@@ -186,7 +186,7 @@ public class Text implements Parcelable {
             else
                 str.append("http://www.sefaria.org/");
         }
-        if(parentNID != 0 && parentNode != null){
+        if(parentNode != null){
             String path = parentNode.getPath(Util.Lang.EN,true, true, true) + "." + levels[0];
             return str + path;
         }
@@ -255,11 +255,16 @@ public class Text implements Parcelable {
      * @throws API.APIException
      * @throws Book.BookNotFoundException
      */
-    public static Node getNodeFromText(Text text,Book book) throws API.APIException, Book.BookNotFoundException {
+    public Node getNodeFromText(Book book) throws API.APIException, Book.BookNotFoundException {
+        Text text = this;
         if(text.ref != null && text.ref.length() > 0){
             API.PlaceRef placeRef = API.PlaceRef.getPlace(text.ref);
-            text = placeRef.text;
-            return placeRef.node;
+            text.parentNode = placeRef.node;
+            if(placeRef.text != null){
+                text.levels = placeRef.text.levels.clone();
+                text.tid = placeRef.text.tid;
+            }
+            return parentNode;
         }
 
         List<Node> roots = Node.getRoots(book);
@@ -283,23 +288,23 @@ public class Text implements Parcelable {
                     }
                     if(!foundChild){
                         Log.e("Node","Problem finding getNodeFromLink child. node" + node);
-                        return node.getFirstDescendant(false);
-                        //return text.parentNode;
+                        text.parentNode = node.getFirstDescendant(false);
+                        return text.parentNode;
                     }
 
                 }
             }else{
                 Log.d("Node","not getting complex node yet");
-                return node.getFirstDescendant(false);
-                //return text.parentNode;
+                text.parentNode = node.getFirstDescendant(false);
+                return text.parentNode;
             }
         }catch (Exception e){
             Log.d("Node",e.toString());
             return null;
         }
 
-        return node.getFirstDescendant(false);
-        //return parentNode;
+        text.parentNode = node.getFirstDescendant(false);
+        return parentNode;
     }
 
 
@@ -591,13 +596,14 @@ public class Text implements Parcelable {
 
         Text text = (Text) o;
         if(text.tid == 0 && this.tid ==0){
-            if((text.ref != null || this.ref != null) || true) {
+            if(true || text.ref != null || this.ref != null) {
                 boolean isEqual = (
                     Arrays.equals(text.levels,this.levels)
                     &&
                     this.bid == text.bid
+                    //&& this.parentNode.equals(text.parentNode)
+                    //TODO maybe needs stricter def... but for now this is fine
                 );
-                Log.d("Text", "Using otherEquals: " + isEqual + text + "__" + this) ;
                 return isEqual;
 
             }else{
@@ -616,7 +622,6 @@ public class Text implements Parcelable {
         newText.tid    = text.tid;
         newText.displayNum = text.displayNum;
         newText.parentNode = text.parentNode;
-        newText.parentNID = text.parentNID;
         return newText;
     }
 

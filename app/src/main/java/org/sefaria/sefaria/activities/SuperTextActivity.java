@@ -170,7 +170,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
             try {
                 if (openToText != null) { //wants to go to specific text (for example, coming from Links or searching).
                     try {
-                        firstLoadedNode = Text.getNodeFromText(openToText,book);
+                        firstLoadedNode = openToText.getNodeFromText(book);
                     } catch (Book.BookNotFoundException e) {
                         e.printStackTrace();
                     }
