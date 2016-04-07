@@ -115,7 +115,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
         */
 
 
-        if(!Database.hasOfflineDB() && Downloader.NO_INTERNET == Downloader.getNetworkStatus()){
+        if(!Database.hasOfflineDB() && Downloader.getNetworkStatus() == Downloader.ConnectionType.NONE){
             Toast.makeText(this,"No internet connection or Offline Library",Toast.LENGTH_SHORT).show();
             MyApp.homeClick(this,false,false);
             finish();
