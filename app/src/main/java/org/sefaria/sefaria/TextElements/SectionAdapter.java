@@ -26,15 +26,17 @@ public class SectionAdapter extends ArrayAdapter<Text> {
     private static float MIN_ALPHA = 0.2f;
     private static float MAX_ALPHA = 0.8f;
 
-    private SectionActivity activity;
+    private SectionActivity sectionActivity;
     private List<Text> texts;
+
+    private Text highlightIncomingText;
 
     private int resourceId;
     private int preLast;
 
-    public SectionAdapter(SectionActivity activity, int resourceId, List<Text> objects) {
-        super(activity,resourceId,objects);
-        this.activity = activity;
+    public SectionAdapter(SectionActivity sectionActivity, int resourceId, List<Text> objects) {
+        super(sectionActivity,resourceId,objects);
+        this.sectionActivity = sectionActivity;
         this.texts = objects;
         this.resourceId = resourceId;
 
@@ -46,7 +48,7 @@ public class SectionAdapter extends ArrayAdapter<Text> {
         Text segment = texts.get(position);
         String enText = segment.getText(Util.Lang.EN);
         String heText = segment.getText(Util.Lang.HE);
-        Util.Lang lang = activity.getTextLang();
+        Util.Lang lang = sectionActivity.getTextLang();
 
         if (lang == Util.Lang.BI) {
             if (enText.length() == 0) {
@@ -64,15 +66,15 @@ public class SectionAdapter extends ArrayAdapter<Text> {
         if (segment.getNumLinks() == 0) linkAlpha = 0;
 
 
-        boolean isCts = activity.getIsCts();
-        boolean isSideBySide = activity.getIsSideBySide();
+        boolean isCts = sectionActivity.getIsCts();
+        boolean isSideBySide = sectionActivity.getIsSideBySide();
         if (view == null
                 || (view.findViewById(R.id.he) == null && lang == Util.Lang.BI)
                 || (view.findViewById(R.id.mono) == null && (lang == Util.Lang.HE || lang == Util.Lang.EN))
                 || (view.findViewById(R.id.top_bottom_layout) == null && !isSideBySide && lang == Util.Lang.BI)
                 || (view.findViewById(R.id.side_by_side_layout) == null && isSideBySide && lang == Util.Lang.BI)) {
             LayoutInflater inflater = (LayoutInflater)
-                    activity.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+                    sectionActivity.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
             if (lang == Util.Lang.BI) {
                 if (isSideBySide) view = inflater.inflate(R.layout.adapter_text_bilingual_side_by_side,null);
                 else view = inflater.inflate(R.layout.adapter_text_bilingual_top_bottom,null);
@@ -82,14 +84,17 @@ public class SectionAdapter extends ArrayAdapter<Text> {
         }
 
 
-        boolean isCurrLinkSegment = segment.equals(activity.getCurrLinkSegment());
+        boolean isCurrLinkSegment = segment.equals(sectionActivity.getCurrLinkSegment());
 
 
 
-        if (isCurrLinkSegment && activity.getFragmentIsOpen()) {
-            view.setBackgroundColor(Util.getColor(activity,R.attr.text_verse_selected_bg));
+        if (isCurrLinkSegment && sectionActivity.getFragmentIsOpen()) {
+            view.setBackgroundColor(Util.getColor(sectionActivity,R.attr.text_verse_selected_bg));
+        } else if(segment.equals(highlightIncomingText)){
+            view.setBackgroundColor(Util.getColor(sectionActivity,R.attr.text_verse_selected_bg));
+        } else {
+            view.setBackgroundColor(sectionActivity.getResources().getColor(android.R.color.transparent));
         }
-        else view.setBackgroundColor(activity.getResources().getColor(android.R.color.transparent));
 
         TextChapterHeader tch = (TextChapterHeader) view.findViewById(R.id.chapHeader);
         SefariaTextView enNum = (SefariaTextView) view.findViewById(R.id.enVerseNum);
@@ -111,7 +116,7 @@ public class SectionAdapter extends ArrayAdapter<Text> {
                 heNum.setVisibility(View.GONE);
 
                 tch.setSectionTitle(segment);
-                tch.setTextSize(activity.getTextSize());
+                tch.setTextSize(sectionActivity.getTextSize());
             } else {
                 view.setClickable(false);
 
@@ -125,11 +130,11 @@ public class SectionAdapter extends ArrayAdapter<Text> {
                 heTv.setText(Html.fromHtml(heText));
 
                 //enTv.setTextColor(Color.parseColor("#999999"));
-                enTv.setFont(Util.Lang.EN, true, activity.getTextSize());
-                //enTv.setTextSize(activity.getTextSize());
+                enTv.setFont(Util.Lang.EN, true, sectionActivity.getTextSize());
+                //enTv.setTextSize(sectionActivity.getTextSize());
 
                 //heTv.setTextColor(Color.parseColor("#000000"));
-                heTv.setFont(Util.Lang.HE,true,activity.getTextSize());
+                heTv.setFont(Util.Lang.HE,true,sectionActivity.getTextSize());
                 if(segment.displayNum)
                     heNum.setText("" + Util.int2heb(segment.levels[0]));
                 else
@@ -144,7 +149,7 @@ public class SectionAdapter extends ArrayAdapter<Text> {
             }
 
         } else { //Hebrew or English
-            SefariaTextView tv = (SefariaTextView      ) view.findViewById(R.id.mono);
+            SefariaTextView tv = (SefariaTextView) view.findViewById(R.id.mono);
             tv.setLangGravity(lang);
             if (segment.isChapter()) {
                 //view.setClickable(true);
@@ -155,7 +160,7 @@ public class SectionAdapter extends ArrayAdapter<Text> {
                 heNum.setVisibility(View.GONE);
 
                 tch.setSectionTitle(segment);
-                tch.setTextSize(activity.getTextSize());
+                tch.setTextSize(sectionActivity.getTextSize());
 
             } else {
                 //view.setClickable(false);
@@ -167,7 +172,7 @@ public class SectionAdapter extends ArrayAdapter<Text> {
 
                 String monoText = segment.getText(lang);
                 if (monoText.length() == 0)
-                    activity.getResources().getString(R.string.no_text);
+                    sectionActivity.getResources().getString(R.string.no_text);
 
                 if (lang == Util.Lang.HE) {
                     tv.setText(Html.fromHtml(monoText));
@@ -196,7 +201,7 @@ public class SectionAdapter extends ArrayAdapter<Text> {
                     heNum.setFont(Util.Lang.HE, true);
                 }
                 tv.setFont(lang,true);
-                tv.setTextSize(activity.getTextSize());
+                tv.setTextSize(sectionActivity.getTextSize());
             }
         }
         return view;
@@ -204,6 +209,11 @@ public class SectionAdapter extends ArrayAdapter<Text> {
 
     public void updateFocusedSegment() {
 
+    }
+
+    public void highlightIncomingText(Text text){
+        highlightIncomingText = text;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -245,7 +255,8 @@ public class SectionAdapter extends ArrayAdapter<Text> {
     @Override
     public int getPosition(Text item) {
         for (int i = 0; i < texts.size(); i++) {
-            if (texts.get(i).tid == item.tid) return i;
+            if (texts.get(i).equals(item))
+                return i;
         }
         return -1;
     }

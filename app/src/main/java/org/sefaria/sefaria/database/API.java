@@ -14,11 +14,18 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.sefaria.sefaria.GoogleTracker;
+import org.sefaria.sefaria.MyApp;
+import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
+import org.sefaria.sefaria.activities.SuperTextActivity;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.NetworkOnMainThreadException;
 import android.util.Log;
@@ -62,6 +69,7 @@ public class API {
     private String fetchData(String urlString){
         String data = "";
         this.url = urlString;
+        long startTime = System.currentTimeMillis();
         if(!alreadyDisplayedURL)
             Log.d("api","URL: " + url);
 
@@ -116,11 +124,86 @@ public class API {
             status = STATUS_ERROR;
         }
 
-        if(status == STATUS_NONE && data.length() >0)
+        long timeForAPI = System.currentTimeMillis() - startTime;
+        if(status == STATUS_NONE && data.length() >0) {
             status = STATUS_GOOD;
+            GoogleTracker.sendEvent(GoogleTracker.CATEGORY_API_REQUEST, "good", timeForAPI);
+        }else{
+            GoogleTracker.sendEvent(GoogleTracker.CATEGORY_API_REQUEST, "error", timeForAPI);
+        }
 
         return data;
     }
+
+    public static class PlaceRef {
+        public Book book;
+        public Node node;
+        public Text text;
+
+        PlaceRef() {
+        }
+
+        public static PlaceRef getPlace(String place) throws APIException, Book.BookNotFoundException {
+            PlaceRef placeRef = new PlaceRef();
+            Log.d("API", "place:" + place);
+            placeRef.book = null;// = new Book(spots[0]);
+            place = place.replaceAll("_", " ");
+            List<Book> books = Book.getAll();
+            for (Book tempBook : books) {
+                String newPlace = place.replaceFirst("^" + tempBook.title + "\\s*", "");
+                if (!newPlace.equals(place)) {
+                    placeRef.book = tempBook;
+                    place = newPlace;
+                    break;
+                }
+            }
+            Log.d("API", "place:" + place);
+            String[] spots = place.split("[\\.:]|(,\\s)");
+
+            if (placeRef.book == null)
+                throw (new Book()).new BookNotFoundException();
+
+
+            if (spots.length == 0) {
+                return placeRef;
+            }
+
+            try {
+                placeRef.node = placeRef.book.getTOCroots().get(0);
+                for (int i = 0; i < spots.length; i++) {
+                    String spot = spots[i];
+                    Log.d("API", "spot1:" + spot);
+                    if (spot.length() == 0)
+                        continue;
+                    Node tempNode = placeRef.node.getChild(spot);
+                    Log.d("API", "tempNode: " + tempNode);
+                    if (tempNode == null) {
+                        //it's a most likely a final number (such as a verse number) so that's why there's no Node for it
+                        //so, lets get the firstDescendant (which should just be the node itself, but just in case lets do it this way)
+                        placeRef.node = placeRef.node.getFirstDescendant(false);
+                        List<Text> texts = placeRef.node.getTexts();
+                        int num = Util.convertDafOrIntegerToNum(spot);
+                        for (Text tempText : texts) {
+                            if (tempText.levels[0] == num) {
+                                placeRef.text = tempText;
+                                //Log.d("API","textLevel: " + num);
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                    placeRef.node = tempNode;
+                }
+            }catch (Exception e){
+                if(placeRef.node != null)
+                    placeRef.node = placeRef.node.getFirstDescendant(false);
+            }
+            return placeRef;
+        }
+    }
+
+
+
 
 
     public class APIException extends Exception{

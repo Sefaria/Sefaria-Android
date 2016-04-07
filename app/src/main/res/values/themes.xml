@@ -28,6 +28,7 @@
         <item name="text_chapter_header_color">@color/text_chapter_header_color_w</item>
         <item name="text_chapter_header_border">@color/text_chapter_header_border_w</item>
         <item name="text_verse_selected_bg">@color/text_verse_selected_bg_w</item>
+        <item name="text_verse_highlighted_bg">@color/text_verse_highlighted_bg_w</item>
         <item name="text_verse_num_color">@color/text_verse_num_color_w</item>
         <item name="link_bg">@color/link_bg_w</item>
         <item name="link_selector_bar_bg">@color/link_selector_bar_bg_w</item>
@@ -62,6 +63,7 @@
         <item name="text_chapter_header_color">@color/text_chapter_header_color_b</item>
         <item name="text_chapter_header_border">@color/text_chapter_header_border_b</item>
         <item name="text_verse_selected_bg">@color/text_verse_selected_bg_b</item>
+        <item name="text_verse_highlighted_bg">@color/text_verse_highlighted_bg_b</item>
         <item name="text_verse_num_color">@color/text_verse_num_color_b</item>
         <item name="link_bg">@color/link_bg_b</item>
         <item name="link_selector_bar_bg">@color/link_selector_bar_bg_b</item>

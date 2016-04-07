@@ -58,6 +58,7 @@
     <color name="text_chapter_header_color_w">#999999</color>
     <color name="text_chapter_header_border_w">#e6e5e6</color>
     <color name="text_verse_selected_bg_w">#eaeaea</color>
+    <color name="text_verse_highlighted_bg_w">#c9c900</color>
     <color name="text_verse_num_color_w">#666666</color>
     <color name="link_bg_w">#f9f9f7</color>
     <color name="link_selector_bar_bg_w">#eaeaea</color>
@@ -74,6 +75,7 @@
     <color name="text_chapter_header_color_b">#999999</color>
     <color name="text_chapter_header_border_b">#666666</color>
     <color name="text_verse_selected_bg_b">#444444</color>
+    <color name="text_verse_highlighted_bg_b">#c9c900</color>
     <color name="text_verse_num_color_b">#dddddd</color>
     <color name="link_bg_b">#2d2d2b</color>
     <color name="link_selector_bar_bg_b">#333</color>

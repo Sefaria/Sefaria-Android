@@ -27,6 +27,7 @@ public class GoogleTracker extends MyApp {
     public static final String CATEGORY_OPENED_URL = "Opened URL";
     public static final String CATEGORY_OPEN_NEW_BOOK_ACTION = "Open new book action";
     public static final String CATEGORY_OPEN_NEW_BOOK_ACTION_2 = "Open new book action 2";
+    public static final String CATEGORY_API_REQUEST = "API request";
 
 
     public GoogleTracker(){
