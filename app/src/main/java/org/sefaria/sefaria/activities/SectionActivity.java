@@ -95,10 +95,6 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
         }
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        Database.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
-    }
 
     /*CONTEXT MENU */
     @Override

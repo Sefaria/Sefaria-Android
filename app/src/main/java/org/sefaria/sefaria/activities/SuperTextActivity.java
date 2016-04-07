@@ -409,7 +409,6 @@ public abstract class SuperTextActivity extends FragmentActivity {
         Database.onRequestPermissionsResult(this,requestCode,permissions,grantResults);
     }
 
-
     @Override
     public void onBackPressed() {
         if(openedNewBookTime >0 && !reportedNewBookBack){

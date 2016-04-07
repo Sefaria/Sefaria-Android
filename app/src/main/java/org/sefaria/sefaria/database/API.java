@@ -133,6 +133,7 @@ public class API {
         long timeForAPI = System.currentTimeMillis() - startTime;
         if(status == STATUS_NONE && data.length() >0) {
             status = STATUS_GOOD;
+            Cache.add(url,jsonString,data); //cache data for later
             GoogleTracker.sendEvent(GoogleTracker.CATEGORY_API_REQUEST, "good", timeForAPI);
         }else{
             GoogleTracker.sendEvent(GoogleTracker.CATEGORY_API_REQUEST, "error", timeForAPI);
@@ -312,7 +313,13 @@ public class API {
      * @throws APIException
      */
     public static String getDataFromURL(String url, String jsonString, boolean useCache) throws APIException{
-       String data;
+        String data;
+        if(useCache){
+            data = Cache.getCache(url,jsonString);
+            if(data != null && data.length()>0)
+                return data;
+        }
+
         API api = new API();
         try{//try to get the data with the current thread.  This will only work if it's on a background thread.
             api.jsonString = jsonString;
@@ -329,20 +336,6 @@ public class API {
             Log.e("api","throwing apiexception");
             throw api.new APIException();
         }
-
-        if(!useCache)
-            return data;
-        /*
-        Cache cache = null;//Cache.getCache(url);
-        if(cache != null  &&  !cache.isExpired()){
-            data = cache.data;
-        }
-        else{
-            data = api.getData();//waiting for data to be returned from intern
-
-        }
-        */
-
         return data;
     }
 
@@ -498,9 +491,6 @@ public class API {
             data = result;//put into data so that the static function can pull the data
             isDone = true;
 
-            if(status == STATUS_GOOD && data.length() >0){
-                ;//Cache.add(url, data); //cache data for later
-            }
             return result;
         }
 
