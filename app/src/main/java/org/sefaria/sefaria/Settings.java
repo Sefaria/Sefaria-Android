@@ -159,18 +159,8 @@ public class Settings {
 
     public static class BookSettings {
         public Node node;
-        //public int tid;
         public int textNum;
         public Util.Lang lang;
-
-        BookSettings(Node node, int tid, Util.Lang lang){
-            this.node = node;
-            //this.tid = tid;
-            this.lang = lang;
-
-            if(lang == null)
-                this.lang = getDefaultTextLang();
-        }
 
         BookSettings(Node node, Util.Lang lang, int textNum){
             this.node = node;
@@ -209,7 +199,7 @@ public class Settings {
                 }
                 editor.putString(title,newSettings);
             }
-            editor.commit();
+            editor.apply();
         }
 
         static public void clearAllBookSettings(){
@@ -218,7 +208,7 @@ public class Settings {
             editor.commit();
             editor = getBookSavedTitleSettings().edit();
             editor.clear();
-            editor.commit();
+            editor.apply();
         }
 
 
@@ -247,7 +237,6 @@ public class Settings {
                 ;
             }
 
-            //BookSettings bookSettings = new BookSettings(node,tid, lang);
             BookSettings bookSettings = new BookSettings(node,lang,textNum);
             return bookSettings;
         }

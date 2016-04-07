@@ -72,6 +72,7 @@ public class Text implements Parcelable {
 
     public int getNumLinks(){ return numLinks;}
 
+    public String getRef(){ return ref; }
     public boolean isChapter() { return isChapter;}
     /**
      * Little sections (like verse) to Big (like chap) and the rest zeros
