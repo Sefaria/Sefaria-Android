@@ -36,6 +36,9 @@ import org.sefaria.sefaria.Settings;
 
 public class Downloader {
 
+    public enum ConnectionType {
+        WIFI,DATA,NONE
+    }
     //public static final String GOOGLE_DRIVE_PATH = "https://googledrive.com/host/0B42RTqGcyx8kbjgtaVJLRlFBSlE/";
     public static final String CSV_FILE_NAME = "sefaria_mobile_updating_csv.csv";
     private static final String CSV_DEBUG_URL = "http://betamidrash.org/other/app/v2/dev/" + CSV_FILE_NAME; //developing version
@@ -51,11 +54,6 @@ public class Downloader {
     public static final int INTERNET_LOST = 56;
     public static final int NOT_ENOUGH_SPACE = 57;
     public static final int UNKNOWN_ERROR = 58;
-
-
-    public static final int DATA_CONNECTED = 0;
-    public static final int WIFI_CONNECTED = 1;
-    public static final int NO_INTERNET = 2;
 
     public static DownloadManager manager;
     public static ArrayList<Long> downloadIdList;
@@ -271,7 +269,7 @@ public class Downloader {
 
     }
 
-    public static int getNetworkStatus()
+    public static ConnectionType getNetworkStatus()
     {
         final ConnectivityManager connMgr = (ConnectivityManager)
                 MyApp.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -279,16 +277,16 @@ public class Downloader {
         if (activeNetwork != null) { // connected to the internet
             if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
                 // connected to wifi
-                return WIFI_CONNECTED;
+                return ConnectionType.WIFI;
             } else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
                 // connected to the mobile provider's data plan
-                return DATA_CONNECTED;
+                return ConnectionType.DATA;
             } else {
                 //TODO not sure if this is the default case
-                return NO_INTERNET;
+                return ConnectionType.NONE;
             }
         } else {
-            return NO_INTERNET;
+            return ConnectionType.NONE;
         }
     }
 

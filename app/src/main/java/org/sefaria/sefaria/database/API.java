@@ -73,7 +73,7 @@ public class API {
         if(!alreadyDisplayedURL)
             Log.d("api","URL: " + url);
 
-        if(Downloader.getNetworkStatus() == Downloader.NO_INTERNET){
+        if(Downloader.getNetworkStatus() == Downloader.ConnectionType.NONE){
             this.status = STATUS_ERROR;
             return data;
         }

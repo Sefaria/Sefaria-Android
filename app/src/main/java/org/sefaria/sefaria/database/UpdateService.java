@@ -122,12 +122,12 @@ public class UpdateService extends Service {
     public static void preupdateLibrary(boolean userInit) {
 
 
-        int netStat = Downloader.getNetworkStatus();
-        if (netStat == Downloader.NO_INTERNET) {
+        Downloader.ConnectionType netStat = Downloader.getNetworkStatus();
+        if (netStat == Downloader.ConnectionType.NONE) {
             DialogManager2.showDialog(Downloader.activity, DialogManager2.DialogPreset.NO_INTERNET);
-        } else if (netStat == Downloader.DATA_CONNECTED) {
+        } else if (netStat == Downloader.ConnectionType.DATA) {
             DialogManager2.showDialog(Downloader.activity, DialogManager2.DialogPreset.DATA_CONNECTED);
-        } else if (netStat == Downloader.WIFI_CONNECTED) {
+        } else if (netStat == Downloader.ConnectionType.WIFI) {
             updateLibrary(userInit);
         }
     }
