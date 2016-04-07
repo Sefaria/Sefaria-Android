@@ -47,6 +47,8 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
     private boolean isLoadingSearch;
     private int currPageLoaded; //based on ElasticSearch page loaded
     private int preLast;
+
+    private String numberOfResults = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,6 +107,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
     View.OnClickListener searchClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            //searchBox.clearFocus();
             AsyncSearch asyncSearch = new AsyncSearch(0);
             asyncSearch.execute();
             // Check if no view has focus:
@@ -121,6 +124,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
     public void onScrollStateChanged(AbsListView view, int scrollState) {
         //blah...
     }
+
 
     @Override
     public void onScroll(AbsListView lw, final int firstVisibleItem,
@@ -154,7 +158,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
         protected void onPreExecute() {
             super.onPreExecute();
             isLoadingSearch = true;
-            numResultsTV.setText("Loading...");
+            numResultsTV.setText(numberOfResults + " Loading...");
             query = searchBox.getText().toString();
         }
 
@@ -174,7 +178,8 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
             } else {
                 adapter.setResults(results,false);
             }
-            numResultsTV.setText(SearchAPI.getNumResults() + " Results");
+            numberOfResults = SearchAPI.getNumResults() + " Results";
+            numResultsTV.setText(numberOfResults);
         }
     }
 
