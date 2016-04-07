@@ -24,13 +24,14 @@ import java.util.Map;
 public class DialogManager2 {
 
     public enum DialogPreset {
+        FIRST_TIME_OPEN,
         FIRST_UPDATE,NEW_UPDATE,
         NO_NEW_UPDATE,UPDATE_STARTED,
-        ARE_YOU_SURE_CANCEL,CHECKING_FOR_UPDATE
+        ARE_YOU_SURE_CANCEL,CHECKING_FOR_UPDATE,
+        SWITCHING_TO_API,
     }
 
     private static Dialog currDialog;
-    private static boolean isShowingDialog;
 
     private static void init() {
 
@@ -41,41 +42,56 @@ public class DialogManager2 {
         makeDialog(context,dialogCallable);
     }
 
-    public static void showDialog(final Context context, DialogPreset dialogPreset) {
+    public static void showDialog(final Activity activity, DialogPreset dialogPreset) {
         switch (dialogPreset) {
+            case FIRST_TIME_OPEN:
+                DialogManager2.showDialog(activity, new DialogCallable(MyApp.getRString(R.string.first_time_title),
+                        MyApp.getRString(R.string.first_time_message),MyApp.getRString(R.string.first_time_positive),
+                        MyApp.getRString(R.string.LATER),null, DialogCallable.DialogType.ALERT) {
+                    @Override
+                    public void positiveClick() {
+                        Downloader.updateLibrary(activity,false);
+                    }
+
+                    @Override
+                    public void negativeClick() {
+                        dismissCurrentDialog();
+                    }
+                });
+                break;
             case FIRST_UPDATE:
-                DialogManager2.showDialog(context, new DialogCallable(MyApp.getRString(R.string.UPDATE_STARTED_TITLE),
+                DialogManager2.showDialog(activity, new DialogCallable(MyApp.getRString(R.string.UPDATE_STARTED_TITLE),
                         MyApp.getRString(R.string.UPDATE_STARTED_MESSAGE), null, MyApp.getRString(R.string.CANCEL), null, DialogCallable.DialogType.PROGRESS) {
                     @Override
                     public void negativeClick() {
                         try {
-                            showDialog(context, DialogPreset.ARE_YOU_SURE_CANCEL);
+                            showDialog(activity, DialogPreset.ARE_YOU_SURE_CANCEL);
                         } catch (Exception e) {
-                            Toast.makeText(context, MyApp.getRString(R.string.update_preparing), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(activity, MyApp.getRString(R.string.update_preparing), Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
                 break;
             case CHECKING_FOR_UPDATE:
-                showDialog(context, new DialogCallable(MyApp.getRString(R.string.CHECKING_FOR_UPDATE_TITLE), "", null, null, null, DialogCallable.DialogType.ALERT) {
+                showDialog(activity, new DialogCallable(MyApp.getRString(R.string.CHECKING_FOR_UPDATE_TITLE), "", null, null, null, DialogCallable.DialogType.ALERT) {
                 });
                 break;
             case UPDATE_STARTED:
-                showDialog(context, new DialogCallable(MyApp.getRString(R.string.UPDATE_STARTED_TITLE),
+                showDialog(activity, new DialogCallable(MyApp.getRString(R.string.UPDATE_STARTED_TITLE),
                         MyApp.getRString(R.string.UPDATE_STARTED_MESSAGE), null, MyApp.getRString(R.string.CANCEL), null, DialogCallable.DialogType.PROGRESS) {
                     @Override
                     public void negativeClick() {
                         try {
                             dismissCurrentDialog();
-                            showDialog(context, DialogPreset.ARE_YOU_SURE_CANCEL);
+                            showDialog(activity, DialogPreset.ARE_YOU_SURE_CANCEL);
                         } catch (Exception e) {
-                            Toast.makeText(context, MyApp.getRString(R.string.update_preparing), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(activity, MyApp.getRString(R.string.update_preparing), Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
                 break;
             case NO_NEW_UPDATE:
-                showDialog(context, new DialogCallable(MyApp.getRString(R.string.NO_NEW_UPDATE_TITLE),
+                showDialog(activity, new DialogCallable(MyApp.getRString(R.string.NO_NEW_UPDATE_TITLE),
                         MyApp.getRString(R.string.NO_NEW_UPDATE_MESSAGE),null,null,
                         MyApp.getRString(R.string.OK), DialogCallable.DialogType.ALERT) {
                     @Override
@@ -86,16 +102,16 @@ public class DialogManager2 {
                 });
                 break;
             case NEW_UPDATE:
-                showDialog(context, new DialogCallable(MyApp.getRString(R.string.NEW_UPDATE_TITLE),
+                showDialog(activity, new DialogCallable(MyApp.getRString(R.string.NEW_UPDATE_TITLE),
                         MyApp.getRString(R.string.NEW_UPDATE_MESSAGE),MyApp.getRString(R.string.YES),
                         MyApp.getRString(R.string.LATER),null, DialogCallable.DialogType.ALERT) {
                     @Override
                     public void positiveClick() {
-                        Intent intent = new Intent(context,UpdateReceiver.class);
+                        Intent intent = new Intent(activity,UpdateReceiver.class);
                         intent.putExtra("isPre",true);
                         intent.putExtra("userInit",true);
-                        context.sendBroadcast(intent);
-                        showDialog(context, DialogManager2.DialogPreset.UPDATE_STARTED);
+                        activity.sendBroadcast(intent);
+                        showDialog(activity, DialogManager2.DialogPreset.UPDATE_STARTED);
                     }
 
                     @Override
@@ -107,12 +123,12 @@ public class DialogManager2 {
                 break;
 
             case ARE_YOU_SURE_CANCEL:
-                showDialog(context, new DialogCallable(MyApp.getRString(R.string.ARE_YOU_SURE_TITLE),
+                showDialog(activity, new DialogCallable(MyApp.getRString(R.string.ARE_YOU_SURE_TITLE),
                         MyApp.getRString(R.string.ARE_YOU_SURE_MESSAGE), MyApp.getRString(R.string.YES), MyApp.getRString(R.string.no), null, DialogCallable.DialogType.ALERT) {
                     @Override
                     public void negativeClick() {
                         //go back to previous dialog (which i'm assuming is update_started)
-                        DialogManager2.showDialog(context,DialogPreset.UPDATE_STARTED);
+                        DialogManager2.showDialog(activity,DialogPreset.UPDATE_STARTED);
                     }
 
                     @Override
@@ -128,6 +144,16 @@ public class DialogManager2 {
                         UpdateService.unlockOrientation(Downloader.activity);
                     }
                 });
+                break;
+            case SWITCHING_TO_API:
+                showDialog(activity, new DialogCallable(MyApp.getRString(R.string.switching_to_api),"",
+                        MyApp.getRString(R.string.OK),null,null, DialogCallable.DialogType.ALERT) {
+                    @Override
+                    public void positiveClick() {
+                        dismissCurrentDialog();
+                    }
+                });
+                break;
         }
     }
 
@@ -249,6 +275,5 @@ public class DialogManager2 {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        isShowingDialog = false;
     }
 }

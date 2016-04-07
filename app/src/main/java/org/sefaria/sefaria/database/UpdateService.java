@@ -224,22 +224,22 @@ public class UpdateService extends Service {
             //check versions before continuing
             if ((updatedVersionNum > currentVersionNum && userInitiated) || evenOverWriteOldDatabase ) {
                 DialogManager2.dismissCurrentDialog();
-                DialogManager2.showDialog(Downloader.activity, DialogManager2.DialogPreset.UPDATE_STARTED);
+                DialogManager2.showDialog((Activity)MyApp.getContext(), DialogManager2.DialogPreset.UPDATE_STARTED);
                 updateStage2(zipUrl, indexURL);
             } else if (updatedVersionNum > currentVersionNum && !userInitiated) {
                 if (currentVersionNum == -1) {
                     //click yes very quickly...
-                    Intent intent = new Intent(Downloader.activity,UpdateReceiver.class);
+                    Intent intent = new Intent(MyApp.getContext(),UpdateReceiver.class);
                     intent.putExtra("isPre",true);
                     intent.putExtra("userInit",true);
                     Downloader.activity.sendBroadcast(intent);
-                    DialogManager2.showDialog(Downloader.activity, DialogManager2.DialogPreset.CHECKING_FOR_UPDATE);
+                    DialogManager2.showDialog((Activity)MyApp.getContext(), DialogManager2.DialogPreset.CHECKING_FOR_UPDATE);
                 } else {
-                    DialogManager2.showDialog(Downloader.activity, DialogManager2.DialogPreset.NEW_UPDATE);
+                    DialogManager2.showDialog((Activity)MyApp.getContext(), DialogManager2.DialogPreset.NEW_UPDATE);
                 }
             } else if (updatedVersionNum <= currentVersionNum && userInitiated) {
                 DialogManager2.dismissCurrentDialog(); //dismiss progressDialog
-                DialogManager2.showDialog(MyApp.getContext(),DialogManager2.DialogPreset.NO_NEW_UPDATE);
+                DialogManager2.showDialog((Activity)MyApp.getContext(),DialogManager2.DialogPreset.NO_NEW_UPDATE);
                 //UpdateService.endService(); //PROBABLY NOT NECESSARY, BUT ADDED IN CASE OF FUTURE BUG (ES)
             } else {
                 //no new update and not user initiated
