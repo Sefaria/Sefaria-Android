@@ -28,7 +28,7 @@ public class DialogManager2 {
         FIRST_UPDATE,NEW_UPDATE,
         NO_NEW_UPDATE,UPDATE_STARTED,
         ARE_YOU_SURE_CANCEL,CHECKING_FOR_UPDATE,
-        SWITCHING_TO_API,
+        SWITCHING_TO_API,NO_INTERNET,DATA_CONNECTED
     }
 
     private static Dialog currDialog;
@@ -153,6 +153,32 @@ public class DialogManager2 {
                         dismissCurrentDialog();
                     }
                 });
+                break;
+            case NO_INTERNET:
+                dismissCurrentDialog();
+                showDialog(Downloader.activity,
+                        new DialogCallable(MyApp.getRString(R.string.NO_INTERNET_TITLE), MyApp.getRString(R.string.NO_INTERNET_MESSAGE),
+                                null, MyApp.getRString(R.string.CANCEL), null, DialogCallable.DialogType.ALERT) {
+                            @Override
+                            public void negativeClick() {
+                                dismissCurrentDialog();
+                                UpdateService.unlockOrientation(Downloader.activity);
+                                UpdateService.endService();
+                            }
+                        });
+                break;
+            case DATA_CONNECTED:
+                dismissCurrentDialog();
+                showDialog(Downloader.activity,
+                        new DialogCallable(Downloader.activity.getString(R.string.NO_INTERNET_TITLE),Downloader.activity.getString(R.string.NO_INTERNET_MESSAGE),
+                                MyApp.getRString(R.string.CONTINUE),null,null, DialogCallable.DialogType.ALERT) {
+                            @Override
+                            public void negativeClick() {
+                                dismissCurrentDialog();
+                                UpdateService.unlockOrientation(Downloader.activity);
+                                UpdateService.endService();
+                            }
+                        });
                 break;
         }
     }

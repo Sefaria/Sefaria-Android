@@ -18,6 +18,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -274,12 +275,18 @@ public class Downloader {
     {
         final ConnectivityManager connMgr = (ConnectivityManager)
                 MyApp.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        final android.net.NetworkInfo wifi =  connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        final android.net.NetworkInfo mobile =  connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-        if( wifi.isConnected()) {
-            return WIFI_CONNECTED;
-        } else if( mobile.isConnected()) {
-            return DATA_CONNECTED;
+        NetworkInfo activeNetwork = connMgr.getActiveNetworkInfo();
+        if (activeNetwork != null) { // connected to the internet
+            if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
+                // connected to wifi
+                return WIFI_CONNECTED;
+            } else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
+                // connected to the mobile provider's data plan
+                return DATA_CONNECTED;
+            } else {
+                //TODO not sure if this is the default case
+                return NO_INTERNET;
+            }
         } else {
             return NO_INTERNET;
         }

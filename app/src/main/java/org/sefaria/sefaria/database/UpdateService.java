@@ -124,27 +124,9 @@ public class UpdateService extends Service {
 
         int netStat = Downloader.getNetworkStatus();
         if (netStat == Downloader.NO_INTERNET) {
-            DialogManager2.showDialog(Downloader.activity,
-                    new DialogCallable(MyApp.getRString(R.string.NO_INTERNET_TITLE),MyApp.getRString(R.string.NO_INTERNET_MESSAGE),
-                    null,MyApp.getRString(R.string.CANCEL),null, DialogCallable.DialogType.ALERT) {
-                @Override
-                public void negativeClick() {
-                    DialogManager2.dismissCurrentDialog();
-                    UpdateService.unlockOrientation(Downloader.activity);
-                    UpdateService.endService();
-                }
-            });
+            DialogManager2.showDialog(Downloader.activity, DialogManager2.DialogPreset.NO_INTERNET);
         } else if (netStat == Downloader.DATA_CONNECTED) {
-            DialogManager2.showDialog(Downloader.activity,
-                    new DialogCallable(Downloader.activity.getString(R.string.NO_INTERNET_TITLE),Downloader.activity.getString(R.string.NO_INTERNET_MESSAGE),
-                            MyApp.getRString(R.string.CONTINUE),null,null, DialogCallable.DialogType.ALERT) {
-                        @Override
-                        public void negativeClick() {
-                            DialogManager2.dismissCurrentDialog();
-                            UpdateService.unlockOrientation(Downloader.activity);
-                            UpdateService.endService();
-                        }
-                    });
+            DialogManager2.showDialog(Downloader.activity, DialogManager2.DialogPreset.DATA_CONNECTED);
         } else if (netStat == Downloader.WIFI_CONNECTED) {
             updateLibrary(userInit);
         }
