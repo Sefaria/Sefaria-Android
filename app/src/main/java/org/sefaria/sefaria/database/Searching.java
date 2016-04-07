@@ -329,6 +329,15 @@ public class Searching {
         return foundItems;
     }
 
+    public static void removeRed(List<Text> textList){
+        for(Text text:textList){
+            text.setText(text.getText(Util.Lang.EN).replace(FONT_RED_END,"").replace(FONT_RED_START,""), Util.Lang.EN);
+            text.setText(text.getText(Util.Lang.HE).replace(FONT_RED_END, "").replace(FONT_RED_START,""), Util.Lang.HE);
+        }
+    }
+
+    private static final String FONT_RED_START = "<font color='#ff5566'>";
+    private static final String FONT_RED_END = "</font>";
     private static String addRedToFoundWord(Matcher m, String orgText, boolean removeLongText){
         final int MAX_CHAR_NUM = 100;
         if(orgText.length() < 300)//you could get the text in there, so let it be.
@@ -354,8 +363,8 @@ public class Searching {
 
                 }
             }
-            newText += orgText.substring(lastSpot, m.start()) + "<font color='#ff5566'>"
-                    + orgText.substring(m.start(),m.end()) + "</font>";
+            newText += orgText.substring(lastSpot, m.start()) + FONT_RED_START
+                    + orgText.substring(m.start(),m.end()) + FONT_RED_END;
             lastSpot = m.end();
         }
         while(m.find());
@@ -599,7 +608,7 @@ public class Searching {
     }
     */
 
-    public static List<Text>  findOnPage(Node node, String term){
+    public static List<Text> findOnPage(Node node, String term){
         List<Text> list;
         try {
             list = findWordsInList(node.getTexts(), term, false, false);

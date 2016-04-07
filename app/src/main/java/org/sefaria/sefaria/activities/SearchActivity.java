@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -19,12 +20,16 @@ import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.SearchElements.SearchAdapter;
 import org.sefaria.sefaria.Settings;
+import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.SearchElements.SearchActionbar;
+import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.SearchAPI;
+import org.sefaria.sefaria.database.Searching;
 import org.sefaria.sefaria.database.Text;
 import org.sefaria.sefaria.layouts.SefariaTextView;
 
@@ -42,6 +47,8 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
     private boolean isLoadingSearch;
     private int currPageLoaded; //based on ElasticSearch page loaded
     private int preLast;
+
+    private String numberOfResults = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,6 +90,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
         listView = (ListView) findViewById(R.id.listview);
         listView.setAdapter(adapter);
         listView.setOnScrollListener(this);
+        listView.setOnItemClickListener(onItemClickListener);
         numResultsTV = (SefariaTextView) findViewById(R.id.numResults);
         numResultsTV.setFont(Settings.getSystemLang(),false);
         isLoadingSearch = false;
@@ -99,6 +107,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
     View.OnClickListener searchClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            //searchBox.clearFocus();
             AsyncSearch asyncSearch = new AsyncSearch(0);
             asyncSearch.execute();
             // Check if no view has focus:
@@ -115,6 +124,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
     public void onScrollStateChanged(AbsListView view, int scrollState) {
         //blah...
     }
+
 
     @Override
     public void onScroll(AbsListView lw, final int firstVisibleItem,
@@ -148,7 +158,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
         protected void onPreExecute() {
             super.onPreExecute();
             isLoadingSearch = true;
-            numResultsTV.setText("Loading...");
+            numResultsTV.setText(numberOfResults + " Loading...");
             query = searchBox.getText().toString();
         }
 
@@ -168,8 +178,26 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
             } else {
                 adapter.setResults(results,false);
             }
-            numResultsTV.setText(SearchAPI.getNumResults() + " Results");
+            numberOfResults = SearchAPI.getNumResults() + " Results";
+            numResultsTV.setText(numberOfResults);
         }
     }
+
+    ListView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            String place = adapter.getItem(position).getLocationString(Util.Lang.EN);
+            API.PlaceRef placeRef = null;
+            try {
+                placeRef = API.PlaceRef.getPlace(place);
+                SuperTextActivity.startNewTextActivityIntent(SearchActivity.this,placeRef.book,placeRef.text,placeRef.node,false,searchBox.getText().toString());
+            } catch (API.APIException e) {
+                MyApp.openURLInBrowser(SearchActivity.this,"https://sefaria.org/" + place);
+            } catch (Book.BookNotFoundException e) {
+                MyApp.openURLInBrowser(SearchActivity.this,"https://sefaria.org/" + place);
+            }
+
+        }
+    };
 
 }

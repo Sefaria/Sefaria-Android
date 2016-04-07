@@ -368,7 +368,6 @@ public class Book implements Parcelable {
         if (cursor.moveToFirst()) {
             do {
                 if (isHebrew) {
-
                     bookNameList.add(Util.getRemovedNikudString(cursor.getString(8))); //8 is index of hebook title
                 } else {
                     bookNameList.add(cursor.getString(7)); //7 is index of enbook title

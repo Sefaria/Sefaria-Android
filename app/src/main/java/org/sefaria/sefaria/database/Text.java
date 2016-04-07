@@ -2,6 +2,7 @@ package org.sefaria.sefaria.database;
 import org.sefaria.sefaria.GoogleTracker;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.sefaria.sefaria.Settings;
@@ -33,7 +34,7 @@ public class Text implements Parcelable {
     private int heTextLength = 0;
     private byte [] heTextCompress;
     private boolean isChapter = false;
-    protected int parentNID;
+    //protected int parentNID;
     private String ref = null;
 
     public String getText(Util.Lang lang)
@@ -166,7 +167,7 @@ public class Text implements Parcelable {
         }
 
         numLinks = cursor.getInt(MAX_LEVELS+5);
-        parentNID = cursor.getInt(MAX_LEVELS+6);
+        //parentNID = cursor.getInt(MAX_LEVELS+6);
     }
 
 
@@ -185,7 +186,7 @@ public class Text implements Parcelable {
             else
                 str.append("http://www.sefaria.org/");
         }
-        if(parentNID != 0 && parentNode != null){
+        if(parentNode != null){
             String path = parentNode.getPath(Util.Lang.EN,true, true, true) + "." + levels[0];
             return str + path;
         }
@@ -246,6 +247,66 @@ public class Text implements Parcelable {
 
         return str;
     }
+
+    /**
+     *
+     * @param book
+     * @return the Node that is the parent of the current Text or null if it has problems doing that
+     * @throws API.APIException
+     * @throws Book.BookNotFoundException
+     */
+    public Node getNodeFromText(Book book) throws API.APIException, Book.BookNotFoundException {
+        Text text = this;
+        if(text.ref != null && text.ref.length() > 0){
+            API.PlaceRef placeRef = API.PlaceRef.getPlace(text.ref);
+            text.parentNode = placeRef.node;
+            if(placeRef.text != null){
+                text.levels = placeRef.text.levels.clone();
+                text.tid = placeRef.text.tid;
+            }
+            return parentNode;
+        }
+
+        List<Node> roots = Node.getRoots(book);
+        if(roots.size() == 0){
+            return null; //TODO deal with if can't find TOCRoots
+        }
+        Node node = roots.get(0);
+        try {
+            if (!node.isComplex()) {
+                for (int i = text.levels.length-1; i > 0; i--) {
+                    if (text.levels[i] == 0)
+                        continue;
+                    int num = text.levels[i];
+                    boolean foundChild = false;
+                    for(Node child:node.getChildren()) {
+                        if(num == child.gridNum) {
+                            node = child;
+                            foundChild = true;
+                            break;
+                        }
+                    }
+                    if(!foundChild){
+                        Log.e("Node","Problem finding getNodeFromLink child. node" + node);
+                        text.parentNode = node.getFirstDescendant(false);
+                        return text.parentNode;
+                    }
+
+                }
+            }else{
+                Log.d("Node","not getting complex node yet");
+                text.parentNode = node.getFirstDescendant(false);
+                return text.parentNode;
+            }
+        }catch (Exception e){
+            Log.d("Node",e.toString());
+            return null;
+        }
+
+        text.parentNode = node.getFirstDescendant(false);
+        return parentNode;
+    }
+
 
     private static List<Text> getFromDB(Book book, int[] levels) throws API.APIException {
         if(book.textDepth != levels.length){
@@ -517,12 +578,14 @@ public class Text implements Parcelable {
             return KenText;
         else if(lang.equals("he"))
             return  KheText;
-        Log.e( "sql_text_convertLang", "Unknown lang");
+        Log.e("sql_text_convertLang", "Unknown lang");
         return "";
     }
 
     @Override
     public int hashCode() {
+        if(tid == 0)
+            return super.hashCode();
         return tid;
     }
 
@@ -532,20 +595,34 @@ public class Text implements Parcelable {
             return false;
 
         Text text = (Text) o;
-        if(text.tid == 0 && this.tid ==0){
-            return super.equals(text);
+        if(text.tid != 0 && this.tid != 0)
+            return text.tid == this.tid;
+
+        boolean isEqual = (
+                Arrays.equals(text.levels,this.levels)
+                        &&
+                        this.bid == text.bid
+                //&& this.parentNode.equals(text.parentNode)
+                //TODO maybe needs stricter def... but for now this is fine
+        );
+        return isEqual;
+        /*
+        if((text.tid == 0 && this.tid ==0) || (text.ref != null || this.ref != null)){
+            //return super.equals(o);
         }
-        return text.tid == this.tid;
+        */
+
     }
 
-    public static Text deepCopy(Text text) {
+    private static Text deepCopy(Text text) {
         Text newText = new Text();
         newText.bid = text.bid;
-        newText.enText = text.enText;
-        newText.heText = text.heText;
+        newText.enText = text.getText(Util.Lang.EN);
+        newText.heText = text.getText(Util.Lang.HE);
         newText.levels = text.levels.clone();
         newText.tid    = text.tid;
         newText.displayNum = text.displayNum;
+        newText.parentNode = text.parentNode;
         return newText;
     }
 

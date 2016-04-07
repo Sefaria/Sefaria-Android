@@ -101,6 +101,8 @@ public abstract class SuperTextActivity extends FragmentActivity {
     protected boolean reportedNewBookScroll = false;
     private static final int NO_HASH_NODE = -1;
 
+
+    private String searchingTerm;
     //private MenuDrawer menuDrawer;
 
     @Override
@@ -132,10 +134,12 @@ public abstract class SuperTextActivity extends FragmentActivity {
             nodeHash = savedInstanceState.getInt("nodeHash", NO_HASH_NODE);
             book = savedInstanceState.getParcelable("currBook");
             openToText = savedInstanceState.getParcelable("incomingLinkText");
+            searchingTerm = savedInstanceState.getString("searchingTerm");
         }else{
             nodeHash = intent.getIntExtra("nodeHash", NO_HASH_NODE);
             book = intent.getParcelableExtra("currBook");
             openToText = intent.getParcelableExtra("incomingLinkText");
+            searchingTerm = intent.getStringExtra("searchingTerm");
         }
 
         if (Settings.getIsFirstTimeOpened()) {
@@ -173,7 +177,11 @@ public abstract class SuperTextActivity extends FragmentActivity {
         if(book != null){ //||nodeHash == -1){// that means it came in from the menu or the TOC commentary tab
             try {
                 if (openToText != null) { //wants to go to specific text (for example, coming from Links or searching).
-                    firstLoadedNode = Node.getNodeFromText(openToText, book);
+                    try {
+                        firstLoadedNode = openToText.getNodeFromText(book);
+                    } catch (Book.BookNotFoundException e) {
+                        e.printStackTrace();
+                    }
                     if(firstLoadedNode == null){
                         Log.e("SuperTextAct", "firstLoadedNode is null");
                     }
@@ -205,13 +213,6 @@ public abstract class SuperTextActivity extends FragmentActivity {
         }
         else { // no book means it came in from TOC
             firstLoadedNode = Node.getSavedNode(nodeHash);
-            /*
-            if(firstLoadedNode == null){//there's a problem with getting the Node from hash. This happens when there's mutli tabs and restores from ram.
-                MyApp.homeClick(this, false,false);
-                badOnCreate = true;
-                finish();
-                return;
-            }*/
             book = new Book(firstLoadedNode.getBid());
         }
         //These vars are specifically initialized here and not in init() so that they don't get overidden when coming from TOC
@@ -302,7 +303,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
      */
     public static void startNewTextActivityIntent(Context context, Text text, boolean openNewTask){
         Book book = new Book(text.bid);
-        startNewTextActivityIntent(context, book, text, null,openNewTask);
+        startNewTextActivityIntent(context, book, text, null,openNewTask,null);
     }
 
 
@@ -313,7 +314,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
      */
     public static void startNewTextActivityIntent(Context context, Book book, boolean openNewTask){
         Settings.RecentTexts.addRecentText(book.title);
-        startNewTextActivityIntent(context, book, null, null,openNewTask);
+        startNewTextActivityIntent(context, book, null, null,openNewTask,null);
     }
 
     /**
@@ -324,7 +325,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
      */
 
 
-    public static void startNewTextActivityIntent(Context context, Book book, Text text, Node node,boolean openNewTask) {
+    public static void startNewTextActivityIntent(Context context, Book book, Text text, Node node,boolean openNewTask,String searchingTerm) {
         List<String> cats = Arrays.asList(book.categories);
         boolean isCtsText = false;
         final String[] CTS_TEXT_CATS = {};// {"Tanach","Talmud"};//
@@ -347,6 +348,9 @@ public abstract class SuperTextActivity extends FragmentActivity {
             node.log();
             Node.saveNode(node);
             intent.putExtra("nodeHash",node.hashCode());
+        }
+        if(searchingTerm != null){
+            intent.putExtra("searchingTerm",searchingTerm);
         }
 
         //lang replaced by general MyApp.getMenuLang() function
@@ -608,7 +612,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
     private void setColorTheme(int colorTheme) {
         Settings.setTheme(colorTheme);
         finish();
-        startNewTextActivityIntent(this,book,currText,currNode,false);
+        startNewTextActivityIntent(this,book,currText,currNode,false,searchingTerm);
         /*Intent intent = new Intent(this, .class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -686,6 +690,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
                 return new ArrayList<>();
             }
             textsList = newNode.getTexts();
+            newNode.findWords(searchingTerm);
             return textsList;
         } catch (API.APIException e) {
             API.makeAPIErrorToast(this);
