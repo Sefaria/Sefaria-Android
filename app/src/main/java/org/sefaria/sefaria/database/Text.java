@@ -2,6 +2,7 @@ package org.sefaria.sefaria.database;
 import org.sefaria.sefaria.GoogleTracker;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.sefaria.sefaria.Settings;
@@ -246,6 +247,61 @@ public class Text implements Parcelable {
 
         return str;
     }
+
+    /**
+     *
+     * @param book
+     * @return the Node that is the parent of the current Text or null if it has problems doing that
+     * @throws API.APIException
+     * @throws Book.BookNotFoundException
+     */
+    public static Node getNodeFromText(Text text,Book book) throws API.APIException, Book.BookNotFoundException {
+        if(text.ref != null && text.ref.length() > 0){
+            API.PlaceRef placeRef = API.PlaceRef.getPlace(text.ref);
+            text = placeRef.text;
+            return placeRef.node;
+        }
+
+        List<Node> roots = Node.getRoots(book);
+        if(roots.size() == 0){
+            return null; //TODO deal with if can't find TOCRoots
+        }
+        Node node = roots.get(0);
+        try {
+            if (!node.isComplex()) {
+                for (int i = text.levels.length-1; i > 0; i--) {
+                    if (text.levels[i] == 0)
+                        continue;
+                    int num = text.levels[i];
+                    boolean foundChild = false;
+                    for(Node child:node.getChildren()) {
+                        if(num == child.gridNum) {
+                            node = child;
+                            foundChild = true;
+                            break;
+                        }
+                    }
+                    if(!foundChild){
+                        Log.e("Node","Problem finding getNodeFromLink child. node" + node);
+                        return node.getFirstDescendant(false);
+                        //return text.parentNode;
+                    }
+
+                }
+            }else{
+                Log.d("Node","not getting complex node yet");
+                return node.getFirstDescendant(false);
+                //return text.parentNode;
+            }
+        }catch (Exception e){
+            Log.d("Node",e.toString());
+            return null;
+        }
+
+        return node.getFirstDescendant(false);
+        //return parentNode;
+    }
+
 
     private static List<Text> getFromDB(Book book, int[] levels) throws API.APIException {
         if(book.textDepth != levels.length){
@@ -517,12 +573,14 @@ public class Text implements Parcelable {
             return KenText;
         else if(lang.equals("he"))
             return  KheText;
-        Log.e( "sql_text_convertLang", "Unknown lang");
+        Log.e("sql_text_convertLang", "Unknown lang");
         return "";
     }
 
     @Override
     public int hashCode() {
+        if(tid == 0)
+            return super.hashCode();
         return tid;
     }
 
@@ -533,19 +591,32 @@ public class Text implements Parcelable {
 
         Text text = (Text) o;
         if(text.tid == 0 && this.tid ==0){
-            return super.equals(text);
+            if((text.ref != null || this.ref != null) || true) {
+                boolean isEqual = (
+                    Arrays.equals(text.levels,this.levels)
+                    &&
+                    this.bid == text.bid
+                );
+                Log.d("Text", "Using otherEquals: " + isEqual + text + "__" + this) ;
+                return isEqual;
+
+            }else{
+                return super.equals(o);
+            }
         }
         return text.tid == this.tid;
     }
 
-    public static Text deepCopy(Text text) {
+    private static Text deepCopy(Text text) {
         Text newText = new Text();
         newText.bid = text.bid;
-        newText.enText = text.enText;
-        newText.heText = text.heText;
+        newText.enText = text.getText(Util.Lang.EN);
+        newText.heText = text.getText(Util.Lang.HE);
         newText.levels = text.levels.clone();
         newText.tid    = text.tid;
         newText.displayNum = text.displayNum;
+        newText.parentNode = text.parentNode;
+        newText.parentNID = text.parentNID;
         return newText;
     }
 

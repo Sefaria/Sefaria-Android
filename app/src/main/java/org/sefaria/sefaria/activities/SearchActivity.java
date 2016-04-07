@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -19,12 +20,16 @@ import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.SearchElements.SearchAdapter;
 import org.sefaria.sefaria.Settings;
+import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.SearchElements.SearchActionbar;
+import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.SearchAPI;
+import org.sefaria.sefaria.database.Searching;
 import org.sefaria.sefaria.database.Text;
 import org.sefaria.sefaria.layouts.SefariaTextView;
 
@@ -83,6 +88,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
         listView = (ListView) findViewById(R.id.listview);
         listView.setAdapter(adapter);
         listView.setOnScrollListener(this);
+        listView.setOnItemClickListener(onItemClickListener);
         numResultsTV = (SefariaTextView) findViewById(R.id.numResults);
         numResultsTV.setFont(Settings.getSystemLang(),false);
         isLoadingSearch = false;
@@ -171,5 +177,22 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
             numResultsTV.setText(SearchAPI.getNumResults() + " Results");
         }
     }
+
+    ListView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            String place = adapter.getItem(position).getLocationString(Util.Lang.EN);
+            API.PlaceRef placeRef = null;
+            try {
+                placeRef = API.PlaceRef.getPlace(place);
+                SuperTextActivity.startNewTextActivityIntent(SearchActivity.this,placeRef.book,placeRef.text,placeRef.node,true,null);
+            } catch (API.APIException e) {
+                MyApp.openURLInBrowser(SearchActivity.this,"https://sefaria.org/" + place);
+            } catch (Book.BookNotFoundException e) {
+                MyApp.openURLInBrowser(SearchActivity.this,"https://sefaria.org/" + place);
+            }
+
+        }
+    };
 
 }

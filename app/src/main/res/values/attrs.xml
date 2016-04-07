@@ -26,6 +26,7 @@
     <attr name="text_chapter_header_color" format="reference|color"/>
     <attr name="text_chapter_header_border" format="reference|color"/>
     <attr name="text_verse_selected_bg" format="reference|color"/>
+    <attr name="text_verse_highlighted_bg" format="reference|color"/>
     <attr name="text_verse_num_color" format="reference|color"/>
     <attr name="link_bg" format="reference|color"/>
     <attr name="link_text_bg" format="reference|color"/>

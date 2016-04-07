@@ -103,7 +103,7 @@ public class MenuDirectRef extends LinearLayout{
         public void onClick(View v) {
             GoogleTracker.sendEvent("MenuDirectRef", enTitle);
             Text text = new Text(Settings.BookSettings.getSavedBook(book).tid);
-            SuperTextActivity.startNewTextActivityIntent(context,book,text,getNode(),false);
+            SuperTextActivity.startNewTextActivityIntent(context,book,text,getNode(),false,null);
         }
     };
 

@@ -599,7 +599,7 @@ public class Searching {
     }
     */
 
-    public static List<Text>  findOnPage(Node node, String term){
+    public static List<Text> findOnPage(Node node, String term){
         List<Text> list;
         try {
             list = findWordsInList(node.getTexts(), term, false, false);
