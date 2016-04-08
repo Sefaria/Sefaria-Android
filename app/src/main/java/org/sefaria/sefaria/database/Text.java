@@ -72,6 +72,7 @@ public class Text implements Parcelable {
 
     public int getNumLinks(){ return numLinks;}
 
+    public String getRef(){ return ref; }
     public boolean isChapter() { return isChapter;}
     /**
      * Little sections (like verse) to Big (like chap) and the rest zeros
@@ -191,7 +192,12 @@ public class Text implements Parcelable {
             return str + path;
         }
 
-        Book book = new Book(bid);
+        Book book = null;
+        try {
+            book = new Book(bid);
+        } catch (Book.BookNotFoundException e) {
+            return "";
+        }
         str.append(book.getTitle(Util.Lang.EN));
         int sectionNum = book.sectionNamesL2B.length-1;
         for(int i=levels.length-1;i>=0;i--){
@@ -210,7 +216,12 @@ public class Text implements Parcelable {
     public String getLocationString(Util.Lang lang){
         if(ref != null)
             return ref;
-        Book book = new Book(bid);
+        Book book = null;
+        try {
+            book = new Book(bid);
+        } catch (Book.BookNotFoundException e) {
+            return "";
+        }
         String str = book.getTitle(lang);
         if(parentNode != null){ //It's a complex text... I Don't think it's always complex text... it could also be just from the Popupmenu for example
 
@@ -401,6 +412,7 @@ public class Text implements Parcelable {
     }
 
 
+    /*
     public static Text makeDummyChapText(Text text){
         int wherePage = (new Book(text.bid)).wherePage;
         Text dummyChapText = deepCopy(text);
@@ -418,7 +430,7 @@ public class Text implements Parcelable {
 
         return dummyChapText;
     }
-
+    */
     public static Text makeDummyChapText0(Text text, int wherePage){
         Text dummyChapText = deepCopy(text);
         //dummyChapText.log();

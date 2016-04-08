@@ -4,12 +4,18 @@ package org.sefaria.sefaria.database;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -53,6 +59,9 @@ public class API {
     private int status = STATUS_NONE;
     private boolean isDone = false;
     private boolean alreadyDisplayedURL = false;
+
+
+    private boolean useCache = Cache.USE_CACHE_DEFAULT;
 
     private String jsonString; //if null, no json to send. if not null send this jsonObject along with url request
     final static int READ_TIMEOUT = 10000;
@@ -127,6 +136,8 @@ public class API {
         long timeForAPI = System.currentTimeMillis() - startTime;
         if(status == STATUS_NONE && data.length() >0) {
             status = STATUS_GOOD;
+            if(useCache)
+                Cache.add(url,jsonString,data); //cache data for later
             GoogleTracker.sendEvent(GoogleTracker.CATEGORY_API_REQUEST, "good", timeForAPI);
         }else{
             GoogleTracker.sendEvent(GoogleTracker.CATEGORY_API_REQUEST, "error", timeForAPI);
@@ -287,14 +298,14 @@ public class API {
     //static methods
 
     public static String getDataFromURL(String url) throws APIException{
-        return getDataFromURL(url,true);
+        return getDataFromURL(url,null,Cache.USE_CACHE_DEFAULT);
     }
 
-
-
-    public static String getDataFromURL(String url, boolean useCache) throws APIException {
+    public static String getDataFromURL(String url,boolean useCache) throws APIException{
         return getDataFromURL(url,null,useCache);
     }
+
+
 
     /**
      * This function will wait until it gets the data from the Internet to return.
@@ -305,15 +316,23 @@ public class API {
      * @return data as String from url request
      * @throws APIException
      */
-    public static String getDataFromURL(String url, String jsonString, boolean useCache) throws APIException{
-       String data;
+    public static String getDataFromURL(String url, String jsonString,boolean useCache) throws APIException{
+        String data;
+        if(useCache){
+            data = Cache.getCache(url,jsonString);
+            if(data != null && data.length()>0)
+                return data;
+        }
+
         API api = new API();
         try{//try to get the data with the current thread.  This will only work if it's on a background thread.
             api.jsonString = jsonString;
+            api.useCache = useCache;
             data = api.fetchData(url);
         }catch (NetworkOnMainThreadException e){//if it was running on main thread, create our own background thread to handle it
             api = getDataFromURLAsync(url,jsonString);//creating an instance of api which will fetch data
             api.alreadyDisplayedURL = true;
+            api.useCache = useCache;
             data = api.getData();//waiting for data to be returned from internet
         }
 
@@ -323,20 +342,6 @@ public class API {
             Log.e("api","throwing apiexception");
             throw api.new APIException();
         }
-
-        if(!useCache)
-            return data;
-        /*
-        Cache cache = null;//Cache.getCache(url);
-        if(cache != null  &&  !cache.isExpired()){
-            data = cache.data;
-        }
-        else{
-            data = api.getData();//waiting for data to be returned from intern
-
-        }
-        */
-
         return data;
     }
 
@@ -413,18 +418,24 @@ public class API {
             return str;
     }
 
-    public static List<Text> getLinks(Text text, LinkFilter linkFilter) throws APIException {
+    public static List<Text> getLinks(Text orgText, LinkFilter linkFilter) throws APIException {
         Log.d("API.Link","got starting LinksAPI");
         List<Text> texts = new ArrayList<>();
-        String place = text.getURL(false, false);
+        String place = orgText.getURL(false, false);
         String url = LINK_URL +place;
         String data = getDataFromURL(url);
         Log.d("API.Link","got data");
-        Book book = new Book(text.bid);
-        List<Text> textList = new ArrayList<>();
+        Book book;
+        try {
+            book = new Book(orgText.bid);
+        } catch (Book.BookNotFoundException e) {
+            return texts;
+        }
         if(data.length()==0)
-            return textList;
+            return texts;
+        List<Text> commentaries = new ArrayList<>();
 
+        String commentOn = " on " + book.title;
         try {
             JSONArray linksArray = new JSONArray(data);
             //Log.d("api", "jsonData:" + jsonData.toString());
@@ -438,7 +449,10 @@ public class API {
                         (linkFilter.depth_type == LinkFilter.DEPTH_TYPE.BOOK && enTitle.equals(linkFilter.enTitle))
                          ){
                     Text tempText = new Text(removeEmpty(jsonLink.getString("text")),removeEmpty(jsonLink.getString("he")),Book.getBid(enTitle),ref);
-                    texts.add(tempText);
+                    if(category.equals("Commentary"))
+                        commentaries.add(tempText);
+                    else
+                        texts.add(tempText);
                 }
             }
 
@@ -446,12 +460,21 @@ public class API {
             e.printStackTrace();
         }
 
+        Collections.sort(commentaries,compareTexts);
+        Collections.sort(texts, compareTexts);
+        texts.addAll(0,commentaries);
+
         Log.d("API.Link","finished LinksAPI");
         return texts;
     }
 
-
-
+    static Comparator<Text> compareTexts = new Comparator<Text>() {
+        @Override
+        public int compare(Text a, Text b) {
+            //only sorting on bid. Within same book using sable sort to keep order
+            return a.bid - b.bid;
+        }
+    };
 
     static private String createPlace(String bookTitle, int[] levels){
         String place = bookTitle.replace(" ", "_"); //the api call doesn't have spaces
@@ -474,9 +497,6 @@ public class API {
             data = result;//put into data so that the static function can pull the data
             isDone = true;
 
-            if(status == STATUS_GOOD && data.length() >0){
-                ;//Cache.add(url, data); //cache data for later
-            }
             return result;
         }
 

@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Node implements  Parcelable{
+public class Node{// implements  Parcelable{
 
 
     public final static int NODE_TYPE_BRANCH = 1;
@@ -519,8 +519,13 @@ public class Node implements  Parcelable{
 
             node = node.getParent();
         }
-        if(includeBook)
-            path = (new Book(this.bid)).getTitle(lang) + path;
+        if(includeBook) {
+            try {
+                path = (new Book(this.bid)).getTitle(lang) + path;
+            } catch (Book.BookNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
         if(replaceSpaces)
             path = path.replace(" ", "_");
         return path;
@@ -824,7 +829,7 @@ public class Node implements  Parcelable{
                     textArray = textArrayBig.getJSONArray(k);
                     heArray = heArrayBig.getJSONArray(k);
                 } catch (JSONException e1) {
-                    Log.d("API","didn't find sub arrays in text");
+                    //Log.d("Node","didn't find sub arrays in text");
                     textArray = textArrayBig;
                     heArray = heArrayBig;
                     stop = 0;
@@ -1152,7 +1157,7 @@ public class Node implements  Parcelable{
 
 
 
-
+    /*
     //TODO
     //PARCELABLE------------------------------------------------------------------------
 
@@ -1190,6 +1195,6 @@ public class Node implements  Parcelable{
         } catch (API.APIException e) {
 
         }
-    }
+    }*/
 
 }

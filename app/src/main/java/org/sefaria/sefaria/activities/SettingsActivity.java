@@ -39,7 +39,7 @@ public class SettingsActivity extends Activity {
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(customActionbar);
         fontSize   = (EditText)findViewById(R.id.fontSize);
-        fontSize.clearFocus();
+
 
     }
 
@@ -84,8 +84,7 @@ public class SettingsActivity extends Activity {
 
 
         fontSize.setText(""+Settings.getDefaultFontSize());
-
-
+        fontSize.clearFocus();
 
 
         //LinearLayout gridRoot = (LinearLayout) findViewById(R.id.gridRoot);
@@ -119,6 +118,11 @@ public class SettingsActivity extends Activity {
         if(value != 0f){
             Settings.setDefaultFontSize(value);
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        Database.onRequestPermissionsResult(this,requestCode,permissions,grantResults);
     }
 
     View.OnLongClickListener homeLongClick = new View.OnLongClickListener() {

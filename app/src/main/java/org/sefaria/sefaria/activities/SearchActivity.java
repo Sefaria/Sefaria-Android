@@ -69,14 +69,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    AsyncSearch asyncSearch = new AsyncSearch(0);
-                    asyncSearch.execute();
-                    // Check if no view has focus:
-                    View view = SearchActivity.this.getCurrentFocus();
-                    if (view != null) {
-                        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                    }
+                    runSearch();
                     return true;
                 }
                 return false;
@@ -96,6 +89,18 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
         isLoadingSearch = false;
     }
 
+    private void runSearch(){
+        searchBox.clearFocus();
+        AsyncSearch asyncSearch = new AsyncSearch(0);
+        asyncSearch.execute();
+        // Check if no view has focus:
+        View view = SearchActivity.this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
+
 
     View.OnClickListener closeClick = new View.OnClickListener() {
         @Override
@@ -107,15 +112,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
     View.OnClickListener searchClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            //searchBox.clearFocus();
-            AsyncSearch asyncSearch = new AsyncSearch(0);
-            asyncSearch.execute();
-            // Check if no view has focus:
-            View view = SearchActivity.this.getCurrentFocus();
-            if (view != null) {
-                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-            }
+            runSearch();
         }
     };
 
@@ -190,7 +187,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
             API.PlaceRef placeRef = null;
             try {
                 placeRef = API.PlaceRef.getPlace(place);
-                SuperTextActivity.startNewTextActivityIntent(SearchActivity.this,placeRef.book,placeRef.text,placeRef.node,false,searchBox.getText().toString());
+                SuperTextActivity.startNewTextActivityIntent(SearchActivity.this,placeRef.book,placeRef.text,placeRef.node,false,searchBox.getText().toString(),-1);
             } catch (API.APIException e) {
                 MyApp.openURLInBrowser(SearchActivity.this,"https://sefaria.org/" + place);
             } catch (Book.BookNotFoundException e) {

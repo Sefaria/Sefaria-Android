@@ -159,13 +159,12 @@ public class Settings {
 
     public static class BookSettings {
         public Node node;
-        public int tid;
+        public int textNum;
         public Util.Lang lang;
 
-
-        BookSettings(Node node, int tid, Util.Lang lang){
+        BookSettings(Node node, Util.Lang lang, int textNum){
             this.node = node;
-            this.tid = tid;
+            this.textNum = textNum;
             this.lang = lang;
 
             if(lang == null)
@@ -200,7 +199,7 @@ public class Settings {
                 }
                 editor.putString(title,newSettings);
             }
-            editor.commit();
+            editor.apply();
         }
 
         static public void clearAllBookSettings(){
@@ -209,7 +208,7 @@ public class Settings {
             editor.commit();
             editor = getBookSavedTitleSettings().edit();
             editor.clear();
-            editor.commit();
+            editor.apply();
         }
 
 
@@ -220,12 +219,12 @@ public class Settings {
             String[] settings = stringThatRepsSavedSettings.split(SETTINGS_SPLITTER);
             Log.d("Settings", "stringThatRepsSavedSettings:" + stringThatRepsSavedSettings);
             String nodePathStr = settings[0];
-            int tid = 0;
+            int textNum = -1;
             Util.Lang lang = null;
             try {
                 Log.d("Settings0", settings[0]);
                 Log.d("Settings1", settings[1]);
-                tid = Integer.valueOf(settings[1]);
+                textNum = Integer.valueOf(settings[1]);
                 lang = str2Lang(settings[2]);
             }catch (Exception e){
                 e.printStackTrace();
@@ -238,7 +237,7 @@ public class Settings {
                 ;
             }
 
-            BookSettings bookSettings = new BookSettings(node,tid, lang);
+            BookSettings bookSettings = new BookSettings(node,lang,textNum);
             return bookSettings;
         }
 
@@ -248,10 +247,13 @@ public class Settings {
             SharedPreferences bookSavedSettings = getBookSavedSettings();
             SharedPreferences.Editor editor = bookSavedSettings.edit();
             //"<en|he|bi>.<cts|sep>.<white|grey|black>.10px:"+ <rootNum>.<Childnum>.<until>.<leaf>.<verseNum>"
-            String tid = "0";
-            if (text != null)
-                tid = "" + text.tid;
-            String settingStr = node.makePathDefiningNode() + SETTINGS_SPLITTER + tid + SETTINGS_SPLITTER + lang2Str(lang);
+            int textNum = -1;
+            try {
+                textNum = node.getTexts().indexOf(text);
+            } catch (API.APIException e) {
+                e.printStackTrace();
+            }
+            String settingStr = node.makePathDefiningNode() + SETTINGS_SPLITTER + textNum + SETTINGS_SPLITTER + lang2Str(lang);
             editor.putString(book.title, settingStr);
             editor.commit();
 
