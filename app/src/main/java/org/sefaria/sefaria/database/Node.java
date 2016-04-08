@@ -829,7 +829,7 @@ public class Node{// implements  Parcelable{
                     textArray = textArrayBig.getJSONArray(k);
                     heArray = heArrayBig.getJSONArray(k);
                 } catch (JSONException e1) {
-                    Log.d("API","didn't find sub arrays in text");
+                    //Log.d("Node","didn't find sub arrays in text");
                     textArray = textArrayBig;
                     heArray = heArrayBig;
                     stop = 0;

@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import org.sefaria.sefaria.GoogleTracker;
+import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
 
 import java.io.File;
@@ -138,7 +139,7 @@ public class Huffman {
     }
 
     private static boolean makeTree(){
-        if(!Database.hasOfflineDB())
+        if(!Database.hasOfflineDB() || Settings.getUseAPI())
             return false;
         Log.d("Huffman", "getTree started");
         long startTime= System.currentTimeMillis();

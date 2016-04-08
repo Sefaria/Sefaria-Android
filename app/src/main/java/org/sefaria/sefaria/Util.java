@@ -1,10 +1,12 @@
 package org.sefaria.sefaria;
 
 import android.app.Activity;
+import android.app.admin.DeviceAdminInfo;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Environment;
+import android.os.StatFs;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
@@ -146,6 +148,28 @@ public class Util {
         String[] strArray = str.split(",");
         return strArray;
     }
+
+
+
+    /**
+     * @return Number of bytes available on internal storage
+     */
+    public static long getInternalAvailableSpace() {
+        long availableSpace = -1L;
+        try {StatFs stat = new StatFs(Environment.getDataDirectory()
+                .getPath());
+            stat.restat(Environment.getDataDirectory().getPath());
+            if(Build.VERSION.SDK_INT >= 18)
+                availableSpace = stat.getAvailableBlocksLong() * stat.getBlockSizeLong();
+            else
+                availableSpace = (long) stat.getAvailableBlocks() * (long) stat.getBlockSize();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return availableSpace;
+    }
+
 
 
     public static long getFolderSize(File dir) {
