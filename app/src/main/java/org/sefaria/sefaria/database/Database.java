@@ -90,6 +90,7 @@ public class Database extends SQLiteOpenHelper{
         }
 
         Util.deleteNonRecursiveDir(Downloader.FULL_DOWNLOAD_PATH); //remove any old temp downloads
+        Cache.clearExpiredCache();
         Database.getOfflineDB(activity,false);
     }
 

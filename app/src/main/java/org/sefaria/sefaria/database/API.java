@@ -59,7 +59,9 @@ public class API {
     private int status = STATUS_NONE;
     private boolean isDone = false;
     private boolean alreadyDisplayedURL = false;
-    private boolean useCache = true;
+
+
+    private boolean useCache = Cache.USE_CACHE_DEFAULT;
 
     private String jsonString; //if null, no json to send. if not null send this jsonObject along with url request
     final static int READ_TIMEOUT = 10000;
@@ -296,9 +298,12 @@ public class API {
     //static methods
 
     public static String getDataFromURL(String url) throws APIException{
-        return getDataFromURL(url,null,true);
+        return getDataFromURL(url,null,Cache.USE_CACHE_DEFAULT);
     }
 
+    public static String getDataFromURL(String url,boolean useCache) throws APIException{
+        return getDataFromURL(url,null,useCache);
+    }
 
 
 
