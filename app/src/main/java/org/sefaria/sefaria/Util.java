@@ -1,10 +1,12 @@
 package org.sefaria.sefaria;
 
 import android.app.Activity;
+import android.app.admin.DeviceAdminInfo;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Environment;
+import android.os.StatFs;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
@@ -22,6 +24,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -67,6 +70,13 @@ public class Util {
 
     public static boolean isSystemLangHe(){
         return Locale.getDefault().getLanguage().equals("iw");
+    }
+
+
+    public static void writeFile(String path, String data) throws IOException {
+        PrintWriter writer = new PrintWriter(path, "UTF-8");
+        writer.print(data);
+        writer.close();
     }
 
     public static String readFile(String path) throws IOException {
@@ -137,6 +147,42 @@ public class Util {
         str = r.matcher(str).replaceAll("");
         String[] strArray = str.split(",");
         return strArray;
+    }
+
+
+
+    /**
+     * @return Number of bytes available on internal storage
+     */
+    public static long getInternalAvailableSpace() {
+        long availableSpace = -1L;
+        try {StatFs stat = new StatFs(Environment.getDataDirectory()
+                .getPath());
+            stat.restat(Environment.getDataDirectory().getPath());
+            if(Build.VERSION.SDK_INT >= 18)
+                availableSpace = stat.getAvailableBlocksLong() * stat.getBlockSizeLong();
+            else
+                availableSpace = (long) stat.getAvailableBlocks() * (long) stat.getBlockSize();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return availableSpace;
+    }
+
+
+
+    public static long getFolderSize(File dir) {
+        long size = 0;
+        for (File file : dir.listFiles()) {
+            if (file.isFile()) {
+                System.out.println(file.getName() + " " + file.length());
+                size += file.length();
+            }
+            else
+                size += getFolderSize(file);
+        }
+        return size;
     }
 
     public static boolean deleteNonRecursiveDir(String dirname){

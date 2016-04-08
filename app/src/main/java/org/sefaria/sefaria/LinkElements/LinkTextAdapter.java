@@ -76,7 +76,7 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextHolder> {
         Util.Lang lang = activity.getTextLang();
 
         Text link = itemList.get(position);
-        boolean showFullTitle = currLinkCount.getCategory().equals("Commentary") && currLinkCount.getDepthType() == LinkFilter.DEPTH_TYPE.BOOK;
+        boolean showFullTitle = false && currLinkCount.getCategory().equals("Commentary") && currLinkCount.getDepthType() == LinkFilter.DEPTH_TYPE.BOOK;
         if (showFullTitle) {
             holder.title.setVisibility(View.GONE);
             holder.enVerseNum.setVisibility(View.VISIBLE);
