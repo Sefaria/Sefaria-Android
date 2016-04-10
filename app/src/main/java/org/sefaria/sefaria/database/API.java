@@ -70,7 +70,11 @@ public class API {
     //TODO determine good times
 
     public static void makeAPIErrorToast(Context context){
-        Toast.makeText(context, "Problem getting data from Internet",Toast.LENGTH_SHORT).show();
+        try {
+            Toast.makeText(context, "Problem getting data from Internet", Toast.LENGTH_SHORT).show();
+        }catch (Exception e){
+            GoogleTracker.sendException(e,"API toast");
+        }
     }
 
 
@@ -422,7 +426,7 @@ public class API {
         Log.d("API.Link","got starting LinksAPI");
         List<Text> texts = new ArrayList<>();
         String place = orgText.getURL(false, false);
-        String url = LINK_URL +place;
+        String url = LINK_URL + place;
         String data = getDataFromURL(url);
         Log.d("API.Link","got data");
         Book book;

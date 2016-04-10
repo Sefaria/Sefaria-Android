@@ -103,8 +103,8 @@ public class SettingsActivity extends Activity {
         if (Settings.getIsDebug()) debugVer = "D ";
         TextView databaseInfo = (TextView) findViewById(R.id.databaseInfo);
         databaseInfo.setText(
-                "Online Library Version: " + Util.convertDBnum(Database.getVersionInDB(true)) + "\n"
-                        + "Offline Library Version: " + debugVer + Util.convertDBnum(Database.getVersionInDB(false))
+                MyApp.getRString(R.string.online_library_version) + Util.convertDBnum(Database.getVersionInDB(true)) + "\n"
+                + MyApp.getRString(R.string.offline_library_version) + debugVer + Util.convertDBnum(Database.getVersionInDB(false))
         );
     }
 

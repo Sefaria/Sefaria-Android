@@ -25,6 +25,8 @@
     <string name="offline_Library">Use Offline Library (recommended)</string>
     <string name="without_permission">Without storage permissions, you cannot use the Offline Library. Go to Settings in the main menu of the app to download the offline Library.</string>
     <string name="send_to">Share</string>
+    <string name="online_library_version">Online Mode Version: </string>
+    <string name="offline_library_version">Offline Library Version: </string>
 
 
     <string name="action_bookmarks">Bookmarks</string>
