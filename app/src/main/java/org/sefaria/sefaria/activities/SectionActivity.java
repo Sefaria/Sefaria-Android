@@ -19,8 +19,6 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import org.sefaria.sefaria.DialogCallable;
-import org.sefaria.sefaria.DialogManager2;
 import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
@@ -28,7 +26,6 @@ import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.TextElements.SectionAdapter;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.API;
-import org.sefaria.sefaria.database.Database;
 import org.sefaria.sefaria.database.Text;
 import org.sefaria.sefaria.layouts.ListViewExt;
 

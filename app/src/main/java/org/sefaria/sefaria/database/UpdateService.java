@@ -27,18 +27,16 @@ import android.os.PowerManager;
 import android.util.Log;
 import android.widget.Toast;
 
-import org.sefaria.sefaria.DialogCallable;
-import org.sefaria.sefaria.DialogManager2;
-import org.sefaria.sefaria.DialogNoahSnackbar;
+import org.sefaria.sefaria.Dialog.DialogCallable;
+import org.sefaria.sefaria.Dialog.DialogManager2;
+import org.sefaria.sefaria.Dialog.DialogNoahSnackbar;
 import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.Settings;
-import org.sefaria.sefaria.activities.HomeActivity;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.MenuElements.MenuState;
 import org.sefaria.sefaria.activities.SectionActivity;
-import org.sefaria.sefaria.activities.SuperTextActivity;
 
 public class UpdateService extends Service {
     public static final int UPDATE_STAGE_2_COMPLETE = 1;

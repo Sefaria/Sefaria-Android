@@ -1,4 +1,4 @@
-package org.sefaria.sefaria;
+package org.sefaria.sefaria.Dialog;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -11,12 +11,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import org.sefaria.sefaria.MyApp;
+import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.database.Downloader;
 import org.sefaria.sefaria.database.UpdateReceiver;
 import org.sefaria.sefaria.database.UpdateService;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by nss on 4/4/16.
@@ -78,17 +77,17 @@ public class DialogManager2 {
                 break;
             case UPDATE_STARTED:
                 showDialog(activity, new DialogCallable(MyApp.getRString(R.string.UPDATE_STARTED_TITLE),
-                        MyApp.getRString(R.string.UPDATE_STARTED_MESSAGE), null, MyApp.getRString(R.string.CANCEL), null, DialogCallable.DialogType.PROGRESS) {
-                    @Override
-                    public void negativeClick() {
-                        try {
-                            dismissCurrentDialog();
-                            showDialog(activity, DialogPreset.ARE_YOU_SURE_CANCEL);
-                        } catch (Exception e) {
-                            Toast.makeText(activity, MyApp.getRString(R.string.update_preparing), Toast.LENGTH_SHORT).show();
-                        }
+                    MyApp.getRString(R.string.UPDATE_STARTED_MESSAGE), null, MyApp.getRString(R.string.CANCEL), null, DialogCallable.DialogType.PROGRESS) {
+                @Override
+                public void negativeClick() {
+                    try {
+                        dismissCurrentDialog();
+                        showDialog(activity, DialogPreset.ARE_YOU_SURE_CANCEL);
+                    } catch (Exception e) {
+                        Toast.makeText(activity, MyApp.getRString(R.string.update_preparing), Toast.LENGTH_SHORT).show();
                     }
-                });
+                }
+            });
                 break;
             case NO_NEW_UPDATE:
                 showDialog(activity, new DialogCallable(MyApp.getRString(R.string.NO_NEW_UPDATE_TITLE),
@@ -127,8 +126,7 @@ public class DialogManager2 {
                         MyApp.getRString(R.string.ARE_YOU_SURE_MESSAGE), MyApp.getRString(R.string.YES), MyApp.getRString(R.string.no), null, DialogCallable.DialogType.ALERT) {
                     @Override
                     public void negativeClick() {
-                        //go back to previous dialog (which i'm assuming is update_started)
-                        DialogManager2.showDialog(activity,DialogPreset.UPDATE_STARTED);
+                        //nothing
                     }
 
                     @Override
