@@ -308,6 +308,10 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
 
     public static void startNewTextActivityIntent(Context context, Book book, Text text, Node node,boolean openNewTask,String searchingTerm,int textNum) {
+        Intent intent;
+
+        /*
+        //SHUOLD ONLY BE IN BOOK IS NOT NULL
         List<String> cats = Arrays.asList(book.categories);
         boolean isCtsText = false;
         final String[] CTS_TEXT_CATS = {};// {"Tanach","Talmud"};//
@@ -315,14 +319,17 @@ public abstract class SuperTextActivity extends FragmentActivity {
             isCtsText = cats.contains(ctsText);
             if (isCtsText) break;
         }
-        Intent intent;
+
         if (isCtsText) {
             intent = new Intent(context, TextActivity.class);
         } else {
             intent = new Intent(context, SectionActivity.class);
         }
+        */
 
-        if(node == null)
+        intent = new Intent(context, SectionActivity.class);
+
+        if(book != null)
             intent.putExtra("currBook", book);
         if(text != null)
             intent.putExtra("incomingLinkText",text);
@@ -407,7 +414,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        Database.onRequestPermissionsResult(this,requestCode,permissions,grantResults);
+        Database.onRequestPermissionsResult(this, requestCode, permissions,grantResults);
     }
 
     @Override
