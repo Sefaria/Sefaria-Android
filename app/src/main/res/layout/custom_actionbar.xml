@@ -2,35 +2,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="wrap_content">
-    <RelativeLayout
+    <LinearLayout
+        android:id="@+id/dialogNoahSnackbarRoot"
         android:layout_width="match_parent"
-        android:layout_height="50dp">
-        <ProgressBar
-            android:id="@+id/progressBar"
-            style="?android:attr/progressBarStyleSmall"
-            android:padding="10dp"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_alignParentLeft="true"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:padding="10dp"
-            android:gravity="center"
-            android:layout_toRightOf="@+id/progressBar"
-            android:text="Downloading Library"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:padding="10dp"
-            android:text="Cancel"
-            android:textAllCaps="true"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:background="?text_menu_button_background_center_ripple_drawable"
-            android:layout_alignParentRight="true"/>
-
-    </RelativeLayout>
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+    </LinearLayout>
     <!-- thin bar which changes color based on top-level section -->
     <View
         android:id="@+id/color_bar"

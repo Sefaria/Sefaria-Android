@@ -25,10 +25,12 @@ import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import org.sefaria.sefaria.DialogCallable;
 import org.sefaria.sefaria.DialogManager2;
+import org.sefaria.sefaria.DialogNoahSnackbar;
 import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
@@ -84,6 +86,7 @@ public class Downloader {
 
 
     public static void updateLibrary(Activity activity, boolean evenOverwriteOldDB) {
+
         UpdateService.evenOverWriteOldDatabase = evenOverwriteOldDB;
         UpdateService.lockOrientation(activity);
         if (!hasPermission(activity)) {
@@ -102,7 +105,9 @@ public class Downloader {
 
         MyApp.setContext(activity);
         activity.sendBroadcast(intent);
-        DialogManager2.showDialog(activity, DialogManager2.DialogPreset.CHECKING_FOR_UPDATE);
+        //DialogManager2.showDialog(activity, DialogManager2.DialogPreset.CHECKING_FOR_UPDATE);
+        Database.isDownloadingDatabase = true;
+        DialogNoahSnackbar.showDialog(activity,(ViewGroup) activity.findViewById(R.id.dialogNoahSnackbarRoot));
     }
 
     private static String getErrorReason(Cursor cursor){

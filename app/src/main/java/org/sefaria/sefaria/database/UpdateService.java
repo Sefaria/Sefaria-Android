@@ -29,6 +29,7 @@ import android.widget.Toast;
 
 import org.sefaria.sefaria.DialogCallable;
 import org.sefaria.sefaria.DialogManager2;
+import org.sefaria.sefaria.DialogNoahSnackbar;
 import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.activities.HomeActivity;
@@ -205,8 +206,8 @@ public class UpdateService extends Service {
 
             //check versions before continuing
             if ((updatedVersionNum > currentVersionNum && userInitiated) || evenOverWriteOldDatabase ) {
-                DialogManager2.dismissCurrentDialog();
-                DialogManager2.showDialog((Activity)MyApp.getContext(), DialogManager2.DialogPreset.UPDATE_STARTED);
+                //DialogManager2.dismissCurrentDialog();
+                //DialogManager2.showDialog((Activity)MyApp.getContext(), DialogManager2.DialogPreset.UPDATE_STARTED);
                 updateStage2(zipUrl, indexURL);
             } else if (updatedVersionNum > currentVersionNum && !userInitiated) {
                 if (currentVersionNum == -1) {
@@ -384,6 +385,8 @@ public class UpdateService extends Service {
     }
 
     public static void endService() {
+        Database.isDownloadingDatabase = false;
+        DialogNoahSnackbar.dismissCurrentDialog();
         try {
             serviceYo.stopForeground(true);
             UpdateReceiver.completeWakefulIntent(intentYo);
