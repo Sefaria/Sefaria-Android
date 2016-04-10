@@ -716,7 +716,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
             newNode.findWords(searchingTerm);
             return textsList;
         } catch (API.APIException e) {
-            API.makeAPIErrorToast(this);
+            //API.makeAPIErrorToast(SuperTextActivity.this);//can't do this b/c it's in the background
             return new ArrayList<>();
         }
 

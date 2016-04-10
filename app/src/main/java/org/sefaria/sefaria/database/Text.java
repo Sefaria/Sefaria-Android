@@ -187,7 +187,7 @@ public class Text implements Parcelable {
             else
                 str.append("http://www.sefaria.org/");
         }
-        if(parentNode != null){
+        if(parentNode != null && (!parentNode.isRef())){
             String path = parentNode.getPath(Util.Lang.EN,true, true, true) + "." + levels[0];
             return str + path;
         }
@@ -223,7 +223,7 @@ public class Text implements Parcelable {
             return "";
         }
         String str = book.getTitle(lang);
-        if(parentNode != null){ //It's a complex text... I Don't think it's always complex text... it could also be just from the Popupmenu for example
+        if(parentNode != null && !parentNode.isRef()){ //It's a complex text... I Don't think it's always complex text... it could also be just from the Popupmenu for example
 
             str = parentNode.getPath(lang,false, true, false);
             if(str.charAt(str.length()-1) == '.' || str.charAt(str.length()-1) == ':')// it ends in a daf
