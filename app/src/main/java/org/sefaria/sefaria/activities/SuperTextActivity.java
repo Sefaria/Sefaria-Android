@@ -111,7 +111,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
         if(!Database.hasOfflineDB() && Downloader.getNetworkStatus() == Downloader.ConnectionType.NONE){
             Toast.makeText(this,"No internet connection or Offline Library",Toast.LENGTH_SHORT).show();
-            MyApp.homeClick(this,false,false);
+            MyApp.homeClick(this, false, false);
             finish();
             return;
         }
@@ -130,16 +130,16 @@ public abstract class SuperTextActivity extends FragmentActivity {
             MyApp.homeClick(this, false, true);
         }
 
+        int nodeHash = getValuesFromIntent(savedInstanceState);
+        if(!getAllNeededLocationVariables(nodeHash)){
+            return;
+        }
+
         if(linkFragment == null){//LINK FRAGMENT
             linkFragment = new LinkFragment();
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.add(R.id.linkRoot, linkFragment,LINK_FRAG_TAG);
             fragmentTransaction.commit();
-        }
-
-        int nodeHash = getValuesFromIntent(savedInstanceState);
-        if(!getAllNeededLocationVariables(nodeHash)){
-            return;
         }
 
 
