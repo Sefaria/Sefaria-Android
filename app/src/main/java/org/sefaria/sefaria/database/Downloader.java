@@ -8,7 +8,6 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.DownloadManager;
 import android.app.DownloadManager.Query;
-import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -28,9 +27,7 @@ import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import org.sefaria.sefaria.DialogCallable;
-import org.sefaria.sefaria.DialogManager2;
-import org.sefaria.sefaria.DialogNoahSnackbar;
+import org.sefaria.sefaria.Dialog.DialogNoahSnackbar;
 import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;

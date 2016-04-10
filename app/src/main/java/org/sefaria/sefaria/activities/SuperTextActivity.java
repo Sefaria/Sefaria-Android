@@ -2,7 +2,6 @@ package org.sefaria.sefaria.activities;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
@@ -15,7 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 
-import org.sefaria.sefaria.DialogManager2;
+import org.sefaria.sefaria.Dialog.DialogManager2;
 import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
@@ -36,7 +35,6 @@ import org.sefaria.sefaria.layouts.ScrollViewExt;
 import org.sefaria.sefaria.MenuElements.MenuNode;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**

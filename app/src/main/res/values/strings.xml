@@ -25,8 +25,8 @@
     <string name="offline_Library">Use Offline Library (recommended)</string>
     <string name="without_permission">Without storage permissions, you cannot use the Offline Library. Go to Settings in the main menu of the app to download the offline Library.</string>
     <string name="send_to">Share</string>
-    <string name="online_library_version">Online Mode Version: </string>
-    <string name="offline_library_version">Offline Library Version: </string>
+    <string name="online_library_version">Online Mode Version:&#160;</string>
+    <string name="offline_library_version">Offline Library Version:&#160;</string>
 
 
     <string name="action_bookmarks">Bookmarks</string>
@@ -130,7 +130,7 @@
     <string name="searching_help3_5" formatted="false">For example: b_g returns texts with big or bag. Name % city returns texts like name of the city. %ברא returns texts with בראם or בראשון. And כלי_ returns texts with הכלי or בכלי.</string>
     <string name="askjosh">If you\'re looking for something in Gemara or Chumash &lt;a href=\'mailto:askjosh@torahsummary.com\'&gt;askjosh@torahsummary.com&lt;/a&gt; might be able to help.</string>
     <string name="ARE_YOU_SURE_TITLE" translatable="false">Are you sure you want to cancel?</string>
-    <string name="ARE_YOU_SURE_MESSAGE" translatable="false">Are you sure you want to cancel? Your update might need to be restarted.</string>
+    <string name="ARE_YOU_SURE_MESSAGE" translatable="false">Your update would need to be restarted</string>
     <string name="CHECKING_FOR_UPDATE_TITLE" translatable="false">Checking for update</string>
     <string name="finish">Finish</string>
     <string name="mainMenuSearchHint">Search Texts or Book Titles</string>

@@ -1,10 +1,10 @@
 package org.sefaria.sefaria.layouts;
 
-import android.content.Context;
+import android.app.Activity;
 import android.view.View;
 import android.view.ViewGroup;
 
-import org.sefaria.sefaria.DialogNoahSnackbar;
+import org.sefaria.sefaria.Dialog.DialogNoahSnackbar;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.MenuElements.MenuElement;
@@ -31,9 +31,9 @@ public class CustomActionbar extends MenuElement {
 
     private static final boolean noBackButton = true;
 
-    public CustomActionbar(Context context, MenuNode menuNode, Util.Lang lang, OnClickListener homeClick, OnLongClickListener homeLongClick, OnClickListener closeClick, OnClickListener searchClick, OnClickListener titleClick, OnClickListener menuClick, OnClickListener backClick, int catColor) {
-        super(context);
-        inflate(context, R.layout.custom_actionbar, this);
+    public CustomActionbar(Activity activity, MenuNode menuNode, Util.Lang lang, OnClickListener homeClick, OnLongClickListener homeLongClick, OnClickListener closeClick, OnClickListener searchClick, OnClickListener titleClick, OnClickListener menuClick, OnClickListener backClick, int catColor) {
+        super(activity);
+        inflate(activity, R.layout.custom_actionbar, this);
 
         this.menuNode = menuNode;
 
@@ -103,7 +103,7 @@ public class CustomActionbar extends MenuElement {
 
         //DEAL WITH DIALOGSNACKBAR
         if (Database.isDownloadingDatabase) {
-            DialogNoahSnackbar.showDialog(context,(ViewGroup) findViewById(R.id.dialogNoahSnackbarRoot));
+            DialogNoahSnackbar.showDialog(activity,(ViewGroup) findViewById(R.id.dialogNoahSnackbarRoot));
         } else {
             DialogNoahSnackbar.dismissCurrentDialog((ViewGroup) findViewById(R.id.dialogNoahSnackbarRoot));
         }

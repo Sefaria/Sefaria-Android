@@ -1,4 +1,4 @@
-package org.sefaria.sefaria;
+package org.sefaria.sefaria.Dialog;
 
 import java.util.concurrent.Callable;
 

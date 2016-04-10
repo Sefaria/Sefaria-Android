@@ -3,7 +3,6 @@ package org.sefaria.sefaria.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -12,7 +11,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.sefaria.sefaria.BuildConfig;
-import org.sefaria.sefaria.DialogNoahSnackbar;
 import org.sefaria.sefaria.MenuElements.MenuNode;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;

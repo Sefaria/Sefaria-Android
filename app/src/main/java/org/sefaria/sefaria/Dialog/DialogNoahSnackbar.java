@@ -1,14 +1,11 @@
-package org.sefaria.sefaria;
+package org.sefaria.sefaria.Dialog;
 
 import android.app.Activity;
-import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 
-import org.sefaria.sefaria.database.Downloader;
-import org.sefaria.sefaria.database.UpdateService;
+import org.sefaria.sefaria.R;
 
 /**
  * Created by nss on 4/8/16.
