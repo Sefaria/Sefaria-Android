@@ -2,11 +2,14 @@ package org.sefaria.sefaria.layouts;
 
 import android.content.Context;
 import android.view.View;
+import android.view.ViewGroup;
 
+import org.sefaria.sefaria.DialogNoahSnackbar;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.MenuElements.MenuElement;
 import org.sefaria.sefaria.MenuElements.MenuNode;
+import org.sefaria.sefaria.database.Database;
 
 /**
  * Created by nss on 10/4/15.
@@ -97,7 +100,15 @@ public class CustomActionbar extends MenuElement {
 
         //TODO - make this look normal centered
         //tocBtn.setVisibility(View.GONE);
+
+        //DEAL WITH DIALOGSNACKBAR
+        if (Database.isDownloadingDatabase) {
+            DialogNoahSnackbar.showDialog(context,(ViewGroup) findViewById(R.id.dialogNoahSnackbarRoot));
+        } else {
+            DialogNoahSnackbar.dismissCurrentDialog((ViewGroup) findViewById(R.id.dialogNoahSnackbarRoot));
+        }
     }
+
 
     private void setTitle(String title) {
         if(title.length() > 18)

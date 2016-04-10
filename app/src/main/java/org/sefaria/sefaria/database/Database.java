@@ -35,6 +35,8 @@ public class Database extends SQLiteOpenHelper{
     public static String API_DB_NAME = "API_UpdateForSefariaMobileDatabase";
     static int DB_VERSION = 1;
 
+
+    public static boolean isDownloadingDatabase = false; //used for showing "snackbar" on top of actionbar
     private static final int MIN_DB_VERSION = 151;
 
     private SQLiteDatabase myDataBase;
