@@ -80,7 +80,7 @@ public class MyApp extends Application {
     public static final int KILL_SWITCH_NUM = -247;
     private static String appPackageName = "org.sefaria.sefaria";
     public static boolean askedForUpgradeThisTime = false;
-    public static boolean firstTimeOpened = false;
+    public static boolean isFirstTimeOpened = false;
     //public static int MIN_WORKING_DB_VERSION = 1; //this doesn't yet need to be made, b/c we don't have a db that will break it...
 
 

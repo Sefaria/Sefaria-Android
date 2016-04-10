@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.sefaria.sefaria.BuildConfig;
+import org.sefaria.sefaria.DialogNoahSnackbar;
 import org.sefaria.sefaria.MenuElements.MenuNode;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
@@ -39,8 +40,6 @@ public class SettingsActivity extends Activity {
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(customActionbar);
         fontSize   = (EditText)findViewById(R.id.fontSize);
-
-
     }
 
     @Override
