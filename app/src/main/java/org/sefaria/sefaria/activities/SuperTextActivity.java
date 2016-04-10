@@ -119,14 +119,14 @@ public abstract class SuperTextActivity extends FragmentActivity {
         }
 
         if (Settings.getIsFirstTimeOpened()) {
-            MyApp.firstTimeOpened = true;
+            MyApp.isFirstTimeOpened = true;
             DialogManager2.showDialog(this, DialogManager2.DialogPreset.FIRST_TIME_OPEN);
             Settings.setIsFirstTimeOpened(false);
         }
 
         if(firstTimeOpeningAppThisSession){
             firstTimeOpeningAppThisSession = false;
-            if(!MyApp.firstTimeOpened)
+            if(!MyApp.isFirstTimeOpened)
                 Database.dealWithStartupDatabaseStuff(this);
             Database.checkAndSwitchToNeededDB(this);
             MyApp.homeClick(this, false, true);
