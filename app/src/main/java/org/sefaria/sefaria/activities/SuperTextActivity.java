@@ -187,11 +187,13 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
     private boolean getAllNeededLocationVariables(int nodeHash){
         try {
+            textNum = -1;
             if (nodeHash != NO_HASH_NODE) {
                 firstLoadedNode = Node.getSavedNode(nodeHash);
             }
 
             if (book == null) {
+                Log.d("superTextAct","book was null");
                 try {
                     if (firstLoadedNode != null) {
                         book = new Book(firstLoadedNode.getBid());
@@ -234,7 +236,6 @@ public abstract class SuperTextActivity extends FragmentActivity {
                 GoogleTracker.sendEvent(GoogleTracker.CATEGORY_OPEN_NEW_BOOK_ACTION, "Opened New Book");
                 openedNewBookTime = System.currentTimeMillis();
             }
-
 
             if (openToText == null && textNum > -1) {
                 try {

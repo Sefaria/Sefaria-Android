@@ -6,10 +6,10 @@ android {
 
     defaultConfig {
         applicationId "org.sefaria.sefaria"
-        minSdkVersion 16
+        minSdkVersion 14
         targetSdkVersion 23
-        versionCode 236
-        versionName "2.36d"
+        versionCode 237
+        versionName "2.37d"
         // Enabling multidex support.
         //multiDexEnabled true
     }
