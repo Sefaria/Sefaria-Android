@@ -76,6 +76,8 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
             }
         });
         searchBox.requestFocus();
+        searchBox.setTypeface(MyApp.getFont(MyApp.Font.QUATTROCENTO));
+
         //open the keyboard focused in the edtSearch
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.showSoftInput(searchBox, InputMethodManager.SHOW_IMPLICIT);

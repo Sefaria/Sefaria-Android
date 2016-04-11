@@ -34,7 +34,7 @@ public class MenuGrid extends LinearLayout {
 
 
 
-    private static final int HOME_MENU_OVERFLOW_NUM = 9;
+    private static final int HOME_MENU_OVERFLOW_NUM = 8;
 
     private Context context;
     private int numColumns;

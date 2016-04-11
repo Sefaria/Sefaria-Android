@@ -2,10 +2,14 @@ package org.sefaria.sefaria.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
@@ -14,6 +18,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 
+import org.sefaria.sefaria.BuildConfig;
 import org.sefaria.sefaria.Dialog.DialogManager2;
 import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MyApp;
@@ -57,6 +62,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
     protected static final int LOAD_PIXEL_THRESHOLD = 500; //num pixels before the bottom (or top) of a segment after (before) which the next (previous) segment will be loaded
 
     protected static final String LINK_FRAG_TAG = "LinkFragTag";
+    protected static final String HOME_FRAG_TAG = "HomeFragTag";
 
     protected boolean isTextMenuVisible;
     protected LinearLayout textMenuRoot;
@@ -84,9 +90,10 @@ public abstract class SuperTextActivity extends FragmentActivity {
     protected boolean isLoadingSection; //to make sure multiple sections don't get loaded at once
     protected boolean isLoadingInit; //true while init is loading. previous loads should not take place until after isLoadingInit is false
 
-    //link vars
+    //fragment vars
+    protected DrawerLayout drawerLayout;
     protected LinkFragment linkFragment;
-    //protected LinkDraggerView linkDraggerView;
+    protected HomeFragment homeFragment;
     /**
      * hacky boolean so that if there's a problem with the on create, the subclasses know not to continue with init (after they call super.onCreate)
      */
@@ -142,6 +149,13 @@ public abstract class SuperTextActivity extends FragmentActivity {
             fragmentTransaction.commit();
         }
 
+        if (homeFragment == null) {
+            homeFragment = new HomeFragment();
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.add(R.id.homeFragmentRoot, homeFragment,HOME_FRAG_TAG);
+            fragmentTransaction.commit();
+        }
+
 
         //These vars are specifically initialized here and not in init() so that they don't get overidden when coming from TOC
         //defaults
@@ -169,6 +183,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
         int nodeHash;
         if (savedInstanceState != null) {//it's coming back after it cleared the activity from ram
             linkFragment = (LinkFragment) getSupportFragmentManager().getFragment(savedInstanceState,LINK_FRAG_TAG);
+            homeFragment = (HomeFragment) getSupportFragmentManager().getFragment(savedInstanceState,HOME_FRAG_TAG);
             nodeHash = savedInstanceState.getInt("nodeHash", NO_HASH_NODE);
             book = savedInstanceState.getParcelable("currBook");
             openToText = savedInstanceState.getParcelable("incomingLinkText");
@@ -276,6 +291,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
         Settings.BookSettings.setSavedBook(book, currNode, currText, textLang);//data also saved with home click
         outState.putParcelable("currBook", book);
         getSupportFragmentManager().putFragment(outState, LINK_FRAG_TAG, linkFragment);
+        getSupportFragmentManager().putFragment(outState, HOME_FRAG_TAG, homeFragment);
     }
 
 
@@ -295,7 +311,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
      * @param book
      */
     public static void startNewTextActivityIntent(Context context, Book book, boolean openNewTask){
-        startNewTextActivityIntent(context, book, null, null,openNewTask,null,-1);
+        startNewTextActivityIntent(context, book, null, null, openNewTask, null, -1);
     }
 
     /**
@@ -370,6 +386,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
         textMenuRoot.setVisibility(View.GONE);
 
         textScrollView = (ScrollViewExt) findViewById(R.id.textScrollView);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         //linkDraggerView = (LinkDraggerView) findViewById(R.id.link_dragger);
 
@@ -413,7 +430,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        Database.onRequestPermissionsResult(this, requestCode, permissions,grantResults);
+        Database.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
     }
 
     @Override
@@ -439,8 +456,11 @@ public abstract class SuperTextActivity extends FragmentActivity {
                 View linkRoot = findViewById(R.id.linkRoot);
                 AnimateLinkFragClose(linkRoot);
             } else { //In CAT or BOOK state
-                linkFragment.gotoState(LinkFragment.State.MAIN,linkFragment.getView(),null);
+                linkFragment.gotoState(LinkFragment.State.MAIN, linkFragment.getView(), null);
             }
+
+        }else if (drawerLayout.isDrawerOpen(Gravity.LEFT)){
+            drawerLayout.closeDrawer(Gravity.LEFT);
         } else {
             super.onBackPressed();
         }
@@ -517,8 +537,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
     View.OnClickListener homeClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Settings.BookSettings.setSavedBook(book, currNode, currText, textLang);
-            MyApp.homeClick(SuperTextActivity.this, false,false);
+            drawerLayout.openDrawer(Gravity.LEFT);
         }
     };
 
@@ -877,7 +896,48 @@ public abstract class SuperTextActivity extends FragmentActivity {
             }
 
         });
+    }
 
+    /*
+    ONCLICK LISTENERS
+     */
+    public void settingsClick(View v) {
+        Intent intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
+    }
+
+    public void aboutClick(View v) {
+        String url = "https://sefaria.org/about";
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        startActivity(intent);
+    }
+
+    public void feedbackClick(View v) {
+
+
+        String email = "android@sefaria.org";
+        Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+                "mailto", email, null));
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Android App Feedback");
+        emailIntent.putExtra(Intent.EXTRA_TEXT, getEmailHeader());
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, new String [] {email});
+        startActivity(Intent.createChooser(emailIntent, "Send email"));
+    }
+
+    public static String getEmailHeader(){
+        return  "App Version: " + BuildConfig.VERSION_NAME + " ("  + BuildConfig.VERSION_CODE + ")" + "\n"
+                + "Online Library Version: " + Util.convertDBnum(Database.getVersionInDB(true)) + "\n"
+                + "Offline Library Version: " + Util.convertDBnum(Database.getVersionInDB(false)) + "\n"
+                + "Using " + (Settings.getUseAPI()? "Online":"Offline") + " Library" + "\n"
+                + GoogleTracker.randomID + "\n"
+                + Build.VERSION.RELEASE + " (" + Build.VERSION.SDK_INT + ")" + "\n"
+                +"\n\n\n";
+    }
+
+    public void siteClick(View v){
+        String url = "https://sefaria.org";
+        Intent intent = new Intent(Intent.ACTION_VIEW,Uri.parse(url));
+        startActivity(intent);
     }
 
 }
