@@ -603,6 +603,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
                     setColorTheme(R.style.SefariaTheme_White);
                     break;
                 case R.id.grey_btn:
+                    setColorTheme(R.style.SefariaTheme_Grey);
                     break;
                 case R.id.black_btn:
                     setColorTheme(R.style.SefariaTheme_Black);

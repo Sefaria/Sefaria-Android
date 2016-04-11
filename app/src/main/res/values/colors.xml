@@ -47,9 +47,11 @@
 
 
     <!--THEME STUPIDNESSS -->
+    <!-- white -->
     <color name="button_bg_w">#fff</color>
     <color name="button_clicked_w">#bbb</color>
     <color name="button_selected_w">#eee</color>
+    <!-- <color name="custom_actionbar_bg_w">#999</color> -->
     <color name="custom_actionbar_border_w">#ddd</color>
     <color name="text_bg_w">#F8FCF8</color>
     <color name="text_color_main_w">#000</color>
@@ -63,6 +65,30 @@
     <color name="link_bg_w">#f9f9f7</color>
     <color name="link_selector_bar_bg_w">#eaeaea</color>
 
+
+
+
+    <!-- grey -->
+    <color name="button_bg_g">#afafaf</color>
+    <color name="button_clicked_g">#909090</color>      <!-- this is only while touching button -->
+    <color name="button_selected_g">#555</color> <!-- this is a permanent color-->
+    <color name="custom_actionbar_bg_g">#999</color>
+    <color name="custom_actionbar_border_g">#444444</color>
+    <color name="text_bg_g">#a8a8a8</color>
+    <color name="text_color_main_g">#000</color>
+    <color name="text_color_english_g">#555</color>
+    <color name="text_color_faded_g">#666666</color>
+    <color name="text_chapter_header_color_g">#000</color>
+    <color name="text_chapter_header_border_g">#777</color>
+    <color name="text_verse_selected_bg_g">#9e9e9e</color>
+    <color name="text_verse_highlighted_bg_g">#c9c900</color>
+    <color name="text_verse_num_color_g">#000</color>
+    <color name="link_bg_g">#a8a8a8</color>
+    <color name="link_selector_bar_bg_g">#999</color>
+
+
+
+    <!-- black -->
     <color name="button_bg_b">#333331</color>
     <color name="button_clicked_b">#666666</color>      <!-- this is only while touching button -->
     <color name="button_selected_b">#444444</color> <!-- this is a permanent color-->
