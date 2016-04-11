@@ -82,7 +82,7 @@ public class TOCSectionName extends LinearLayout implements TOCElement {
                 else //lang == HE
                     text = "\u25c2  " + text;
             }else {// if(displayingChildren)
-                    text = "\u25be  " + text;
+                text = "\u25be  " + text;
             }
         }
 

@@ -51,6 +51,7 @@
     <color name="button_bg_w">#fff</color>
     <color name="button_clicked_w">#bbb</color>
     <color name="button_selected_w">#eee</color>
+    <!-- <color name="custom_actionbar_bg_w">#999</color> -->
     <color name="custom_actionbar_border_w">#ddd</color>
     <color name="text_bg_w">#F8FCF8</color>
     <color name="text_color_main_w">#000</color>
@@ -63,6 +64,9 @@
     <color name="text_verse_num_color_w">#666666</color>
     <color name="link_bg_w">#f9f9f7</color>
     <color name="link_selector_bar_bg_w">#eaeaea</color>
+
+
+
 
     <!-- grey -->
     <color name="button_bg_g">#afafaf</color>
@@ -81,6 +85,8 @@
     <color name="text_verse_num_color_g">#000</color>
     <color name="link_bg_g">#a8a8a8</color>
     <color name="link_selector_bar_bg_g">#999</color>
+
+
 
     <!-- black -->
     <color name="button_bg_b">#333331</color>
