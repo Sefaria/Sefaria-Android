@@ -31,6 +31,7 @@ public class Node{// implements  Parcelable{
     public final static int NID_NON_COMPLEX = -3;
     public  final static int NID_NO_INFO = -1;
     public final static int NID_CHAP_NO_NID = -4;
+    public final static int NID_DUMMY = -4;
 
     private int nid;
     private int bid;
@@ -77,6 +78,16 @@ public class Node{// implements  Parcelable{
     private static List<Node> getSavedBookTOCroots(Book book){ return allSavedBookTOCroots.get(book);}
     private static String NODE_TABLE = "Nodes";
 
+    public static Node dummyNode = new Node(true);
+
+
+    public Node(boolean dummy){
+        children = new ArrayList<>();
+        nid = NID_DUMMY;
+        textList = new ArrayList<>();
+        parent = null;
+        parentNodeID = NID_NO_INFO;
+    }
 
     public Node(){
         children = new ArrayList<>();
@@ -994,6 +1005,8 @@ public class Node{// implements  Parcelable{
     final static private String PATH_DEFINING_NODE_VERSION = "a";
     public String makePathDefiningNode(){
         String str = "";
+        if(nid == NID_DUMMY)
+            return str;
         Node node = this;
         while(node.parent != null){
             int index =  node.parent.getChildren().indexOf(node);
@@ -1151,12 +1164,17 @@ public class Node{// implements  Parcelable{
 
     @Override
     public String toString() {
-        String str = "{"+  nid + ",bid:" + bid + ",titles:" + enTitle + " " + heTitle + ",sections:" + Util.array2str(sectionNames) + "," + Util.array2str(heSectionNames) + ",structN:" + structNum + ",textD:" + textDepth + ",tids:" + startTid + "-" + endTid + ",ref:" + extraTidsRef;
-        str += ", child.len:" + getChildren().size();
-        str += ",gridN:" + getNiceGridNum(Util.Lang.EN);
-        //str +=  ",siblingN:" + siblingNum;
-        str += getNodeTypeFlagsStr();
-        str += "}";
+        String str;
+        try {
+            str = "{" + nid + ",bid:" + bid + ",titles:" + enTitle + " " + heTitle + ",sections:" + Util.array2str(sectionNames) + "," + Util.array2str(heSectionNames) + ",structN:" + structNum + ",textD:" + textDepth + ",tids:" + startTid + "-" + endTid + ",ref:" + extraTidsRef;
+            str += ", child.len:" + getChildren().size();
+            str += ",gridN:" + getNiceGridNum(Util.Lang.EN);
+            //str +=  ",siblingN:" + siblingNum;
+            str += getNodeTypeFlagsStr();
+            str += "}";
+        }catch (Exception e){
+            str = "{node (problem getting string): " + nid +  ",bid:" + bid + ",titles:" + enTitle + " " + heTitle  + "}";
+        }
         return str;
     }
 

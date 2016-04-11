@@ -138,7 +138,7 @@ public class HomeFragment extends android.support.v4.app.Fragment {
         else{
             recentRoot.removeAllViews();
         }
-        final int columNum = 3;
+        final int columNum = 2;
         List<String> recentBooks = Settings.RecentTexts.getRecentTexts();
         recentTexts = new ArrayList<>();
         if(recentBooks.size()>0) {
