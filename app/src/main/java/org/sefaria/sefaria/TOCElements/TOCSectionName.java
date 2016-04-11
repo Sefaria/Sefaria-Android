@@ -55,9 +55,11 @@ public class TOCSectionName extends LinearLayout implements TOCElement {
             return;
         }
         int padding = 18;//12;
-        if(node.isTextSection())
+        final int sidePadding = 55;
+        if(node.isTextSection()) {
             padding = 21;
-        final int sidePadding = 50;
+            //sidePadding += 4;
+        }
         if(lang == Util.Lang.EN) {
             this.setPadding(sidePadding, padding, 0, padding);
             this.setGravity(Gravity.LEFT);
@@ -69,7 +71,7 @@ public class TOCSectionName extends LinearLayout implements TOCElement {
 
         //http://stackoverflow.com/questions/2701192/character-for-up-down-triangle-arrow-to-display-in-html
         if(node.isTextSection()) {
-            text += " >";//" \u25b8";//
+            text = text + " >";//" \u25b8";// "   " + text
         }else if(node.getChildren().size() == 0){//it has no children but it's not a section, so it should be greyed out
             sectionroot.setTextColor(getResources().getColor(R.color.toc_greyed_out_section_name));
         }else if(text.length() >0){
