@@ -59,6 +59,8 @@ public class TOCGrid extends LinearLayout {
         this.lang = lang;
         this.book = book;
 
+        if(pathDefiningNode == null)
+            pathDefiningNode = "";
         init(pathDefiningNode);
     }
 
