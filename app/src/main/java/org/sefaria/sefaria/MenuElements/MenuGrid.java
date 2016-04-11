@@ -169,7 +169,7 @@ public class MenuGrid extends LinearLayout {
         ll.removeViewAt(childIndex);
         MenuButton mb = new MenuButton(context, node, sectionNode, menuState.getLang());
         mb.setOnClickListener(menuButtonClick);
-        //mb.setOnLongClickListener(menuButtonLongClick);
+        mb.setOnLongClickListener(menuButtonLongClick);
         ll.addView(mb, childIndex);
 
         menuElementList.add(mb);
@@ -301,11 +301,10 @@ public class MenuGrid extends LinearLayout {
         menuState.goHome();
     }
 
-    public OnLongClickListener menuButtonLongClick1 = new OnLongClickListener() {
+    public OnLongClickListener menuButtonLongClick = new OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
-            menuClick(v,true);
-            return true;
+            return menuClick(v,true);
         }
     };
 
@@ -316,12 +315,13 @@ public class MenuGrid extends LinearLayout {
         }
     };
 
-    private void menuClick(View v,boolean longClick){
+    private boolean menuClick(View v,boolean longClick){
+        boolean goToTOC = longClick;
+        longClick = false;
         MenuButton mb = (MenuButton) v;
         MenuState newMenuState = menuState.goForward(mb.getNode(), mb.getSectionNode());
         Intent intent;
         if (mb.isBook()) {
-            boolean goToTOC = false;
             Book book = null;
             try {
                 if(!Settings.getUseAPI() && !Database.hasOfflineDB()){ //There's no DB //TODO make it work with API
@@ -329,13 +329,14 @@ public class MenuGrid extends LinearLayout {
                 }
                 book = new Book(newMenuState.getCurrNode().getTitle(Util.Lang.EN));
                 if(goToTOC){
-                    intent = new Intent(context, TOCActivity.class);
-                    intent.putExtra("currBook", book);
-                    intent.putExtra("lang", newMenuState.getLang());
+                    intent = TOCActivity.getStartTOCActivityIntent(context, book,null);
+                    ///intent = new Intent(context, TOCActivity.class);
+                    //intent.putExtra("currBook", book);
+                    //intent.putExtra("lang", newMenuState.getLang());
                     context.startActivity(intent);
+                    return true;
                 }else {
                     SuperTextActivity.startNewTextActivityIntent(context,book,longClick);
-
                 }
             } catch (Book.BookNotFoundException e) {
                 Toast.makeText(context,"Sorry, book not found",Toast.LENGTH_SHORT).show();
@@ -360,7 +361,7 @@ public class MenuGrid extends LinearLayout {
             }
         }
 
-
+        return false;
     }
 
 

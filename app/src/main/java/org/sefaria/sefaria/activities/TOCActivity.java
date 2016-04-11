@@ -27,7 +27,7 @@ import java.util.List;
 public class TOCActivity extends AppCompatActivity {
 
     private Book book;
-    private String pathDefiningNode;
+    public String pathDefiningNode;
     private Util.Lang lang;
     private Context context;
     private TOCGrid tocGrid;
@@ -35,8 +35,10 @@ public class TOCActivity extends AppCompatActivity {
     public static Intent getStartTOCActivityIntent(Context superTextActivityThis, Book book, Node currNode){
         Intent intent = new Intent(superTextActivityThis, TOCActivity.class);
         intent.putExtra("currBook", book);
-        String pathDefiningNode = currNode.makePathDefiningNode();
-        intent.putExtra("pathDefiningNode", pathDefiningNode);
+        if(currNode != null) {
+            String pathDefiningNode = currNode.makePathDefiningNode();
+            intent.putExtra("pathDefiningNode", pathDefiningNode);
+        }
         return intent;
     }
 

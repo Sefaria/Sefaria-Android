@@ -15,6 +15,7 @@ import android.widget.TextView;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.activities.SectionActivity;
+import org.sefaria.sefaria.activities.TOCActivity;
 import org.sefaria.sefaria.database.Node;
 
 /**
@@ -97,7 +98,8 @@ public class TOCNumBox extends TextView implements TOCElement {
         Intent intent = new Intent(context, SectionActivity.class);
         intent.putExtra("nodeHash", node.hashCode());
         intent.putExtra("lang", lang);
-        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        if(((TOCActivity) context).pathDefiningNode != null && ((TOCActivity) context).pathDefiningNode.length() >0)//it will only do this if a SectionAct was already opened
+            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         //TODO determine if SectionActivity was already open... Make sure to be careful of multi-tab stuff
         //TODO I think it should also actually have the back button work for going to the TOC from textActivity
         context.startActivity(intent);
