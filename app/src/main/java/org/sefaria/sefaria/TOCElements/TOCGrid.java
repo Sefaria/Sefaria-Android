@@ -112,7 +112,7 @@ public class TOCGrid extends LinearLayout {
         this.gridRoot = new LinearLayout(context);
         gridRoot.setOrientation(LinearLayout.VERTICAL);
         gridRoot.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-        gridRoot.setGravity(Gravity.CENTER);
+
         this.addView(gridRoot, 3);
 
         TocTabList.get(defaultTab).setActive(true);//set it true, such that the setLang function will start the right tab
@@ -221,7 +221,7 @@ public class TOCGrid extends LinearLayout {
             displayTree(root, gridRoot, false);
         }else{
             List<Book> commentaries = book.getAllCommentaries();
-            displayCommentaries(commentaries,gridRoot);
+            displayCommentaries(commentaries, gridRoot);
 
         }
     }
@@ -260,6 +260,7 @@ public class TOCGrid extends LinearLayout {
     private void displayTree(Node node, LinearLayout linearLayout){
         displayTree(node, linearLayout, true);
     }
+
     private void displayTree(Node node, LinearLayout linearLayout, boolean displayLevel){
         TOCSectionName tocSectionName = new TOCSectionName(context, node, lang, displayLevel);
         linearLayout.addView(tocSectionName);
@@ -286,6 +287,10 @@ public class TOCGrid extends LinearLayout {
             //There's some gridsNodes that haven't been displayed yet
             addNumGrid(gridNodes, tocSectionName);
         }
+        if(displayLevel && node.getDepth()>=2){
+            tocSectionName.setDisplayingChildren(false);
+        }
+
     }
 
     private LinearLayout makeTabSections(List<Node> nodeList) {
@@ -336,6 +341,13 @@ public class TOCGrid extends LinearLayout {
 
     public void setLang(Util.Lang lang) {
         this.lang = lang;
+        /*
+        if(lang == Util.Lang.HE){
+            gridRoot.setGravity(Gravity.RIGHT);
+        }else{
+            gridRoot.setGravity(Gravity.LEFT);
+        }*/
+        gridRoot.setGravity(Gravity.CENTER);
         bookTitleView.setText(book.getTitle(lang));
         //TODO also setLang of all the Header feilds
         if ((lang == Util.Lang.HE && !flippedForHe) ||

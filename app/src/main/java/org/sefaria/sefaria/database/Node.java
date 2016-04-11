@@ -220,6 +220,16 @@ public class Node{// implements  Parcelable{
         return root.tocRootsNum;
     }
 
+    public int getDepth(){
+        int depth = 0;
+        Node parent = this.parent;
+        while(parent != null){
+            depth++;
+            parent = parent.parent;
+        }
+        return depth;
+    }
+
     public Node getFirstDescendant(boolean checkForTexts) throws API.APIException {
         final int MAX_TEXTS = 5;
         Node node = getFirstDescendant();

@@ -23,6 +23,7 @@ public class TOCSectionName extends LinearLayout implements TOCElement {
     private Node node;
     private boolean displayLevel;
     private Util.Lang lang;
+    private boolean displayingChildren = true;
 
     public TOCSectionName(Context context, Node node, Util.Lang lang, boolean displayLevel){
         super(context);
@@ -43,6 +44,7 @@ public class TOCSectionName extends LinearLayout implements TOCElement {
 
         setLang(lang);
         this.setOnClickListener(clickListener);
+        this.setOnLongClickListener(onLongClickListener);
     }
 
     @Override
@@ -52,7 +54,9 @@ public class TOCSectionName extends LinearLayout implements TOCElement {
             this.setPadding(0, 0, 0, 0);
             return;
         }
-        final int padding = 12;
+        int padding = 18;//12;
+        if(node.isTextSection())
+            padding = 21;
         final int sidePadding = 50;
         if(lang == Util.Lang.EN) {
             this.setPadding(sidePadding, padding, 0, padding);
@@ -62,43 +66,78 @@ public class TOCSectionName extends LinearLayout implements TOCElement {
             this.setGravity(Gravity.RIGHT);
         }
         String text = node.getTitle(lang);
+
+        //http://stackoverflow.com/questions/2701192/character-for-up-down-triangle-arrow-to-display-in-html
         if(node.isTextSection()) {
-            text += " >";
+            text += " >";//" \u25b8";//
         }else if(node.getChildren().size() == 0){//it has no children but it's not a section, so it should be greyed out
             sectionroot.setTextColor(getResources().getColor(R.color.toc_greyed_out_section_name));
+        }else if(text.length() >0){
+            if(!displayingChildren){
+                //text += " \u2304";
+                text = "\u25b8  " + text; ////25BC //25BD //25BE //25BF
+            }else// if(displayingChildren)
+                text = "\u25be  " + text; ////25BC //25BD //25BE //25BF
         }
+
+
+
         //else    ;//text += " " + "\u2228";
         sectionroot.setText(text);
         /*
         This is for a case of a node that holds just a grid and is a sibling of a sectionName which istextSection()
         Look at Ohr Hashem for an example.
          */
-        if(text.length() ==0 && !node.isTextSection())
+        if(text.length() == 0 && !node.isTextSection())
             sectionroot.setVisibility(View.GONE);
 
+    }
+
+    private void setDisplayingChildren(boolean displayingChildren,boolean forceChildren) {
+        if (sectionroot.getVisibility() != VISIBLE)
+            return;
+        this.displayingChildren = displayingChildren;
+        for (int i = 0; i < getChildCount(); i++) {
+            View child = getChildAt(i);
+            if (!(child instanceof SefariaTextView)) {//don't hid the text of the sectionName itself
+                if (displayingChildren) {
+                    child.setVisibility(View.VISIBLE);
+                } else {
+                    child.setVisibility(View.GONE);
+                }
+                if (forceChildren && child instanceof TOCSectionName) {
+                    ((TOCSectionName) child).setDisplayingChildren(displayingChildren,forceChildren);
+                }
+            }
+            setLang(lang);
+        }
+    }
+
+    public void setDisplayingChildren(boolean displayingChildren){
+        setDisplayingChildren(displayingChildren,false);
     }
 
     OnClickListener clickListener = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            //TODO go to intent of text page
-            Log.d("toc", "sectionanem _ node:" + node);
-            if(false && !node.isTextSection()){ //TODO maybe try to make this work at some point .. && get rid of false
-                for(int i=0;i<TOCSectionName.this.getChildCount();i++){
-                    View child = TOCSectionName.this.getChildAt(i);
-                    if(child == sectionroot)
-                        continue;
-                    if(child.getVisibility() == View.INVISIBLE)
-                        setVisibility(View.VISIBLE);
-                    else
-                        setVisibility(View.INVISIBLE);
-                }
+            if(!node.isTextSection()){
+                setDisplayingChildren(!displayingChildren);
+                return;
             }
 
             //TODO determine if it's a leaf and if so then display text
-            if(!node.isTextSection())
-                return;
             TOCNumBox.gotoTextActivity(context,node,lang);
         }
     };
+
+   OnLongClickListener onLongClickListener = new OnLongClickListener() {
+       @Override
+       public boolean onLongClick(View v) {
+           if(!node.isTextSection()) {
+               setDisplayingChildren(!displayingChildren,true);
+               return true;
+           }
+           return false;
+       }
+   };
 }
