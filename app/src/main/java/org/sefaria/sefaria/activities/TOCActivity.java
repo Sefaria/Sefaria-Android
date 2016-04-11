@@ -74,8 +74,16 @@ public class TOCActivity extends AppCompatActivity {
     private void init() {
         MenuNode titleNode = new MenuNode("Table of Contents","תוכן העניינים",null);
         int catColor = book.getCatColor();
+        //this would make it that when coming straight to TOC from Menu, it's a back icon instead of close, but we removed the back functionality, so it's currently not going to work
+        if(pathDefiningNode == null) {
+            closeClick = null;
+        }else{
+            homeClick = null;
+        }
+
+
         //CustomActionbar cab = new CustomActionbar(this, titleNode, Settings.getSystemLang(),homeClick,null,null,null,langClick,backClick,catColor);
-        CustomActionbar cab = new CustomActionbar(this, titleNode, Settings.getSystemLang(),null,null,closeClick,null,null,langClick,backClick,catColor);
+        CustomActionbar cab = new CustomActionbar(this, titleNode, Settings.getSystemLang(),homeClick,null,closeClick,null,null,langClick,backClick,catColor);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(cab);
 
@@ -117,7 +125,6 @@ public class TOCActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             MyApp.homeClick(TOCActivity.this,false,false);
-            finish();
         }
     };
 
