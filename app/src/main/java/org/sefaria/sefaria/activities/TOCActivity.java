@@ -78,9 +78,9 @@ public class TOCActivity extends AppCompatActivity {
         if(pathDefiningNode == null) {
             closeClick = null;
         }else{
-            homeClick = null;
+            backClick = null;
         }
-
+        homeClick = null;
 
         //CustomActionbar cab = new CustomActionbar(this, titleNode, Settings.getSystemLang(),homeClick,null,null,null,langClick,backClick,catColor);
         CustomActionbar cab = new CustomActionbar(this, titleNode, Settings.getSystemLang(),homeClick,null,closeClick,null,null,langClick,backClick,catColor);

@@ -116,12 +116,11 @@ public abstract class SuperTextActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         Log.d("SuperTextActi", "onCreate");
 
+        /*
         if(!Database.hasOfflineDB() && Downloader.getNetworkStatus() == Downloader.ConnectionType.NONE){
             Toast.makeText(this,"No internet connection or Offline Library",Toast.LENGTH_SHORT).show();
-            MyApp.homeClick(this, false, false);
-            finish();
-            return;
         }
+        */
 
         if (Settings.getIsFirstTimeOpened()) {
             MyApp.isFirstTimeOpened = true;
@@ -134,12 +133,11 @@ public abstract class SuperTextActivity extends FragmentActivity {
             if(!MyApp.isFirstTimeOpened)
                 Database.dealWithStartupDatabaseStuff(this);
             Database.checkAndSwitchToNeededDB(this);
-            MyApp.homeClick(this, false, true);
         }
 
         int nodeHash = getValuesFromIntent(savedInstanceState);
         if(!getAllNeededLocationVariables(nodeHash)){
-            return;
+            ;//return;
         }
 
         if(linkFragment == null){//LINK FRAGMENT
@@ -261,6 +259,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
             }
         }catch (API.APIException apiE){
             API.makeAPIErrorToast(this);
+            firstLoadedNode = Node.dummyNode;
             return false;
         }
         return true;
@@ -395,6 +394,8 @@ public abstract class SuperTextActivity extends FragmentActivity {
             MenuNode menuNode = new MenuNode("a","b",null); //TODO possibly replace this object with a more general bilinual node
             int catColor = book.getCatColor();
             searchClick = null;
+            backClick = null;
+            homeLongClick = null;
             customActionbar = new CustomActionbar(this, menuNode, menuLang,homeClick,homeLongClick, null,searchClick,titleClick,menuClick,backClick,catColor); //TODO.. I'm not actually sure this should be lang.. instead it shuold be MENU_LANG from Util.S
             LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
             abRoot.addView(customActionbar);
@@ -623,7 +624,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
                     }
                     break;
             }
-            textMenuBar.setState(textLang,isCts,isSideBySide,colorTheme);
+            textMenuBar.setState(textLang, isCts, isSideBySide,colorTheme);
             if (!updatedTextSize) toggleTextMenu();
         }
     };
@@ -658,7 +659,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
     private void setColorTheme(int colorTheme) {
         Settings.setTheme(colorTheme);
         finish();
-        startNewTextActivityIntent(this,book,currText,currNode,false,searchingTerm,-1);
+        startNewTextActivityIntent(this, book, currText, currNode, false, searchingTerm,-1);
     }
 
     protected abstract void setTextLang(Util.Lang textLang);
@@ -786,10 +787,12 @@ public abstract class SuperTextActivity extends FragmentActivity {
         slide.setAnimationListener(new Animation.AnimationListener() {
 
             @Override
-            public void onAnimationStart(Animation animation) {}
+            public void onAnimationStart(Animation animation) {
+            }
 
             @Override
-            public void onAnimationRepeat(Animation animation) {}
+            public void onAnimationRepeat(Animation animation) {
+            }
 
             @Override
             public void onAnimationEnd(Animation animation) {

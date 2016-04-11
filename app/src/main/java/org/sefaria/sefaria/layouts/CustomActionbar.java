@@ -29,7 +29,7 @@ public class CustomActionbar extends MenuElement {
     private String enText = null;
     private MenuNode menuNode;
 
-    private static final boolean noBackButton = true;
+    private static final boolean noBackButton = false;
 
     public CustomActionbar(Activity activity, MenuNode menuNode, Util.Lang lang, OnClickListener homeClick, OnLongClickListener homeLongClick, OnClickListener closeClick, OnClickListener searchClick, OnClickListener titleClick, OnClickListener menuClick, OnClickListener backClick, int catColor) {
         super(activity);
@@ -86,7 +86,7 @@ public class CustomActionbar extends MenuElement {
 
 
         if (backClick != null) backBtn.setOnClickListener(backClick);
-        else  backBtn.setVisibility(View.INVISIBLE);
+        else  backBtn.setVisibility(View.GONE);
         if(noBackButton) backBtn.setVisibility(View.GONE);
 
 
