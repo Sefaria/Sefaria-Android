@@ -10,32 +10,12 @@
         android:paddingRight="@dimen/custom_action_bar_button_to_side_padding"
         android:background="?custom_actionbar_bg">
 
-
         <FrameLayout
-            android:id="@+id/close_btn"
-            android:layout_width="@dimen/custom_action_bar_button_frame_width"
-            android:layout_height="match_parent"
-            android:paddingLeft="@dimen/custom_action_bar_button_to_side_padding"
-            android:layout_margin="0dp"
-            android:background="?selectableItemBackgroundBorderless"
-            >
-            <ImageView
-                android:layout_width="@dimen/custom_action_bar_pic_size"
-                android:layout_height="@dimen/custom_action_bar_pic_size"
-                android:src="@drawable/close47"
-                android:scaleType="fitCenter"
-                android:layout_gravity="center"
-                />
-
-        </FrameLayout>
-
-
-        <FrameLayout
+            android:layout_alignParentLeft="true"
             android:id="@+id/search_btn"
-            android:layout_toRightOf="@+id/close_btn"
             android:layout_width="@dimen/custom_action_bar_button_frame_width"
             android:layout_height="match_parent"
-            android:paddingRight="@dimen/custom_action_bar_button_to_side_padding"
+            android:padding="5dp"
             android:layout_margin="0dp"
             android:background="?selectableItemBackgroundBorderless"
             >
@@ -48,15 +28,33 @@
                 />
         </FrameLayout>
 
-        <EditText
-            android:id="@+id/search_box"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+        <org.sefaria.sefaria.layouts.SefariaTextView
+            android:id="@+id/search_tv"
             android:layout_toRightOf="@+id/search_btn"
-            android:inputType="text"
-            android:imeOptions="actionSearch"
-            android:hint="Search"/>
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:textStyle="italic"
+            android:textSize="15sp"
+            android:text="Search Sefaria"/>
 
+        <FrameLayout
+            android:id="@+id/lang_btn"
+            android:layout_alignParentRight="true"
+            android:layout_width="@dimen/custom_action_bar_button_frame_width"
+            android:layout_height="@dimen/custom_action_bar_button_frame_width"
+            android:padding="8dp"
+            android:layout_centerVertical="true"
+            android:layout_gravity="right">
+            <org.sefaria.sefaria.layouts.SefariaTextView
+                android:id="@+id/langTV"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:background="@drawable/button_ripple_rect_rounded_transparent"
+                android:textSize="20sp"
+                android:text="A"/>
+        </FrameLayout>
 
     </RelativeLayout>
 
