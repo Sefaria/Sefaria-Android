@@ -19,13 +19,6 @@
         android:label="@string/app_name"
         android:theme="@style/SefariaTheme.White">
         <activity
-            android:name=".activities.HomeActivity"
-            android:label="@string/app_name"
-        >
-
-
-        </activity>
-        <activity
             android:name=".activities.MenuActivity"
             android:label="@string/app_name"></activity>
         <activity

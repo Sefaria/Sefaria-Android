@@ -44,7 +44,7 @@ public class DailyLearning {
 
                         }
                     }
-                    node = node.getFirstDescendant(false);
+                    node = node.getFirstDescendant();
                     MenuDirectRef menuDirectRef = new MenuDirectRef(context,todayDaf,book.heTitle + " " + node.getNiceGridNum(Util.Lang.HE),node.makePathDefiningNode(),book, "Daf Yomi");
                     return menuDirectRef;
                 }
@@ -81,7 +81,7 @@ public class DailyLearning {
                             break;
                         }
                     }
-                    node = node.getFirstDescendant(false);//go to first aliyah
+                    node = node.getFirstDescendant();//go to first aliyah
                     MenuDirectRef parshaMenu = new MenuDirectRef(context,node.getParent().getTitle(Util.Lang.EN),node.getParent().getTitle(Util.Lang.HE),node.makePathDefiningNode(),book, "Parsha");
 
                     String haftaraBookName = haftara.replaceFirst("\\s[0-9]+.*$","");
