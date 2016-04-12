@@ -205,8 +205,12 @@ public abstract class SuperTextActivity extends FragmentActivity {
                 firstLoadedNode = Node.getSavedNode(nodeHash);
             }
 
-            if(firstLoadedNode != null && book != null && firstLoadedNode.getBid() != book.bid)
+            if(firstLoadedNode != null && book != null && firstLoadedNode.getBid() != book.bid) {
+                if(MyApp.DEBUGGING)
+                    Toast.makeText(this,"Wrong book with node:" + book.bid + " --" + firstLoadedNode.getBid(),Toast.LENGTH_SHORT);
+                GoogleTracker.sendEvent(GoogleTracker.CATEGORY_RANDOM_ERROR,"Wrong book with node:" + book.bid + " --" + firstLoadedNode.getBid());
                 book = null;
+            }
 
             if (book == null) {
                 Log.d("superTextAct","book was null");
@@ -283,13 +287,15 @@ public abstract class SuperTextActivity extends FragmentActivity {
         }else
             veryFirstTime = false;
 
+        if(drawerLayout != null && drawerLayout.isDrawerOpen(Gravity.LEFT)){
+            drawerLayout.closeDrawer(Gravity.LEFT);
+        }
+
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        if(book == null)
-            return;
         Settings.BookSettings.setSavedBook(book, currNode, currText, textLang);//data also saved with home click
         outState.putParcelable("currBook", book);
         getSupportFragmentManager().putFragment(outState, LINK_FRAG_TAG, linkFragment);
@@ -453,7 +459,9 @@ public abstract class SuperTextActivity extends FragmentActivity {
         }
 
         Settings.BookSettings.setSavedBook(book, currNode, currText, textLang);
-        if(isTextMenuVisible)
+        if (drawerLayout.isDrawerOpen(Gravity.LEFT)) {
+            drawerLayout.closeDrawer(Gravity.LEFT);
+        }else if(isTextMenuVisible)
             toggleTextMenu();
         else if (linkFragment != null && linkFragment.getIsOpen()) {
             if (linkFragment.getCurrState() == LinkFragment.State.MAIN) {
@@ -463,8 +471,6 @@ public abstract class SuperTextActivity extends FragmentActivity {
                 linkFragment.gotoState(LinkFragment.State.MAIN, linkFragment.getView(), null);
             }
 
-        }else if (drawerLayout.isDrawerOpen(Gravity.LEFT)){
-            drawerLayout.closeDrawer(Gravity.LEFT);
         } else {
             super.onBackPressed();
         }
@@ -541,6 +547,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
     View.OnClickListener homeClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            Settings.BookSettings.setSavedBook(book, currNode, currText, textLang);//data also saved with home click
             drawerLayout.openDrawer(Gravity.LEFT);
         }
     };
@@ -548,6 +555,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
     View.OnClickListener titleClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            Settings.BookSettings.setSavedBook(book, currNode, currText, textLang);//data also saved with home click
             if(openedNewBookTime >0 && !reportedNewBookTOC){
                 String category;
                 if(reportedNewBookScroll || reportedNewBookBack)

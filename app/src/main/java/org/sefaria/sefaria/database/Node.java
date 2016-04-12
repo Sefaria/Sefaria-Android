@@ -687,11 +687,28 @@ public class Node{// implements  Parcelable{
             addSubChaps(upperNode, currDepth, counts);
     }
 
+    private static int getDepth(JSONArray jsonArray, int depth){
+        if(jsonArray.length() == 0)
+            return depth;
+        try{
+            JSONArray newJsonArray = jsonArray.getJSONArray(0);
+            return getDepth(newJsonArray, depth + 1);
+        }catch (JSONException e){
+            return depth +1;
+        }
+    }
+
     private static void addSubChaps(Node upperNode, int currDepth, JSONArray counts) throws JSONException {
         Log.d("Node", "addSubChaps" + upperNode + "__" + currDepth);
-        if(currDepth == 1) {
+
+        //currDepth = getDepth(counts,0);
+
+
+        if(currDepth <= 1) {
             if(!upperNode.isComplex)
                 upperNode.addChapChild(0);
+
+            //else upperNode.isTextSection = true;
             return;
         }
         for (int i = 0; i < counts.length(); i++) {
@@ -715,7 +732,7 @@ public class Node{// implements  Parcelable{
                 JSONObject subObject = jsonData.getJSONObject(child.enTitle);
                 setChaps_API(child,subObject);
             }catch (JSONException e){
-                Log.e("Node", child.enTitle + "__didn't get subJSON_" + child);
+                Log.e("Node", child.enTitle + " __didn't get subJSON_" + child);
             }
         }
         try {
