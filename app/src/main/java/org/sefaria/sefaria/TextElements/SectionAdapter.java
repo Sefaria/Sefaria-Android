@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
+import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.activities.SectionActivity;
@@ -172,7 +173,7 @@ public class SectionAdapter extends ArrayAdapter<Text> {
 
                 String monoText = segment.getText(lang);
                 if (monoText.length() == 0)
-                    sectionActivity.getResources().getString(R.string.no_text);
+                    monoText = MyApp.getRString(R.string.no_text);
 
                 if (lang == Util.Lang.HE) {
                     tv.setText(Html.fromHtml(monoText));
@@ -201,7 +202,11 @@ public class SectionAdapter extends ArrayAdapter<Text> {
                     heNum.setFont(Util.Lang.HE, true);
                 }
                 tv.setFont(lang,true);
-                tv.setTextSize(sectionActivity.getTextSize());
+                float newTextSize = sectionActivity.getTextSize();
+                if(lang == Util.Lang.EN)
+                    newTextSize *=.85;
+
+                tv.setTextSize(newTextSize);
             }
         }
         return view;
