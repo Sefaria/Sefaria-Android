@@ -243,7 +243,8 @@ public class Settings {
 
         final static private String SETTINGS_SPLITTER = "@";
 
-        static public void setSavedBook(Book book,Node node, Text text, Util.Lang lang){
+        static public boolean setSavedBook(Book book,Node node, Text text, Util.Lang lang){
+            if(book == null) return false;
             SharedPreferences bookSavedSettings = getBookSavedSettings();
             SharedPreferences.Editor editor = bookSavedSettings.edit();
             //"<en|he|bi>.<cts|sep>.<white|grey|black>.10px:"+ <rootNum>.<Childnum>.<until>.<leaf>.<verseNum>"
@@ -262,7 +263,7 @@ public class Settings {
             editor.putString(EN_TITLE + book.title, node.getMenuBarTitle(book, Util.Lang.EN));
             editor.putString(HE_TITLE + book.title, node.getMenuBarTitle(book, Util.Lang.HE));
             editor.commit();
-
+            return true;
         }
 
 

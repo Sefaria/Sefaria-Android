@@ -33,6 +33,8 @@ public class MyApp extends Application {
         MultiDex.install(this);
     }*/
 
+    public static final boolean DEBUGGING = false;
+
     public static final String[] CAT_NAMES = {"Tanach","Mishnah","Talmud",
             "Tosefta","Liturgy","Tefillah",
             "Philosophy","Chasidut","Musar",
