@@ -23,8 +23,8 @@ public class DialogNoahSnackbar extends LinearLayout {
     }
 
     public static void showDialog(Activity activity, ViewGroup rootView) {
-        DialogNoahSnackbar dnsb = new DialogNoahSnackbar(activity);
-        rootView.addView(dnsb);
+        DialogNoahSnackbar dialogNoahSnackbar = new DialogNoahSnackbar(activity);
+        rootView.addView(dialogNoahSnackbar);
         currentDialogRoot = rootView;
     }
 

@@ -205,6 +205,9 @@ public abstract class SuperTextActivity extends FragmentActivity {
                 firstLoadedNode = Node.getSavedNode(nodeHash);
             }
 
+            if(firstLoadedNode != null && book != null && firstLoadedNode.getBid() != book.bid)
+                book = null;
+
             if (book == null) {
                 Log.d("superTextAct","book was null");
                 try {
@@ -245,7 +248,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
                     return false;
                 }
                 Node root = TOCroots.get(0);
-                firstLoadedNode = root.getFirstDescendant(true);
+                firstLoadedNode = root.getFirstDescendant();//was getting first text true);
                 GoogleTracker.sendEvent(GoogleTracker.CATEGORY_OPEN_NEW_BOOK_ACTION, "Opened New Book");
                 openedNewBookTime = System.currentTimeMillis();
             }
@@ -496,7 +499,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
         @Override
         public boolean onLongClick(View v) {
             Settings.BookSettings.setSavedBook(book, currNode, currText, textLang);
-            MyApp.homeClick(SuperTextActivity.this, true,false);
+            //MyApp.homeClick(SuperTextActivity.this, true,false);
             return true;
         }
     };
@@ -720,7 +723,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
                 firstLoadedNode = newNode;
             }
         } catch (Node.LastNodeException e) {
-            return new ArrayList<>();
+            return null;
         }
 
 
@@ -729,7 +732,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
             Log.d("SuperTextAct", "trying to getTexts");
             if(newNode == null){//This error occurs when using API and the book no longer exists in Sefaria (it could also happen other times we don't know about)
                 //TODO add error text into the list.
-                finish();
+                //Node.dummyNode;
                 return new ArrayList<>();
             }
             textsList = newNode.getTexts();

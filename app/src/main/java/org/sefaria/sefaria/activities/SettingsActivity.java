@@ -127,7 +127,7 @@ public class SettingsActivity extends Activity {
         @Override
         public boolean onLongClick(View v) {
             saveFontSize();
-            MyApp.homeClick(SettingsActivity.this, true,false);
+            //MyApp.homeClick(SettingsActivity.this, true,false);
             return true;
         }
     };

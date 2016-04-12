@@ -71,7 +71,7 @@ public class API {
 
     public static void makeAPIErrorToast(Context context){
         try {
-            Toast.makeText(context, "Problem getting data from Internet", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, MyApp.getRString(R.string.problem_internet), Toast.LENGTH_LONG).show();
         }catch (Exception e){
             GoogleTracker.sendException(e,"API toast");
         }
@@ -195,7 +195,7 @@ public class API {
                     if (tempNode == null) {
                         //it's a most likely a final number (such as a verse number) so that's why there's no Node for it
                         //so, lets get the firstDescendant (which should just be the node itself, but just in case lets do it this way)
-                        placeRef.node = placeRef.node.getFirstDescendant(false);
+                        placeRef.node = placeRef.node.getFirstDescendant();
                         List<Text> texts = placeRef.node.getTexts();
                         int num = Util.convertDafOrIntegerToNum(spot);
                         for (Text tempText : texts) {
@@ -211,7 +211,7 @@ public class API {
                 }
             }catch (Exception e){
                 if(placeRef.node != null)
-                    placeRef.node = placeRef.node.getFirstDescendant(false);
+                    placeRef.node = placeRef.node.getFirstDescendant();
             }
             return placeRef;
         }

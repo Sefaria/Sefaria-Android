@@ -232,7 +232,7 @@ public class Settings {
             Node node = null;
             try {
                 node = book.getNodeFromPathStr(nodePathStr);
-                node = node.getFirstDescendant(true);//should be unneeded line, but in case there was a previous bug this should return a isTextSection() node to avoid bugs
+                node = node.getFirstDescendant();//true);//should be unneeded line, but in case there was a previous bug this should return a isTextSection() node to avoid bugs
             } catch (Exception e) {
                 ;
             }
@@ -403,9 +403,9 @@ public class Settings {
             List<String> books = new ArrayList<>();
             SharedPreferences recentSettings = getRecentSettings();
             Set<String> pinnedTexts = getPinned();
-            int recentTextCount = 3;
+            int recentTextCount = 4;
             while(pinnedTexts.size()/(recentTextCount*1.0) > .6){
-                recentTextCount += 3;
+                recentTextCount += 2;
             }
             for(String bookTitle:pinnedTexts){
                 books.add(bookTitle);
