@@ -20,6 +20,7 @@ import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.SearchElements.SearchAdapter;
@@ -47,6 +48,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
     private boolean isLoadingSearch;
     private int currPageLoaded; //based on ElasticSearch page loaded
     private int preLast;
+    private boolean APIError = false;
 
     private String numberOfResults = "";
     @Override
@@ -163,13 +165,20 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
 
         @Override
         protected List<Text> doInBackground(Void... params) {
-            return SearchAPI.search(query, pageNum, PAGE_SIZE);
+            APIError = false;
+            try {
+                return SearchAPI.search(query, pageNum, PAGE_SIZE);
+            } catch (API.APIException e) {
+                APIError = true;
+                return new ArrayList<>();
+            }
         }
 
         @Override
         protected void onPostExecute(List<Text> results) {
             super.onPostExecute(results);
             isLoadingSearch = false;
+            if(results == null)
             //page 0 means you're starting a new search. reset everything
             if (pageNum == 0) {
                 adapter.setResults(results,true);
@@ -179,6 +188,10 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
             }
             numberOfResults = SearchAPI.getNumResults() + " Results";
             numResultsTV.setText(numberOfResults);
+            if(APIError) {
+                GoogleTracker.sendEvent(GoogleTracker.CATEGORY_RANDOM_ERROR,MyApp.getRString(R.string.searching_requires_internet));
+                API.makeAPIErrorToast(SearchActivity.this, MyApp.getRString(R.string.searching_requires_internet));
+            }
         }
     }
 
@@ -191,7 +204,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
                 placeRef = API.PlaceRef.getPlace(place);
                 SuperTextActivity.startNewTextActivityIntent(SearchActivity.this,placeRef.book,placeRef.text,placeRef.node,false,searchBox.getText().toString(),-1);
             } catch (API.APIException e) {
-                MyApp.openURLInBrowser(SearchActivity.this,"https://sefaria.org/" + place);
+                API.makeAPIErrorToast(SearchActivity.this);//MyApp.openURLInBrowser(SearchActivity.this,"https://sefaria.org/" + place);
             } catch (Book.BookNotFoundException e) {
                 MyApp.openURLInBrowser(SearchActivity.this,"https://sefaria.org/" + place);
             }

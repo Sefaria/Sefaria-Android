@@ -18,7 +18,7 @@ public class SearchAPI {
     private static int numResults;
     private static Set<String> refSet;
 
-    public static List<Text> search(String query,int pageNum,int pageSize) {
+    public static List<Text> search(String query,int pageNum,int pageSize) throws API.APIException {
         if (pageNum == 0) refSet = new HashSet<>();
 
         List<Text> resultList = new ArrayList<>();
@@ -44,13 +44,8 @@ public class SearchAPI {
                         "}" +
                         "}" +
                         "}";
-        try {
-            String result = API.getDataFromURL(SEARCH_URL, jsonString,false);
-            resultList = getParsedResults(result);
-        } catch (API.APIException e) {
-            e.printStackTrace();
-        }
-
+        String result = API.getDataFromURL(SEARCH_URL, jsonString,false);
+        resultList = getParsedResults(result);
         return resultList;
     }
 
