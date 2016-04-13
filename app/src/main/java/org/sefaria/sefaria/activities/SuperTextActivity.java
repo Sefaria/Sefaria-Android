@@ -287,9 +287,9 @@ public abstract class SuperTextActivity extends FragmentActivity {
         }else
             veryFirstTime = false;
 
-        if(drawerLayout != null && drawerLayout.isDrawerOpen(Gravity.LEFT)){
-            drawerLayout.closeDrawer(Gravity.LEFT);
-        }
+        //if(drawerLayout != null && drawerLayout.isDrawerOpen(Gravity.LEFT)){
+        //    drawerLayout.closeDrawer(Gravity.LEFT);
+        //}
 
     }
 

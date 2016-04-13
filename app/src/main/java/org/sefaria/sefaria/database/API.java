@@ -69,9 +69,17 @@ public class API {
     final static int SPIN_TIMEOUT = 8000;
     //TODO determine good times
 
-    public static void makeAPIErrorToast(Context context){
+    public static void makeAPIErrorToast(Context context) {
+        String extraString = MyApp.getRString(R.string.consider_downloading);
+        makeAPIErrorToast(context,extraString);
+    }
+
+    public static void makeAPIErrorToast(Context context, String extraString){
+        String message = MyApp.getRString(R.string.problem_internet);
+        if(extraString != null && extraString.length() >0)
+            message  += " - " + extraString;
         try {
-            Toast.makeText(context, MyApp.getRString(R.string.problem_internet), Toast.LENGTH_LONG).show();
+            Toast.makeText(context,message, Toast.LENGTH_LONG).show();
         }catch (Exception e){
             GoogleTracker.sendException(e,"API toast");
         }
