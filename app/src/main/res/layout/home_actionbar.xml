@@ -2,7 +2,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="wrap_content">
-
+    <!-- thin bar which changes color based on top-level section -->
+    <View
+        android:id="@+id/color_bar"
+        android:layout_width="match_parent"
+        android:layout_height="8dp"
+        android:background="@color/system"></View>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="54dp"
@@ -23,6 +28,8 @@
                 android:layout_width="@dimen/custom_action_bar_pic_size"
                 android:layout_height="@dimen/custom_action_bar_pic_size"
                 android:src="@drawable/search100"
+                android:tint="?text_color_main"
+                android:alpha="0.5"
                 android:scaleType="fitCenter"
                 android:layout_gravity="center"
                 />
@@ -36,6 +43,7 @@
             android:gravity="center_vertical"
             android:textStyle="italic"
             android:textSize="15sp"
+            android:textColor="?text_color_english"
             android:text="Search Sefaria"/>
 
         <FrameLayout
@@ -51,7 +59,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:background="@drawable/button_ripple_rect_rounded_transparent"
+                android:background="?button_ripple_rect_rounded_transparent"
+                android:textColor="?text_color_english"
                 android:textSize="20sp"
                 android:text="A"/>
         </FrameLayout>

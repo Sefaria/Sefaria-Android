@@ -2,7 +2,18 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="wrap_content">
-
+    <LinearLayout
+        android:id="@+id/dialogNoahSnackbarRoot"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+    </LinearLayout>
+    <!-- thin bar which changes color based on top-level section -->
+    <View
+        android:id="@+id/color_bar"
+        android:layout_width="match_parent"
+        android:layout_height="8dp"
+        android:background="@color/system"></View>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="54dp"
@@ -23,6 +34,8 @@
                 android:layout_width="@dimen/custom_action_bar_pic_size"
                 android:layout_height="@dimen/custom_action_bar_pic_size"
                 android:src="@drawable/close47"
+                android:tint="?text_color_main"
+                android:alpha="0.5"
                 android:scaleType="fitCenter"
                 android:layout_gravity="center"
                 />
@@ -44,6 +57,8 @@
                 android:layout_height="@dimen/custom_action_bar_pic_size"
                 android:src="@drawable/search100"
                 android:scaleType="fitCenter"
+                android:tint="?text_color_main"
+                android:alpha="0.5"
                 android:layout_gravity="center"
                 />
         </FrameLayout>
@@ -54,6 +69,8 @@
             android:layout_height="match_parent"
             android:layout_toRightOf="@+id/search_btn"
             android:inputType="text"
+            android:textColor="?text_color_main"
+            android:textColorHint="?text_color_english"
             android:imeOptions="actionSearch"
             android:hint="Search"/>
 
