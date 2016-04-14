@@ -1,6 +1,7 @@
 package org.sefaria.sefaria.database;
 
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Parcel;
@@ -31,7 +32,7 @@ public class Node{// implements  Parcelable{
     public final static int NID_NON_COMPLEX = -3;
     public  final static int NID_NO_INFO = -1;
     public final static int NID_CHAP_NO_NID = -4;
-    public final static int NID_DUMMY = -4;
+    public final static int NID_DUMMY = -5;
 
     private int nid;
     private int bid;
@@ -241,7 +242,10 @@ public class Node{// implements  Parcelable{
         return depth;
     }
 
-    public Node getFirstDescendant(boolean checkForTexts) throws API.APIException {
+
+    private Node getFirstDescendant(boolean checkForTexts) throws API.APIException {
+        //Log.d("Node","getFirstDescendant" + checkForTexts + " " + this);
+        //boolean checkForTexts = false;
         final int MAX_TEXTS = 5;
         Node node = getFirstDescendant();
         int failedTexts = 0;
@@ -262,7 +266,7 @@ public class Node{// implements  Parcelable{
         return node;
     }
 
-    private Node getFirstDescendant(){
+    public Node getFirstDescendant(){
         Node node = this;
         while(node.getChildren().size() > 0){
             node = node.getChildren().get(0);
@@ -409,23 +413,28 @@ public class Node{// implements  Parcelable{
      * @return the next node in the tree that contains text
      */
     public Node getNextTextNode() throws LastNodeException {
+        Log.d("Node","getNextTextNode started: " + this);
         if(parent == null){
             throw new LastNodeException();
         }
         int index = parent.getChildren().indexOf(this);
         if(index == -1){
             Log.e("Node.getNextTextNode","Couldn't find index in parent's children: " + this);
+            //Log.d("Node", "getNextTextNode returning: " + getFirstDescendant());
             return getFirstDescendant();
         } else if(index < parent.getChildren().size()-1){
             Node node = parent.getChildren().get(index +1);
             if(node.isTextSection){
+                //Log.d("Node", "getNextTextNode returning: " + node);
                 return node;
             }else {
+                //Log.d("Node", "getNextTextNode returning: " + node.getFirstDescendant());
                 return node.getFirstDescendant();
             }
         }else {// if(index >=parent.getChildren().size()){
-            Node node = parent;
-            return parent.getNextTextNode();
+            Node node = parent.getNextTextNode();
+            //Log.d("Node", "getNextTextNode returning: " + node);
+            return node;
         }
     }
     /**
@@ -438,7 +447,7 @@ public class Node{// implements  Parcelable{
         }
         int index = parent.getChildren().indexOf(this);
         if(index == -1){
-            Log.e("Node.getNextTextNode","Couldn't find index in parent's children: " + this);
+            Log.e("Node.getNextTextNode", "Couldn't find index in parent's children: " + this);
             return getLastDescendant();
         }else if(index > 0){
             Node node = parent.getChildren().get(index - 1);
@@ -678,11 +687,28 @@ public class Node{// implements  Parcelable{
             addSubChaps(upperNode, currDepth, counts);
     }
 
+    private static int getDepth(JSONArray jsonArray, int depth){
+        if(jsonArray.length() == 0)
+            return depth;
+        try{
+            JSONArray newJsonArray = jsonArray.getJSONArray(0);
+            return getDepth(newJsonArray, depth + 1);
+        }catch (JSONException e){
+            return depth +1;
+        }
+    }
+
     private static void addSubChaps(Node upperNode, int currDepth, JSONArray counts) throws JSONException {
         Log.d("Node", "addSubChaps" + upperNode + "__" + currDepth);
-        if(currDepth == 1) {
+
+        //currDepth = getDepth(counts,0);
+
+
+        if(currDepth <= 1) {
             if(!upperNode.isComplex)
                 upperNode.addChapChild(0);
+
+            //else upperNode.isTextSection = true;
             return;
         }
         for (int i = 0; i < counts.length(); i++) {
@@ -706,7 +732,7 @@ public class Node{// implements  Parcelable{
                 JSONObject subObject = jsonData.getJSONObject(child.enTitle);
                 setChaps_API(child,subObject);
             }catch (JSONException e){
-                Log.e("Node", child.enTitle + "__didn't get subJSON_" + child);
+                Log.e("Node", child.enTitle + " __didn't get subJSON_" + child);
             }
         }
         try {
@@ -724,7 +750,7 @@ public class Node{// implements  Parcelable{
         if(!Settings.getUseAPI())
             return;
 
-        Log.i("Node","settAllChaps_API: " + this);
+        Log.i("Node", "settAllChaps_API: " + this);
         String bookTitle = Book.getTitle(bid);
 
         String place = bookTitle.replace(" ", "_");
@@ -907,7 +933,8 @@ public class Node{// implements  Parcelable{
         }
         Log.d("Node","found no textList");
         if(!isTextSection){
-            Log.e("Node", "getTexts() was called when it's not a textSection!");
+            Log.e("Node", "getTexts() was called when it's not a textSection!" + this);
+            //Integer.valueOf("aadfa");
             textList = new ArrayList<>();
         }else if(Settings.getUseAPI()) {
             textList = getTextsFromAPI();
@@ -1160,6 +1187,15 @@ public class Node{// implements  Parcelable{
         if(isRef)
             str += " IS_REF";
         return str;
+    }
+
+    public boolean pseudoEquals(Node node){
+        if(nid > 0 || node.nid > 0){
+            return (node.nid == nid);
+        }
+        else{
+            return equals(node);
+        }
     }
 
     @Override

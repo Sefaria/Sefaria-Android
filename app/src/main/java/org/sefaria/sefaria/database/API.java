@@ -69,9 +69,17 @@ public class API {
     final static int SPIN_TIMEOUT = 8000;
     //TODO determine good times
 
-    public static void makeAPIErrorToast(Context context){
+    public static void makeAPIErrorToast(Context context) {
+        String extraString = MyApp.getRString(R.string.consider_downloading);
+        makeAPIErrorToast(context,extraString);
+    }
+
+    public static void makeAPIErrorToast(Context context, String extraString){
+        String message = MyApp.getRString(R.string.problem_internet);
+        if(extraString != null && extraString.length() >0)
+            message  += " - " + extraString;
         try {
-            Toast.makeText(context, "Problem getting data from Internet", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context,message, Toast.LENGTH_LONG).show();
         }catch (Exception e){
             GoogleTracker.sendException(e,"API toast");
         }
@@ -195,7 +203,7 @@ public class API {
                     if (tempNode == null) {
                         //it's a most likely a final number (such as a verse number) so that's why there's no Node for it
                         //so, lets get the firstDescendant (which should just be the node itself, but just in case lets do it this way)
-                        placeRef.node = placeRef.node.getFirstDescendant(false);
+                        placeRef.node = placeRef.node.getFirstDescendant();
                         List<Text> texts = placeRef.node.getTexts();
                         int num = Util.convertDafOrIntegerToNum(spot);
                         for (Text tempText : texts) {
@@ -211,7 +219,7 @@ public class API {
                 }
             }catch (Exception e){
                 if(placeRef.node != null)
-                    placeRef.node = placeRef.node.getFirstDescendant(false);
+                    placeRef.node = placeRef.node.getFirstDescendant();
             }
             return placeRef;
         }

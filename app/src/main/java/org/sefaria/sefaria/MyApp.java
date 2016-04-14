@@ -6,28 +6,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.util.Log;
 import android.widget.Toast;
 
-import org.sefaria.sefaria.activities.HomeActivity;
 import org.sefaria.sefaria.activities.SuperTextActivity;
 import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Database;
-import org.sefaria.sefaria.database.Downloader;
 import org.sefaria.sefaria.database.LinkFilter;
-import org.sefaria.sefaria.database.Node;
-import org.sefaria.sefaria.database.Text;
 
-import java.io.InputStream;
-import java.security.KeyStore;
 import java.util.Arrays;
-import java.util.List;
-
-import javax.net.ssl.SSLSocketFactory;
 
 /**
  * Created by nss on 9/16/15.
@@ -40,6 +32,8 @@ public class MyApp extends Application {
         super.attachBaseContext(base);
         MultiDex.install(this);
     }*/
+
+    public static final boolean DEBUGGING = false;
 
     public static final String[] CAT_NAMES = {"Tanach","Mishnah","Talmud",
             "Tosefta","Liturgy","Tefillah",
@@ -136,6 +130,16 @@ public class MyApp extends Application {
         return color;
     }
 
+    public static String getEmailHeader(){
+        return  "App Version: " + BuildConfig.VERSION_NAME + " ("  + BuildConfig.VERSION_CODE + ")" + "\n"
+                + "Online Library Version: " + Util.convertDBnum(Database.getVersionInDB(true)) + "\n"
+                + "Offline Library Version: " + Util.convertDBnum(Database.getVersionInDB(false)) + "\n"
+                + "Using " + (Settings.getUseAPI()? "Online":"Offline") + " Library" + "\n"
+                + GoogleTracker.randomID + "\n"
+                + Build.VERSION.RELEASE + " (" + Build.VERSION.SDK_INT + ")" + "\n"
+                +"\n\n\n";
+    }
+
     public static String getRString(int R_string){
         return getContext().getString(R_string);
     }
@@ -146,6 +150,7 @@ public class MyApp extends Application {
 
     public static void killSwitch(){return; }//TODO remove function
 
+    /*
     public static void homeClick(Activity activity, boolean openNewTab,boolean hideOpening){
         Intent intent = new Intent(activity, HomeActivity.class);
         //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); //Clear Activity stack and put the Home screen as the only activity
@@ -163,7 +168,7 @@ public class MyApp extends Application {
             activity.startActivity(intent);
             activity.overridePendingTransition(R.animator.slide_right, R.animator.stay);
         }
-    }
+    }*/
 
     public static Intent startNewTab(Intent intent){
         Toast.makeText(context, context.getString(R.string.opening_new_task), Toast.LENGTH_SHORT).show();

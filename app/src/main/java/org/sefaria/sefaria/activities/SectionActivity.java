@@ -183,7 +183,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
         emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Sefaria Text Correction");
         emailIntent.putExtra(Intent.EXTRA_TEXT,
 
-                HomeActivity.getEmailHeader()
+                MyApp.getEmailHeader()
                 + text.getURL(true,false) + "\n\n"
                 + Html.fromHtml(text.getText(Util.Lang.BI))
                 + "\n\nDescribe the error: \n\n"
@@ -351,6 +351,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
     };
 
 
+
     public class AsyncLoadSection extends AsyncTask<Void,Void,List<Text>> {
 
         private TextEnums dir;
@@ -375,7 +376,11 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
         protected void onPostExecute(List<Text> textsList) {
             isLoadingSection = false;
             isLoadingInit = false;
-            if (textsList.size() == 0) return;
+
+
+
+            if (textsList == null) return;
+            //if (textsList.size() == 0) return;//removed this line so that when it doesn't find text it continues to look for the next item for text
 
             Text sectionHeader = getSectionHeaderText(dir);
             if (dir == TextEnums.NEXT_SECTION) {
