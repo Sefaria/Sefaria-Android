@@ -44,7 +44,7 @@ public class SearchAPI {
                         "}" +
                         "}" +
                         "}";
-        String result = API.getDataFromURL(SEARCH_URL, jsonString,false);
+        String result = API.getDataFromURL(SEARCH_URL, jsonString,true);
         resultList = getParsedResults(result);
         return resultList;
     }
