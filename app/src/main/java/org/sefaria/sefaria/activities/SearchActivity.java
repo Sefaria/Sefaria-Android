@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
@@ -20,6 +21,7 @@ import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.sefaria.sefaria.Dialog.DialogNoahSnackbar;
 import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
@@ -54,7 +56,9 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTheme(Settings.getTheme());
         setContentView(R.layout.activity_search);
+
 
         LinearLayout actionbarRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         actionbarRoot.addView(new SearchActionbar(this, closeClick, searchClick));
@@ -83,14 +87,21 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
         //open the keyboard focused in the edtSearch
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.showSoftInput(searchBox, InputMethodManager.SHOW_IMPLICIT);
-        adapter = new SearchAdapter(this, R.layout.search_item_mono,new ArrayList<Text>());
-        listView = (ListView) findViewById(R.id.listview);
-        listView.setAdapter(adapter);
-        listView.setOnScrollListener(this);
-        listView.setOnItemClickListener(onItemClickListener);
+        if (adapter == null)
+            adapter = new SearchAdapter(this, R.layout.search_item_mono,new ArrayList<Text>());
+
+        if (listView == null) {
+            listView = (ListView) findViewById(R.id.listview);
+            listView.setAdapter(adapter);
+            listView.setOnScrollListener(this);
+            listView.setOnItemClickListener(onItemClickListener);
+        }
         numResultsTV = (SefariaTextView) findViewById(R.id.numResults);
         numResultsTV.setFont(Settings.getSystemLang(),false);
         isLoadingSearch = false;
+
+
+        DialogNoahSnackbar.checkCurrentDialog(this, (ViewGroup) findViewById(R.id.dialogNoahSnackbarRoot));
     }
 
     private void runSearch(){
@@ -178,7 +189,6 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
         protected void onPostExecute(List<Text> results) {
             super.onPostExecute(results);
             isLoadingSearch = false;
-            if(results == null)
             //page 0 means you're starting a new search. reset everything
             if (pageNum == 0) {
                 adapter.setResults(results,true);
