@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import org.sefaria.sefaria.R;
+import org.sefaria.sefaria.database.Database;
 
 /**
  * Created by nss on 4/8/16.
@@ -23,9 +24,10 @@ public class DialogNoahSnackbar extends LinearLayout {
     }
 
     public static void showDialog(Activity activity, ViewGroup rootView) {
+        dismissCurrentDialog(rootView);
+        currentDialogRoot = rootView;
         DialogNoahSnackbar dnsb = new DialogNoahSnackbar(activity);
         rootView.addView(dnsb);
-        currentDialogRoot = rootView;
     }
 
     public static void dismissCurrentDialog(ViewGroup rootView) {
@@ -34,6 +36,19 @@ public class DialogNoahSnackbar extends LinearLayout {
 
     public static void dismissCurrentDialog() {
         dismissCurrentDialog(currentDialogRoot);
+    }
+
+
+    public static void checkCurrentDialog(Activity activity, ViewGroup viewGroup) {
+        try {
+            if (Database.isDownloadingDatabase) {
+                DialogNoahSnackbar.showDialog(activity, viewGroup);
+            } else {
+                DialogNoahSnackbar.dismissCurrentDialog(viewGroup);
+            }
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
     }
 
     OnClickListener cancelClick = new OnClickListener() {

@@ -102,11 +102,7 @@ public class CustomActionbar extends MenuElement {
         //tocBtn.setVisibility(View.GONE);
 
         //DEAL WITH DIALOGSNACKBAR
-        if (Database.isDownloadingDatabase) {
-            DialogNoahSnackbar.showDialog(activity,(ViewGroup) findViewById(R.id.dialogNoahSnackbarRoot));
-        } else {
-            DialogNoahSnackbar.dismissCurrentDialog((ViewGroup) findViewById(R.id.dialogNoahSnackbarRoot));
-        }
+        DialogNoahSnackbar.checkCurrentDialog(activity,(ViewGroup) this.findViewById(R.id.dialogNoahSnackbarRoot));
     }
 
 

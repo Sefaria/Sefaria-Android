@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.sefaria.sefaria.BuildConfig;
+import org.sefaria.sefaria.Dialog.DialogNoahSnackbar;
 import org.sefaria.sefaria.MenuElements.MenuNode;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
@@ -94,6 +96,8 @@ public class SettingsActivity extends Activity {
         View updateLibraryButton = findViewById(R.id.update_library);
         updateLibraryButton.setOnLongClickListener(longUpdateLibrary);
 
+        DialogNoahSnackbar.checkCurrentDialog(this, (ViewGroup) this.findViewById(R.id.dialogNoahSnackbarRoot));
+
     }
 
     private void setDatabaseInfo(){
@@ -168,13 +172,15 @@ public class SettingsActivity extends Activity {
 
     public void updateLibrary(View v){
         Downloader.updateLibrary(this, false);
+        DialogNoahSnackbar.showDialog(this, (ViewGroup) findViewById(R.id.dialogNoahSnackbarRoot));
     }
 
     View.OnLongClickListener longUpdateLibrary = new View.OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
             Toast.makeText(SettingsActivity.this, "Downloading Library (even if it's not a new version).", Toast.LENGTH_SHORT).show();
-            Downloader.updateLibrary(SettingsActivity.this,true);
+            Downloader.updateLibrary(SettingsActivity.this, true);
+            DialogNoahSnackbar.showDialog(SettingsActivity.this, (ViewGroup) findViewById(R.id.dialogNoahSnackbarRoot));
             return true;
         }
     };
