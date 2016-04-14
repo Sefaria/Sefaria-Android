@@ -69,7 +69,7 @@ public class Cache{
             String filename = urlToHashFile(url,json);
             String data = Util.readFile(filename);
             if(data != null && data.length() >0){
-                Log.d("cache", "Good Data: " + url);
+                Log.d("cache", "Good Data");
                 return data;
             }
         } catch (Exception e) {

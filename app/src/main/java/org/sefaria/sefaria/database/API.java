@@ -169,7 +169,7 @@ public class API {
         public static PlaceRef getPlace(String place, Book book) throws APIException, Book.BookNotFoundException {
             PlaceRef placeRef = new PlaceRef();
             Log.d("API", "place:" + place);
-            place = place.replaceAll("_", " ");
+            place = place.replace("_", " ");
             if (book == null) {
                 String title = place.replaceAll("[\\s\\.][0-9]+.*$", "");
                 Log.d("api", "title:" + title);
@@ -187,8 +187,8 @@ public class API {
 
             if (book != null){
                 placeRef.book = book;
+                place = place.replaceFirst("^" + book.title + "\\s*", "");
             } else{
-                placeRef.book = null;// = new Book(spots[0]);
                 List<Book> books = Book.getAll();
                 for (Book tempBook : books) {
                     String newPlace = place.replaceFirst("^" + tempBook.title + "\\s*", "");
@@ -199,6 +199,7 @@ public class API {
                     }
                 }
             }
+
 
             //Log.d("API", "place:" + place);
             String[] spots = place.split("[\\.:]|(,\\s)");
