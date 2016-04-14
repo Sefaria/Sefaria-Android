@@ -173,15 +173,15 @@ public class TOCGrid extends LinearLayout {
         }
 
         Point size = MyApp.getScreenSize();
-        if(depth > 0)
-            depth--;
-        int numColumns = (size.x - depth*100)/205;
+        //if(depth > 0) depth--;
+        int numColumns = 7;//(size.x - depth*15)/51;
+        //Toast.makeText(context,"screenWidthDp: " + size.x +  " smallestScreenWidthDp: " + size.y,Toast.LENGTH_SHORT).show();
+        numColumns -= depth/2;
         if(numColumns <1)
             numColumns = 1;
         gl.setColumnCount(numColumns);
-        Log.d("SefariaGridLayout","bf setRows");
         gl.setRowCount((int) Math.ceil(gridNodes.size() / numColumns));
-        Log.d("SefariaGridLayout", "after setRows");
+
 
         for (int j = 0; j < gridNodes.size(); j++) {
             //This operation of creating a new view lots of times (for example, in Araab Turim) is causing it to go really slow

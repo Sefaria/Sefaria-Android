@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Point;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -131,7 +132,14 @@ public class MyApp extends Application {
         display.getSize(size);
         int width = size.x;
         int height = size.y;
+
+        Configuration configuration = getContext().getResources().getConfiguration();
+        int screenWidthDp = configuration.screenWidthDp; //The current width of the available screen space, in dp units, corresponding to screen width resource qualifier.
+        int smallestScreenWidthDp = configuration.smallestScreenWidthDp; //The smallest screen size an application will see in normal operation, corresponding to smallest screen width resource qualifier.
+        Log.d("TOCGrid","screenWidthDp: " + screenWidthDp +  " smallestScreenWidthDp: " + smallestScreenWidthDp);
         Log.d("TOCGrid","width: " + width +  " H: " + height + "___w2:" + getContext().getResources().getDisplayMetrics().widthPixels);
+        size.x = screenWidthDp;
+        size.y = smallestScreenWidthDp;
         return size;
     }
 
