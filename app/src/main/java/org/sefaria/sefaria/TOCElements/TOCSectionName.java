@@ -55,7 +55,7 @@ public class TOCSectionName extends LinearLayout implements TOCElement {
             return;
         }
         int padding = 18;//12;
-        final int sidePadding = 55;
+        final int sidePadding = 45;
         if(node.isTextSection()) {
             //padding = 21;
             //sidePadding += 4;
@@ -78,11 +78,11 @@ public class TOCSectionName extends LinearLayout implements TOCElement {
             if(!displayingChildren){
                 //text += " \u2304";////25BC //25BD //25BE //25BF
                 if(lang == Util.Lang.EN)
-                    text = "\u25b8  " + text;
+                    text = "\u25b8 " + text;
                 else //lang == HE
-                    text = "\u25c2  " + text;
+                    text = "\u25c2 " + text;
             }else {// if(displayingChildren)
-                text = "\u25be  " + text;
+                text = "\u25be " + text;
             }
         }
 

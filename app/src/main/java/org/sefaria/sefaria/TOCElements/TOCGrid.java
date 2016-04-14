@@ -173,13 +173,13 @@ public class TOCGrid extends LinearLayout {
         }
 
         Point size = MyApp.getScreenSize();
-        //if(depth > 0) depth--;
-        int numColumns = 7;//(size.x - depth*15)/51;
+        if(depth > 0) depth--;
+        double numColumns = (size.x)/51.0;
         //Toast.makeText(context,"screenWidthDp: " + size.x +  " smallestScreenWidthDp: " + size.y,Toast.LENGTH_SHORT).show();
-        numColumns -= depth/2;
+        numColumns -= depth;
         if(numColumns <1)
-            numColumns = 1;
-        gl.setColumnCount(numColumns);
+            numColumns = 1.0;
+        gl.setColumnCount((int) numColumns);
         gl.setRowCount((int) Math.ceil(gridNodes.size() / numColumns));
 
 
