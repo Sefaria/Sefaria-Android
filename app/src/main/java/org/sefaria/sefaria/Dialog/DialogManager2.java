@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -50,6 +51,7 @@ public class DialogManager2 {
                     @Override
                     public void positiveClick() {
                         Downloader.updateLibrary(activity,false);
+                        DialogNoahSnackbar.showDialog(activity, (ViewGroup) activity.findViewById(R.id.dialogNoahSnackbarRoot));
                     }
 
                     @Override
@@ -177,7 +179,7 @@ public class DialogManager2 {
                                 intent.putExtra("isPre",false);
                                 intent.putExtra("userInit",true);
                                 activity.sendBroadcast(intent);
-                                showDialog(activity,DialogPreset.CHECKING_FOR_UPDATE);
+                                //showDialog(activity,DialogPreset.``);
                             }
 
                             @Override

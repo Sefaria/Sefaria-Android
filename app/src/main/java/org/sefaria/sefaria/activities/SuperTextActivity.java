@@ -11,6 +11,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
@@ -20,6 +21,7 @@ import android.widget.Toast;
 
 import org.sefaria.sefaria.BuildConfig;
 import org.sefaria.sefaria.Dialog.DialogManager2;
+import org.sefaria.sefaria.Dialog.DialogNoahSnackbar;
 import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
@@ -280,6 +282,8 @@ public abstract class SuperTextActivity extends FragmentActivity {
         }else
             veryFirstTime = false;
 
+        DialogNoahSnackbar.checkCurrentDialog(this, (ViewGroup) this.findViewById(R.id.dialogNoahSnackbarRoot));
+
     }
 
     @Override
@@ -403,7 +407,6 @@ public abstract class SuperTextActivity extends FragmentActivity {
         }
 
         setCurrNode(firstLoadedNode);
-
     }
 
     private void comingFromTOC(Intent intent){
