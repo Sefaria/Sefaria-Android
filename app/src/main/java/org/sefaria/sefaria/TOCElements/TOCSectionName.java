@@ -6,6 +6,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.Node;
@@ -54,8 +55,8 @@ public class TOCSectionName extends LinearLayout implements TOCElement {
             this.setPadding(0, 0, 0, 0);
             return;
         }
-        int padding = 18;//12;
-        final int sidePadding = 45;
+        int padding = (int) MyApp.convertDpToPixel(4.5f);
+        final int sidePadding = (int) MyApp.convertDpToPixel(13);
         if(node.isTextSection()) {
             //padding = 21;
             //sidePadding += 4;
@@ -78,11 +79,11 @@ public class TOCSectionName extends LinearLayout implements TOCElement {
             if(!displayingChildren){
                 //text += " \u2304";////25BC //25BD //25BE //25BF
                 if(lang == Util.Lang.EN)
-                    text = "\u25b8 " + text;
+                    text = "\u25b8  " + text;
                 else //lang == HE
-                    text = "\u25c2 " + text;
+                    text = "\u25c2  " + text;
             }else {// if(displayingChildren)
-                text = "\u25be " + text;
+                text = "\u25be  " + text;
             }
         }
 

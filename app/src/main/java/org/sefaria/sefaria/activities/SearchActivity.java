@@ -208,10 +208,17 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
     ListView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            String place = adapter.getItem(position).getLocationString(Util.Lang.EN);
+            Text text = adapter.getItem(position);
+            String place = text.getLocationString(Util.Lang.EN);
+            Book book;
+            try {
+                book = new Book(text.bid);
+            } catch (Book.BookNotFoundException e) {
+                book = null;
+            }
             API.PlaceRef placeRef = null;
             try {
-                placeRef = API.PlaceRef.getPlace(place);
+                placeRef = API.PlaceRef.getPlace(place,book);
                 SuperTextActivity.startNewTextActivityIntent(SearchActivity.this,placeRef.book,placeRef.text,placeRef.node,false,searchBox.getText().toString(),-1);
             } catch (API.APIException e) {
                 API.makeAPIErrorToast(SearchActivity.this);//MyApp.openURLInBrowser(SearchActivity.this,"https://sefaria.org/" + place);

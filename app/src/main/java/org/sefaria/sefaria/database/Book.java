@@ -245,6 +245,11 @@ public class Book implements Parcelable {
     }
 
 
+    /**
+     *
+     * @param title
+     * @return the bid or 0 if error
+     */
     public static int getBid(String title){
         SQLiteDatabase db = Database.getDB();
         Cursor cursor = db.query(TABLE_BOOKS, new String[]{"_id"}, Ktitle + "=?",
