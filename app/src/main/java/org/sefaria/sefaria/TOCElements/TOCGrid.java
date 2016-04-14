@@ -53,6 +53,8 @@ public class TOCGrid extends LinearLayout {
 
     private boolean flippedForHe;
 
+    private double regularColumnCount = 0.0;
+
 
 
     public TOCGrid(Context context,Book book, List<Node> tocRoots, boolean limitGridSize, Util.Lang lang, String pathDefiningNode) {
@@ -147,6 +149,16 @@ public class TOCGrid extends LinearLayout {
     */
 
 
+    private double getRegularColumnCount(){
+        if(regularColumnCount == 0.0){
+            Point size = MyApp.getScreenSize();
+            regularColumnCount = (size.x)/51.0;
+            if(regularColumnCount < 1.0)
+                regularColumnCount = 1.0;
+        }
+        return regularColumnCount;
+    }
+
     public void addNumGrid(List<Node> gridNodes,LinearLayout linearLayoutRoot, int depth) {
 
         //List<Integer> chaps = node.getChaps();
@@ -172,13 +184,11 @@ public class TOCGrid extends LinearLayout {
             gl.setRotationY(180);
         }
 
-        Point size = MyApp.getScreenSize();
+        double numColumns = getRegularColumnCount();
         if(depth > 0) depth--;
-        double numColumns = (size.x)/51.0;
-        //Toast.makeText(context,"screenWidthDp: " + size.x +  " smallestScreenWidthDp: " + size.y,Toast.LENGTH_SHORT).show();
-        numColumns -= depth;
-        if(numColumns <1)
-            numColumns = 1.0;
+        numColumns -= (int) (depth*1.5);
+        if(numColumns <1) numColumns = 1.0;
+
         gl.setColumnCount((int) numColumns);
         gl.setRowCount((int) Math.ceil(gridNodes.size() / numColumns));
 
@@ -193,9 +203,7 @@ public class TOCGrid extends LinearLayout {
             gl.addView(tocNumBox);
         }
         linearLayoutRoot.addView(gl);
-        Log.d("TOCGrid", "linWidth: " + linearLayoutRoot.getWidth() + "meruserdwidth:" + linearLayoutRoot.getMeasuredWidth());
 
-        Log.d("TOCGrid", "linWidth: " + linearLayoutRoot.getWidth() + "meruserdwidth:" + linearLayoutRoot.getMeasuredWidth());
     /*{
         //Old SDK (looks not as good, but doesn't matter as much)
         int currNodeIndex = 0;

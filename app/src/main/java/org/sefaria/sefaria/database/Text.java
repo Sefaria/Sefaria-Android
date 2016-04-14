@@ -227,9 +227,9 @@ public class Text implements Parcelable {
 
             str = parentNode.getPath(lang,false, true, false);
             if(str.charAt(str.length()-1) == '.' || str.charAt(str.length()-1) == ':')// it ends in a daf
-                str += " " + levels[0];
+                str += " " + Header.getNiceGridNum(lang,levels[0],false);
             else
-                str += ":" + levels[0];
+                str += ":" + Header.getNiceGridNum(lang,levels[0],false);
             Log.d("Text", "getLocationStri using getPath()" + str);
             return str;
         }
@@ -269,7 +269,7 @@ public class Text implements Parcelable {
     public Node getNodeFromText(Book book) throws API.APIException, Book.BookNotFoundException {
         Text text = this;
         if(text.ref != null && text.ref.length() > 0){
-            API.PlaceRef placeRef = API.PlaceRef.getPlace(text.ref);
+            API.PlaceRef placeRef = API.PlaceRef.getPlace(text.ref,book);
             text.parentNode = placeRef.node;
             if(placeRef.text != null){
                 text.levels = placeRef.text.levels.clone();

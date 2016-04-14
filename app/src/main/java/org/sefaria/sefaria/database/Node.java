@@ -726,7 +726,7 @@ public class Node{// implements  Parcelable{
 
 
     private static void setChaps_API(Node node, JSONObject jsonData) {
-        Log.d("Node", "setChaps_API" + node);
+        //Log.d("Node", "setChaps_API" + node);
         for(Node child:node.getChildren()){
             try{
                 JSONObject subObject = jsonData.getJSONObject(child.enTitle);
@@ -750,7 +750,7 @@ public class Node{// implements  Parcelable{
         if(!Settings.getUseAPI())
             return;
 
-        Log.i("Node", "settAllChaps_API: " + this);
+        //Log.i("Node", "settAllChaps_API: " + this);
         String bookTitle = Book.getTitle(bid);
 
         String place = bookTitle.replace(" ", "_");
@@ -846,7 +846,6 @@ public class Node{// implements  Parcelable{
 
 
     private List<Text> getTextsFromAPI() throws API.APIException{ //(String booktitle, int []levels)
-        Log.d("API","getTextsFromAPI2 called");
         String completeUrl = API.TEXT_URL + getPath(Util.Lang.EN, true, true, true) + "?" + API.ZERO_CONTEXT + API.ZERO_COMMENTARY;
 
         String data = API.getDataFromURL(completeUrl);
@@ -891,6 +890,7 @@ public class Node{// implements  Parcelable{
                         enText = textArray.getString(i);
                     } catch (JSONException e) {
                         Log.d("api", e.toString());
+                        //GoogleTracker.sendException(e,);
                     }
                     String heText = "";
                     try {
@@ -914,6 +914,7 @@ public class Node{// implements  Parcelable{
         }catch(JSONException e){
             e.printStackTrace();
             Log.e("api", "error processing json data");
+            GoogleTracker.sendException(e,"getTextsFromAPI: proc data");
         }
 
 
@@ -927,11 +928,11 @@ public class Node{// implements  Parcelable{
      * @throws API.APIException
      */
     public List<Text> getTexts() throws API.APIException{
-        Log.d("Node","getTexts called");
+        //Log.d("Node","getTexts called");
         if(textList != null) {
             return textList;
         }
-        Log.d("Node","found no textList");
+        //Log.d("Node","found no textList");
         if(!isTextSection){
             Log.e("Node", "getTexts() was called when it's not a textSection!" + this);
             //Integer.valueOf("aadfa");

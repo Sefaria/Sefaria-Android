@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
@@ -126,22 +127,47 @@ public class MyApp extends Application {
     }
 
     public static Point getScreenSize(){
-        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        Display display = wm.getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        int width = size.x;
-        int height = size.y;
+        //WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        //Display display = wm.getDefaultDisplay();
+        //Point size = new Point();
+        //display.getSize(size);
+        //int width = size.x;
+        //int height = size.y;
 
         Configuration configuration = getContext().getResources().getConfiguration();
-        int screenWidthDp = configuration.screenWidthDp; //The current width of the available screen space, in dp units, corresponding to screen width resource qualifier.
-        int smallestScreenWidthDp = configuration.smallestScreenWidthDp; //The smallest screen size an application will see in normal operation, corresponding to smallest screen width resource qualifier.
-        Log.d("TOCGrid","screenWidthDp: " + screenWidthDp +  " smallestScreenWidthDp: " + smallestScreenWidthDp);
-        Log.d("TOCGrid","width: " + width +  " H: " + height + "___w2:" + getContext().getResources().getDisplayMetrics().widthPixels);
-        size.x = screenWidthDp;
-        size.y = smallestScreenWidthDp;
+        Point size = new Point();
+        size.x = configuration.screenWidthDp;
+        size.y = configuration.screenHeightDp;
         return size;
     }
+
+
+
+    /**
+     * This method converts dp unit to equivalent pixels, depending on device density.
+     *
+     * @param dp A value in dp (density independent pixels) unit. Which we need to convert into pixels
+     * @return A float value to represent px equivalent to dp depending on device density
+     */
+    public static float convertDpToPixel(float dp){
+        DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+        float px = dp * ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+        return px;
+    }
+
+    /**
+     * This method converts device specific pixels to density independent pixels.
+     *
+     * @param px A value in px (pixels) unit. Which we need to convert into db
+     * @return A float value to represent dp equivalent to px value
+     */
+    public static float convertPixelsToDp(float px){
+        DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+        float dp = px / ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+        return dp;
+    }
+
+
 
     public static int getCatColor(String catName) {
         int color;
@@ -215,7 +241,7 @@ public class MyApp extends Application {
                 GoogleTracker.sendEvent(GoogleTracker.CATEGORY_OPENED_URL, url);
                 String place = url.replaceAll("(?i).*sefaria\\.org/?(s2/)?", "");
                 try {
-                    API.PlaceRef placeRef = API.PlaceRef.getPlace(place);
+                    API.PlaceRef placeRef = API.PlaceRef.getPlace(place,null);
                     SuperTextActivity.startNewTextActivityIntent(activity, placeRef.book, placeRef.text, placeRef.node, true, null,-1);
                 }catch (API.APIException e){
                     openURLInBrowser(activity,url);

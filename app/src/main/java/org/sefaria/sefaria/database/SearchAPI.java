@@ -1,5 +1,7 @@
 package org.sefaria.sefaria.database;
 
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -66,8 +68,11 @@ public class SearchAPI {
                 }
 
                 String content = hits.getJSONObject(i).getJSONObject("highlight").getJSONArray("content").getString(0);
-                String title = ref.replaceAll("\\s[0-9]+.*$", "");
+                ///String title = ref.replaceAll("\\s[0-9]+.*$", "");
+                String path = source.getString("path");
+                String title = path.substring(path.lastIndexOf("/")+1);
 
+                Log.d("title", title);
                 String heText = "";
                 String enText = "";
                 if (id.contains("[he]")) {

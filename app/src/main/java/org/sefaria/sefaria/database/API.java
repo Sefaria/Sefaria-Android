@@ -166,21 +166,25 @@ public class API {
         PlaceRef() {
         }
 
-        public static PlaceRef getPlace(String place) throws APIException, Book.BookNotFoundException {
+        public static PlaceRef getPlace(String place,Book book) throws APIException, Book.BookNotFoundException {
             PlaceRef placeRef = new PlaceRef();
             Log.d("API", "place:" + place);
-            placeRef.book = null;// = new Book(spots[0]);
             place = place.replaceAll("_", " ");
-            List<Book> books = Book.getAll();
-            for (Book tempBook : books) {
-                String newPlace = place.replaceFirst("^" + tempBook.title + "\\s*", "");
-                if (!newPlace.equals(place)) {
-                    placeRef.book = tempBook;
-                    place = newPlace;
-                    break;
+            if(book != null){
+                placeRef.book = book;
+            }else {
+                placeRef.book = null;// = new Book(spots[0]);
+                List<Book> books = Book.getAll();
+                for (Book tempBook : books) {
+                    String newPlace = place.replaceFirst("^" + tempBook.title + "\\s*", "");
+                    if (!newPlace.equals(place)) {
+                        placeRef.book = tempBook;
+                        place = newPlace;
+                        break;
+                    }
                 }
             }
-            Log.d("API", "place:" + place);
+            //Log.d("API", "place:" + place);
             String[] spots = place.split("[\\.:]|(,\\s)");
 
             if (placeRef.book == null)
@@ -195,11 +199,11 @@ public class API {
                 placeRef.node = placeRef.book.getTOCroots().get(0);
                 for (int i = 0; i < spots.length; i++) {
                     String spot = spots[i];
-                    Log.d("API", "spot1:" + spot);
+                    //Log.d("API", "spot1:" + spot);
                     if (spot.length() == 0)
                         continue;
                     Node tempNode = placeRef.node.getChild(spot);
-                    Log.d("API", "tempNode: " + tempNode);
+                    //Log.d("API", "tempNode: " + tempNode);
                     if (tempNode == null) {
                         //it's a most likely a final number (such as a verse number) so that's why there's no Node for it
                         //so, lets get the firstDescendant (which should just be the node itself, but just in case lets do it this way)
