@@ -68,7 +68,6 @@ public class SearchAPI {
                 }
 
                 String content = hits.getJSONObject(i).getJSONObject("highlight").getJSONArray("content").getString(0);
-                ///String title = ref.replaceAll("\\s[0-9]+.*$", "");
                 String path = source.getString("path");
                 String title = path.substring(path.lastIndexOf("/")+1);
 
