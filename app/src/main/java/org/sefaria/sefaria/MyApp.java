@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Point;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
@@ -11,6 +12,8 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.util.Log;
+import android.view.Display;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import org.sefaria.sefaria.activities.SuperTextActivity;
@@ -119,6 +122,17 @@ public class MyApp extends Application {
                 return quattrocento_tf;
         }
         return null;
+    }
+
+    public static Point getScreenSize(){
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        int height = size.y;
+        Log.d("TOCGrid","width: " + width +  " H: " + height + "___w2:" + getContext().getResources().getDisplayMetrics().widthPixels);
+        return size;
     }
 
     public static int getCatColor(String catName) {
