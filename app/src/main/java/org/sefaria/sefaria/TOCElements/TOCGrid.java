@@ -3,15 +3,19 @@ package org.sefaria.sefaria.TOCElements;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Point;
 import android.support.v7.widget.GridLayout;
 import android.util.Log;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.activities.TextActivity;
@@ -49,7 +53,7 @@ public class TOCGrid extends LinearLayout {
 
     private boolean flippedForHe;
 
-    private double numColumns = 7.0;
+
 
     public TOCGrid(Context context,Book book, List<Node> tocRoots, boolean limitGridSize, Util.Lang lang, String pathDefiningNode) {
         super(context);
@@ -126,8 +130,8 @@ public class TOCGrid extends LinearLayout {
         }
         setLang(lang);
     }
-
-    /* saving method for SDK VERSION < 14 */
+    /*
+    // /* saving method for SDK VERSION < 14 //
     private LinearLayout addRow(LinearLayout linearLayoutRoot) {
         LinearLayout ll = new LinearLayout(context);
         ll.setOrientation(LinearLayout.HORIZONTAL);
@@ -140,9 +144,10 @@ public class TOCGrid extends LinearLayout {
         linearLayoutRoot.addView(ll);
         return ll;
     }
+    */
 
 
-    public void addNumGrid(List<Node> gridNodes,LinearLayout linearLayoutRoot) {
+    public void addNumGrid(List<Node> gridNodes,LinearLayout linearLayoutRoot, int depth) {
 
         //List<Integer> chaps = node.getChaps();
         if (gridNodes.size() == 0){
@@ -151,7 +156,10 @@ public class TOCGrid extends LinearLayout {
         }
 
 
+
+
         GridLayout gl = new GridLayout(context);
+        //GridLayout gl = new GridLayout(context);
         gl.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 
         /**
@@ -164,8 +172,17 @@ public class TOCGrid extends LinearLayout {
             gl.setRotationY(180);
         }
 
+        Point size = MyApp.getScreenSize();
+        if(depth > 0)
+            depth--;
+        int numColumns = (size.x - depth*100)/205;
+        if(numColumns <1)
+            numColumns = 1;
+        gl.setColumnCount(numColumns);
+        Log.d("SefariaGridLayout","bf setRows");
         gl.setRowCount((int) Math.ceil(gridNodes.size() / numColumns));
-        gl.setColumnCount((int) numColumns);
+        Log.d("SefariaGridLayout", "after setRows");
+
         for (int j = 0; j < gridNodes.size(); j++) {
             //This operation of creating a new view lots of times (for example, in Araab Turim) is causing it to go really slow
             TOCNumBox tocNumBox = new TOCNumBox(context, gridNodes.get(j), lang);
@@ -176,6 +193,9 @@ public class TOCGrid extends LinearLayout {
             gl.addView(tocNumBox);
         }
         linearLayoutRoot.addView(gl);
+        Log.d("TOCGrid", "linWidth: " + linearLayoutRoot.getWidth() + "meruserdwidth:" + linearLayoutRoot.getMeasuredWidth());
+
+        Log.d("TOCGrid", "linWidth: " + linearLayoutRoot.getWidth() + "meruserdwidth:" + linearLayoutRoot.getMeasuredWidth());
     /*{
         //Old SDK (looks not as good, but doesn't matter as much)
         int currNodeIndex = 0;
@@ -277,7 +297,7 @@ public class TOCGrid extends LinearLayout {
             if(!child.isGridItem()) {
                 if (gridNodes.size() > 0) {
                     //There's some gridsNodes that haven't been displayed yet
-                    addNumGrid(gridNodes, tocSectionName);
+                    addNumGrid(gridNodes, tocSectionName,node.getDepth());
                     gridNodes = new ArrayList<>();
                 }
                 displayTree(child, tocSectionName);
@@ -287,7 +307,7 @@ public class TOCGrid extends LinearLayout {
         }
         if (gridNodes.size() > 0) {
             //There's some gridsNodes that haven't been displayed yet
-            addNumGrid(gridNodes, tocSectionName);
+            addNumGrid(gridNodes, tocSectionName,node.getDepth());
         }
         if(displayLevel && node.getDepth()>=2){
             tocSectionName.setDisplayingChildren(false);
