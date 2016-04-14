@@ -27,7 +27,9 @@
     <string name="send_to">Share</string>
     <string name="online_library_version">Online Mode Version:&#160;</string>
     <string name="offline_library_version">Offline Library Version:&#160;</string>
-
+    <string name="problem_internet">Problem getting data from internet</string>
+    <string name="consider_downloading">consider downloading Offline Library</string>
+    <string name="searching_requires_internet">searching requires internet connection</string>
 
     <string name="action_bookmarks">Bookmarks</string>
     <string name="activity_filterlinks">Filter Sources</string>

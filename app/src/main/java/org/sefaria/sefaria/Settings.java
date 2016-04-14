@@ -232,7 +232,7 @@ public class Settings {
             Node node = null;
             try {
                 node = book.getNodeFromPathStr(nodePathStr);
-                node = node.getFirstDescendant(true);//should be unneeded line, but in case there was a previous bug this should return a isTextSection() node to avoid bugs
+                node = node.getFirstDescendant();//true);//should be unneeded line, but in case there was a previous bug this should return a isTextSection() node to avoid bugs
             } catch (Exception e) {
                 ;
             }
@@ -243,7 +243,8 @@ public class Settings {
 
         final static private String SETTINGS_SPLITTER = "@";
 
-        static public void setSavedBook(Book book,Node node, Text text, Util.Lang lang){
+        static public boolean setSavedBook(Book book,Node node, Text text, Util.Lang lang){
+            if(book == null) return false;
             SharedPreferences bookSavedSettings = getBookSavedSettings();
             SharedPreferences.Editor editor = bookSavedSettings.edit();
             //"<en|he|bi>.<cts|sep>.<white|grey|black>.10px:"+ <rootNum>.<Childnum>.<until>.<leaf>.<verseNum>"
@@ -262,7 +263,7 @@ public class Settings {
             editor.putString(EN_TITLE + book.title, node.getMenuBarTitle(book, Util.Lang.EN));
             editor.putString(HE_TITLE + book.title, node.getMenuBarTitle(book, Util.Lang.HE));
             editor.commit();
-
+            return true;
         }
 
 
@@ -403,9 +404,9 @@ public class Settings {
             List<String> books = new ArrayList<>();
             SharedPreferences recentSettings = getRecentSettings();
             Set<String> pinnedTexts = getPinned();
-            int recentTextCount = 3;
+            int recentTextCount = 4;
             while(pinnedTexts.size()/(recentTextCount*1.0) > .6){
-                recentTextCount += 3;
+                recentTextCount += 2;
             }
             for(String bookTitle:pinnedTexts){
                 books.add(bookTitle);

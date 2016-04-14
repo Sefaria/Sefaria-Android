@@ -89,7 +89,7 @@ public class MenuDirectRef extends LinearLayout{
                     node = Node.getNodeFromPathStr(book,nodePath);
             } catch (Exception e) {
                 try {
-                    node = book.getTOCroots().get(0).getFirstDescendant(true);
+                    node = book.getTOCroots().get(0).getFirstDescendant(); //true); //tihs was used to check about if it has the text
                 }catch (Exception e2){
                     e2.printStackTrace();
                 }

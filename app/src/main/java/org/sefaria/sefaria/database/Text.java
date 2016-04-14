@@ -299,14 +299,14 @@ public class Text implements Parcelable {
                     }
                     if(!foundChild){
                         Log.e("Node","Problem finding getNodeFromLink child. node" + node);
-                        text.parentNode = node.getFirstDescendant(false);
+                        text.parentNode = node.getFirstDescendant();
                         return text.parentNode;
                     }
 
                 }
             }else{
                 Log.d("Node","not getting complex node yet");
-                text.parentNode = node.getFirstDescendant(false);
+                text.parentNode = node.getFirstDescendant();
                 return text.parentNode;
             }
         }catch (Exception e){
@@ -314,7 +314,7 @@ public class Text implements Parcelable {
             return null;
         }
 
-        text.parentNode = node.getFirstDescendant(false);
+        text.parentNode = node.getFirstDescendant();
         return parentNode;
     }
 
@@ -610,13 +610,18 @@ public class Text implements Parcelable {
         if(text.tid != 0 && this.tid != 0)
             return text.tid == this.tid;
 
-        boolean isEqual = (
+        if(super.equals(o))
+            return true;
+
+        boolean isEqual =  (
                 Arrays.equals(text.levels,this.levels)
-                        &&
-                        this.bid == text.bid
+                &&
+                this.bid == text.bid
                 //&& this.parentNode.equals(text.parentNode)
                 //TODO maybe needs stricter def... but for now this is fine
         );
+        if(this.parentNode != null && text.parentNode != null)
+            return isEqual && this.parentNode.pseudoEquals(text.parentNode);
         return isEqual;
         /*
         if((text.tid == 0 && this.tid ==0) || (text.ref != null || this.ref != null)){

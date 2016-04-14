@@ -128,7 +128,7 @@ public class TOCActivity extends AppCompatActivity {
     View.OnClickListener homeClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            MyApp.homeClick(TOCActivity.this,false,false);
+            //MyApp.homeClick(TOCActivity.this,false,false);
         }
     };
 

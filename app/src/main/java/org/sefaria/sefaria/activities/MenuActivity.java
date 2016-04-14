@@ -124,7 +124,7 @@ public class MenuActivity extends Activity {
     View.OnLongClickListener homeLongClick = new View.OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
-            MyApp.homeClick(MenuActivity.this, true,false);
+            //MyApp.homeClick(MenuActivity.this, true,false);
             return true;
         }
     };
@@ -138,8 +138,8 @@ public class MenuActivity extends Activity {
             setResult(0, returnIntent);
             finish();
             */
-            MyApp.homeClick(MenuActivity.this,false,false);
-            finish();
+            //MyApp.homeClick(MenuActivity.this,false,false);
+            //finish();
         }
     };
 
