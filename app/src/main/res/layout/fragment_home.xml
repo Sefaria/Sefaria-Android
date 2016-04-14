@@ -1,6 +1,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:id="@+id/root"
     android:layout_height="match_parent"
@@ -24,11 +25,72 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
+
             <LinearLayout
-                android:id="@+id/gridRoot"
+                android:id="@+id/homeRoot"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_gravity="center">
+                <org.sefaria.sefaria.layouts.SefariaTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingLeft="3dp"
+                    android:paddingRight="3dp"
+                    android:paddingTop="40dp"
+                    android:paddingBottom="20dp"
+                    android:textSize="20sp"
+                    android:text="Browse Texts"
+                    app:isSerif="false"
+                    app:lang="english"
+                    android:textColor="?text_color_english"
+                    android:textAllCaps="true"/>
+                <LinearLayout
+                    android:id="@+id/gridRoot"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"/>
+                <org.sefaria.sefaria.layouts.SefariaTextView
+                    android:id="@+id/recentTextsTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingLeft="3dp"
+                    android:paddingRight="3dp"
+                    android:paddingTop="40dp"
+                    android:paddingBottom="20dp"
+                    android:textSize="20sp"
+                    android:text="Recent Texts"
+                    app:isSerif="false"
+                    app:lang="english"
+                    android:textColor="?text_color_english"
+                    android:textAllCaps="true"/>
+                <LinearLayout
+                    android:id="@+id/recentRoot"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"></LinearLayout>
+                <org.sefaria.sefaria.layouts.SefariaTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingLeft="3dp"
+                    android:paddingRight="3dp"
+                    android:paddingTop="40dp"
+                    android:paddingBottom="20dp"
+                    android:textSize="20sp"
+                    android:text="Calendar"
+                    app:isSerif="false"
+                    app:lang="english"
+                    android:textColor="?text_color_english"
+                    android:textAllCaps="true"/>
+                <LinearLayout
+                    android:id="@+id/calendarRoot"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"></LinearLayout>
+
 
             </LinearLayout>
 

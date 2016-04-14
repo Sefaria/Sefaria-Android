@@ -76,19 +76,13 @@ public class HomeFragment extends android.support.v4.app.Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-
-        LinearLayout gridRoot = (LinearLayout) view.findViewById(R.id.gridRoot);
-        LinearLayout homeRoot = new LinearLayout(activity);
-        homeRoot.setOrientation(LinearLayout.VERTICAL);
-        homeRoot.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
-        homeRoot.setGravity(Gravity.CENTER);
-        gridRoot.addView(homeRoot);
+        LinearLayout homeRoot = (LinearLayout) view.findViewById(R.id.homeRoot);
 
         //Don't mention the living library thing unless you're actually at the home screen
         //addHeader(homeRoot);
-        addMenuGrid(homeRoot);
-        addRecentTexts(homeRoot);
-        addCalendar(homeRoot);
+        addMenuGrid(view);
+        addRecentTexts(view);
+        addCalendar(view);
 
 
         //just extra spacing for the bottom
@@ -127,13 +121,10 @@ public class HomeFragment extends android.support.v4.app.Fragment {
         homeRoot.addView(livingLibraryView);
     }*/
 
-    private void addRecentTexts(LinearLayout homeRoot){
+    private void addRecentTexts(View view){
         //Recent Texts
         if(recentRoot == null) {
-            recentRoot = new LinearLayout(getContext());
-            recentRoot.setOrientation(LinearLayout.VERTICAL);
-            recentRoot.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
-            homeRoot.addView(recentRoot);
+            recentRoot = (LinearLayout) view.findViewById(R.id.recentRoot);
         }
         else{
             recentRoot.removeAllViews();
@@ -142,7 +133,6 @@ public class HomeFragment extends android.support.v4.app.Fragment {
         List<String> recentBooks = Settings.RecentTexts.getRecentTexts();
         recentTexts = new ArrayList<>();
         if(recentBooks.size()>0) {
-            recentRoot.addView(createTypeTitle("Recent Texts",false));
             LinearLayout recentRow = null;
             for (int i=0;i<recentBooks.size();i++){
                 if(i%columNum  == 0){
@@ -166,6 +156,8 @@ public class HomeFragment extends android.support.v4.app.Fragment {
                 }
 
             }
+        } else {
+            view.findViewById(R.id.recentTextsTV).setVisibility(View.GONE);
         }
 
     }
@@ -173,12 +165,12 @@ public class HomeFragment extends android.support.v4.app.Fragment {
 
 
 
-    private void addMenuGrid(LinearLayout homeRoot){
+    private void addMenuGrid(View view){
         //Menu grid
         Util.Lang menuLang = Settings.getMenuLang();
         menuGrid = new MenuGrid(getContext(),NUM_COLUMNS, menuState,LIMIT_GRID_SIZE,menuLang);
-        homeRoot.addView(createTypeTitle("Browse Texts",false));
-        homeRoot.addView(menuGrid);
+        LinearLayout gridRoot = (LinearLayout) view.findViewById(R.id.gridRoot);
+        gridRoot.addView(menuGrid);
     }
 
     private void setLang(Util.Lang lang){
@@ -197,13 +189,9 @@ public class HomeFragment extends android.support.v4.app.Fragment {
 
     }
 
-    private void addCalendar(LinearLayout homeRoot){
+    private void addCalendar(View view){
         //Calendar
-        LinearLayout calendarRoot = new LinearLayout(getContext());
-        calendarRoot.setOrientation(LinearLayout.HORIZONTAL);
-        calendarRoot.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
-        homeRoot.addView(createTypeTitle("Calendar", false));
-        homeRoot.addView(calendarRoot);
+        LinearLayout calendarRoot = (LinearLayout) view.findViewById(R.id.calendarRoot);
         dailyLearnings = DailyLearning.getDailyLearnings(getContext());
         for(MenuDirectRef menuDirectRef: dailyLearnings) {
             calendarRoot.addView(menuDirectRef);

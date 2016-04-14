@@ -1,11 +1,13 @@
 package org.sefaria.sefaria.layouts;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.widget.TextView;
 
 import org.sefaria.sefaria.MyApp;
+import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
 
 /**
@@ -23,6 +25,28 @@ public class SefariaTextView extends TextView {
 
     public SefariaTextView(Context context, AttributeSet attributeSet) {
         super(context,attributeSet);
+        boolean isSerif = false;
+        Util.Lang lang = Util.Lang.EN;
+
+        TypedArray a = context.obtainStyledAttributes(attributeSet, R.styleable.SefariaTextView);
+        final int N = a.getIndexCount();
+        for(int i = 0; i < N; i++){
+            int attr = a.getIndex(i);
+            switch(attr){
+                case R.styleable.SefariaTextView_isSerif:
+                    isSerif = a.getBoolean(attr,false);
+
+                    break;
+                case R.styleable.SefariaTextView_lang:
+                    int langInt = a.getInt(attr,-1);
+                    if (langInt == 0) lang = Util.Lang.EN;
+                    else if (langInt == 1) lang = Util.Lang.HE;
+                    break;
+            }
+        }
+        a.recycle();
+
+        setFont(lang,isSerif);
     }
 
 
