@@ -551,7 +551,6 @@ public abstract class SuperTextActivity extends FragmentActivity {
         @Override
         public void onClick(View v) {
             Log.d("TextAct", "here");
-            Node oldNode = currNode;
             if(searchActionbar == null) {
                 searchActionbar = new SearchActionbar(SuperTextActivity.this, findOnPageCloseClick, null,findOnPageUpClick,findOnPageDownClick,book.getCatColor(), getRString(R.string.search) + " " + book.getTitle(menuLang));
             }
@@ -722,7 +721,6 @@ public abstract class SuperTextActivity extends FragmentActivity {
         if(currNode != node){
             currNode = node;
             customActionbar.setTitleText(currNode.getMenuBarTitle(book, menuLang), menuLang, true, true);
-
         }
     }
 
