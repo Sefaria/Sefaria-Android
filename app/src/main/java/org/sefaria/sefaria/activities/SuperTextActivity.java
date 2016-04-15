@@ -480,7 +480,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
                 linkFragment.gotoState(LinkFragment.State.MAIN, linkFragment.getView(), null);
             }
 
-        } else if(searchActionBarRoot.getChildCount()>0){
+        } else if(searchActionBarRoot != null && searchActionBarRoot.getChildCount()>0){
             searchActionBarRoot.removeAllViews();
         } else {
             super.onBackPressed();
