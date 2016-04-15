@@ -29,6 +29,7 @@ public class GoogleTracker extends MyApp {
     public static final String CATEGORY_OPEN_NEW_BOOK_ACTION_2 = "Open new book action 2";
     public static final String CATEGORY_API_REQUEST = "API request";
     public static final String CATEGORY_RANDOM_ERROR = "Random Error";
+    public static final String CATEGORY_FIND_ON_PAGE = "Find on Page";
 
 
     public GoogleTracker(){

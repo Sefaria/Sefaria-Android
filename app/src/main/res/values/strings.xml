@@ -76,6 +76,8 @@
     <string name="defaults_restored">Defaults Restored</string>
     <string name="saved">Saved Successfully</string>
     <string name="no_match_filter">No sources match filter</string>
+    <string name="search">Search</string>
+    <string name="enter_word_to_search">Enter word to search in Book</string>
 
     <string name="upgrade_to_newest">Upgrade to the newest version of</string>
     <string name="view_bookmarks">View Bookmarks</string>
