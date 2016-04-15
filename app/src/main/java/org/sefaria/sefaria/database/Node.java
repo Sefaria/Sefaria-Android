@@ -65,6 +65,8 @@ public class Node{// implements  Parcelable{
     private String lastSearchedTerm = null;
     private List<Text> foundFindOnPageList = null;
 
+    private Boolean gotTextListInAPI;
+
 
     private static Map<Integer,Node> allSavedNodes = new HashMap<Integer, Node>();
 
@@ -934,10 +936,10 @@ public class Node{// implements  Parcelable{
      */
     public List<Text> getTexts() throws API.APIException{
         //Log.d("Node","getTexts called");
-        if(textList != null) {
+        if(textList != null && (gotTextListInAPI == Settings.getUseAPI())) {
             return textList;
         }
-        //Log.d("Node","found no textList");
+        Log.d("Node","found no textList");
         if(!isTextSection){
             Log.e("Node", "getTexts() was called when it's not a textSection!" + this);
             //Integer.valueOf("aadfa");
@@ -976,6 +978,7 @@ public class Node{// implements  Parcelable{
         for(Text text:textList){
             text.parentNode = this;
         }
+        gotTextListInAPI = Settings.getUseAPI();
         return textList;
     }
 
