@@ -10,11 +10,13 @@ import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -26,6 +28,7 @@ import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.TextElements.SectionAdapter;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.API;
+import org.sefaria.sefaria.database.Node;
 import org.sefaria.sefaria.database.Text;
 import org.sefaria.sefaria.layouts.ListViewExt;
 
@@ -349,6 +352,12 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
 
         }
     };
+
+
+    @Override
+    protected void postFindOnPageBackground() {
+        sectionAdapter.notifyDataSetChanged();
+    }
 
 
 

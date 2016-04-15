@@ -18,9 +18,6 @@
     android:textSize="18sp"
     android:gravity="center"
 
-
-
-
     >
 
 </org.sefaria.sefaria.layouts.SefariaTextView>
