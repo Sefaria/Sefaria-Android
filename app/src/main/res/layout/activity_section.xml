@@ -20,6 +20,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:translationZ="40dp"></LinearLayout>
+        <LinearLayout
+        android:id="@+id/searchBarRoot"
+        android:orientation="horizontal"
+        android:layout_alignParentTop="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:translationZ="40dp"></LinearLayout>
 
         <LinearLayout
             android:id="@+id/textMenuRoot"

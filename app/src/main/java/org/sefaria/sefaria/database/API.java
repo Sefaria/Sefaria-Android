@@ -169,7 +169,7 @@ public class API {
         public static PlaceRef getPlace(String place, Book book) throws APIException, Book.BookNotFoundException {
             PlaceRef placeRef = new PlaceRef();
             Log.d("API", "place:" + place);
-            place = place.replaceAll("_", " ");
+            place = place.replace("_", " ");
             if (book == null) {
                 String title = place.replaceAll("[\\s\\.][0-9]+.*$", "");
                 Log.d("api", "title:" + title);
@@ -187,8 +187,8 @@ public class API {
 
             if (book != null){
                 placeRef.book = book;
+                place = place.replaceFirst("^" + book.title + "\\s*", "");
             } else{
-                placeRef.book = null;// = new Book(spots[0]);
                 List<Book> books = Book.getAll();
                 for (Book tempBook : books) {
                     String newPlace = place.replaceFirst("^" + tempBook.title + "\\s*", "");
@@ -199,6 +199,7 @@ public class API {
                     }
                 }
             }
+
 
             //Log.d("API", "place:" + place);
             String[] spots = place.split("[\\.:]|(,\\s)");
@@ -503,7 +504,7 @@ public class API {
     static Comparator<Text> compareTexts = new Comparator<Text>() {
         @Override
         public int compare(Text a, Text b) {
-            //only sorting on bid. Within same book using sable sort to keep order
+            //only sorting on bid. Within same book using stable sort to keep order
             return a.bid - b.bid;
         }
     };
@@ -523,6 +524,11 @@ public class API {
 
 
     private class GetDataTask extends AsyncTask <String, Void, String> {
+
+        @Override
+        protected void onPreExecute() {
+        }
+
         @Override
         protected String doInBackground(String... params) {
             String result = fetchData(params[0]);
@@ -534,10 +540,6 @@ public class API {
 
         @Override
         protected void onPostExecute(String result) {
-            //TODO: FILL IN:
-            //Log.d("api", "in onPostExecute: data length: " + result.length());
-            //How about using intent to push the List<Text> to Text.java using Parcelable, as Text class already implements it? (ES)
-            //Intent intent = new Intent();
         }
     }
 

@@ -25,6 +25,7 @@ import org.sefaria.sefaria.Dialog.DialogNoahSnackbar;
 import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
+import org.sefaria.sefaria.SearchElements.SearchActionbar;
 import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.TextElements.TextChapterHeader;
 import org.sefaria.sefaria.TextElements.TextMenuBar;
@@ -32,9 +33,7 @@ import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Database;
-import org.sefaria.sefaria.database.Downloader;
 import org.sefaria.sefaria.database.Node;
-import org.sefaria.sefaria.database.Searching;
 import org.sefaria.sefaria.database.Text;
 import org.sefaria.sefaria.layouts.CustomActionbar;
 import org.sefaria.sefaria.layouts.PerekTextView;
@@ -43,6 +42,8 @@ import org.sefaria.sefaria.MenuElements.MenuNode;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.sefaria.sefaria.MyApp.getRString;
 
 /**
  * Created by nss on 1/5/16.
@@ -111,7 +112,12 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
     private static boolean firstTimeOpeningAppThisSession = true;
 
-    private String searchingTerm;
+    private Boolean loadedTextUsingAPI = null;
+
+    protected LinearLayout searchActionBarRoot;
+    protected SearchActionbar searchActionbar;
+    protected String searchingTerm;
+    protected FindOnPage findOnPage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -405,7 +411,8 @@ public abstract class SuperTextActivity extends FragmentActivity {
         if (customActionbar == null) {
             MenuNode menuNode = new MenuNode("a","b",null); //TODO possibly replace this object with a more general bilinual node
             int catColor = book.getCatColor();
-            searchClick = null;
+            if(Settings.getUseAPI())
+                searchClick = null;
             backClick = null;
             homeLongClick = null;
             customActionbar = new CustomActionbar(this, menuNode, menuLang,homeClick,homeLongClick, null,searchClick,titleClick,menuClick,backClick,catColor); //TODO.. I'm not actually sure this should be lang.. instead it shuold be MENU_LANG from Util.S
@@ -473,6 +480,8 @@ public abstract class SuperTextActivity extends FragmentActivity {
                 linkFragment.gotoState(LinkFragment.State.MAIN, linkFragment.getView(), null);
             }
 
+        } else if(searchActionBarRoot != null && searchActionBarRoot.getChildCount()>0){
+            searchActionBarRoot.removeAllViews();
         } else {
             super.onBackPressed();
         }
@@ -512,47 +521,51 @@ public abstract class SuperTextActivity extends FragmentActivity {
         }
     };
 
-    private List<Text> searchList;
-    private int spotInSearching = 0;
+    View.OnClickListener findOnPageCloseClick = new View.OnClickListener(){
+        @Override
+        public void onClick(View v) {
+            searchActionBarRoot.removeAllViews();
+        }
+    };
+
+    protected abstract void postFindOnPageBackground();
+
+    View.OnClickListener findOnPageUpClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if(findOnPage == null) findOnPage = new FindOnPage(SuperTextActivity.this);
+            findOnPage.runFindOnPage(false);
+        }
+    };
+
+    View.OnClickListener findOnPageDownClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if(findOnPage == null) findOnPage = new FindOnPage(SuperTextActivity.this);
+            findOnPage.runFindOnPage(true);
+        }
+    };
+
 
     View.OnClickListener searchClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Log.d("TextAct","here");
+            Log.d("TextAct", "here");
             Node oldNode = currNode;
-            if(searchList == null) {
-
-                List<Text> list = null;
-                while(list == null || list.size() ==0){
-                    try {
-                        if(list != null)
-                            currNode = currNode.getNextTextNode();
-                        list = Searching.findOnPage(currNode, "spoke");
-                    } catch (Node.LastNodeException e) {
-                        e.printStackTrace();
-                        break;
-                    }
-                }
-
-                searchList = new ArrayList<>();
-                searchList.addAll(list);
+            if(searchActionbar == null) {
+                searchActionbar = new SearchActionbar(SuperTextActivity.this, findOnPageCloseClick, null,findOnPageUpClick,findOnPageDownClick,book.getCatColor(), getRString(R.string.search) + " " + book.getTitle(menuLang));
             }
-            if(spotInSearching < searchList.size())
-                jumpToText(searchList.get(spotInSearching++));
-            else{
-                Toast.makeText(SuperTextActivity.this,"No more results.",Toast.LENGTH_SHORT).show();
-            }
+            if(searchActionBarRoot == null)
+                searchActionBarRoot = (LinearLayout) findViewById(R.id.searchBarRoot);
+            searchActionBarRoot.removeAllViews();//in case you some how click on the search button while the search thing is already open (see if the old bar is visable through the search bar)
+            searchActionBarRoot.addView(searchActionbar);
 
+            if(findOnPage == null)
+                findOnPage = new FindOnPage(SuperTextActivity.this);
         }
     };
 
-    View.OnClickListener homeClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Settings.BookSettings.setSavedBook(book, currNode, currText, textLang);//data also saved with home click
-            drawerLayout.openDrawer(Gravity.LEFT);
-        }
-    };
+
 
     View.OnClickListener titleClick = new View.OnClickListener() {
         @Override
@@ -915,6 +928,14 @@ public abstract class SuperTextActivity extends FragmentActivity {
         });
     }
 
+    View.OnClickListener homeClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Settings.BookSettings.setSavedBook(book, currNode, currText, textLang);//data also saved with home click
+            drawerLayout.openDrawer(Gravity.LEFT);
+        }
+    };
+
     /*
     ONCLICK LISTENERS
      */
@@ -956,5 +977,9 @@ public abstract class SuperTextActivity extends FragmentActivity {
         Intent intent = new Intent(Intent.ACTION_VIEW,Uri.parse(url));
         startActivity(intent);
     }
+
+
+    //FIND ON PAGE
+
 
 }

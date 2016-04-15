@@ -68,11 +68,51 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_toRightOf="@+id/search_btn"
+            android:layout_toLeftOf="@+id/up_button"
             android:inputType="text"
             android:textColor="?text_color_main"
             android:textColorHint="?text_color_english"
             android:imeOptions="actionSearch"
             android:hint="Search"/>
+
+        <FrameLayout
+            android:id="@+id/up_button"
+            android:layout_toLeftOf="@+id/down_button"
+            android:layout_width="@dimen/custom_action_bar_button_frame_width"
+            android:layout_height="match_parent"
+            android:paddingRight="@dimen/custom_action_bar_button_to_side_padding"
+            android:layout_margin="0dp"
+            android:background="?selectableItemBackgroundBorderless"
+            >
+            <ImageView
+                android:layout_width="@dimen/custom_action_bar_pic_size"
+                android:layout_height="@dimen/custom_action_bar_pic_size"
+                android:src="@drawable/double_up"
+                android:scaleType="fitCenter"
+                android:tint="?text_color_main"
+                android:alpha="0.5"
+                android:layout_gravity="center"
+                />
+        </FrameLayout>
+        <FrameLayout
+            android:id="@+id/down_button"
+            android:layout_alignParentRight="true"
+            android:layout_width="@dimen/custom_action_bar_button_frame_width"
+            android:layout_height="match_parent"
+            android:paddingRight="@dimen/custom_action_bar_button_to_side_padding"
+            android:layout_margin="0dp"
+            android:background="?selectableItemBackgroundBorderless"
+            >
+            <ImageView
+                android:layout_width="@dimen/custom_action_bar_pic_size"
+                android:layout_height="@dimen/custom_action_bar_pic_size"
+                android:src="@drawable/double_down"
+                android:scaleType="fitCenter"
+                android:tint="?text_color_main"
+                android:alpha="0.5"
+                android:layout_gravity="center"
+                />
+        </FrameLayout>
 
 
     </RelativeLayout>

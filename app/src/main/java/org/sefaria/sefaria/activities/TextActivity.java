@@ -77,6 +77,11 @@ public class TextActivity extends SuperTextActivity {
         }
     }
 
+    @Override
+    protected void postFindOnPageBackground() {
+        //TODO
+    }
+
     protected void setIsCts(boolean isCts) {
         this.isCts = isCts;
         for (PerekTextView ptv : perekTextViews) {

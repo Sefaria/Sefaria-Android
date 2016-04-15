@@ -62,7 +62,10 @@ public class Node{// implements  Parcelable{
     private int tocRootsNum = -1;
 
 
-    private String lastSearchedTerm;
+    private String lastSearchedTerm = null;
+    private List<Text> foundFindOnPageList = null;
+
+    private Boolean gotTextListInAPI;
 
 
     private static Map<Integer,Node> allSavedNodes = new HashMap<Integer, Node>();
@@ -274,7 +277,7 @@ public class Node{// implements  Parcelable{
         return node;
     }
 
-    private Node getLastDescendant(){
+    public Node getLastDescendant(){
         Node node = this;
         while(node.getChildren().size() > 0){
             node = node.getChildren().get(node.getChildren().size()-1);
@@ -507,19 +510,23 @@ public class Node{// implements  Parcelable{
     }
 
 
-    public void findWords(String searchingTerm){
-        if(searchingTerm == null)
-            return;
-        if(textList == null)
-            return;
-        if(searchingTerm.equals(lastSearchedTerm)){
-            return;
-        }
-        if(lastSearchedTerm != null){
+
+    public List<Text> findWords(String searchingTerm) throws API.APIException {
+        Log.d("Node","findwords1:" + searchingTerm + " lastWord:" + lastSearchedTerm + "  ---" + this);
+        if(lastSearchedTerm != null && !lastSearchedTerm.equals(searchingTerm)){
             Searching.removeRed(textList);
         }
 
-        Searching.findWordsInList(textList,searchingTerm,false,false);
+        if(searchingTerm == null)
+            return null;
+        if(searchingTerm.equals(lastSearchedTerm)){
+            return foundFindOnPageList;
+        }
+        lastSearchedTerm = searchingTerm;
+
+        Log.d("Node","Findwords:" + searchingTerm + "... " + getTexts().size());
+        foundFindOnPageList = Searching.findWordsInList(getTexts(),searchingTerm,false,false);
+        return foundFindOnPageList;
     }
 
     public String getPath(Util.Lang lang, boolean forURL, boolean includeBook, boolean replaceSpaces){
@@ -929,10 +936,10 @@ public class Node{// implements  Parcelable{
      */
     public List<Text> getTexts() throws API.APIException{
         //Log.d("Node","getTexts called");
-        if(textList != null) {
+        if(textList != null && (gotTextListInAPI == Settings.getUseAPI())) {
             return textList;
         }
-        //Log.d("Node","found no textList");
+        Log.d("Node","found no textList");
         if(!isTextSection){
             Log.e("Node", "getTexts() was called when it's not a textSection!" + this);
             //Integer.valueOf("aadfa");
@@ -971,6 +978,7 @@ public class Node{// implements  Parcelable{
         for(Text text:textList){
             text.parentNode = this;
         }
+        gotTextListInAPI = Settings.getUseAPI();
         return textList;
     }
 

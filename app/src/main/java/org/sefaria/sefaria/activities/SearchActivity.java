@@ -61,7 +61,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
 
 
         LinearLayout actionbarRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
-        actionbarRoot.addView(new SearchActionbar(this, closeClick, searchClick));
+        actionbarRoot.addView(new SearchActionbar(this, closeClick, searchClick,null,null,-1,MyApp.getRString(R.string.search) + " Sefaria"));
 
 
     }
