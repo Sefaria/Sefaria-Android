@@ -99,6 +99,7 @@ public class FindOnPage {
         private Node goingToNode = null;
         private Text goingToText = null;
         private Integer myTID = null;
+        private boolean APIError = false;
 
 
         private boolean lookForAlreadyFoundWord(List<Text> list, boolean presort) {
@@ -139,6 +140,7 @@ public class FindOnPage {
         protected Boolean doInBackground(String... params) {
             Log.d("SuperTextAct", "starting FinOnPage.doBackground");
             if (Settings.getUseAPI()) {
+                APIError = true;
                 return false;
             }
             String term = params[0];
@@ -227,8 +229,10 @@ public class FindOnPage {
             super.onPostExecute(success);
             isWorking = false;
             if (success == false) {
+                if(APIError)
+                    Toast.makeText(superTextActivity,"Not available in Online mode",Toast.LENGTH_SHORT).show();
                 if (finishedEverything)
-                    Toast.makeText(superTextActivity, "Didn't find word", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(superTextActivity, "Didn't find query in book", Toast.LENGTH_SHORT).show();
                 return;
             }
             superTextActivity.postFindOnPageBackground();
