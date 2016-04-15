@@ -10,7 +10,7 @@ android {
         targetSdkVersion 23
         versionCode 247
         versionName "2.47d"
-        // Enabling multidex support.
+        // Enabling multidex support
         //multiDexEnabled true
     }
     buildTypes {
