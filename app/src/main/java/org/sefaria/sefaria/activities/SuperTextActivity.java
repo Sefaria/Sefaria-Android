@@ -3,25 +3,19 @@ package org.sefaria.sefaria.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
-import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -39,24 +33,15 @@ import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Database;
-import org.sefaria.sefaria.database.Downloader;
 import org.sefaria.sefaria.database.Node;
-import org.sefaria.sefaria.database.Searching;
 import org.sefaria.sefaria.database.Text;
 import org.sefaria.sefaria.layouts.CustomActionbar;
 import org.sefaria.sefaria.layouts.PerekTextView;
 import org.sefaria.sefaria.layouts.ScrollViewExt;
 import org.sefaria.sefaria.MenuElements.MenuNode;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import static org.sefaria.sefaria.MyApp.getRString;
 
@@ -127,11 +112,11 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
     private static boolean firstTimeOpeningAppThisSession = true;
 
-    private LinearLayout searchActionBarRoot;
-    private SearchActionbar searchActionbar;
-    private String searchingTerm;
+    protected LinearLayout searchActionBarRoot;
+    protected SearchActionbar searchActionbar;
+    protected String searchingTerm;
 
-    private FindOnPage findOnPage;
+    protected FindOnPage findOnPage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -546,7 +531,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
     View.OnClickListener findOnPageUpClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if(findOnPage == null) findOnPage = new FindOnPage();
+            if(findOnPage == null) findOnPage = new FindOnPage(SuperTextActivity.this);
             findOnPage.runFindOnPage(false);
         }
     };
@@ -554,7 +539,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
     View.OnClickListener findOnPageDownClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if(findOnPage == null) findOnPage = new FindOnPage();
+            if(findOnPage == null) findOnPage = new FindOnPage(SuperTextActivity.this);
             findOnPage.runFindOnPage(true);
         }
     };
@@ -574,7 +559,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
             searchActionBarRoot.addView(searchActionbar);
 
             if(findOnPage == null)
-                findOnPage = new FindOnPage();
+                findOnPage = new FindOnPage(SuperTextActivity.this);
         }
     };
 
@@ -993,226 +978,6 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
 
     //FIND ON PAGE
-
-    public class FindOnPage{
-        public FindOnPage() {
-            if (searchBox == null) {
-                searchBox = (EditText) findViewById(R.id.search_box);
-                searchBox.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-                    @Override
-                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                        if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                            findOnPage.runFindOnPage(true);
-                            return true;
-                        }
-                        return false;
-                    }
-                });
-                searchBox.requestFocus();
-                searchBox.setTypeface(MyApp.getFont(MyApp.Font.QUATTROCENTO));
-            }
-        }
-
-        private void runFindOnPage(boolean directionForward) {
-            searchingTerm = searchActionbar.getText();
-            if(searchingTerm.equals("")){
-                Toast.makeText(SuperTextActivity.this,getRString(R.string.enter_word_to_search),Toast.LENGTH_SHORT).show();
-                return;
-            }
-            searchBox.clearFocus();
-            this.directionForward = directionForward;
-            if(!isWorking) {
-                FindOnPageBackground findOnPageBackground = new FindOnPageBackground();
-                findOnPageBackground.execute(searchingTerm);
-            }else{
-                Log.d("FindOnPage","isWorking");
-            }
-        }
-
-        final Comparator<Text> textComparator = new Comparator<Text>() {
-            public int compare(Text a, Text b) {
-                return b.tid - a.tid;
-            }
-        };
-
-        private void sort(List<Text> list){
-            int lastTid = 0;
-            for(Text text:list){
-                if(text.tid < lastTid){
-                    Collections.sort(list,textComparator);
-                    return;
-                }
-                lastTid = text.tid;
-            }
-            //if it's here that means that it's already sorted.. hey guess what? We just "sorted" in O(n)
-        }
-
-        private boolean isWorking;
-        private boolean directionForward;
-        private EditText searchBox;
-        private List<Text> foundSearchList;
-        private Set<Node> searchedNodes;
-        private String lastSearchingTerm;
-        private boolean finishedEverything = false;
-        private int lastFoundTID = 0;
-        private Toast foundToast;
-
-        private class FindOnPageBackground extends AsyncTask<String, Void, Boolean> {
-
-            private Node goingToNode = null;
-            private Text goingToText = null;
-            private Integer myTID = null;
-
-
-            private boolean lookForAlreadyFoundWord(List<Text> list,boolean presort) {
-                if(presort){
-                    sort(list);
-                }
-                if (directionForward) {
-                    for (Text found : list) {
-                        if (myTID <= found.tid) {
-                            goingToNode = found.parentNode;
-                            goingToText = found;
-                            lastFoundTID = found.tid;
-                            return true;
-                        }
-                    }
-                } else {
-                    for (int i = list.size() - 1; i >= 0; i--) {
-                        Text found = list.get(i);
-                        if (myTID >= found.tid) {
-                            goingToNode = found.parentNode;
-                            goingToText = found;
-                            lastFoundTID = found.tid;
-                            return true;
-                        }
-                    }
-                }
-
-                return false;
-            }
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                isWorking = true;
-            }
-
-            @Override
-            protected Boolean doInBackground(String... params) {
-                Log.d("SuperTextAct","starting FinOnPage.doBackground");
-                if(Settings.getUseAPI()){
-                    return false;
-                }
-                String term = params[0];
-                if(currText == null)
-                    return false;
-                if(currText.isChapter()){
-                    try {
-                        myTID = currText.parentNode.getTexts().get(0).tid;
-                    } catch (API.APIException e) {
-                        return false;
-                    }
-                }else{
-                    myTID = currText.tid;
-                    if(directionForward && lastFoundTID >= myTID && lastFoundTID - myTID < 4)
-                        myTID = lastFoundTID +1;
-                    else if(!directionForward && lastFoundTID <= myTID && myTID - lastFoundTID < 4)
-                        myTID = lastFoundTID -1;
-                    //if(term.equals(lastSearchingTerm) && searchedNodes.contains(currNode)) myTID++;
-                }
-                if(myTID == null || myTID == 0)
-                    return false;
-
-                Log.d("findonpage", "myTID: " + myTID);
-
-
-                if(lastSearchingTerm == null || !term.equals(lastSearchingTerm)){
-                    foundSearchList = new ArrayList<>();
-                    searchedNodes = new HashSet<>();
-                    lastSearchingTerm = term;
-                    finishedEverything = false;
-                }
-
-                if(lookForAlreadyFoundWord(foundSearchList,(!finishedEverything))){
-                    return true;
-                }
-
-                List<Text> list = null;
-                Node node = currNode;//.getAncestorRoot().getFirstDescendant();
-                Node startingNode = node;
-                while(true){
-                    try {
-                        list = node.findWords(term);
-                    } catch (API.APIException e) {
-                        //TODO handle better
-                        e.printStackTrace();
-                        if(foundSearchList.size() <1 || true){
-                            return false;
-                        }else{
-                            return true;
-                        }
-                    }
-                    if(!searchedNodes.contains(node)){
-                        foundSearchList.addAll(list);
-                        searchedNodes.add(node);
-                    }
-
-                    if(lookForAlreadyFoundWord(list,false))
-                        return true;
-
-                    try {
-                        if(directionForward)
-                            node = node.getNextTextNode();
-                        else
-                            node = node.getPrevTextNode();
-                    } catch (Node.LastNodeException e) {
-                        if(directionForward) {
-                            node = node.getAncestorRoot().getFirstDescendant();
-                            myTID = 1;
-                        }
-                        else {
-                            node = node.getAncestorRoot().getLastDescendant();
-                            myTID = Integer.MAX_VALUE;
-                        }
-
-                        Log.d("findonpage","looping back around");
-                    }
-                    if(startingNode.equals(node)){
-                        finishedEverything = true;
-                        sort(foundSearchList);
-                        return false;
-                    }
-                }
-            }
-
-            @Override
-            protected void onPostExecute(Boolean success) {
-                super.onPostExecute(success);
-                isWorking = false;
-                if(success == false) {
-                    if(finishedEverything)
-                        Toast.makeText(SuperTextActivity.this,"Didn't find word",Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                postFindOnPageBackground();
-                if(goingToNode != null) {
-                    Log.d("findOnPage","node:" + goingToNode);
-                    lastLoadedNode = null;
-                    firstLoadedNode = goingToNode;
-                    openToText = goingToText;
-                    if(openToText != null) {
-                        if(foundToast != null)
-                            foundToast.cancel();
-                        foundToast = Toast.makeText(SuperTextActivity.this,openToText.getLocationString(menuLang),Toast.LENGTH_SHORT);
-                        //foundToast.show();
-                        Snackbar.make(searchActionBarRoot, openToText.getLocationString(menuLang), Snackbar.LENGTH_SHORT).show();
-                    }
-                    init();
-                }
-            }
-        }
-    }
 
 
 }
