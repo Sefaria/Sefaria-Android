@@ -56,7 +56,7 @@ public class TOCSectionName extends LinearLayout implements TOCElement {
             return;
         }
         int padding = (int) MyApp.convertDpToPixel(4.5f);
-        final int sidePadding = (int) MyApp.convertDpToPixel(13);
+        final int sidePadding = (int) MyApp.convertDpToPixel(13f);
         if(node.isTextSection()) {
             //padding = 21;
             //sidePadding += 4;

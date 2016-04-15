@@ -108,28 +108,32 @@ public class FindOnPage {
 
 
         private boolean lookForAlreadyFoundWord(List<Text> list, boolean presort) {
+            Log.d("findOnPage","looking for already Found word list.size:" + list.size() + "... myTID:" + myTID);
             if (presort) {
                 sort(list);
             }
+            Text found = null;
             if (directionForward) {
-                for (Text found : list) {
-                    if (myTID <= found.tid) {
-                        goingToNode = found.parentNode;
-                        goingToText = found;
-                        lastFoundTID = found.tid;
-                        return true;
+                for (Text text : list) {
+                    if (myTID <= text.tid) {
+                        found = text;
+                        break;
                     }
                 }
             } else {
                 for (int i = list.size() - 1; i >= 0; i--) {
-                    Text found = list.get(i);
-                    if (myTID >= found.tid) {
-                        goingToNode = found.parentNode;
-                        goingToText = found;
-                        lastFoundTID = found.tid;
-                        return true;
+                    Text text = list.get(i);
+                    if (myTID >= text.tid) {
+                        found = text;
+                        break;
                     }
                 }
+            }
+            if(found != null) {
+                goingToNode = found.parentNode;
+                goingToText = found;
+                lastFoundTID = found.tid;
+                return true;
             }
 
             return false;
@@ -139,11 +143,13 @@ public class FindOnPage {
         protected void onPreExecute() {
             super.onPreExecute();
             isWorking = true;
+
+            //Log.d("findonpage","findWords of startingNode:" + startingNode);
         }
 
         @Override
         protected Boolean doInBackground(String... params) {
-            Log.d("SuperTextAct", "starting FinOnPage.doBackground");
+            //Log.d("SuperTextAct", "starting FinOnPage.doBackground");
             if (Settings.getUseAPI()) {
                 APIError = true;
                 return false;
@@ -151,6 +157,8 @@ public class FindOnPage {
             String term = params[0];
             if (superTextActivity.currText == null)
                 return false;
+
+            //Log.d("findonpage", "4currText: " + superTextActivity.currText);
             if (superTextActivity.currText.isChapter()) {
                 try {
                     myTID = superTextActivity.currText.parentNode.getTexts().get(0).tid;
@@ -168,7 +176,7 @@ public class FindOnPage {
             if (myTID == null || myTID == 0)
                 return false;
 
-            Log.d("findonpage", "myTID: " + myTID);
+            //Log.d("findonpage", "myTID: " + myTID);
 
 
             if (lastSearchingTerm == null || !term.equals(lastSearchingTerm)) {
@@ -178,14 +186,15 @@ public class FindOnPage {
                 finishedEverything = false;
             }
 
-            if (lookForAlreadyFoundWord(foundSearchList, true)) {
+            if (finishedEverything && lookForAlreadyFoundWord(foundSearchList, true)) {
                 return true;
             }
 
             List<Text> list = null;
-            Node node = superTextActivity.currNode;//.getAncestorRoot().getFirstDescendant();
-            Node startingNode = node;
+            Node startingNode = superTextActivity.currNode;
+            Node node = startingNode;
             while (true) {
+                //Log.d("findonpage","findWords of node:" + node);
                 try {
                     list = node.findWords(term);
                 } catch (API.APIException e) {
@@ -199,6 +208,7 @@ public class FindOnPage {
                     searchedNodes.add(node);
                 }
 
+
                 if (lookForAlreadyFoundWord(list, false))
                     return true;
 
@@ -207,9 +217,9 @@ public class FindOnPage {
                         node = node.getNextTextNode();
                     else
                         node = node.getPrevTextNode();
-                    Log.d("findOnPage","Searching next (" + directionForward + ") node:" + node);
+                    //Log.d("findOnPage","Searching next (" + directionForward + ") node:" + node);
                 } catch (Node.LastNodeException e) {
-                    Log.d("findOnPage","Got lastNodeException");
+                    //Log.d("findOnPage","Got lastNodeException");
                     if (directionForward) {
                         node = node.getAncestorRoot().getFirstDescendant();
                         myTID = 1;
@@ -218,7 +228,7 @@ public class FindOnPage {
                         myTID = Integer.MAX_VALUE;
                     }
 
-                    Log.d("findonpage", "looping back around.. myTID:" + myTID);
+                    //Log.d("findonpage", "looping back around.. myTID:" + myTID);
                 }
                 if (startingNode.equals(node)) {
                     finishedEverything = true;
