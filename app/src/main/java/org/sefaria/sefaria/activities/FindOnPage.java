@@ -173,7 +173,7 @@ public class FindOnPage {
                 finishedEverything = false;
             }
 
-            if (lookForAlreadyFoundWord(foundSearchList, (!finishedEverything))) {
+            if (lookForAlreadyFoundWord(foundSearchList, true)) {
                 return true;
             }
 
@@ -186,11 +186,8 @@ public class FindOnPage {
                 } catch (API.APIException e) {
                     //TODO handle better
                     e.printStackTrace();
-                    if (foundSearchList.size() < 1 || true) {
-                        return false;
-                    } else {
-                        return true;
-                    }
+                    APIError = true;
+                    return false;
                 }
                 if (!searchedNodes.contains(node)) {
                     foundSearchList.addAll(list);
@@ -205,7 +202,9 @@ public class FindOnPage {
                         node = node.getNextTextNode();
                     else
                         node = node.getPrevTextNode();
+                    Log.d("findOnPage","Searching next (" + directionForward + ") node:" + node);
                 } catch (Node.LastNodeException e) {
+                    Log.d("findOnPage","Got lastNodeException");
                     if (directionForward) {
                         node = node.getAncestorRoot().getFirstDescendant();
                         myTID = 1;
@@ -214,7 +213,7 @@ public class FindOnPage {
                         myTID = Integer.MAX_VALUE;
                     }
 
-                    Log.d("findonpage", "looping back around");
+                    Log.d("findonpage", "looping back around.. myTID:" + myTID);
                 }
                 if (startingNode.equals(node)) {
                     finishedEverything = true;

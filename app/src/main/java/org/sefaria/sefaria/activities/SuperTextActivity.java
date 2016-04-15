@@ -112,10 +112,11 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
     private static boolean firstTimeOpeningAppThisSession = true;
 
+    private Boolean loadedTextUsingAPI = null;
+
     protected LinearLayout searchActionBarRoot;
     protected SearchActionbar searchActionbar;
     protected String searchingTerm;
-
     protected FindOnPage findOnPage;
 
     @Override
