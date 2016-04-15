@@ -9,6 +9,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Settings;
@@ -56,6 +57,10 @@ public class FindOnPage {
             Toast.makeText(superTextActivity, getRString(R.string.enter_word_to_search), Toast.LENGTH_SHORT).show();
             return;
         }
+        if(!superTextActivity.searchingTerm.equals(lastSearchingTerm)){
+            GoogleTracker.sendEvent(GoogleTracker.CATEGORY_FIND_ON_PAGE,superTextActivity.searchingTerm);
+        }
+
         searchBox.clearFocus();
         this.directionForward = directionForward;
         if (!isWorking) {
