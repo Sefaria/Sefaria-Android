@@ -21,6 +21,7 @@ public class CustomActionbar extends MenuElement {
     private View searchBtn;
     private View colorBar;
     private View menuBtn;
+    private View menuLangBtn;
     private View backBtn;
     private View invisableBtn;
     private View invisableBtnLeft;
@@ -31,7 +32,7 @@ public class CustomActionbar extends MenuElement {
 
     private static final boolean noBackButton = false;
 
-    public CustomActionbar(Activity activity, MenuNode menuNode, Util.Lang lang, OnClickListener homeClick, OnLongClickListener homeLongClick, OnClickListener closeClick, OnClickListener searchClick, OnClickListener titleClick, OnClickListener menuClick, OnClickListener backClick, int catColor) {
+    public CustomActionbar(Activity activity, MenuNode menuNode, Util.Lang lang, OnClickListener homeClick, OnLongClickListener homeLongClick, OnClickListener closeClick, OnClickListener searchClick, OnClickListener titleClick, OnClickListener menuClick, OnClickListener backClick, OnClickListener menuLangClick, int catColor) {
         super(activity);
         inflate(activity, R.layout.custom_actionbar, this);
 
@@ -41,6 +42,7 @@ public class CustomActionbar extends MenuElement {
         closeBtn = findViewById(R.id.close_btn);
         searchBtn = findViewById(R.id.search_btn);
         menuBtn = findViewById(R.id.menu_btn);
+        menuLangBtn = findViewById(R.id.menu_lang_btn);
         backBtn = findViewById(R.id.back_btn);
         invisableBtn = findViewById(R.id.invisable_btn);
         invisableBtnLeft = findViewById(R.id.invisable_btn_left);
@@ -50,6 +52,8 @@ public class CustomActionbar extends MenuElement {
         SefariaTextView langBtn = (SefariaTextView) menuBtn.findViewById(R.id.lang_btn);
         langBtn.setFont(Util.Lang.HE,true);
 
+        SefariaTextView menuLangBtnTextView = (SefariaTextView) menuLangBtn.findViewById(R.id.langTV);
+        menuLangBtnTextView.setFont(Util.Lang.HE,true);
 
         setLang(lang);
 
@@ -83,7 +87,9 @@ public class CustomActionbar extends MenuElement {
         }
         else menuBtn.setVisibility(View.INVISIBLE);
 
-
+        if(menuLangClick != null){
+            menuLangBtn.setOnClickListener(menuLangClick);
+        }else menuLangBtn.setVisibility(GONE);
 
         if (backClick != null) backBtn.setOnClickListener(backClick);
         else  backBtn.setVisibility(View.GONE);
@@ -123,6 +129,13 @@ public class CustomActionbar extends MenuElement {
             enText = title;
         if(forceRefresh)
             setLang(lang);
+    }
+
+    public void setMenuBtnLang(Util.Lang lang) {
+        SefariaTextView tv = (SefariaTextView) findViewById(R.id.langTV);
+        tv.setFont(lang,true);
+        if (lang == Util.Lang.HE) tv.setText("A");
+        else /* if (lang == Util.Lang.EN) */ tv.setText("א");
     }
 
     public void setLang(Util.Lang lang) {

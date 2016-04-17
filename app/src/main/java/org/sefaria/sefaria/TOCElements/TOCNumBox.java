@@ -82,31 +82,9 @@ public class TOCNumBox extends TextView implements TOCElement {
             if(!node.isTextSection()) {
                 return;
             }
-            gotoTextActivity(context,node,lang);
+            TOCActivity.gotoTextActivity(context,node,lang);
         }
     };
 
-    /**
-     * go from TOC to textActivity
-     *
-     * @param context
-     * @param node
-     * @param lang
-     */
-    public static void gotoTextActivity(Context context,Node node,Util.Lang lang){
-        Node.saveNode(node);
-        Intent intent = new Intent(context, SectionActivity.class);
-        intent.putExtra("nodeHash", node.hashCode());
-        intent.putExtra("lang", lang);
-        if(((TOCActivity) context).pathDefiningNode != null && ((TOCActivity) context).pathDefiningNode.length() >0)//it will only do this if a SectionAct was already opened
-            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-        //TODO determine if SectionActivity was already open... Make sure to be careful of multi-tab stuff
-        //TODO I think it should also actually have the back button work for going to the TOC from textActivity
-        context.startActivity(intent);
 
-
-        //Activity act = (Activity) context; //stupid casting
-        //act.setResult(Activity.RESULT_OK,intent);
-        //act.finish();//close the TOC
-    }
 }

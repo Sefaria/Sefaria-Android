@@ -936,7 +936,7 @@ public class Node{// implements  Parcelable{
      */
     public List<Text> getTexts() throws API.APIException{
         //Log.d("Node","getTexts called");
-        if(textList != null && (gotTextListInAPI == Settings.getUseAPI())) {
+        if(textList != null && (nid == NID_DUMMY || gotTextListInAPI == Settings.getUseAPI())){
             return textList;
         }
         Log.d("Node","found no textList");
