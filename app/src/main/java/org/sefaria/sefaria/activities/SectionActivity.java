@@ -14,6 +14,7 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -331,6 +332,12 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
             //close textMenuBar if its open
             if (isTextMenuVisible) {
                 toggleTextMenu();
+                return;
+            }
+
+            InputMethodManager inputMethodManager = getInputMethodManager();
+            if(inputMethodManager.isActive()) {
+                findOnPage.hideShowKeyboard(false, 0);
                 return;
             }
 

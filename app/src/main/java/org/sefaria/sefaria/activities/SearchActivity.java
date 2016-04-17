@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,8 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -43,7 +46,6 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
 
     private static final int PAGE_SIZE = 10;
 
-    private EditText searchBox;
     private SearchAdapter adapter;
     private ListView listView;
     private SefariaTextView numResultsTV;
@@ -51,6 +53,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
     private int currPageLoaded; //based on ElasticSearch page loaded
     private int preLast;
     private boolean APIError = false;
+    private AutoCompleteTextView autoCompleteTextView;
 
     private String numberOfResults = "";
     @Override
@@ -64,29 +67,56 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
         actionbarRoot.addView(new SearchActionbar(this, closeClick, searchClick,null,null,-1,MyApp.getRString(R.string.search) + " Sefaria"));
 
 
+        autoCompleteTextView = (AutoCompleteTextView) findViewById(R.id.auto_complete_text_view);
+
+        ArrayList<String> allBookNames = Book.getAllBookNames(Util.Lang.BI);
+        ArrayAdapter<String> autoComAdapter = new ArrayAdapter<>(this, android.R.layout.select_dialog_item,allBookNames);
+        autoCompleteTextView.setAdapter(autoComAdapter);
+        autoCompleteTextView.setOnItemClickListener(autoCompleteItemClick);
+        //autoCompleteTextView.setOnFocusChangeListener(autoComFocus);
+        autoCompleteTextView.setOnEditorActionListener(autoComEnterClick);
+        autoCompleteTextView.setDropDownWidth((int) Math.floor(MyApp.getScreenSizePixels().x * 0.75));
+        autoCompleteTextView.setCompletionHint("Click book to open");
     }
+
+    TextView.OnEditorActionListener autoComEnterClick = new TextView.OnEditorActionListener() {
+        @Override
+        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                Log.d("SearchAct","autoComEnterClick");
+                runSearch();
+                return true;
+            }
+            return false;
+        }
+    };
+
+    AdapterView.OnItemClickListener autoCompleteItemClick = new AdapterView.OnItemClickListener() {
+        public void onItemClick(android.widget.AdapterView<?> parent, View v, int pos, long id) {
+            String title = (String) ((TextView)v).getText();
+            //Log.d("SearchAct", "bookName:" + bookName);
+            try {
+                Book book = new Book(title,true);
+                SuperTextActivity.startNewTextActivityIntent(SearchActivity.this,book,false);
+            } catch (Book.BookNotFoundException e) {
+                Toast.makeText(SearchActivity.this,"Error getting book",Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
+
+    View.OnFocusChangeListener autoComFocus = new View.OnFocusChangeListener() {
+        @Override
+        public void onFocusChange(View v, boolean hasFocus) {
+            Log.d("SearchAct","onFocusChange" + hasFocus);
+        }
+    };
 
     @Override
     protected void onResume() {
         super.onResume();
-        searchBox = (EditText) findViewById(R.id.search_box);
-        //this is a listener to do a search when the user clicks on search button
-        searchBox.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    runSearch();
-                    return true;
-                }
-                return false;
-            }
-        });
-        searchBox.requestFocus();
-        searchBox.setTypeface(MyApp.getFont(MyApp.Font.QUATTROCENTO));
-
         //open the keyboard focused in the edtSearch
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.showSoftInput(searchBox, InputMethodManager.SHOW_IMPLICIT);
+        imm.showSoftInput(autoCompleteTextView, InputMethodManager.SHOW_IMPLICIT);
         if (adapter == null)
             adapter = new SearchAdapter(this, R.layout.search_item_mono,new ArrayList<Text>());
 
@@ -105,7 +135,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
     }
 
     private void runSearch(){
-        searchBox.clearFocus();
+        autoCompleteTextView.clearFocus();
         AsyncSearch asyncSearch = new AsyncSearch(0);
         asyncSearch.execute();
         // Check if no view has focus:
@@ -171,7 +201,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
             super.onPreExecute();
             isLoadingSearch = true;
             numResultsTV.setText(numberOfResults + " Loading...");
-            query = searchBox.getText().toString();
+            query = autoCompleteTextView.getText().toString();
         }
 
         @Override
@@ -219,7 +249,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
             API.PlaceRef placeRef = null;
             try {
                 placeRef = API.PlaceRef.getPlace(place,book);
-                SuperTextActivity.startNewTextActivityIntent(SearchActivity.this,placeRef.book,placeRef.text,placeRef.node,false,searchBox.getText().toString(),-1);
+                SuperTextActivity.startNewTextActivityIntent(SearchActivity.this,placeRef.book,placeRef.text,placeRef.node,false,autoCompleteTextView.getText().toString(),-1);
             } catch (API.APIException e) {
                 API.makeAPIErrorToast(SearchActivity.this);//MyApp.openURLInBrowser(SearchActivity.this,"https://sefaria.org/" + place);
             } catch (Book.BookNotFoundException e) {

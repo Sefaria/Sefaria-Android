@@ -57,6 +57,7 @@ public class HomeFragment extends android.support.v4.app.Fragment {
     @Override
     public void onCreate(Bundle in) {
         super.onCreate(in);
+        Log.d("HomeFrag", "onCreate");
         //setTheme(Settings.getTheme());
         //setContentView(R.layout.fragment_home);
 
@@ -66,6 +67,7 @@ public class HomeFragment extends android.support.v4.app.Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.d("HomeFrag", "onCreateView");
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         LinearLayout homeRoot = (LinearLayout) view.findViewById(R.id.homeRoot);
 
@@ -90,8 +92,23 @@ public class HomeFragment extends android.support.v4.app.Fragment {
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        menuGrid.setLang(menuGrid.getLang());
+        Log.d("HomeFrag", "onActivityResult");
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle out) {
+        super.onSaveInstanceState(out);
+
+        //out.putParcelable("menuState", menuState);
+    }
+
+    @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        Log.d("HomeFrag", "onAttach");
 
         this.activity = activity;
 
@@ -100,6 +117,7 @@ public class HomeFragment extends android.support.v4.app.Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+        Log.d("HomeFrag", "onDetach");
     }
 
     /*private void addHeader(LinearLayout homeRoot){
@@ -111,6 +129,36 @@ public class HomeFragment extends android.support.v4.app.Fragment {
         livingLibraryView.setTextColor(Util.getColor(getContext(), R.attr.text_color_main));
         homeRoot.addView(livingLibraryView);
     }*/
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("HomeFrag", "onResume");
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        Log.d("HomeFrag","onHiddenChanged" + hidden);
+    }
+
+    @Override
+    public void setMenuVisibility(boolean menuVisible) {
+        super.setMenuVisibility(menuVisible);
+        Log.d("HomeFrag", "setMenuVisibility" + menuVisible);
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        Log.d("HomeFrag", "setUserViableHint" + isVisibleToUser);
+    }
+
+    @Override
+    public void setHasOptionsMenu(boolean hasMenu) {
+        super.setHasOptionsMenu(hasMenu);
+        Log.d("HomeFrag", "setHasOptionsMenu" + hasMenu);
+    }
 
     private void addRecentTexts(View view){
         //Recent Texts
@@ -207,18 +255,7 @@ public class HomeFragment extends android.support.v4.app.Fragment {
     }
 
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        menuGrid.setLang(menuGrid.getLang());
-    }
 
-    @Override
-    public void onSaveInstanceState(Bundle out) {
-        super.onSaveInstanceState(out);
-
-        //out.putParcelable("menuState", menuState);
-    }
 
     View.OnClickListener searchClick = new View.OnClickListener() {
         @Override

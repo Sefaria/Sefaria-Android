@@ -2,9 +2,11 @@ package org.sefaria.sefaria.SearchElements;
 
 import android.content.Context;
 import android.view.View;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
+import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 
 /**
@@ -30,15 +32,18 @@ public class SearchActionbar extends LinearLayout {
         if (catColor != -1)
             findViewById(R.id.color_bar).setBackgroundColor(getResources().getColor(catColor));
 
+        AutoCompleteTextView autoCompleteTextView = (AutoCompleteTextView) findViewById(R.id.auto_complete_text_view);
         if(hintText != null)
-            ((EditText) findViewById(R.id.search_box)).setHint(hintText);
+            autoCompleteTextView.setHint(hintText);
+        autoCompleteTextView.setTypeface(MyApp.getFont(MyApp.Font.QUATTROCENTO));
     }
 
     public String getText(){
-        EditText searchBox = (EditText) findViewById(R.id.search_box);
-
-        return searchBox.getText().toString();
+        AutoCompleteTextView autoCompleteTextView = (AutoCompleteTextView) findViewById(R.id.auto_complete_text_view);
+        return autoCompleteTextView.getText().toString();
     }
+
+
 
 
 }

@@ -1,10 +1,16 @@
 package org.sefaria.sefaria.activities;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -13,7 +19,9 @@ import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Settings;
+import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.API;
+import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Node;
 import org.sefaria.sefaria.database.Text;
 
@@ -24,6 +32,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static android.content.Context.INPUT_METHOD_SERVICE;
 import static org.sefaria.sefaria.MyApp.getRString;
 
 /**
@@ -32,24 +41,82 @@ import static org.sefaria.sefaria.MyApp.getRString;
 public class FindOnPage {
     final SuperTextActivity superTextActivity;
 
+
+    private boolean isWorking;
+    private boolean directionForward;
+    protected AutoCompleteTextView autoCompleteTextView;
+    private List<Text> foundSearchList;
+    private Set<Node> searchedNodes;
+    private String lastSearchingTerm;
+    private boolean finishedEverything = false;
+    private int lastFoundTID = 0;
+    private Snackbar snackbar;
+    private InputMethodManager inputMethodManager;
+
+
     public FindOnPage(final SuperTextActivity superTextActivity) {
         this.superTextActivity = superTextActivity;
-        if (searchBox == null) {
-            searchBox = (EditText) superTextActivity.findViewById(R.id.search_box);
-            searchBox.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-                @Override
-                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                    if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                        superTextActivity.findOnPage.runFindOnPage(true);
-                        return true;
-                    }
-                    return false;
-                }
-            });
-            searchBox.requestFocus();
-            searchBox.setTypeface(MyApp.getFont(MyApp.Font.QUATTROCENTO));
+        if (autoCompleteTextView == null) {
+            autoCompleteTextView = (AutoCompleteTextView) superTextActivity.findViewById(R.id.auto_complete_text_view);
+            setAutoCompleteAdapter();
+            autoCompleteTextView.setOnItemClickListener(autoCompleteItemClick);
+            autoCompleteTextView.setOnFocusChangeListener(autoComFocus);
+            autoCompleteTextView.setOnEditorActionListener(autoComEnterClick);
+            autoCompleteTextView.setDropDownWidth((int) Math.floor(MyApp.getScreenSizePixels().x * 0.75));
+            autoCompleteTextView.requestFocus();
+
+            //open the keyboard focused in the edtSearch
+            hideShowKeyboard(true,InputMethodManager.SHOW_IMPLICIT);
         }
     }
+
+    /**
+     *
+     * @param show
+     * @param InputMethodManagerFlags 0 for regular (good for regular hide). or can use something like InputMethodManager.SHOW_FORCED or InputMethodManager.SHOW_IMPLICIT
+     */
+    public void hideShowKeyboard(boolean show,int InputMethodManagerFlags){
+        if(inputMethodManager == null)
+            inputMethodManager = superTextActivity.getInputMethodManager();
+        if(show)
+            inputMethodManager.showSoftInput(autoCompleteTextView, InputMethodManagerFlags);
+        else
+            inputMethodManager.hideSoftInputFromWindow(autoCompleteTextView.getWindowToken(), InputMethodManagerFlags);
+
+    }
+
+    private void setAutoCompleteAdapter(){
+        ArrayList<String> allSearchTerms = new ArrayList<>(Settings.getSearchTerms());
+        ArrayAdapter<String> autoComAdapter = new ArrayAdapter<>(superTextActivity, android.R.layout.select_dialog_item,allSearchTerms);
+        autoCompleteTextView.setAdapter(autoComAdapter);
+    }
+
+    TextView.OnEditorActionListener autoComEnterClick = new TextView.OnEditorActionListener() {
+        @Override
+        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                Log.d("SearchAct","autoComEnterClick");
+                superTextActivity.findOnPage.runFindOnPage(true);
+                return true;
+            }
+            return false;
+        }
+    };
+
+    AdapterView.OnItemClickListener autoCompleteItemClick = new AdapterView.OnItemClickListener() {
+        public void onItemClick(android.widget.AdapterView<?> parent, View v, int pos, long id) {
+            //String term = (String) ((TextView)v).getText();
+            superTextActivity.findOnPage.runFindOnPage(true);
+        }
+    };
+
+    View.OnFocusChangeListener autoComFocus = new View.OnFocusChangeListener() {
+        @Override
+        public void onFocusChange(View v, boolean hasFocus) {
+            Log.d("SearchAct","onFocusChange" + hasFocus);
+            hideShowKeyboard(hasFocus,hasFocus ? InputMethodManager.SHOW_FORCED:1);
+        }
+    };
 
     protected void runFindOnPage(boolean directionForward) {
         superTextActivity.searchingTerm = superTextActivity.searchActionbar.getText();
@@ -57,11 +124,7 @@ public class FindOnPage {
             Toast.makeText(superTextActivity, getRString(R.string.enter_word_to_search), Toast.LENGTH_SHORT).show();
             return;
         }
-        if(!superTextActivity.searchingTerm.equals(lastSearchingTerm)){
-            GoogleTracker.sendEvent(GoogleTracker.CATEGORY_FIND_ON_PAGE,superTextActivity.searchingTerm);
-        }
 
-        searchBox.clearFocus();
         this.directionForward = directionForward;
         if (!isWorking) {
             FindOnPageBackground findOnPageBackground = new FindOnPageBackground();
@@ -69,6 +132,14 @@ public class FindOnPage {
         } else {
             Log.d("FindOnPage", "isWorking");
         }
+
+        if(!superTextActivity.searchingTerm.equals(lastSearchingTerm)){
+            GoogleTracker.sendEvent(GoogleTracker.CATEGORY_FIND_ON_PAGE,superTextActivity.searchingTerm);
+        }
+
+        Settings.addSearchTerm(superTextActivity.searchingTerm);
+        hideShowKeyboard(false,0);
+        setAutoCompleteAdapter();
     }
 
     final Comparator<Text> textComparator = new Comparator<Text>() {
@@ -89,15 +160,6 @@ public class FindOnPage {
         //if it's here that means that it's already sorted.. hey guess what? We just "sorted" in O(n)
     }
 
-    private boolean isWorking;
-    private boolean directionForward;
-    private EditText searchBox;
-    private List<Text> foundSearchList;
-    private Set<Node> searchedNodes;
-    private String lastSearchingTerm;
-    private boolean finishedEverything = false;
-    private int lastFoundTID = 0;
-    private Snackbar snackbar;
 
     private class FindOnPageBackground extends AsyncTask<String, Void, Boolean> {
 

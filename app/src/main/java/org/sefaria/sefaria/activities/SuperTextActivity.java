@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -454,6 +455,10 @@ public abstract class SuperTextActivity extends FragmentActivity {
     }
     */
 
+    public InputMethodManager getInputMethodManager(){
+        return (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         Database.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
@@ -494,6 +499,14 @@ public abstract class SuperTextActivity extends FragmentActivity {
             setResult(RESULT_CANCELED);
             finish();
         }
+    }
+
+    @Override
+    public boolean onSearchRequested() {
+        super.onSearchRequested();
+        if(findOnPage == null) findOnPage = new FindOnPage(SuperTextActivity.this);
+        findOnPage.runFindOnPage(false);
+        return true;
     }
 
     protected Text getSectionHeaderText(TextEnums dir){
@@ -542,8 +555,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
     View.OnClickListener findOnPageUpClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if(findOnPage == null) findOnPage = new FindOnPage(SuperTextActivity.this);
-            findOnPage.runFindOnPage(false);
+            onSearchRequested();
         }
     };
 

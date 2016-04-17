@@ -62,7 +62,7 @@ public class DailyLearning {
         String todaysDate = getLongDate(1);
         JSONArray weeks = null;
         try {
-            Log.d("DailyLearning", "getParsha..today: "+ todaysDate);
+            //Log.d("DailyLearning", "getParsha..today: "+ todaysDate);
             weeks = Util.openJSONArrayFromAssets("calendar/parshiot.json");
 
             for (int i = 0; i < weeks.length(); i++) {
@@ -71,11 +71,10 @@ public class DailyLearning {
                     String parsha = week.getString("parasha");
                     JSONArray haftaras = week.getJSONArray("haftara");
                     //maybe also use: "shabbat_name": "Shabbat HaGadol"
-                    Log.d("DailyLearning", "this weeks parsha: " + parsha + "");
+                    //Log.d("DailyLearning", "this weeks parsha: " + parsha + "");
 
                     //TODO deal with multi part hafotra
                     String haftara = haftaras.getString(0);
-                    Log.d("DailyLearning", "this weeks haftara: " + haftara);
                     String aliyah = week.getJSONArray("aliyot").getString(0);
                     String bookName = aliyah.replaceFirst("\\s[0-9]+.*$", "");
                     Book book = new Book(bookName);
@@ -113,7 +112,7 @@ public class DailyLearning {
     }
 
     public static List<MenuDirectRef> getDailyLearnings(Context context){
-        Log.d("DailyLearning", "starting get dailyLearning");
+        //Log.d("DailyLearning", "starting get dailyLearning");
         List<MenuDirectRef> dailyLearnings = new ArrayList<>();
 
         for(MenuDirectRef menuDirectRef:getParsha(context)) {
