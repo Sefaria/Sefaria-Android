@@ -2,9 +2,7 @@ package org.sefaria.sefaria.activities;
 
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,22 +14,15 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import org.sefaria.sefaria.BuildConfig;
-import org.sefaria.sefaria.GoogleTracker;
-import org.sefaria.sefaria.HomeActionbar;
+import org.sefaria.sefaria.layouts.HomeActionbar;
 import org.sefaria.sefaria.MenuElements.MenuDirectRef;
 import org.sefaria.sefaria.MenuElements.MenuGrid;
-import org.sefaria.sefaria.MenuElements.MenuNode;
 import org.sefaria.sefaria.MenuElements.MenuState;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.DailyLearning;
-import org.sefaria.sefaria.database.Database;
-import org.sefaria.sefaria.database.Huffman;
-import org.sefaria.sefaria.database.Searching;
-import org.sefaria.sefaria.layouts.CustomActionbar;
 import org.sefaria.sefaria.layouts.SefariaTextView;
 
 import java.util.ArrayList;

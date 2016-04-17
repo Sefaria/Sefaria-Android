@@ -156,6 +156,25 @@
                 android:textSize="22dp" />
         </FrameLayout>
         <FrameLayout
+            android:id="@+id/menu_lang_btn"
+            android:layout_alignParentRight="true"
+            android:layout_width="@dimen/custom_action_bar_button_frame_width"
+            android:layout_height="@dimen/custom_action_bar_button_frame_width"
+            android:padding="8dp"
+            android:layout_centerVertical="true"
+            android:layout_gravity="right">
+            <org.sefaria.sefaria.layouts.SefariaTextView
+                android:id="@+id/langTV"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:background="?button_ripple_rect_rounded_transparent"
+                android:textColor="?text_color_english"
+                android:textSize="20sp"
+                android:text="A"/>
+        </FrameLayout>
+
+        <FrameLayout
             android:id="@+id/invisable_btn"
             android:layout_width="@dimen/custom_action_bar_button_frame_width"
             android:layout_height="match_parent"

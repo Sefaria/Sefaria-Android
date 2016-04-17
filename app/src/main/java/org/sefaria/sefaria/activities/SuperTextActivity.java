@@ -295,6 +295,13 @@ public abstract class SuperTextActivity extends FragmentActivity {
         }else
             veryFirstTime = false;
 
+        if(loadedTextUsingAPI == null)
+            loadedTextUsingAPI = Settings.getUseAPI();
+        else if(loadedTextUsingAPI != Settings.getUseAPI()) {
+            restartActivity();
+        }
+
+
         DialogNoahSnackbar.checkCurrentDialog(this, (ViewGroup) this.findViewById(R.id.dialogNoahSnackbarRoot));
         //if(drawerLayout != null && drawerLayout.isDrawerOpen(Gravity.LEFT)){
         //    drawerLayout.closeDrawer(Gravity.LEFT);
@@ -415,7 +422,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
                 searchClick = null;
             backClick = null;
             homeLongClick = null;
-            customActionbar = new CustomActionbar(this, menuNode, menuLang,homeClick,homeLongClick, null,searchClick,titleClick,menuClick,backClick,catColor); //TODO.. I'm not actually sure this should be lang.. instead it shuold be MENU_LANG from Util.S
+            customActionbar = new CustomActionbar(this, menuNode, menuLang,homeClick,homeLongClick, null,searchClick,titleClick,menuClick,backClick,null,catColor); //TODO.. I'm not actually sure this should be lang.. instead it shuold be MENU_LANG from Util.S
             LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
             abRoot.addView(customActionbar);
             customActionbar.setLang(menuLang);
@@ -483,7 +490,9 @@ public abstract class SuperTextActivity extends FragmentActivity {
         } else if(searchActionBarRoot != null && searchActionBarRoot.getChildCount()>0){
             searchActionBarRoot.removeAllViews();
         } else {
-            super.onBackPressed();
+            //super.onBackPressed();
+            setResult(RESULT_CANCELED);
+            finish();
         }
     }
 
@@ -683,6 +692,10 @@ public abstract class SuperTextActivity extends FragmentActivity {
     public int getColorTheme() { return colorTheme; }
     private void setColorTheme(int colorTheme) {
         Settings.setTheme(colorTheme);
+        restartActivity();
+    }
+
+    protected void restartActivity(){
         finish();
         startNewTextActivityIntent(this, book, currText, currNode, false, searchingTerm,-1);
     }

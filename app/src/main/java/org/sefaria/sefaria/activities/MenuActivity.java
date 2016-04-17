@@ -30,7 +30,7 @@ public class MenuActivity extends Activity {
     private MenuState menuState;
     private boolean isPopup;
     private boolean hasSectionBack; //true when you clicked a subsection to get to this menu
-    private CustomActionbar cab;
+    private CustomActionbar customActionbar;
 
     @Override
     protected void onCreate(Bundle in) {
@@ -58,9 +58,10 @@ public class MenuActivity extends Activity {
         int catColor = menuState.getCurrNode().getTopLevelColor();
         homeClick = null;
         homeLongClick = null;
-        cab = new CustomActionbar(this, menuState.getCurrNode(),menuLang,homeClick,homeLongClick, null,null,null,menuClick,backClick,catColor);
+        customActionbar = new CustomActionbar(this, menuState.getCurrNode(),menuLang,homeClick,homeLongClick, null,null,null,null,backClick,menuClick,catColor);
+        customActionbar.setMenuBtnLang(menuLang);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
-        abRoot.addView(cab);
+        abRoot.addView(customActionbar);
 
         menuGrid = new MenuGrid(this,NUM_COLUMNS, menuState,LIMIT_GRID_SIZE,menuLang);
         ScrollView root = (ScrollView) findViewById(R.id.gridRoot);
@@ -74,7 +75,7 @@ public class MenuActivity extends Activity {
         }
         menuState.setLang(lang);
         menuGrid.setLang(lang);
-        cab.setLang(lang);
+        customActionbar.setLang(lang);
     }
 
     private boolean veryFirstTime = true;
@@ -147,7 +148,9 @@ public class MenuActivity extends Activity {
     View.OnClickListener menuClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            setLang(Settings.switchMenuLang());
+            Util.Lang lang = Settings.switchMenuLang();
+            setLang(lang);
+            customActionbar.setMenuBtnLang(lang);
         }
     };
 
