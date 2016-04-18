@@ -20,7 +20,7 @@ public class SefariaTextView extends TextView {
     }
 
     public SefariaTextView (final Context context,final AttributeSet attrs,final int defStyle) {
-        super(context,attrs,defStyle);
+        super(context, attrs, defStyle);
     }
 
     public SefariaTextView(Context context, AttributeSet attributeSet) {
@@ -46,7 +46,7 @@ public class SefariaTextView extends TextView {
         }
         a.recycle();
 
-        setFont(lang,isSerif);
+        setFont(lang, isSerif);
     }
 
 
@@ -71,6 +71,7 @@ public class SefariaTextView extends TextView {
             if (textSize != -1) {
                 setTextSize(textSize);
             }
+            setLineSpacing(0,1f);
         } else {
             if (isSerif) font = MyApp.Font.QUATTROCENTO;
             else font = MyApp.Font.MONTSERRAT;

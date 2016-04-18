@@ -27,8 +27,8 @@ public class HomeActionbar extends LinearLayout {
 
     public void setLang(Util.Lang lang) {
         SefariaTextView tv = (SefariaTextView) findViewById(R.id.langTV);
-        tv.setFont(lang,true);
         if (lang == Util.Lang.HE) tv.setText("A");
         else /* if (lang == Util.Lang.EN) */ tv.setText("א");
+        tv.setFont(lang,true);
     }
 }
