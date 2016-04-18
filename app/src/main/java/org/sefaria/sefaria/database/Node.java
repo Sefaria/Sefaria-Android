@@ -921,7 +921,7 @@ public class Node{// implements  Parcelable{
         }catch(JSONException e){
             e.printStackTrace();
             Log.e("api", "error processing json data");
-            GoogleTracker.sendException(e,"getTextsFromAPI: proc data");
+            GoogleTracker.sendException(e, "getTextsFromAPI: proc data");
         }
 
 
@@ -929,14 +929,24 @@ public class Node{// implements  Parcelable{
     }
 
     /**
-     *  Get texts for complex texts
-     *
+     * Get texts for all types of texts
      * @return textList
      * @throws API.APIException
      */
     public List<Text> getTexts() throws API.APIException{
+        return getTexts(false);
+    }
+
+    /**
+     *  Get texts
+     *
+     * @return textList
+     * @throws API.APIException
+     */
+    public List<Text> getTexts(boolean ignoreUsingAPI) throws API.APIException{
         //Log.d("Node","getTexts called");
-        if(textList != null && (nid == NID_DUMMY || gotTextListInAPI == Settings.getUseAPI())){
+        if(textList != null && (nid == NID_DUMMY || gotTextListInAPI == Settings.getUseAPI()|| ignoreUsingAPI)){
+            Log.d("Node","text list not null: " + ignoreUsingAPI + "...." + (nid == NID_DUMMY || gotTextListInAPI == Settings.getUseAPI()));
             return textList;
         }
         Log.d("Node","found no textList");

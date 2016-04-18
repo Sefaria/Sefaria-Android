@@ -64,9 +64,14 @@ public class API {
     private boolean useCache = Cache.USE_CACHE_DEFAULT;
 
     private String jsonString; //if null, no json to send. if not null send this jsonObject along with url request
-    final static int READ_TIMEOUT = 10000;
-    final static int CONNECT_TIMEOUT = 10000;
-    final static int SPIN_TIMEOUT = 8000;
+    final static int READ_TIMEOUT = 3000;
+    final static int CONNECT_TIMEOUT = 3000;
+    final static int SPIN_TIMEOUT = 5000;
+
+    final static int READ_TIMEOUT_LONG = 10000;
+    final static int CONNECT_TIMEOUT_LONG = 10000;
+    final static int SPIN_TIMEOUT_LONG = 8000;
+    private boolean usingLongerTimeouts = false;
     //TODO determine good times
 
     public static void makeAPIErrorToast(Context context) {
@@ -98,12 +103,19 @@ public class API {
             this.status = STATUS_ERROR;
             return data;
         }
+        int readTimeout = READ_TIMEOUT;
+        int connectionTimeout = CONNECT_TIMEOUT;
+        if(usingLongerTimeouts){
+            readTimeout = READ_TIMEOUT_LONG;
+            connectionTimeout = CONNECT_TIMEOUT_LONG;
+        }
+
         try {
             if(jsonString == null) {//!use JSON post
                 URL url = new URL(urlString);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setReadTimeout(READ_TIMEOUT);
-                conn.setConnectTimeout(CONNECT_TIMEOUT);
+                conn.setReadTimeout(readTimeout);
+                conn.setConnectTimeout(connectionTimeout);
                 conn.connect();
                 InputStream stream = conn.getInputStream();
                 data = convertStreamToString(stream);
@@ -126,8 +138,8 @@ public class API {
                 wr.write(buf, 0, buf.length);
                 wr.flush();
                 wr.close();
-                connection.setReadTimeout(READ_TIMEOUT);
-                connection.setConnectTimeout(CONNECT_TIMEOUT);
+                connection.setReadTimeout(readTimeout);
+                connection.setConnectTimeout(connectionTimeout);
                 connection.connect();
                 InputStream stream = connection.getInputStream();
                 data = convertStreamToString(stream);
@@ -331,25 +343,37 @@ public class API {
     //static methods
 
     public static String getDataFromURL(String url) throws APIException{
-        return getDataFromURL(url,null,Cache.USE_CACHE_DEFAULT);
+        return getDataFromURL(url,null,Cache.USE_CACHE_DEFAULT,false);
     }
 
     public static String getDataFromURL(String url,boolean useCache) throws APIException{
-        return getDataFromURL(url,null,useCache);
+        return getDataFromURL(url,null,useCache,false);
     }
 
 
 
     /**
-     * This function will wait until it gets the data from the Internet to return.
-     * It is possible that it will take a while if you are asking for lots of data or bad connection.
-     * Read timeout is {@value #READ_TIMEOUT}ms and connection timeout is {@value #CONNECT_TIMEOUT}ms.
-     *
+
      * @param url
      * @return data as String from url request
      * @throws APIException
      */
-    public static String getDataFromURL(String url, String jsonString,boolean useCache) throws APIException{
+
+    /**
+     *
+     * This function will wait until it gets the data from the Internet to return.
+     * It is possible that it will take a while if you are asking for lots of data or bad connection.
+     * Read timeout is {@value #READ_TIMEOUT}ms and connection timeout is {@value #CONNECT_TIMEOUT}ms.
+     *
+     *
+     * @param url the URL to get the data from
+     * @param jsonString the jsonString to send or null if you don't need to send JSON
+     * @param useCache if the cache is available
+     * @param usingLongerTimeouts if you really want to wait a while if it's a bad connection
+     * @return string data
+     * @throws APIException
+     */
+    public static String getDataFromURL(String url, String jsonString,boolean useCache, boolean usingLongerTimeouts) throws APIException{
         String data;
         if(useCache){
             data = Cache.getCache(url,jsonString);
@@ -359,6 +383,7 @@ public class API {
 
         API api = new API();
         try{//try to get the data with the current thread.  This will only work if it's on a background thread.
+            api.usingLongerTimeouts = usingLongerTimeouts;
             api.jsonString = jsonString;
             api.useCache = useCache;
             data = api.fetchData(url);
