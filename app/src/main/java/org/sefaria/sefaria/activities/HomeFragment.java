@@ -2,9 +2,7 @@ package org.sefaria.sefaria.activities;
 
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,22 +14,15 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import org.sefaria.sefaria.BuildConfig;
-import org.sefaria.sefaria.GoogleTracker;
-import org.sefaria.sefaria.HomeActionbar;
+import org.sefaria.sefaria.layouts.HomeActionbar;
 import org.sefaria.sefaria.MenuElements.MenuDirectRef;
 import org.sefaria.sefaria.MenuElements.MenuGrid;
-import org.sefaria.sefaria.MenuElements.MenuNode;
 import org.sefaria.sefaria.MenuElements.MenuState;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.DailyLearning;
-import org.sefaria.sefaria.database.Database;
-import org.sefaria.sefaria.database.Huffman;
-import org.sefaria.sefaria.database.Searching;
-import org.sefaria.sefaria.layouts.CustomActionbar;
 import org.sefaria.sefaria.layouts.SefariaTextView;
 
 import java.util.ArrayList;
@@ -66,6 +57,7 @@ public class HomeFragment extends android.support.v4.app.Fragment {
     @Override
     public void onCreate(Bundle in) {
         super.onCreate(in);
+        Log.d("HomeFrag", "onCreate");
         //setTheme(Settings.getTheme());
         //setContentView(R.layout.fragment_home);
 
@@ -75,6 +67,7 @@ public class HomeFragment extends android.support.v4.app.Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.d("HomeFrag", "onCreateView");
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         LinearLayout homeRoot = (LinearLayout) view.findViewById(R.id.homeRoot);
 
@@ -99,8 +92,23 @@ public class HomeFragment extends android.support.v4.app.Fragment {
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        menuGrid.setLang(menuGrid.getLang());
+        Log.d("HomeFrag", "onActivityResult");
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle out) {
+        super.onSaveInstanceState(out);
+
+        //out.putParcelable("menuState", menuState);
+    }
+
+    @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        Log.d("HomeFrag", "onAttach");
 
         this.activity = activity;
 
@@ -109,6 +117,7 @@ public class HomeFragment extends android.support.v4.app.Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+        Log.d("HomeFrag", "onDetach");
     }
 
     /*private void addHeader(LinearLayout homeRoot){
@@ -120,6 +129,36 @@ public class HomeFragment extends android.support.v4.app.Fragment {
         livingLibraryView.setTextColor(Util.getColor(getContext(), R.attr.text_color_main));
         homeRoot.addView(livingLibraryView);
     }*/
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("HomeFrag", "onResume");
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        Log.d("HomeFrag","onHiddenChanged" + hidden);
+    }
+
+    @Override
+    public void setMenuVisibility(boolean menuVisible) {
+        super.setMenuVisibility(menuVisible);
+        Log.d("HomeFrag", "setMenuVisibility" + menuVisible);
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        Log.d("HomeFrag", "setUserViableHint" + isVisibleToUser);
+    }
+
+    @Override
+    public void setHasOptionsMenu(boolean hasMenu) {
+        super.setHasOptionsMenu(hasMenu);
+        Log.d("HomeFrag", "setHasOptionsMenu" + hasMenu);
+    }
 
     private void addRecentTexts(View view){
         //Recent Texts
@@ -216,18 +255,7 @@ public class HomeFragment extends android.support.v4.app.Fragment {
     }
 
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        menuGrid.setLang(menuGrid.getLang());
-    }
 
-    @Override
-    public void onSaveInstanceState(Bundle out) {
-        super.onSaveInstanceState(out);
-
-        //out.putParcelable("menuState", menuState);
-    }
 
     View.OnClickListener searchClick = new View.OnClickListener() {
         @Override

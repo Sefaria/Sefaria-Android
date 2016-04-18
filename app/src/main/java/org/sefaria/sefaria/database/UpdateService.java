@@ -75,7 +75,7 @@ public class UpdateService extends Service {
 
 
         WifiManager wm = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-        wifiLock= wm.createWifiLock(WifiManager.WIFI_MODE_FULL, "wifiTag");
+        wifiLock= wm.createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "wifiTag");
         wifiLock.acquire();
 
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
@@ -173,7 +173,7 @@ public class UpdateService extends Service {
 
     public static void postUpdateStage1() {
         try {
-            String csvData = API.getDataFromURL(Downloader.getCSVurl(),false);
+            String csvData = API.getDataFromURL(Downloader.getCSVurl(),null,false,false);
             Log.d("Downloader", "postUpdateStage1 CSV: " + csvData);
             String[] firstLine = csvData.split(",");
             int dbVersion = Integer.parseInt(firstLine[0]);

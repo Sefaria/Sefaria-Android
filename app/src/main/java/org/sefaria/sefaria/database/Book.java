@@ -54,7 +54,13 @@ public class Book implements Parcelable {
     public Book(String title) throws BookNotFoundException {
         //Node root = Node.getTOC(116);
         wherePage = DEFAULT_WHERE_PAGE;
-        get(title);
+        get(title, false);
+    }
+
+    public Book(String title,boolean searchHeAndEnTitles) throws BookNotFoundException {
+        //Node root = Node.getTOC(116);
+        wherePage = DEFAULT_WHERE_PAGE;
+        get(title,searchHeAndEnTitles);
     }
 
     public Book(int bid) throws BookNotFoundException {
@@ -88,6 +94,19 @@ public class Book implements Parcelable {
             Log.e("Book", "wrong lang num");
             return "title";
         }
+    }
+
+    public String getCategories(){
+        String string = "";
+        for(int i=0;i<categories.length;i++){
+            String cat;
+            if(i<categories.length -1)
+                cat = categories[i] + ", ";
+            else
+                cat = categories[i];
+            string += cat;
+        }
+        return string;
     }
 
 
@@ -217,13 +236,20 @@ public class Book implements Parcelable {
         private static final long serialVersionUID = 1L;
     }
 
-    public void get(String title)throws BookNotFoundException{
+    public void get(String title,boolean searchHeAndEnTitles)throws BookNotFoundException{
         SQLiteDatabase db = Database.getDB();
         Cursor cursor = db.query(TABLE_BOOKS, null, Ktitle + "=?",
                 new String[] { title }, null, null, null, null);
 
         if (cursor != null && cursor.moveToFirst()){
             getFromCursor(cursor);
+        }
+        else if(searchHeAndEnTitles){
+            cursor = db.query(TABLE_BOOKS, null, KheTitle + "=?",
+                    new String[] { title }, null, null, null, null);
+            if (cursor != null && cursor.moveToFirst()){
+                getFromCursor(cursor);
+            }
         }
         else
             throw new BookNotFoundException();
@@ -362,20 +388,21 @@ public class Book implements Parcelable {
         return bookList;
     }
 
-    public static ArrayList<String> getAllBookNames(boolean isHebrew) {
+    public static ArrayList<String> getAllBookNames(Util.Lang lang) {
         SQLiteDatabase db = Database.getDB();
         // Select All Query
         String selectQuery = "SELECT  * FROM " + TABLE_BOOKS;
 
         Cursor cursor = db.rawQuery(selectQuery, null);
         // looping through all rows and adding to list
-        ArrayList<String> bookNameList = new ArrayList<String>(cursor.getCount());
+        ArrayList<String> bookNameList = new ArrayList<>();
         if (cursor.moveToFirst()) {
             do {
-                if (isHebrew) {
-                    bookNameList.add(Util.getRemovedNikudString(cursor.getString(8))); //8 is index of hebook title
-                } else {
+                if(lang == Util.Lang.EN || lang == Util.Lang.BI){
                     bookNameList.add(cursor.getString(7)); //7 is index of enbook title
+                }
+                if (lang == Util.Lang.HE || lang == Util.Lang.BI) {
+                    bookNameList.add(Util.getRemovedNikudString(cursor.getString(8))); //8 is index of hebook title
                 }
             } while (cursor.moveToNext());
         }

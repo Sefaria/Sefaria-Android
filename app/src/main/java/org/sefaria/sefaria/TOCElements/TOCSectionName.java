@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
+import org.sefaria.sefaria.activities.TOCActivity;
 import org.sefaria.sefaria.database.Node;
 import org.sefaria.sefaria.layouts.SefariaTextView;
 
@@ -56,7 +57,7 @@ public class TOCSectionName extends LinearLayout implements TOCElement {
             return;
         }
         int padding = (int) MyApp.convertDpToPixel(4.5f);
-        final int sidePadding = (int) MyApp.convertDpToPixel(13);
+        final int sidePadding = (int) MyApp.convertDpToPixel(13f);
         if(node.isTextSection()) {
             //padding = 21;
             //sidePadding += 4;
@@ -132,8 +133,7 @@ public class TOCSectionName extends LinearLayout implements TOCElement {
                 return;
             }
 
-            //TODO determine if it's a leaf and if so then display text
-            TOCNumBox.gotoTextActivity(context,node,lang);
+            TOCActivity.gotoTextActivity(context, node, lang);
         }
     };
 

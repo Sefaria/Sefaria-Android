@@ -1,8 +1,10 @@
-package org.sefaria.sefaria;
+package org.sefaria.sefaria.layouts;
 
 import android.content.Context;
 import android.widget.LinearLayout;
 
+import org.sefaria.sefaria.R;
+import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.layouts.SefariaTextView;
 
 /**

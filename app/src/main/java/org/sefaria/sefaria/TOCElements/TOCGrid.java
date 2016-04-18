@@ -84,15 +84,28 @@ public class TOCGrid extends LinearLayout {
 
 
         bookTitleView = new SefariaTextView(context);
-        bookTitleView.setFont(lang,true);
+        bookTitleView.setFont(lang, true);
         bookTitleView.setTextSize(25);
-        bookTitleView.setTextColor(Util.getColor(context,R.attr.text_color_main));
+        bookTitleView.setTextColor(Util.getColor(context, R.attr.text_color_main));
         bookTitleView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
         bookTitleView.setGravity(Gravity.CENTER);
-        int bookTitlepaddding =10;
+        final int bookTitlepaddding =10;
         bookTitleView.setPadding(bookTitlepaddding, bookTitlepaddding, bookTitlepaddding, bookTitlepaddding);
-        this.addView(bookTitleView,0);
+        this.addView(bookTitleView, 0);
+
+        AutoResizeTextView bookCategoryView = new AutoResizeTextView(context);
+        bookCategoryView.setTextColor(getResources().getColor(R.color.toc_curr_section_title));
+        bookCategoryView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        bookCategoryView.setText(book.getCategories());
+        bookCategoryView.setTextSize(40);
+        final int padding = 8;
+        bookCategoryView.setPadding(padding, padding, padding, padding);
+        bookCategoryView.setGravity(Gravity.CENTER);
+        this.addView(bookCategoryView, 1);
+
+
+
 
         currSectionTitleView = new AutoResizeTextView(context);
         currSectionTitleView.setTextColor(getResources().getColor(R.color.toc_curr_section_title));
@@ -104,7 +117,7 @@ public class TOCGrid extends LinearLayout {
             String sectionTitle = node.getWholeTitle(lang); //TODO move lang to setLang
             currSectionTitleView.setText(sectionTitle);
             currSectionTitleView.setTextSize(40);
-            int padding = 8;
+
             currSectionTitleView.setPadding(padding, padding, padding, padding);
         } catch (Node.InvalidPathException e) {
             currSectionTitleView.setHeight(0);
@@ -112,16 +125,16 @@ public class TOCGrid extends LinearLayout {
             Toast.makeText(context,"Problem getting data from internet", Toast.LENGTH_SHORT).show();
         }
         currSectionTitleView.setGravity(Gravity.CENTER);
-        this.addView(currSectionTitleView, 1);
+        this.addView(currSectionTitleView, 2);
 
         tabRoot = makeTabSections(tocNodesRoots);
-        this.addView(tabRoot,2);//It's the 2nd view starting with bookTitle and CurrSectionName
+        this.addView(tabRoot,3);//It's the 3nd view starting with bookTitle and CurrSectionName
 
         this.gridRoot = new LinearLayout(context);
         gridRoot.setOrientation(LinearLayout.VERTICAL);
         gridRoot.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 
-        this.addView(gridRoot, 3);
+        this.addView(gridRoot, 4);
 
         TocTabList.get(defaultTab).setActive(true);//set it true, such that the setLang function will start the right tab
 
