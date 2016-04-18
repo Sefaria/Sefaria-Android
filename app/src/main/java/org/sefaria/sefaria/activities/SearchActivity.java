@@ -75,7 +75,6 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
         autoCompleteTextView.setOnItemClickListener(autoCompleteItemClick);
         //autoCompleteTextView.setOnFocusChangeListener(autoComFocus);
         autoCompleteTextView.setOnEditorActionListener(autoComEnterClick);
-        autoCompleteTextView.setDropDownWidth((int) Math.floor(MyApp.getScreenSizePixels().x * 0.75));
         autoCompleteTextView.setCompletionHint("Click book to open");
     }
 

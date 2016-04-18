@@ -546,6 +546,9 @@ public abstract class SuperTextActivity extends FragmentActivity {
     View.OnClickListener findOnPageCloseClick = new View.OnClickListener(){
         @Override
         public void onClick(View v) {
+            if(findOnPage != null){
+                findOnPage.hideShowKeyboard(false,0);
+            }
             searchActionBarRoot.removeAllViews();
         }
     };
@@ -579,6 +582,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
                 searchActionBarRoot = (LinearLayout) findViewById(R.id.searchBarRoot);
             searchActionBarRoot.removeAllViews();//in case you some how click on the search button while the search thing is already open (see if the old bar is visable through the search bar)
             searchActionBarRoot.addView(searchActionbar);
+            searchActionbar.requestFocus();
 
             if(findOnPage == null)
                 findOnPage = new FindOnPage(SuperTextActivity.this);

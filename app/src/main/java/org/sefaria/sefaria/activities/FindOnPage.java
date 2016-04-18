@@ -62,7 +62,7 @@ public class FindOnPage {
             autoCompleteTextView.setOnItemClickListener(autoCompleteItemClick);
             autoCompleteTextView.setOnFocusChangeListener(autoComFocus);
             autoCompleteTextView.setOnEditorActionListener(autoComEnterClick);
-            autoCompleteTextView.setDropDownWidth((int) Math.floor(MyApp.getScreenSizePixels().x * 0.75));
+
             autoCompleteTextView.requestFocus();
 
             //open the keyboard focused in the edtSearch
