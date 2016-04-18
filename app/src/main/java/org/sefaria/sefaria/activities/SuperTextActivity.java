@@ -14,6 +14,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -559,6 +561,12 @@ public abstract class SuperTextActivity extends FragmentActivity {
                 searchActionBarRoot = (LinearLayout) findViewById(R.id.searchBarRoot);
             searchActionBarRoot.removeAllViews();//in case you some how click on the search button while the search thing is already open (see if the old bar is visable through the search bar)
             searchActionBarRoot.addView(searchActionbar);
+            //open the keyboard focused in the edtSearch
+
+            EditText searchBox = (EditText) searchActionbar.findViewById(R.id.search_box);
+            searchBox.requestFocus();
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(searchBox, InputMethodManager.SHOW_IMPLICIT);
 
             if(findOnPage == null)
                 findOnPage = new FindOnPage(SuperTextActivity.this);

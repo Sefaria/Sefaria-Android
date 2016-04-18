@@ -291,7 +291,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
                         AsyncLoadSection als = new AsyncLoadSection(TextEnums.PREV_SECTION);
                         als.execute();
                     }
-                    if (lastItem == totalItemCount && preLast != lastItem) {
+                    if (lastItem == totalItemCount ) {
                         preLast = lastItem;
                         AsyncLoadSection als = new AsyncLoadSection(TextEnums.NEXT_SECTION);
                         als.execute();

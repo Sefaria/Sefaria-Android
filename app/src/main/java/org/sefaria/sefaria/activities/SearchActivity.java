@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.text.BidiFormatter;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -36,6 +37,7 @@ import org.sefaria.sefaria.database.Searching;
 import org.sefaria.sefaria.database.Text;
 import org.sefaria.sefaria.layouts.SefariaTextView;
 
+import java.text.Bidi;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,7 +63,8 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
 
 
         LinearLayout actionbarRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
-        actionbarRoot.addView(new SearchActionbar(this, closeClick, searchClick,null,null,-1,MyApp.getRString(R.string.search) + " Sefaria"));
+        actionbarRoot.addView(new SearchActionbar(this, closeClick, searchClick, null, null, -1, MyApp.getRString(R.string.search) + " Sefaria"));
+
 
 
     }
@@ -102,6 +105,9 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
 
 
         DialogNoahSnackbar.checkCurrentDialog(this, (ViewGroup) findViewById(R.id.dialogNoahSnackbarRoot));
+
+        String test = "";
+        numResultsTV.setText(test);
     }
 
     private void runSearch(){
