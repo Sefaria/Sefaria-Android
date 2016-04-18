@@ -336,7 +336,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
             }
 
             InputMethodManager inputMethodManager = getInputMethodManager();
-            if(inputMethodManager.isActive()) {
+            if(findOnPage != null && inputMethodManager.isActive()) {
                 findOnPage.hideShowKeyboard(false, 0);
                 return;
             }
