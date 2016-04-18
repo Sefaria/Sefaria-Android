@@ -126,14 +126,17 @@ public class MyApp extends Application {
         return null;
     }
 
-    public static Point getScreenSize(){
-        //WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        //Display display = wm.getDefaultDisplay();
-        //Point size = new Point();
-        //display.getSize(size);
+    public static Point getScreenSizePixels(){
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
         //int width = size.x;
         //int height = size.y;
+        return size;
+    }
 
+    public static Point getScreenSize(){
         Configuration configuration = getContext().getResources().getConfiguration();
         Point size = new Point();
         size.x = configuration.screenWidthDp;

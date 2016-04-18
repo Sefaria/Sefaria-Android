@@ -2,6 +2,7 @@ package org.sefaria.sefaria.database;
 
 
 import android.content.Context;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -61,14 +62,17 @@ public class DailyLearning {
         String todaysDate = getLongDate(1);
         JSONArray weeks = null;
         try {
+            //Log.d("DailyLearning", "getParsha..today: "+ todaysDate);
             weeks = Util.openJSONArrayFromAssets("calendar/parshiot.json");
 
             for (int i = 0; i < weeks.length(); i++) {
                 JSONObject week = weeks.getJSONObject(i);
-
                 if(week.getString("date").equals(todaysDate)){
                     String parsha = week.getString("parasha");
                     JSONArray haftaras = week.getJSONArray("haftara");
+                    //maybe also use: "shabbat_name": "Shabbat HaGadol"
+                    //Log.d("DailyLearning", "this weeks parsha: " + parsha + "");
+
                     //TODO deal with multi part hafotra
                     String haftara = haftaras.getString(0);
                     String aliyah = week.getJSONArray("aliyot").getString(0);
@@ -101,12 +105,14 @@ public class DailyLearning {
 
             }
         } catch (Exception e) {
+            Log.e("DailyLearning", "getParsha Problems");
             e.printStackTrace();
         }
         return new MenuDirectRef[]{};
     }
 
     public static List<MenuDirectRef> getDailyLearnings(Context context){
+        //Log.d("DailyLearning", "starting get dailyLearning");
         List<MenuDirectRef> dailyLearnings = new ArrayList<>();
 
         for(MenuDirectRef menuDirectRef:getParsha(context)) {

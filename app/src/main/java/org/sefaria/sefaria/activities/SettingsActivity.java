@@ -37,7 +37,7 @@ public class SettingsActivity extends Activity {
         numDebugDBUnlockClicks = 0;
 
         backClick = null;
-        CustomActionbar customActionbar = new CustomActionbar(this, new MenuNode("Settings","Settings (he)", null), Settings.getSystemLang(),null,null,closeClick,null,null,null,backClick,-1);
+        CustomActionbar customActionbar = new CustomActionbar(this, new MenuNode("Settings","Settings (he)", null), Settings.getSystemLang(),null,null,closeClick,null,null,null,backClick,null,-1);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(customActionbar);
         fontSize   = (EditText)findViewById(R.id.fontSize);
@@ -208,7 +208,7 @@ public class SettingsActivity extends Activity {
             case R.id.DB_use_full:
                 if (checked)
                     Settings.setUseAPI(false);
-                    Database.getOfflineDB(this,true);
+                    Database.getOfflineDBIfNeeded(this,true);
                 break;
         }
     }

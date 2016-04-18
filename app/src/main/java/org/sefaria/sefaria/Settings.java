@@ -119,6 +119,22 @@ public class Settings {
     }
 
 
+    public static void addSearchTerm(String string){
+        Set set = getSearchTerms();
+        if(!set.contains(string))
+            set.add(string);
+        SharedPreferences.Editor editor = getGeneralSettings().edit();
+        editor.putStringSet("searchTerms", set);
+        editor.commit();
+    }
+
+    public static Set<String> getSearchTerms(){
+        SharedPreferences generalSettings = getGeneralSettings();
+        Set<String> set = generalSettings.getStringSet("searchTerms", null);
+        if(set == null)
+            set = new HashSet<>();
+        return set;
+    }
 
     public static boolean getIsSideBySide(){
         SharedPreferences generalSettings = getGeneralSettings();
@@ -250,7 +266,7 @@ public class Settings {
             //"<en|he|bi>.<cts|sep>.<white|grey|black>.10px:"+ <rootNum>.<Childnum>.<until>.<leaf>.<verseNum>"
             int textNum = -1;
             try {
-                textNum = node.getTexts().indexOf(text);
+                textNum = node.getTexts(true).indexOf(text);
             } catch (API.APIException e) {
                 e.printStackTrace();
             }

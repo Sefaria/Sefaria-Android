@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -297,6 +296,13 @@ public abstract class SuperTextActivity extends FragmentActivity {
         }else
             veryFirstTime = false;
 
+        if(loadedTextUsingAPI == null)
+            loadedTextUsingAPI = Settings.getUseAPI();
+        else if(loadedTextUsingAPI != Settings.getUseAPI()) {
+            restartActivity();
+        }
+
+
         DialogNoahSnackbar.checkCurrentDialog(this, (ViewGroup) this.findViewById(R.id.dialogNoahSnackbarRoot));
         //if(drawerLayout != null && drawerLayout.isDrawerOpen(Gravity.LEFT)){
         //    drawerLayout.closeDrawer(Gravity.LEFT);
@@ -417,7 +423,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
                 searchClick = null;
             backClick = null;
             homeLongClick = null;
-            customActionbar = new CustomActionbar(this, menuNode, menuLang,homeClick,homeLongClick, null,searchClick,titleClick,menuClick,backClick,catColor); //TODO.. I'm not actually sure this should be lang.. instead it shuold be MENU_LANG from Util.S
+            customActionbar = new CustomActionbar(this, menuNode, menuLang,homeClick,homeLongClick, null,searchClick,titleClick,menuClick,backClick,null,catColor); //TODO.. I'm not actually sure this should be lang.. instead it shuold be MENU_LANG from Util.S
             LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
             abRoot.addView(customActionbar);
             customActionbar.setLang(menuLang);
@@ -448,6 +454,10 @@ public abstract class SuperTextActivity extends FragmentActivity {
         }
     }
     */
+
+    public InputMethodManager getInputMethodManager(){
+        return (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
@@ -485,8 +495,18 @@ public abstract class SuperTextActivity extends FragmentActivity {
         } else if(searchActionBarRoot != null && searchActionBarRoot.getChildCount()>0){
             searchActionBarRoot.removeAllViews();
         } else {
-            super.onBackPressed();
+            //super.onBackPressed();
+            setResult(RESULT_CANCELED);
+            finish();
         }
+    }
+
+    @Override
+    public boolean onSearchRequested() {
+        super.onSearchRequested();
+        if(findOnPage == null) findOnPage = new FindOnPage(SuperTextActivity.this);
+        findOnPage.runFindOnPage(false);
+        return true;
     }
 
     protected Text getSectionHeaderText(TextEnums dir){
@@ -526,6 +546,9 @@ public abstract class SuperTextActivity extends FragmentActivity {
     View.OnClickListener findOnPageCloseClick = new View.OnClickListener(){
         @Override
         public void onClick(View v) {
+            if(findOnPage != null){
+                findOnPage.hideShowKeyboard(false,0);
+            }
             searchActionBarRoot.removeAllViews();
         }
     };
@@ -535,8 +558,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
     View.OnClickListener findOnPageUpClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if(findOnPage == null) findOnPage = new FindOnPage(SuperTextActivity.this);
-            findOnPage.runFindOnPage(false);
+            onSearchRequested();
         }
     };
 
@@ -553,7 +575,6 @@ public abstract class SuperTextActivity extends FragmentActivity {
         @Override
         public void onClick(View v) {
             Log.d("TextAct", "here");
-            Node oldNode = currNode;
             if(searchActionbar == null) {
                 searchActionbar = new SearchActionbar(SuperTextActivity.this, findOnPageCloseClick, null,findOnPageUpClick,findOnPageDownClick,book.getCatColor(), getRString(R.string.search) + " " + book.getTitle(menuLang));
             }
@@ -561,12 +582,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
                 searchActionBarRoot = (LinearLayout) findViewById(R.id.searchBarRoot);
             searchActionBarRoot.removeAllViews();//in case you some how click on the search button while the search thing is already open (see if the old bar is visable through the search bar)
             searchActionBarRoot.addView(searchActionbar);
-            //open the keyboard focused in the edtSearch
-
-            EditText searchBox = (EditText) searchActionbar.findViewById(R.id.search_box);
-            searchBox.requestFocus();
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.showSoftInput(searchBox, InputMethodManager.SHOW_IMPLICIT);
+            searchActionbar.requestFocus();
 
             if(findOnPage == null)
                 findOnPage = new FindOnPage(SuperTextActivity.this);
@@ -692,6 +708,10 @@ public abstract class SuperTextActivity extends FragmentActivity {
     public int getColorTheme() { return colorTheme; }
     private void setColorTheme(int colorTheme) {
         Settings.setTheme(colorTheme);
+        restartActivity();
+    }
+
+    protected void restartActivity(){
         finish();
         startNewTextActivityIntent(this, book, currText, currNode, false, searchingTerm,-1);
     }
@@ -730,7 +750,6 @@ public abstract class SuperTextActivity extends FragmentActivity {
         if(currNode != node){
             currNode = node;
             customActionbar.setTitleText(currNode.getMenuBarTitle(book, menuLang), menuLang, true, true);
-
         }
     }
 

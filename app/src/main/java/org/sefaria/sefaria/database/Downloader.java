@@ -82,6 +82,10 @@ public class Downloader {
 
 
     public static void updateLibrary(Activity activity, boolean evenOverwriteOldDB) {
+        if(Database.isDownloadingDatabase == true){
+            Toast.makeText(activity, "Still downloading Library", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         UpdateService.evenOverWriteOldDatabase = evenOverwriteOldDB;
         UpdateService.lockOrientation(activity);
