@@ -91,11 +91,11 @@ public class Database extends SQLiteOpenHelper{
 
         Util.deleteNonRecursiveDir(Downloader.FULL_DOWNLOAD_PATH); //remove any old temp downloads
         Cache.clearExpiredCache();
-        Database.getOfflineDB(activity,false);
+        Database.getOfflineDBIfNeeded(activity,false);
     }
 
-    static public void getOfflineDB(Activity activity, boolean evenIfUsingAPI){
-        if((evenIfUsingAPI || !Settings.getUseAPI()) && (!Database.isValidOfflineDB()|| !Database.hasOfflineDB())) {
+    static public void getOfflineDBIfNeeded(Activity activity, boolean evenIfUsingAPI){
+        if(!isDownloadingDatabase && (evenIfUsingAPI || !Settings.getUseAPI()) && (!Database.isValidOfflineDB()|| !Database.hasOfflineDB())) {
             Toast.makeText(activity, "Starting Download", Toast.LENGTH_SHORT).show();
             Downloader.updateLibrary(activity,false);
             return;

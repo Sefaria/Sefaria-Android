@@ -266,7 +266,7 @@ public class Settings {
             //"<en|he|bi>.<cts|sep>.<white|grey|black>.10px:"+ <rootNum>.<Childnum>.<until>.<leaf>.<verseNum>"
             int textNum = -1;
             try {
-                textNum = node.getTexts().indexOf(text);
+                textNum = node.getTexts(true).indexOf(text);
             } catch (API.APIException e) {
                 e.printStackTrace();
             }

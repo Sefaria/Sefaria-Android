@@ -208,7 +208,7 @@ public class SettingsActivity extends Activity {
             case R.id.DB_use_full:
                 if (checked)
                     Settings.setUseAPI(false);
-                    Database.getOfflineDB(this,true);
+                    Database.getOfflineDBIfNeeded(this,true);
                 break;
         }
     }
