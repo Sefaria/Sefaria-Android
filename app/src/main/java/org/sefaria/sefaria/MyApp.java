@@ -141,6 +141,7 @@ public class MyApp extends Application {
         Point size = new Point();
         size.x = configuration.screenWidthDp;
         size.y = configuration.screenHeightDp;
+        //Log.d("screenSize","X:"+ size.x);
         return size;
     }
 
@@ -183,9 +184,9 @@ public class MyApp extends Application {
 
     public static String getEmailHeader(){
         return  "App Version: " + BuildConfig.VERSION_NAME + " ("  + BuildConfig.VERSION_CODE + ")" + "\n"
-                + "Online Library Version: " + Util.convertDBnum(Database.getVersionInDB(true)) + "\n"
+                + "Online Mode Version: " + Util.convertDBnum(Database.getVersionInDB(true)) + "\n"
                 + "Offline Library Version: " + Util.convertDBnum(Database.getVersionInDB(false)) + "\n"
-                + "Using " + (Settings.getUseAPI()? "Online":"Offline") + " Library" + "\n"
+                + "Using " + (Settings.getUseAPI()? "Online Mode":"Offline Library") + "\n"
                 + GoogleTracker.randomID + "\n"
                 + Build.VERSION.RELEASE + " (" + Build.VERSION.SDK_INT + ")" + "\n"
                 +"\n\n\n";

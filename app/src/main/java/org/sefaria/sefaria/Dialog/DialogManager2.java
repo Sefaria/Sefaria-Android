@@ -7,6 +7,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
+import android.text.Html;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -14,7 +16,9 @@ import android.widget.Toast;
 
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
+import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.Downloader;
+import org.sefaria.sefaria.database.Text;
 import org.sefaria.sefaria.database.UpdateReceiver;
 import org.sefaria.sefaria.database.UpdateService;
 
@@ -28,7 +32,8 @@ public class DialogManager2 {
         FIRST_UPDATE,NEW_UPDATE,
         NO_NEW_UPDATE,UPDATE_STARTED,
         ARE_YOU_SURE_CANCEL,CHECKING_FOR_UPDATE,
-        SWITCHING_TO_API,NO_INTERNET,DATA_CONNECTED
+        SWITCHING_TO_API,NO_INTERNET,DATA_CONNECTED,
+        HOW_TO_REPORT_CORRECTIONS
     }
 
     private static Dialog currDialog;
@@ -43,6 +48,10 @@ public class DialogManager2 {
     }
 
     public static void showDialog(final Activity activity, DialogPreset dialogPreset) {
+        showDialog(activity,dialogPreset,null);
+    }
+
+    public static void showDialog(final Activity activity, DialogPreset dialogPreset, final Object object) {
         switch (dialogPreset) {
             case FIRST_TIME_OPEN:
                 DialogManager2.showDialog(activity, new DialogCallable(MyApp.getRString(R.string.first_time_title),
@@ -79,17 +88,17 @@ public class DialogManager2 {
                 break;
             case UPDATE_STARTED:
                 showDialog(activity, new DialogCallable(MyApp.getRString(R.string.UPDATE_STARTED_TITLE),
-                    MyApp.getRString(R.string.UPDATE_STARTED_MESSAGE), null, MyApp.getRString(R.string.CANCEL), null, DialogCallable.DialogType.PROGRESS) {
-                @Override
-                public void negativeClick() {
-                    try {
-                        dismissCurrentDialog();
-                        showDialog(activity, DialogPreset.ARE_YOU_SURE_CANCEL);
-                    } catch (Exception e) {
-                        Toast.makeText(activity, MyApp.getRString(R.string.update_preparing), Toast.LENGTH_SHORT).show();
+                        MyApp.getRString(R.string.UPDATE_STARTED_MESSAGE), null, MyApp.getRString(R.string.CANCEL), null, DialogCallable.DialogType.PROGRESS) {
+                    @Override
+                    public void negativeClick() {
+                        try {
+                            dismissCurrentDialog();
+                            showDialog(activity, DialogPreset.ARE_YOU_SURE_CANCEL);
+                        } catch (Exception e) {
+                            Toast.makeText(activity, MyApp.getRString(R.string.update_preparing), Toast.LENGTH_SHORT).show();
+                        }
                     }
-                }
-            });
+                });
                 break;
             case NO_NEW_UPDATE:
                 showDialog(activity, new DialogCallable(MyApp.getRString(R.string.NO_NEW_UPDATE_TITLE),
@@ -175,9 +184,9 @@ public class DialogManager2 {
 
                             @Override
                             public void positiveClick() {
-                                Intent intent = new Intent(activity,UpdateReceiver.class);
-                                intent.putExtra("isPre",false);
-                                intent.putExtra("userInit",true);
+                                Intent intent = new Intent(activity, UpdateReceiver.class);
+                                intent.putExtra("isPre", false);
+                                intent.putExtra("userInit", true);
                                 activity.sendBroadcast(intent);
                                 //showDialog(activity,DialogPreset.``);
                             }
@@ -189,6 +198,29 @@ public class DialogManager2 {
                                 UpdateService.endService();
                             }
                         });
+            case HOW_TO_REPORT_CORRECTIONS:
+                DialogManager2.showDialog(activity, new DialogCallable(MyApp.getRString(R.string.how_to_report_mistake),
+                        MyApp.getRString(R.string.how_to_report_mistake_message_short), MyApp.getRString(R.string.OK),
+                        MyApp.getRString(R.string.CANCEL), null, DialogCallable.DialogType.ALERT) {
+                    @Override
+                    public void positiveClick() {
+                        Text text = (Text) object;
+                        String email = "corrections@sefaria.org";
+                        Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+                                "mailto", email, null));
+                        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Sefaria Text Correction from Android");
+                        emailIntent.putExtra(Intent.EXTRA_TEXT,
+
+                                MyApp.getEmailHeader()
+                                        + text.getURL(true,false) + "\n\n"
+                                        + Html.fromHtml(text.getText(Util.Lang.BI))
+                                        + "\n\nDescribe the error: \n\n"
+                        );
+                        emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{email});
+                        activity.startActivity(Intent.createChooser(emailIntent, "Send email"));
+
+                    }
+                });
                 break;
         }
     }

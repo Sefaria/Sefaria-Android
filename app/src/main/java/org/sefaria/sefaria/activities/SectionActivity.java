@@ -22,6 +22,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import org.sefaria.sefaria.Dialog.DialogManager2;
 import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
@@ -181,19 +182,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
     }
 
     private void sendCorrection(Text text){
-        String email = "android@sefaria.org";
-        Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
-                "mailto", email, null));
-        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Sefaria Text Correction");
-        emailIntent.putExtra(Intent.EXTRA_TEXT,
-
-                MyApp.getEmailHeader()
-                + text.getURL(true,false) + "\n\n"
-                + Html.fromHtml(text.getText(Util.Lang.BI))
-                + "\n\nDescribe the error: \n\n"
-                );
-        emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{email});
-        startActivity(Intent.createChooser(emailIntent, "Send email"));
+        DialogManager2.showDialog(this,DialogManager2.DialogPreset.HOW_TO_REPORT_CORRECTIONS, text);
     }
 
     private void copyText(Text text){

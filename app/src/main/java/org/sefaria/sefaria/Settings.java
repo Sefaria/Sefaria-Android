@@ -136,9 +136,12 @@ public class Settings {
         return set;
     }
 
+    private static final boolean defaultSideBySide = MyApp.getScreenSize().x > 400;
+
     public static boolean getIsSideBySide(){
         SharedPreferences generalSettings = getGeneralSettings();
-        return generalSettings.getBoolean("sideBySide", false);
+        boolean isSideBySide =  generalSettings.getBoolean("sideBySide", defaultSideBySide);
+        return isSideBySide;
     }
 
     public static void setIsSideBySide(boolean isSideBySide){
