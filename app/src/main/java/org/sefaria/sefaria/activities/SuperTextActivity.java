@@ -172,8 +172,8 @@ public abstract class SuperTextActivity extends FragmentActivity {
         colorTheme = Settings.getTheme();
         setTheme(colorTheme);
 
-        if(textLang == null)
-            textLang = Settings.BookSettings.getSavedBook(book).lang;
+
+
         textSize = Settings.getDefaultFontSize();
         //end defaults
         isLoadingInit = false;
@@ -290,6 +290,9 @@ public abstract class SuperTextActivity extends FragmentActivity {
         GoogleTracker.sendScreen("SuperTextActivity");
         if(!goodOnCreate)
             return;
+
+        textLang = Settings.BookSettings.getSavedBook(book).lang;
+
         GoogleTracker.sendEvent(GoogleTracker.CATEGORY_NEW_TEXT, book.title, Settings.lang2Int(textLang));
         if(!veryFirstTime) {
             setMenuLang(Settings.getMenuLang());
