@@ -492,13 +492,25 @@ public abstract class SuperTextActivity extends FragmentActivity {
                 linkFragment.gotoState(LinkFragment.State.MAIN, linkFragment.getView(), null);
             }
 
-        } else if(searchActionBarRoot != null && searchActionBarRoot.getChildCount()>0){
-            searchActionBarRoot.removeAllViews();
+        } else if(getFindOnPageIsOpen()){
+            //searchActionBarRoot.removeAllViews();
+            findOnPageClose();
         } else {
             //super.onBackPressed();
             setResult(RESULT_CANCELED);
             finish();
         }
+    }
+
+    protected boolean getFindOnPageIsOpen(){
+        return searchActionBarRoot != null && searchActionBarRoot.getChildCount()>0;
+    }
+
+    protected void findOnPageClose(){
+        if(findOnPage != null){
+            findOnPage.hideShowKeyboard(false,0);
+        }
+        searchActionBarRoot.removeAllViews();
     }
 
     @Override
@@ -546,10 +558,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
     View.OnClickListener findOnPageCloseClick = new View.OnClickListener(){
         @Override
         public void onClick(View v) {
-            if(findOnPage != null){
-                findOnPage.hideShowKeyboard(false,0);
-            }
-            searchActionBarRoot.removeAllViews();
+            findOnPageClose();
         }
     };
 
@@ -586,6 +595,11 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
             if(findOnPage == null)
                 findOnPage = new FindOnPage(SuperTextActivity.this);
+
+            if(linkFragment.getIsOpen()){
+                View linkRoot = findViewById(R.id.linkRoot);
+                AnimateLinkFragClose(linkRoot);
+            }
         }
     };
 
