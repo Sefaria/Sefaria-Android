@@ -421,6 +421,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
                 super.onDrawerClosed(drawerView);
                 Log.d("SuperTextAct", "draw closed");
                 setMenuLang(Settings.getMenuLang());
+                homeFragment.onHomeFragClose();
             }
 
             @Override

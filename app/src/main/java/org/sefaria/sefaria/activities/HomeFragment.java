@@ -116,6 +116,10 @@ public class HomeFragment extends android.support.v4.app.Fragment {
 
     }
 
+    public void onHomeFragClose(){
+        menuGrid.closeMoreClick();
+    }
+
     public void onHomeFragOpen(){
         addRecentTexts(ThisView);
     }

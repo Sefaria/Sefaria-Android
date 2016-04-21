@@ -55,6 +55,8 @@ public class MenuGrid extends LinearLayout {
 
     private boolean flippedForHe; //are the views flipped for hebrew
 
+    private MenuButton moreMenuButton;
+
     public MenuGrid(Context context,int numColumns,MenuState menuState, boolean limitGridSize, Util.Lang lang) {
         super(context);
         this.menuState = menuState;
@@ -183,13 +185,13 @@ public class MenuGrid extends LinearLayout {
     //adds the 'Other' button for home page
     private MenuButton addMoreButton(LinearLayout ll) {
         MenuNode moreNode = new MenuNode("More >","עוד >",null);
-        MenuButton mb = new MenuButton(context,moreNode,null, menuState.getLang());
-        mb.setOnClickListener(moreButtonClick);
-        ll.addView(mb);
+        moreMenuButton = new MenuButton(context,moreNode,null, menuState.getLang());
+        moreMenuButton.setOnClickListener(moreButtonClick);
+        ll.addView(moreMenuButton);
 
-        menuElementList.add(mb);
+        menuElementList.add(moreMenuButton);
 
-        return mb;
+        return moreMenuButton;
     }
 
     public void buildPage() {
@@ -374,9 +376,16 @@ public class MenuGrid extends LinearLayout {
             for (MenuButton mb : overflowButtonList) {
                 mb.setVisibility(View.VISIBLE);
             }
-
         }
     };
+
+    public void closeMoreClick(){
+        if(moreMenuButton != null)
+            moreMenuButton.setVisibility(View.VISIBLE);
+        for (MenuButton mb : overflowButtonList) {
+            mb.setVisibility(View.GONE);
+        }
+    }
 
     public OnClickListener tabButtonClick = new OnClickListener() {
         @Override

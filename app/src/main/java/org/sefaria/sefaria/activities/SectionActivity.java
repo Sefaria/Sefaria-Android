@@ -330,7 +330,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
             }
 
             View linkRoot = findViewById(R.id.linkRoot);
-            if (linkFragment.getIsOpen()) {
+            if (linkFragment.getIsOpen()) { //&& false
 
                 //linkRoot.setVisibility(View.GONE);
                 AnimateLinkFragClose(linkRoot);
