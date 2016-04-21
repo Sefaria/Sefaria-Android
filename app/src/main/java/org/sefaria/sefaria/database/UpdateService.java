@@ -144,7 +144,7 @@ public class UpdateService extends Service {
         int SDK_INT = android.os.Build.VERSION.SDK_INT;
         Notification.Builder notBuild = new Notification.Builder(serviceYo)
                 .setTicker("Updating Sefaria")
-    //            .setSmallIcon(R.drawable.beta_icon_noti) //TODO MAKE OTHER ICON!!!
+                .setSmallIcon(R.drawable.sefaria_icon_noti)
                 .setWhen(System.currentTimeMillis())
                 .setContentTitle("Updating Sefaria")
                 .setContentText("Library downloading and installing");
@@ -157,7 +157,6 @@ public class UpdateService extends Service {
         Intent notificationIntent = new Intent(serviceYo, UpdateService.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(serviceYo, 0, notificationIntent, 0);
         serviceYo.startForeground(NOTIFICATION_ID, notification);
-
         //save last check time
         SharedPreferences settings = Settings.getGeneralSettings();
         Editor editor = settings.edit();
