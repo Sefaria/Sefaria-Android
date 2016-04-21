@@ -96,7 +96,8 @@ public class MenuGrid extends LinearLayout {
         //ll.setGravity(Gravity.CENTER);
         ll.setHorizontalGravity(Gravity.CENTER_HORIZONTAL);
         for (int i = 0; i < numColumns; i++) {
-            ll.addView(new MenuButton(context));
+            MenuButton menuButton = new MenuButton(context);
+            ll.addView(menuButton);
         }
         gridRoot.addView(ll);
         return ll;
@@ -165,13 +166,13 @@ public class MenuGrid extends LinearLayout {
         }
     }
 
-    private MenuButton addElement(MenuNode node, MenuNode sectionNode, LinearLayout ll, int childIndex) {
+    private MenuButton addElement(MenuNode menuNode, MenuNode sectionNode, LinearLayout ll, int childIndex) {
+
         ll.removeViewAt(childIndex);
-        MenuButton mb = new MenuButton(context, node, sectionNode, menuState.getLang());
+        MenuButton mb = new MenuButton(context, menuNode, sectionNode, menuState.getLang());
         mb.setOnClickListener(menuButtonClick);
         mb.setOnLongClickListener(menuButtonLongClick);
         ll.addView(mb, childIndex);
-
         menuElementList.add(mb);
 
         return mb;

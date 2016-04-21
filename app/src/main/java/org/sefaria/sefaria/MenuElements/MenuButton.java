@@ -1,6 +1,7 @@
 package org.sefaria.sefaria.MenuElements;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 
 import org.sefaria.sefaria.R;
@@ -41,6 +42,7 @@ public class MenuButton extends MenuElement {
         } else {//menu
             inflate(context, R.layout.button_menu, this);
             this.tv = (SefariaTextView) this.findViewById(R.id.tv);
+
         }
         this.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, 1f));
 
@@ -78,6 +80,6 @@ public class MenuButton extends MenuElement {
 
     public void setLang(Util.Lang lang) {
         tv.setText(menuNode.getPrettyTitle(lang));
-        tv.setFont(lang,true);
+        tv.setFont(lang, true);
     }
 }
