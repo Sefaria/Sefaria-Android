@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -209,7 +210,6 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
     private boolean getAllNeededLocationVariables(int nodeHash){
         try {
-            textNum = -1;
             if (nodeHash != NO_HASH_NODE) {
                 firstLoadedNode = Node.getSavedNode(nodeHash);
             }
@@ -406,12 +406,47 @@ public abstract class SuperTextActivity extends FragmentActivity {
         isTextMenuVisible = false;
         textMenuRoot = (LinearLayout) findViewById(R.id.textMenuRoot);
         textMenuBar = new TextMenuBar(SuperTextActivity.this,textMenuBtnClick);
-        textMenuBar.setState(textLang,isCts,isSideBySide,colorTheme);
+        textMenuBar.setState(textLang, isCts, isSideBySide, colorTheme);
         textMenuRoot.addView(textMenuBar);
         textMenuRoot.setVisibility(View.GONE);
 
         textScrollView = (ScrollViewExt) findViewById(R.id.textScrollView);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this,drawerLayout,R.string.OK,R.string.CANCEL) {
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                Log.d("SuperTextAct", "draw closed");
+                setMenuLang(Settings.getMenuLang());
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                Log.d("SuperTextAct", "draw opened");
+                Settings.BookSettings.setSavedBook(book, currNode, currText, textLang);//save this book b/f home frag so that this book is in recent list
+                homeFragment.onHomeFragOpen();
+            }
+
+            /*
+            not using b/c opening doesn't account for homeClick and closing doesn't account for clicking on side grey
+            @Override
+            public void onDrawerStateChanged(int newState) {
+                super.onDrawerStateChanged(newState);
+                if (newState == DrawerLayout.STATE_DRAGGING) {
+                    if (drawerLayout.isDrawerOpen(Gravity.LEFT)) {
+                        //closing
+                        Log.d("SuperTextAct", "draw closing");
+                    } else {
+                        //opening
+                        Log.d("SuperTextAct", "draw opening");
+                    }
+                }
+            }*/
+        };
+
+        drawerLayout.setDrawerListener(actionBarDrawerToggle);
+
 
         //linkDraggerView = (LinkDraggerView) findViewById(R.id.link_dragger);
 
@@ -435,6 +470,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
     private void comingFromTOC(Intent intent){
         //lang = (Util.Lang) data.getSerializableExtra("lang"); TODO you might need to set lang here if user can change lang in TOC
         int nodeHash = intent.getIntExtra("nodeHash", -1);
+        textNum = -1; //This is so that it jumps to the beginning of the Node
         //TODO it might want to try to keep the old loaded sections and just go scroll to it if the new section is already loaded
         getAllNeededLocationVariables(nodeHash);
         lastLoadedNode = null;
@@ -501,6 +537,8 @@ public abstract class SuperTextActivity extends FragmentActivity {
             finish();
         }
     }
+
+
 
     protected boolean getFindOnPageIsOpen(){
         return searchActionBarRoot != null && searchActionBarRoot.getChildCount()>0;
@@ -810,6 +848,9 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
     }
 
+
+
+
     //-----
     //TEXT MENU BAR
     //-----
@@ -969,10 +1010,10 @@ public abstract class SuperTextActivity extends FragmentActivity {
         });
     }
 
+
     View.OnClickListener homeClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Settings.BookSettings.setSavedBook(book, currNode, currText, textLang);//data also saved with home click
             drawerLayout.openDrawer(Gravity.LEFT);
         }
     };

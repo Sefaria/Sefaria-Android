@@ -62,7 +62,7 @@ public class TextMenuBar extends LinearLayout {
             findViewById(R.id.mono_formatting).setVisibility(View.GONE);
             findViewById(R.id.bi_formatting).setVisibility(View.VISIBLE);
         } else {
-            findViewById(R.id.mono_formatting).setVisibility(View.VISIBLE);
+            findViewById(R.id.mono_formatting).setVisibility(View.GONE);//instead of visible  b/c continuous isn't a thing yet
             findViewById(R.id.bi_formatting).setVisibility(View.GONE);
         }
     }

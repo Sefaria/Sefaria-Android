@@ -61,6 +61,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
         init();
     }
 
+
     protected void init() {
         super.init();
         listView = (ListViewExt) findViewById(R.id.listview);

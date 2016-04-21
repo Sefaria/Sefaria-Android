@@ -40,6 +40,7 @@ public class HomeFragment extends android.support.v4.app.Fragment {
     private List<MenuDirectRef> recentTexts;
     private LinearLayout recentRoot;
     private HomeActionbar homeActionbar;
+    private View ThisView;
 
     public static HomeFragment newInstance() {
 
@@ -57,7 +58,7 @@ public class HomeFragment extends android.support.v4.app.Fragment {
     @Override
     public void onCreate(Bundle in) {
         super.onCreate(in);
-        Log.d("HomeFrag", "onCreate");
+        //Log.d("HomeFrag", "onCreate");
         //setTheme(Settings.getTheme());
         //setContentView(R.layout.fragment_home);
 
@@ -69,12 +70,13 @@ public class HomeFragment extends android.support.v4.app.Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.d("HomeFrag", "onCreateView");
         View view = inflater.inflate(R.layout.fragment_home, container, false);
+        ThisView = view;
         LinearLayout homeRoot = (LinearLayout) view.findViewById(R.id.homeRoot);
 
         //Don't mention the living library thing unless you're actually at the home screen
         //addHeader(homeRoot);
         addMenuGrid(view);
-        addRecentTexts(view);
+        //addRecentTexts(view); //done in on HomeFrag open
         addCalendar(view);
 
 
@@ -114,10 +116,15 @@ public class HomeFragment extends android.support.v4.app.Fragment {
 
     }
 
+    public void onHomeFragOpen(){
+        addRecentTexts(ThisView);
+    }
+
     @Override
-    public void onDetach() {
-        super.onDetach();
-        Log.d("HomeFrag", "onDetach");
+    public void onResume() {
+        super.onResume();
+        //Log.d("HomeFrag","onresume");
+        addRecentTexts(ThisView);
     }
 
     /*private void addHeader(LinearLayout homeRoot){
@@ -130,37 +137,9 @@ public class HomeFragment extends android.support.v4.app.Fragment {
         homeRoot.addView(livingLibraryView);
     }*/
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.d("HomeFrag", "onResume");
-    }
-
-    @Override
-    public void onHiddenChanged(boolean hidden) {
-        super.onHiddenChanged(hidden);
-        Log.d("HomeFrag","onHiddenChanged" + hidden);
-    }
-
-    @Override
-    public void setMenuVisibility(boolean menuVisible) {
-        super.setMenuVisibility(menuVisible);
-        Log.d("HomeFrag", "setMenuVisibility" + menuVisible);
-    }
-
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        Log.d("HomeFrag", "setUserViableHint" + isVisibleToUser);
-    }
-
-    @Override
-    public void setHasOptionsMenu(boolean hasMenu) {
-        super.setHasOptionsMenu(hasMenu);
-        Log.d("HomeFrag", "setHasOptionsMenu" + hasMenu);
-    }
 
     private void addRecentTexts(View view){
+        Log.d("homeFrag","adding recent Texts");
         //Recent Texts
         if(recentRoot == null) {
             recentRoot = (LinearLayout) view.findViewById(R.id.recentRoot);
