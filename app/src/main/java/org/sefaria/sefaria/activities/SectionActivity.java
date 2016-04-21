@@ -324,13 +324,6 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
                 return;
             }
 
-            /*
-            InputMethodManager inputMethodManager = getInputMethodManager();
-            if(findOnPage != null && inputMethodManager.isActive() && inputMethodManager.isAcceptingText()) {
-                findOnPage.hideShowKeyboard(false, 0);
-                return;
-            }*/
-
             if(getFindOnPageIsOpen()){
                 findOnPageClose();
             }
