@@ -92,8 +92,8 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
 
     AdapterView.OnItemClickListener autoCompleteItemClick = new AdapterView.OnItemClickListener() {
         public void onItemClick(android.widget.AdapterView<?> parent, View v, int pos, long id) {
+            autoCompleteTextView.setText("");//So that it doesn't fill the bar with the book you just clicked
             String title = (String) ((TextView)v).getText();
-            //Log.d("SearchAct", "bookName:" + bookName);
             try {
                 Book book = new Book(title,true);
                 SuperTextActivity.startNewTextActivityIntent(SearchActivity.this,book,false);

@@ -36,7 +36,7 @@ public class SearchActionbar extends LinearLayout {
         if(hintText != null)
             autoCompleteTextView.setHint(hintText);
         autoCompleteTextView.setTypeface(MyApp.getFont(MyApp.Font.QUATTROCENTO));
-        autoCompleteTextView.setDropDownWidth((int) Math.floor(MyApp.getScreenSizePixels().x - MyApp.convertDpToPixel(60)) );
+        autoCompleteTextView.setDropDownWidth((int) Math.floor(MyApp.getScreenSizePixels().x - MyApp.convertDpToPixel(60)));
     }
 
     public String getText(){

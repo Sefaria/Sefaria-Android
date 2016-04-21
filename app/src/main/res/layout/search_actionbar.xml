@@ -58,7 +58,8 @@
             android:paddingTop="10dp"
             android:paddingBottom="15dp"
             android:paddingEnd="50dp"
-            android:paddingRight="50dp"/>
+            android:paddingRight="50dp"
+            />
 
         <FrameLayout
             android:id="@+id/up_button"

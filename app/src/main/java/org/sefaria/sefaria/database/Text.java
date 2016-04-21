@@ -86,9 +86,6 @@ public class Text implements Parcelable {
 
 
 
-    public Text(){
-        //empty
-    }
 
 
     /**
@@ -98,6 +95,7 @@ public class Text implements Parcelable {
     public Text(Node node) {
         isChapter = true;
         parentNode = node;
+        levels = new int [MAX_LEVELS];
         this.enText = node.getWholeTitle(Util.Lang.EN);
         this.heText = node.getWholeTitle(Util.Lang.HE);
     }
@@ -188,7 +186,8 @@ public class Text implements Parcelable {
                 str.append("http://www.sefaria.org/");
         }
         if(parentNode != null && (!parentNode.isRef())){
-            String path = parentNode.getPath(Util.Lang.EN,true, true, true) + "." + levels[0];
+            String path = parentNode.getPath(Util.Lang.EN,true, true, true)
+                    + "." + levels[0];
             return str + path;
         }
 
@@ -632,10 +631,7 @@ public class Text implements Parcelable {
     }
 
     private static Text deepCopy(Text text) {
-        Text newText = new Text();
-        newText.bid = text.bid;
-        newText.enText = text.getText(Util.Lang.EN);
-        newText.heText = text.getText(Util.Lang.HE);
+        Text newText = new Text(text.getText(Util.Lang.EN), text.getText(Util.Lang.HE),text.bid,text.ref);
         newText.levels = text.levels.clone();
         newText.tid    = text.tid;
         newText.displayNum = text.displayNum;
