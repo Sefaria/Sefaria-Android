@@ -7,8 +7,10 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.os.Environment;
 import android.os.StatFs;
+import android.support.v4.text.BidiFormatter;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 
@@ -26,6 +28,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.lang.reflect.Array;
+import java.text.Bidi;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -502,6 +505,65 @@ public class Util {
             num = Integer.valueOf(spot);
         }
         return num;
+    }
+
+    /**
+     *
+     * @param input
+     * @param mainLang - either Util.Lang.HE or Util.Lang.EN, depending on what you expect the language to be
+     * @return
+     */
+    public static String getBidiString(String input, Util.Lang mainLang) {
+        boolean rtlContext;
+        int bidiDirection;
+        int defaultBidiDirection;
+        if (mainLang == Util.Lang.EN) {
+            rtlContext = false;
+            bidiDirection = Bidi.DIRECTION_LEFT_TO_RIGHT;
+            defaultBidiDirection = Bidi.DIRECTION_DEFAULT_LEFT_TO_RIGHT;
+        } else /* if (lang == Util.Lang.HE) */{
+            rtlContext = true;
+            bidiDirection = Bidi.DIRECTION_RIGHT_TO_LEFT;
+            defaultBidiDirection = Bidi.DIRECTION_DEFAULT_RIGHT_TO_LEFT;
+        }
+
+        Bidi bidi = new Bidi(input,defaultBidiDirection);
+        if (!bidi.isMixed()) return input;
+
+
+
+        BidiFormatter bidiFormatter = BidiFormatter.getInstance(rtlContext);
+        StringBuilder bidiTestBuilder = new StringBuilder();
+        for (int i = 0; i < bidi.getRunCount(); i++)
+        {
+            int start = bidi.getRunStart(i);
+            int level = bidi.getRunLevel(i);
+            int limit = bidi.getRunLimit(i);
+            String run = input.substring(start, limit);
+
+            if (level != bidiDirection) {
+                run = bidiFormatter.unicodeWrap(run,!rtlContext) + " ";
+            }
+            bidiTestBuilder.append(run);
+        }
+
+        return bidiTestBuilder.toString();
+
+        //SOME TEST
+        //String testHe = "הבחור Noah Santacruz הוא חמוד מאוד ונולד בשנת 1992.";
+        //String testEn = "English is cool, but what I really love is להקליד בעברית all day long!";
+
+        //String testEn = "English is cool, but what I really love is להקליד בעברית all day long!";
+        //String testHe = "ויכל ביום השביעי, by the time the seventh day had started, all G’d’s work had been completed so that there was no creative activity left for G’d to perform on the seventh day. It is therefore technically correct to state that the meaning of the words is that G’d’s work had been completed, and completion of work cannot be termed “work.” The meaning of the words אשר עשה, therefore is that “all the creative activities which G’d had performed during the preceding six “days” had been terminated with the advent of the seventh day, so that there was nothing left to be done on that day.” We have similar constructions in the Torah, for instance in Exodus 12,16 ביום הראשון תשביתו שאור, which means that on that day leavened things should be in a state of having been destroyed, banished. (compare Pessachim 5) וישבות, He discontinued, what He had completed (שבת).";
+/*
+        String testHe = "איזו קבוצה כדאי לי לאהוד בפלייאוף ה-NBA?\n" +
+                "בעד האנדרדוג, הולכים עם העדר, בעלי ניסיון או עקשנים בקטע טוב? עשר שאלות ותדעו מי השותפה האידאלית עבורכם ללילות הלבנים";
+*/
+        //BidiFormatter bdf = BidiFormatter.getInstance(false);
+
+
+        //String bidiTest = bdf.unicodeWrap(testHe,false);
+        //Log.d("SearchActivity", bidiTest);
     }
 
 }
