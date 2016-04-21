@@ -1,6 +1,7 @@
 package org.sefaria.sefaria.MenuElements;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
