@@ -198,6 +198,7 @@ public class DialogManager2 {
                                 UpdateService.endService();
                             }
                         });
+                break;
             case HOW_TO_REPORT_CORRECTIONS:
                 DialogManager2.showDialog(activity, new DialogCallable(MyApp.getRString(R.string.how_to_report_mistake),
                         MyApp.getRString(R.string.how_to_report_mistake_message_short), MyApp.getRString(R.string.OK),

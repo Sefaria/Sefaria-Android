@@ -26,6 +26,8 @@
     <dimen name="custom_action_bar_button_frame_width">50dp</dimen>
     <dimen name="custom_action_bar_button_to_side_padding">5dp</dimen>
 
+    <dimen name="custom_action_bar_title_button">15dp</dimen>
+
     <dimen name="color_bar_height">5dp</dimen>
 
     <dimen name="text_activtiy_between_segment_padding">6dp</dimen>
