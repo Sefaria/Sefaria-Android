@@ -46,7 +46,8 @@
         android:gravity="center_horizontal"
         android:textStyle="italic"
         android:textSize="15dp"
-        android:text="@string/no_links_filtered" />
+        android:text="@string/no_links_filtered"
+        android:textColor="?text_color_english"/>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recview"
         android:layout_width="match_parent"

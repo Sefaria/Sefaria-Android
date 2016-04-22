@@ -99,7 +99,7 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextHolder> {
             else
                 text = link.getText(lang);
 
-            monoHolder.monoTv.setText(Html.fromHtml(text));
+            monoHolder.monoTv.setText(Html.fromHtml(Util.getBidiString(text,lang)));
             monoHolder.monoTv.setFont(lang,true);
             monoHolder.monoTv.setTextSize(activity.getTextSize());
             monoHolder.monoTv.setLangGravity(lang);
@@ -116,13 +116,13 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextHolder> {
             if (enText.length() == 0)
                 biHolder.enTv.setVisibility(View.GONE);
             else
-                biHolder.enTv.setText(Html.fromHtml(enText));
+                biHolder.enTv.setText(Html.fromHtml(Util.getBidiString(enText,Util.Lang.EN)));
             biHolder.enTv.setFont(Util.Lang.EN,true,activity.getTextSize());
 
             if (heText.length() == 0)
                 biHolder.heTv.setVisibility(View.GONE);
             else
-                biHolder.heTv.setText(Html.fromHtml(heText));
+                biHolder.heTv.setText(Html.fromHtml(Util.getBidiString(heText,Util.Lang.HE)));
             biHolder.heTv.setFont(Util.Lang.HE,true,activity.getTextSize());
         }
 
