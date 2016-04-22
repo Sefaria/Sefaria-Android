@@ -127,8 +127,8 @@ public class SectionAdapter extends ArrayAdapter<Text> {
                 enNum.setVisibility(View.VISIBLE);
                 heNum.setVisibility(View.VISIBLE);
 
-                enTv.setText(Html.fromHtml(enText));
-                heTv.setText(Html.fromHtml(heText));
+                enTv.setText(Html.fromHtml(Util.getBidiString(enText,Util.Lang.EN)));
+                heTv.setText(Html.fromHtml(Util.getBidiString(heText,Util.Lang.HE)));
 
                 //enTv.setTextColor(Color.parseColor("#999999"));
                 enTv.setFont(Util.Lang.EN, true, sectionActivity.getTextSize());
@@ -176,7 +176,8 @@ public class SectionAdapter extends ArrayAdapter<Text> {
                     monoText = MyApp.getRString(R.string.no_text);
 
                 if (lang == Util.Lang.HE) {
-                    tv.setText(Html.fromHtml(monoText));
+                    tv.setText(Html.fromHtml(Util.getBidiString(monoText,lang)));
+                    //tv.setText(Html.fromHtml(monoText));
                     enNum.setText(Util.VERSE_BULLET);
                     enNum.setAlpha(linkAlpha);
                     enNum.setFont(Util.Lang.HE, true);
@@ -189,7 +190,7 @@ public class SectionAdapter extends ArrayAdapter<Text> {
 
 
                 } else /*if (lang == Util.Lang.EN)*/ {
-                    tv.setText(Html.fromHtml(monoText));
+                    tv.setText(Html.fromHtml(Util.getBidiString(monoText,lang)));
                     if(segment.displayNum)
                         enNum.setText(""+segment.levels[0]);
                     else

@@ -508,7 +508,7 @@ public class Util {
     }
 
     /**
-     *
+     * Unclear if this function works for HTML tags. So far in my tests it hasn't worked
      * @param input
      * @param mainLang - either Util.Lang.HE or Util.Lang.EN, depending on what you expect the language to be
      * @return
@@ -541,8 +541,10 @@ public class Util {
             int limit = bidi.getRunLimit(i);
             String run = input.substring(start, limit);
 
-            if (level != bidiDirection) {
-                run = bidiFormatter.unicodeWrap(run,!rtlContext) + " ";
+            //apparently level is even when ltr and odd when rtl
+            //bidiDirection == 0 when LTR and 1 when RTL
+            if ((level % 2) != bidiDirection) {
+                run = bidiFormatter.unicodeWrap(run ,!rtlContext) + " ";
             }
             bidiTestBuilder.append(run);
         }

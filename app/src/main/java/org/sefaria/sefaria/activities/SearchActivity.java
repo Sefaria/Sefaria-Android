@@ -134,9 +134,6 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
 
 
         DialogNoahSnackbar.checkCurrentDialog(this, (ViewGroup) findViewById(R.id.dialogNoahSnackbarRoot));
-
-        String test = "";
-        numResultsTV.setText(test);
     }
 
     private void runSearch(){
