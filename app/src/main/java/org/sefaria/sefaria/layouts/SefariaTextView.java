@@ -73,11 +73,11 @@ public class SefariaTextView extends TextView {
             }
             setLineSpacing(0,1f);
         } else {
-            if (isSerif) font = MyApp.Font.QUATTROCENTO;
-            else font = MyApp.Font.MONTSERRAT;
+            if (isSerif) font = MyApp.Font.GARAMOND;
+            else font = MyApp.Font.OPEN_SANS_EN;
 
             if (textSize != -1) {
-                setTextSize((float) Math.round(textSize * 0.8));
+                setTextSize((float) Math.round(textSize));
                 //Log.d("seftv", "getTextSize() = " + getTextSize() + " rounded = " + Math.round(getTextSize()*0.9));
             }
             setLineSpacing(0, 1.3f);

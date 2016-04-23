@@ -61,7 +61,7 @@ public class SearchAdapter extends ArrayAdapter<Text> {
         SefariaTextView mono = (SefariaTextView) view.findViewById(R.id.mono);
 
         title.setText(text.getLocationString(Settings.getMenuLang()));
-        mono.setText(Html.fromHtml(text.getText(lang)));
+        mono.setText(Html.fromHtml(Util.getBidiString(text.getText(lang),lang)));
 
         title.setFont(Settings.getMenuLang(), true);
         mono.setFont(lang, true);
