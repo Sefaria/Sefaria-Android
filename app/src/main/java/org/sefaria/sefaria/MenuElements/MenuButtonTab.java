@@ -33,7 +33,7 @@ public class MenuButtonTab extends MenuElement {
 
     public void setLang(Util.Lang lang) {
         tv.setText(node.getPrettyTitle(lang));
-        tv.setFont(lang,true);
+        tv.setFont(lang,true,getResources().getDimension(R.dimen.tab_menu_font_size));
     }
 
     public void setActive(boolean isActive) {
