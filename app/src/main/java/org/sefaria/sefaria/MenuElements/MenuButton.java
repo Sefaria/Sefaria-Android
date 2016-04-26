@@ -80,6 +80,6 @@ public class MenuButton extends MenuElement {
 
     public void setLang(Util.Lang lang) {
         tv.setText(menuNode.getPrettyTitle(lang));
-        tv.setFont(lang, true);
+        tv.setFont(lang, true, getResources().getDimension(R.dimen.menu_button_font_size));
     }
 }

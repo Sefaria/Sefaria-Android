@@ -72,7 +72,7 @@ public class MenuDirectRef extends LinearLayout{
     }
 
     public void setLang(Util.Lang lang) {
-        tv.setFont(lang,true);
+        tv.setFont(lang,true,getResources().getDimension(R.dimen.menu_button_font_size));
         if (lang == Util.Lang.HE) {
             tv.setText(heTitle);
         } else {
