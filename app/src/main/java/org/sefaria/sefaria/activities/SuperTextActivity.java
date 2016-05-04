@@ -458,7 +458,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
         if (customActionbar == null) {
             MenuNode menuNode = new MenuNode("a","b",null); //TODO possibly replace this object with a more general bilinual node
             int catColor = book.getCatColor();
-            if(Settings.getUseAPI())
+            if(Settings.getUseAPI()|| true) //findOnPae temp removed for all versions
                 searchClick = null;
             backClick = null;
             homeLongClick = null;

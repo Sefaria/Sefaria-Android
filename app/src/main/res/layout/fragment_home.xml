@@ -35,25 +35,6 @@
                 android:paddingRight="10dp"
                 android:paddingLeft="10dp">
                 <org.sefaria.sefaria.layouts.SefariaTextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:paddingLeft="3dp"
-                    android:paddingRight="3dp"
-                    android:paddingTop="15dp"
-                    android:paddingBottom="10dp"
-                    android:textSize="15sp"
-                    android:text="Browse"
-                    app:isSerif="false"
-                    app:lang="english"
-                    android:textColor="?text_color_english"
-                    android:textAllCaps="true"/>
-                <LinearLayout
-                    android:id="@+id/gridRoot"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"/>
-                <org.sefaria.sefaria.layouts.SefariaTextView
                     android:id="@+id/recentTextsTV"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -73,6 +54,26 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"></LinearLayout>
+                <org.sefaria.sefaria.layouts.SefariaTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingLeft="3dp"
+                    android:paddingRight="3dp"
+                    android:paddingTop="15dp"
+                    android:paddingBottom="10dp"
+                    android:textSize="15sp"
+                    android:text="Browse"
+                    app:isSerif="false"
+                    app:lang="english"
+                    android:textColor="?text_color_english"
+                    android:textAllCaps="true"/>
+                <LinearLayout
+                    android:id="@+id/gridRoot"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"/>
+
                 <org.sefaria.sefaria.layouts.SefariaTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
