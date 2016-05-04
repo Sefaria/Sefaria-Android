@@ -423,9 +423,9 @@ public class Settings {
             List<String> books = new ArrayList<>();
             SharedPreferences recentSettings = getRecentSettings();
             Set<String> pinnedTexts = getPinned();
-            int recentTextCount = 4;
+            int recentTextCount = 3;
             while(pinnedTexts.size()/(recentTextCount*1.0) > .6){
-                recentTextCount += 2;
+                recentTextCount += 1;
             }
             for(String bookTitle:pinnedTexts){
                 books.add(bookTitle);
