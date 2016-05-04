@@ -8,8 +8,8 @@ android {
         applicationId "org.sefaria.sefaria"
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 257
-        versionName "2.57d"
+        versionCode 258
+        versionName "2.58d"
         // Enabling multidex support
         //multiDexEnabled true
     }
