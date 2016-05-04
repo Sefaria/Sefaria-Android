@@ -46,7 +46,7 @@ import java.util.List;
 
 public class SearchActivity extends Activity implements AbsListView.OnScrollListener {
 
-    private static final int PAGE_SIZE = 10;
+    private static final int PAGE_SIZE = 30;
 
     private SearchAdapter adapter;
     private ListView listView;

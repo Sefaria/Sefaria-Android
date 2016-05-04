@@ -30,7 +30,7 @@ import java.util.List;
 
 public class HomeFragment extends android.support.v4.app.Fragment {
 
-    private final int NUM_COLUMNS = 2;
+    private final int NUM_COLUMNS = 1;
     private final boolean LIMIT_GRID_SIZE = true;
 
     private Activity activity;
@@ -151,7 +151,7 @@ public class HomeFragment extends android.support.v4.app.Fragment {
         else{
             recentRoot.removeAllViews();
         }
-        final int columNum = 2;
+        final int columNum = 1;
         List<String> recentBooks = Settings.RecentTexts.getRecentTexts();
         recentTexts = new ArrayList<>();
         if(recentBooks.size()>0) {
