@@ -96,8 +96,11 @@ public class Text implements Parcelable {
         isChapter = true;
         parentNode = node;
         levels = new int [MAX_LEVELS];
-        this.enText = node.getWholeTitle(Util.Lang.EN);
-        this.heText = node.getWholeTitle(Util.Lang.HE);
+
+        if (node != null) {
+            this.enText = node.getWholeTitle(Util.Lang.EN);
+            this.heText = node.getWholeTitle(Util.Lang.HE);
+        }
     }
 
     public Text(Cursor cursor ){

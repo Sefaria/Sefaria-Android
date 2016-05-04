@@ -415,6 +415,7 @@ public class Book implements Parcelable {
     }
 
     public int getCatColor() {
+        if (categories == null) return -1;
         return MyApp.getCatColor(categories[0]);
     }
 
