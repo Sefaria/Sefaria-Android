@@ -3,6 +3,8 @@ package org.sefaria.sefaria.layouts;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.widget.TextView;
 
@@ -55,21 +57,22 @@ public class SefariaTextView extends TextView {
         setFont(lang, isSerif, -1);
     }
 
+    public void setFont(Util.Lang lang, boolean isSerif, float textSize) { setFont(lang,isSerif,textSize,TypedValue.COMPLEX_UNIT_SP); }
 
     /**
      *
      * @param lang choose font based on language of text
      * @param isSerif
-     * @param textSize -1 means keep the textSize the same
+     * @param textSize -1 means keep the textSize the same. else, set to that value in SP
      */
-    public void setFont(Util.Lang lang, boolean isSerif, float textSize) {
+    public void setFont(Util.Lang lang, boolean isSerif, float textSize, int typedValue) {
         MyApp.Font font;
         if (lang == Util.Lang.HE) {
             if (isSerif) font = MyApp.Font.TAAMEY_FRANK;
             else font = MyApp.Font.OPEN_SANS_HE;
 
             if (textSize != -1) {
-                setTextSize(textSize);
+                setTextSize(typedValue,textSize);
             }
             setLineSpacing(0,1f);
         } else {
@@ -77,12 +80,13 @@ public class SefariaTextView extends TextView {
             else font = MyApp.Font.OPEN_SANS_EN;  //B/W MONTSERRAT and OPEN_SANS_EN
 
             if (textSize != -1) {
-                setTextSize(Math.round(textSize)*0.85f);
+                setTextSize(typedValue,textSize*0.85f);
                 //Log.d("seftv", "getTextSize() = " + getTextSize() + " rounded = " + Math.round(getTextSize()*0.9));
             }
             setLineSpacing(0, 1.3f);
         }
         setTypeface(MyApp.getFont(font));
+
     }
 
     //set text alignment correctly depending on language (only a problem when both languages appear in the text)
