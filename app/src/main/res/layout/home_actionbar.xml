@@ -42,10 +42,10 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
-            android:textStyle="italic"
+            android:textStyle="normal|italic"
             android:textSize="15sp"
             android:textColor="?text_color_english"
-            android:text="Search Sefaria"/>
+            android:text="@string/search"/>
 
         <FrameLayout
             android:id="@+id/lang_btn"
