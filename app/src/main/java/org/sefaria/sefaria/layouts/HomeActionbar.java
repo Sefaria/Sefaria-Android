@@ -1,6 +1,7 @@
 package org.sefaria.sefaria.layouts;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.util.TypedValue;
 import android.widget.LinearLayout;
 
@@ -18,7 +19,6 @@ public class HomeActionbar extends LinearLayout {
         inflate(context, R.layout.home_actionbar, this);
 
         SefariaTextView tv = (SefariaTextView) findViewById(R.id.search_tv);
-        tv.setText
         tv.setFont(Util.Lang.EN, true);
         tv.setOnClickListener(searchClick);
         findViewById(R.id.search_btn).setOnClickListener(searchClick);
