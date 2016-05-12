@@ -2,6 +2,7 @@ package org.sefaria.sefaria.MenuElements;
 
 import android.content.Context;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -72,7 +73,7 @@ public class MenuDirectRef extends LinearLayout{
     }
 
     public void setLang(Util.Lang lang) {
-        tv.setFont(lang,true,getResources().getDimension(R.dimen.menu_button_font_size));
+        tv.setFont(lang,true,getResources().getDimension(R.dimen.menu_button_font_size), TypedValue.COMPLEX_UNIT_PX);
         if (lang == Util.Lang.HE) {
             tv.setText(heTitle);
         } else {

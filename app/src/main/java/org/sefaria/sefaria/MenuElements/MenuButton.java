@@ -2,6 +2,8 @@ package org.sefaria.sefaria.MenuElements;
 
 import android.content.Context;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.View;
 
 import org.sefaria.sefaria.R;
@@ -33,7 +35,6 @@ public class MenuButton extends MenuElement {
             inflate(context, R.layout.button_home, this);
             this.tv = (SefariaTextView) this.findViewById(R.id.tv);
             this.colorBar = this.findViewById(R.id.color_bar);
-
             if (android.os.Build.VERSION.SDK_INT >= 14) {
                 this.tv.setAllCaps(true);
             }
@@ -80,6 +81,7 @@ public class MenuButton extends MenuElement {
 
     public void setLang(Util.Lang lang) {
         tv.setText(menuNode.getPrettyTitle(lang));
-        tv.setFont(lang, true, getResources().getDimension(R.dimen.menu_button_font_size));
+        //NOTE: Need to use pixels here b/c I'm using getDimension which already converts
+        tv.setFont(lang, true, getResources().getDimension(R.dimen.menu_button_font_size), TypedValue.COMPLEX_UNIT_PX);
     }
 }
