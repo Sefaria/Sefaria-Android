@@ -1,6 +1,7 @@
 package org.sefaria.sefaria.layouts;
 
 import android.content.Context;
+import android.util.TypedValue;
 import android.widget.LinearLayout;
 
 import org.sefaria.sefaria.R;
@@ -32,11 +33,11 @@ public class HomeActionbar extends LinearLayout {
         SefariaTextView tv = (SefariaTextView) findViewById(R.id.langTV);
         if (lang == Util.Lang.HE) {
             tv.setText("A");
-            tv.setFont(Util.Lang.EN,true,getResources().getDimension(R.dimen.custom_action_bar_lang_font_size));
+            tv.setFont(Util.Lang.EN,true,getResources().getDimension(R.dimen.custom_action_bar_lang_font_size), TypedValue.COMPLEX_UNIT_PX);
         }
         else /* if (lang == Util.Lang.EN) */ {
             tv.setText("א");
-            tv.setFont(Util.Lang.HE,true,getResources().getDimension(R.dimen.custom_action_bar_lang_font_size));
+            tv.setFont(Util.Lang.HE,true,getResources().getDimension(R.dimen.custom_action_bar_lang_font_size),TypedValue.COMPLEX_UNIT_PX);
         }
 
     }
