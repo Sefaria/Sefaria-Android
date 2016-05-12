@@ -66,7 +66,8 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextHolder> {
     @Override
     public int getItemViewType(int position) {
         Util.Lang lang = activity.getTextLang();
-        if (lang == Util.Lang.BI) return BI_LINK_TEXT_VIEW_TYPE;
+        if (lang == Util.Lang.BI || itemList.get(position).getText(lang).length() == 0)
+            return BI_LINK_TEXT_VIEW_TYPE;
         else return MONO_LINK_TEXT_VIEW_TYPE;
     }
 
@@ -76,7 +77,9 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextHolder> {
         Util.Lang lang = activity.getTextLang();
 
         Text link = itemList.get(position);
-        boolean showFullTitle = false && currLinkCount.getCategory().equals("Commentary") && currLinkCount.getDepthType() == LinkFilter.DEPTH_TYPE.BOOK;
+        if (link.getText(lang).length() == 0) lang = Util.Lang.BI; //TODO noah, make this better.
+
+        boolean showFullTitle = false;// && currLinkCount.getCategory().equals("Commentary") && currLinkCount.getDepthType() == LinkFilter.DEPTH_TYPE.BOOK;
         if (showFullTitle) {
             holder.title.setVisibility(View.GONE);
             holder.enVerseNum.setVisibility(View.VISIBLE);
