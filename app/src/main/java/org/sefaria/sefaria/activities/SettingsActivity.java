@@ -28,7 +28,7 @@ public class SettingsActivity extends Activity {
 
     private final int TOT_NUM_DEBUG_DB_CLICKS = 7;
     private int numDebugDBUnlockClicks;
-    private EditText fontSize;
+    //private EditText fontSize;
 
     //buttons
     private SefariaTextView menuEnBtn;

@@ -57,19 +57,33 @@ public class SefariaTextView extends TextView {
         setFont(lang, isSerif, -1);
     }
 
-    public void setFont(Util.Lang lang, boolean isSerif, float textSize) { setFont(lang,isSerif,textSize,TypedValue.COMPLEX_UNIT_SP); }
-
     /**
      *
      * @param lang choose font based on language of text
      * @param isSerif
      * @param textSize -1 means keep the textSize the same. else, set to that value in SP
      */
+    public void setFont(Util.Lang lang, boolean isSerif, float textSize) { setFont(lang,isSerif,textSize,TypedValue.COMPLEX_UNIT_SP); }
+
+    /**
+     *
+     * @param lang
+     * @param isSerif
+     * @param textSize
+     */
+    /**
+     *
+     * @param lang choose font based on language of text
+     * @param isSerif
+     * @param textSize -1 means keep the textSize the same
+     * @param typedValue can use TypedValue.COMPLEX_UNIT_PX if the number is in pixels. Useful when using getResources().getDimension() which converts to pixels
+     */
     public void setFont(Util.Lang lang, boolean isSerif, float textSize, int typedValue) {
         MyApp.Font font;
         if (lang == Util.Lang.HE) {
             if (isSerif) font = MyApp.Font.TAAMEY_FRANK;
             else font = MyApp.Font.OPEN_SANS_HE;
+
 
             if (textSize != -1) {
                 setTextSize(typedValue,textSize);
