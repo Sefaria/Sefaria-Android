@@ -28,7 +28,7 @@ public class SettingsActivity extends Activity {
 
     private final int TOT_NUM_DEBUG_DB_CLICKS = 7;
     private int numDebugDBUnlockClicks;
-    private EditText fontSize;
+    //private EditText fontSize;
 
     //buttons
     private SefariaTextView menuEnBtn;
@@ -57,7 +57,7 @@ public class SettingsActivity extends Activity {
         CustomActionbar customActionbar = new CustomActionbar(this, new MenuNode("Settings","Settings (he)", null), Settings.getSystemLang(),null,null,closeClick,null,null,null,null,null,R.color.system);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(customActionbar);
-        fontSize   = (EditText)findViewById(R.id.fontSize);
+        //fontSize   = (EditText)findViewById(R.id.fontSiz);
 
         menuEnBtn = (SefariaTextView) findViewById(R.id.menu_en_btn);
         menuHeBtn = (SefariaTextView) findViewById(R.id.menu_he_btn);
