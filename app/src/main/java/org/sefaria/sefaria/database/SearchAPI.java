@@ -15,7 +15,7 @@ import java.util.Set;
  * Created by nss on 4/1/16.
  */
 public class SearchAPI {
-    private final static String SEARCH_URL = "http://search.sefaria.org:788/sefaria/_search/";
+    private final static String SEARCH_URL = "http://search.sefaria.org:788/merged/_search/";
 
     private static int numResults;
     private static Set<String> refSet;
