@@ -15,6 +15,7 @@
             android:padding="10dp"
             android:gravity="center"
             android:layout_toRightOf="@+id/progressBar"
+            android:textColor="?text_color_main"
             android:text="Downloading Library"/>
         <TextView
             android:id="@+id/cancel_action"
@@ -22,6 +23,7 @@
             android:layout_height="match_parent"
             android:padding="10dp"
             android:text="Cancel"
+            android:textColor="?text_color_main"
             android:textAllCaps="true"
             android:textStyle="bold"
             android:gravity="center"
