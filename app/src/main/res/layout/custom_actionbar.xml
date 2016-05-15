@@ -82,7 +82,6 @@
 
         <FrameLayout
             android:id="@+id/home_btn"
-            android:layout_toRightOf="@+id/back_btn"
             android:layout_width="@dimen/custom_action_bar_button_frame_width"
             android:layout_height="match_parent"
             android:paddingLeft="@dimen/custom_action_bar_button_to_side_padding"
@@ -185,43 +184,78 @@
             >
 
         </FrameLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/close_btn"
+            android:layout_toLeftOf="@id/menu_btn"
+            >
+        <LinearLayout
+            android:id="@+id/whole_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="?button_selector_transparent_drawable"
+            >
+            <FrameLayout
+                android:id="@+id/toc_btn_left"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="3dp"
+                android:visibility="gone"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                >
+                <ImageView
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:src="@drawable/drop25"
+                    android:scaleType="fitCenter"
+                    android:layout_gravity="center"
+                    />
+            </FrameLayout>
         <org.sefaria.sefaria.layouts.AutoResizeTextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
-            android:layout_toRightOf="@id/invisable_btn_left"
-            android:layout_toLeftOf="@id/invisable_btn"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
             android:layout_height="32dp"
             android:text="Table of Contents"
-            android:textSize="20dp"
+            android:textSize="17sp"
             android:textAllCaps="true"
             android:textColor="?text_color_main"
-            android:layout_centerHorizontal="true"
             android:gravity="center"
             android:padding="0dp"
-            android:layout_centerVertical="true"
-
-            android:ellipsize="none"
+            android:layout_weight="1"
+            android:ellipsize="middle"
             android:singleLine="true"
-            android:background="?button_selector_transparent_drawable"
             />
-        <!--
         <FrameLayout
-            android:id="@+id/toc_btn"
-            android:layout_width="@dimen/custom_action_bar_button_frame_width"
-            android:layout_height="match_parent"
-            android:layout_toLeftOf="@id/menu_btn"
-            android:paddingRight="@dimen/custom_action_bar_button_to_side_padding"
-            android:layout_margin="0dp"
+            android:id="@+id/toc_btn_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="3dp"
+            android:visibility="gone"
+            android:layout_weight="1"
+            android:layout_gravity="center"
             >
             <ImageView
-                android:layout_width="@dimen/custom_action_bar_pic_size"
-                android:layout_height="@dimen/custom_action_bar_pic_size"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
                 android:src="@drawable/drop25"
                 android:scaleType="fitCenter"
                 android:layout_gravity="center"
                 />
         </FrameLayout>
-        -->
+
+        </LinearLayout>
+        </RelativeLayout>
     </RelativeLayout>
 
     <View
