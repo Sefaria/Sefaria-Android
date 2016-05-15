@@ -195,12 +195,13 @@ public class HomeFragment extends android.support.v4.app.Fragment {
         gridRoot.addView(menuGrid);
     }
 
-    private void setLang(Util.Lang lang){
+    public void setLang(Util.Lang lang){
         if(lang == Util.Lang.BI) {
             lang = Util.Lang.EN;
         }
         menuState.setLang(lang);
         menuGrid.setLang(lang);
+        homeActionbar.setLang(lang);
         //not setting cab, b/c it should stay as the SystemLang
         for(MenuDirectRef menuDirectRef:dailyLearnings)
             menuDirectRef.setLang(lang);

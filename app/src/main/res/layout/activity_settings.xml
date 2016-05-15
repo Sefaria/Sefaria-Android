@@ -1,6 +1,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:id="@+id/root"
     android:layout_height="match_parent"
@@ -20,172 +21,249 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
+        android:layout_height="match_parent">
         <LinearLayout
-            android:id="@+id/gridRoot"
-            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-
-            android:padding="20dp"
-            >
-
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/menu_lang"/>
-            <RadioGroup
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="10dp"
-                android:layout_marginBottom="15dp"
-                android:gravity="center"
-                >
-
-                <RadioButton android:id="@+id/menu_english"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/english"
-                    android:onClick="onMenuLangRadioButtonClicked"/>
-                <RadioButton android:id="@+id/menu_hebrew"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/hebrew"
-                    android:onClick="onMenuLangRadioButtonClicked"/>
-
-
-            </RadioGroup>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/default_text_language"/>
-            <RadioGroup
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="10dp"
-                android:gravity="center"
-                >
-                <RadioButton android:id="@+id/text_bilingual"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/bilingual"
-                    android:onClick="onRadioButtonClicked"/>
-                <RadioButton android:id="@+id/text_hebrew"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/hebrew"
-                    android:onClick="onRadioButtonClicked"/>
-                <RadioButton android:id="@+id/text_english"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/english"
-                    android:onClick="onRadioButtonClicked"/>
-
-            </RadioGroup>
-
-
+            android:orientation="vertical"
+            android:padding="10dp">
             <LinearLayout
+                android:id="@+id/menu_lang_group"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="20dp"
-                android:orientation="horizontal"
-                android:gravity="center"
-
-                android:visibility="gone"
-
-                >
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/font_size"/>
-
-
-                <EditText
-                    android:layout_marginLeft="5dp"
-                    android:layout_width="50dp"
-                    android:layout_height="wrap_content"
-                    android:inputType="number"
-                    android:ems="10"
-                    android:id="@+id/fontSize"
-                    android:text="20.0"
-
-                    />
-            </LinearLayout>
-
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Library Type"/>
-            <RadioGroup
-                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="10dp"
-                android:gravity="center"
-                >
-                <RadioButton android:id="@+id/DB_use_API"
-                    android:layout_width="wrap_content"
+                android:paddingTop="15dp">
+                <org.sefaria.sefaria.layouts.SefariaTextView
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/online_only_Library"
-                    android:onClick="onUseDB"/>
-                <RadioButton android:id="@+id/DB_use_full"
-                    android:layout_width="wrap_content"
+                    android:text="Menu Language"
+                    android:textAllCaps="true"
+                    app:isSerif="false"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:textColor="?text_color_soft"
+                    android:textSize="@dimen/settings_subsection_font_size"
+                    app:lang="english"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:orientation="horizontal"
                     android:layout_height="wrap_content"
-                    android:text="@string/offline_Library"
-                    android:onClick="onUseDB"/>
+                    android:layout_margin="10dp"
+                    android:gravity="center"
+                    android:layout_gravity="center">
+                    <org.sefaria.sefaria.layouts.SefariaTextView
+                        android:id="@+id/menu_en_btn"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="@dimen/text_menu_button_height"
+                        android:layout_gravity="center_vertical"
+                        android:text="English"
+                        android:textAllCaps="true"
+                        android:textSize="@dimen/settings_button_font_size"
+                        android:textColor="?text_color_soft"
+                        android:gravity="center"
+                        android:background="?text_menu_button_background_left_drawable" />
+                    <org.sefaria.sefaria.layouts.SefariaTextView
+                        android:id="@+id/menu_he_btn"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="@dimen/text_menu_button_height"
+                        android:layout_gravity="center_vertical"
+                        android:text="Hebrew"
+                        android:textAllCaps="true"
+                        android:textSize="@dimen/settings_button_font_size"
+                        android:textColor="?text_color_soft"
+                        android:gravity="center"
+                        android:background="?text_menu_button_background_right_drawable" />
 
-            </RadioGroup>
 
+                </LinearLayout>
+            </LinearLayout>
 
-            <!--
-            <Button
+            <LinearLayout
+                android:id="@+id/book_lang_group"
                 android:layout_width="match_parent"
-                android:layout_height="45dp"
-                android:text="@string/clear_all_book_settings"
-                android:onClick="clearAllBookSettings"
-                />
-            -->
-            <TextView
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="15dp">
+                <org.sefaria.sefaria.layouts.SefariaTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Default Book Language"
+                    android:textAllCaps="true"
+                    android:textColor="?text_color_soft"
+                    app:isSerif="false"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:textSize="@dimen/settings_subsection_font_size"
+                    app:lang="english"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:gravity="center"
+                    android:layout_gravity="center">
+                    <org.sefaria.sefaria.layouts.SefariaTextView
+                        android:id="@+id/book_en_btn"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="@dimen/text_menu_button_height"
+                        android:layout_gravity="center_vertical"
+                        android:text="English"
+                        android:textAllCaps="true"
+                        android:textSize="@dimen/settings_button_font_size"
+                        android:textColor="?text_color_soft"
+                        android:gravity="center"
+                        android:background="?text_menu_button_background_left_drawable" />
+                    <org.sefaria.sefaria.layouts.SefariaTextView
+                        android:id="@+id/book_bi_btn"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="@dimen/text_menu_button_height"
+                        android:layout_gravity="center_vertical"
+                        android:text="Bilingual"
+                        android:textAllCaps="true"
+                        android:textSize="@dimen/settings_button_font_size"
+                        android:textColor="?text_color_soft"
+                        android:gravity="center"
+                        android:background="?text_menu_button_background_center_drawable" />
+                    <org.sefaria.sefaria.layouts.SefariaTextView
+                        android:id="@+id/book_he_btn"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="@dimen/text_menu_button_height"
+                        android:layout_gravity="center_vertical"
+                        android:text="Hebrew"
+                        android:textAllCaps="true"
+                        android:textSize="@dimen/settings_button_font_size"
+                        android:textColor="?text_color_soft"
+                        android:gravity="center"
+                        android:background="?text_menu_button_background_right_drawable" />
+
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/offline_group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="15dp">
+                <org.sefaria.sefaria.layouts.SefariaTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Offline Access"
+                    android:textColor="?text_color_soft"
+                    android:textAllCaps="true"
+                    app:isSerif="false"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:textSize="@dimen/settings_subsection_font_size"
+                    app:lang="english"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:gravity="center"
+                    android:layout_gravity="center">
+                    <org.sefaria.sefaria.layouts.SefariaTextView
+                        android:id="@+id/online_btn"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="@dimen/text_menu_button_height"
+                        android:layout_gravity="center_vertical"
+                        android:text="Off"
+                        android:textAllCaps="true"
+                        android:textSize="@dimen/settings_button_font_size"
+                        android:textColor="?text_color_soft"
+                        android:gravity="center"
+                        android:background="?text_menu_button_background_left_drawable" />
+                    <org.sefaria.sefaria.layouts.SefariaTextView
+                        android:id="@+id/offline_btn"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="@dimen/text_menu_button_height"
+                        android:layout_gravity="center_vertical"
+                        android:text="On"
+                        android:textAllCaps="true"
+                        android:textSize="@dimen/settings_button_font_size"
+                        android:textColor="?text_color_soft"
+                        android:gravity="center"
+                        android:background="?text_menu_button_background_right_drawable" />
+
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <org.sefaria.sefaria.layouts.SefariaTextView
+                android:id="@+id/save_btn"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/text_menu_button_height"
+                android:layout_gravity="center_vertical"
+                android:gravity="center"
+                android:background="@drawable/text_menu_button_background_system"
+                android:text="Save Settings"
+                android:textSize="@dimen/settings_button_font_size"
+                android:textColor="#ffffff"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?custom_actionbar_border"
+                android:layout_marginBottom="40dp"
+                android:layout_marginTop="40dp"/>
+
+            <org.sefaria.sefaria.layouts.SefariaTextView
+                android:id="@+id/update_library"
+                android:layout_marginBottom="20dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/text_menu_button_height"
+                android:layout_gravity="center_vertical"
+                android:gravity="center"
+                android:background="@drawable/text_menu_button_background_white"
+                android:text="Update Library"
+                android:textSize="@dimen/settings_button_font_size"
+                android:textColor="?text_color_soft"/>
+
+            <org.sefaria.sefaria.layouts.SefariaTextView
                 android:id="@+id/appInfo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/app_version_is"
                 android:gravity="center"
-                android:padding="5dp"
+                android:padding="1dp"
                 android:layout_marginTop="15dp"
-                android:clickable="true"
-                />
-            <TextView
-                android:id="@+id/databaseInfo"
+                android:textColor="?text_color_soft"
+                android:clickable="true" />
+            <org.sefaria.sefaria.layouts.SefariaTextView
+                android:id="@+id/onlineInfo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/library_version_is"
                 android:gravity="center"
-                android:padding="5dp"
-                android:onClick="debubDBUnlockClick"
-                />
-
-            <Button
-                android:id="@+id/update_library"
+                android:padding="1dp"
+                android:textColor="?text_color_soft"
+                android:onClick="debubDBUnlockClick" />
+            <org.sefaria.sefaria.layouts.SefariaTextView
+                android:id="@+id/offlineInfo"
                 android:layout_width="match_parent"
-                android:layout_height="45dp"
-                android:text="@string/update_library"
-                android:onClick="updateLibrary"
+                android:layout_height="wrap_content"
+                android:text="@string/library_version_is"
+                android:gravity="center"
+                android:padding="1dp"
+                android:textColor="?text_color_soft"
+                android:onClick="debubDBUnlockClick" />
 
-                />
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="45dp"
-                android:text="@string/settings_done"
-                android:onClick="done"
-                android:layout_marginTop="15dp"
-                />
         </LinearLayout>
-
     </ScrollView>
 </LinearLayout>
