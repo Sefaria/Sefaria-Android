@@ -22,6 +22,7 @@
     <attr name="custom_actionbar_border" format="reference|color"/>
     <attr name="text_bg" format="reference|color" />
     <attr name="text_color_main" format="reference|color"/>
+    <attr name="text_color_soft" format="reference|color"/>
     <attr name="text_color_english" format="reference|color"/>
     <attr name="text_color_faded" format="reference|color"/>
     <attr name="text_chapter_header_color" format="reference|color"/>

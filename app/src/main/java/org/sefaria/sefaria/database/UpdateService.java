@@ -75,7 +75,7 @@ public class UpdateService extends Service {
 
 
         WifiManager wm = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-        wifiLock= wm.createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "wifiTag");
+        wifiLock= wm.createWifiLock(WifiManager.WIFI_MODE_FULL, "wifiTag");
         wifiLock.acquire();
 
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);

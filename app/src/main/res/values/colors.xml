@@ -56,6 +56,7 @@
     <color name="custom_actionbar_border_w">#ddd</color>
     <color name="text_bg_w">#F8FCF8</color>
     <color name="text_color_main_w">#000</color>
+    <color name="text_color_soft_w">#666</color>
     <color name="text_color_english_w">#999999</color>
     <color name="text_color_faded_w">#999999</color>
     <color name="text_chapter_header_color_w">#999999</color>
@@ -77,6 +78,7 @@
     <color name="custom_actionbar_border_g">#444444</color>
     <color name="text_bg_g">#a8a8a8</color>
     <color name="text_color_main_g">#000</color>
+    <color name="text_color_soft_g">#333</color>
     <color name="text_color_english_g">#555</color>
     <color name="text_color_faded_g">#666666</color>
     <color name="text_chapter_header_color_g">#000</color>
@@ -97,6 +99,7 @@
     <color name="custom_actionbar_border_b">#444444</color>
     <color name="text_bg_b">#333331</color>
     <color name="text_color_main_b">#ffffff</color>
+    <color name="text_color_soft_b">#ccc</color>
     <color name="text_color_english_b">#999999</color>
     <color name="text_color_faded_b">#666666</color>
     <color name="text_chapter_header_color_b">#999999</color>
