@@ -1,10 +1,13 @@
 package org.sefaria.sefaria.MenuElements;
 
 import android.content.Context;
+import android.util.TypedValue;
 
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.layouts.SefariaTextView;
+
+import java.lang.reflect.TypeVariable;
 
 /**
  * Created by nss on 9/24/15.
@@ -33,7 +36,7 @@ public class MenuButtonTab extends MenuElement {
 
     public void setLang(Util.Lang lang) {
         tv.setText(node.getPrettyTitle(lang));
-        tv.setFont(lang,true,getResources().getDimension(R.dimen.tab_menu_font_size));
+        tv.setFont(lang,true,getResources().getDimension(R.dimen.tab_menu_font_size), TypedValue.COMPLEX_UNIT_PX);
     }
 
     public void setActive(boolean isActive) {
