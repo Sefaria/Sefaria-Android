@@ -49,6 +49,7 @@ public class SettingsActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTheme(Settings.getTheme());
         setContentView(R.layout.activity_settings);
 
         numDebugDBUnlockClicks = 0;
@@ -57,7 +58,7 @@ public class SettingsActivity extends Activity {
         CustomActionbar customActionbar = new CustomActionbar(this, new MenuNode("Settings","Settings (he)", null), Settings.getSystemLang(),null,null,closeClick,null,null,null,null,null,R.color.system);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(customActionbar);
-        fontSize   = (EditText)findViewById(R.id.fontSize);
+        //fontSize   = (EditText)findViewById(R.id.fontSize);
 
         menuEnBtn = (SefariaTextView) findViewById(R.id.menu_en_btn);
         menuHeBtn = (SefariaTextView) findViewById(R.id.menu_he_btn);
