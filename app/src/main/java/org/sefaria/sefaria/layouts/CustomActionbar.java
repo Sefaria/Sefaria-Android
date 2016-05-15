@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import org.sefaria.sefaria.Dialog.DialogNoahSnackbar;
 import org.sefaria.sefaria.R;
@@ -26,10 +27,12 @@ public class CustomActionbar extends MenuElement {
     private View backBtn;
     private View invisableBtn;
     private View invisableBtnLeft;
+    private LinearLayout wholeTitleLinearLayout;
     private SefariaTextView titleTV;
     private String heText = null;
     private String enText = null;
     private MenuNode menuNode;
+    private boolean forTOC = false;
 
     private static final boolean noBackButton = false;
 
@@ -48,7 +51,9 @@ public class CustomActionbar extends MenuElement {
         invisableBtn = findViewById(R.id.invisable_btn);
         invisableBtnLeft = findViewById(R.id.invisable_btn_left);
         colorBar = findViewById(R.id.color_bar);
+        wholeTitleLinearLayout = (LinearLayout) findViewById(R.id.whole_title);
         titleTV = (SefariaTextView) findViewById(R.id.title);
+
 
         SefariaTextView langBtn = (SefariaTextView) menuBtn.findViewById(R.id.lang_btn);
         langBtn.setFont(Util.Lang.HE,true);
@@ -99,7 +104,7 @@ public class CustomActionbar extends MenuElement {
 
 
         if (titleClick != null ) {
-            titleTV.setOnClickListener(titleClick);
+            wholeTitleLinearLayout.setOnClickListener(titleClick);
             //tocBtn.setOnClickListener(titleClick);
         }
         //else{ tocBtn.setVisibility(View.GONE);
@@ -114,16 +119,28 @@ public class CustomActionbar extends MenuElement {
 
 
     private void setTitle(String title) {
-        if(title.length() > 18)
-            titleTV.setTextSize(9);
-        if(title.length()< 19)
-            title = "\u3000\u3000" + title + "\u3000\u3000";
+        if(title.length() > 18) titleTV.setTextSize(9);
         titleTV.setText(title);
     }
 
-    public void setTitleText(String title, Util.Lang lang, boolean forceRefresh, boolean forTOC){
-        if(forTOC) //Add down arrow
-            title = title + " \u25be"; // "\u25bc " //"\u25be" 23F7 //http://unicode-search.net/unicode-namesearch.pl?term=triangle
+    private void setTOCbtn(Util.Lang lang, boolean forTOC){
+        this.forTOC = forTOC;
+        if(forTOC) { //Add down arrow
+            if(lang == Util.Lang.HE) {
+                findViewById(R.id.toc_btn_left).setVisibility(VISIBLE);
+                findViewById(R.id.toc_btn_right).setVisibility(GONE);
+            }else{
+                findViewById(R.id.toc_btn_left).setVisibility(GONE);
+                findViewById(R.id.toc_btn_right).setVisibility(VISIBLE);
+            }
+        }else{
+            findViewById(R.id.toc_btn_left).setVisibility(GONE);
+            findViewById(R.id.toc_btn_right).setVisibility(GONE);
+        }
+    }
+
+    public void setTitleText(String title, Util.Lang lang, boolean forceRefresh,boolean forTOC){
+        setTOCbtn(lang,forTOC);
         if(lang == Util.Lang.HE)
             heText = title;
         else// if(lang == Util.Lang.HE || Lang.BI)
@@ -137,7 +154,7 @@ public class CustomActionbar extends MenuElement {
 
         if (lang == Util.Lang.HE) {
             tv.setText("A");
-            tv.setFont(Util.Lang.EN, true,getResources().getDimension(R.dimen.custom_action_bar_lang_font_size), TypedValue.COMPLEX_UNIT_PX);
+            tv.setFont(Util.Lang.EN, true,getResources().getDimension(R.dimen.custom_action_bar_lang_font_size), TypedValue.COMPLEX_UNIT_PX);//using pixels b/c when using getDimentions it actually converts to pixels
         }
         else /* if (lang == Util.Lang.EN) */ {
             tv.setText("א");
@@ -162,6 +179,7 @@ public class CustomActionbar extends MenuElement {
 
 
         setTitle(title);
+        setTOCbtn(lang,forTOC);
         titleTV.setFont(lang,false);
     }
 

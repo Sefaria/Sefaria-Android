@@ -51,6 +51,7 @@ public class SectionAdapter extends ArrayAdapter<Text> {
         String heText = segment.getText(Util.Lang.HE);
         Util.Lang lang = sectionActivity.getTextLang();
 
+        boolean originalIsBILang = (lang == Util.Lang.BI);
         if (lang == Util.Lang.BI) {
             if (enText.length() == 0) {
                 lang = Util.Lang.HE;
@@ -172,7 +173,7 @@ public class SectionAdapter extends ArrayAdapter<Text> {
                 heNum.setVisibility(View.VISIBLE);
 
                 String monoText = segment.getText(lang);
-                if (monoText.length() == 0)
+                if (!originalIsBILang && monoText.length() == 0)
                     monoText = MyApp.getRString(R.string.no_text);
 
                 if (lang == Util.Lang.HE) {
