@@ -16,6 +16,8 @@
     <dimen name="text_menu_button_height">50dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="custom_action_bar_lang_font_size">18sp</dimen>
+    <dimen name="settings_button_font_size">12sp</dimen>
+    <dimen name="settings_subsection_font_size">12sp</dimen>
 
     <dimen name="toc_numbox">45dp</dimen>
 

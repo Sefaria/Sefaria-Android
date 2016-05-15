@@ -40,7 +40,7 @@ public class SefariaTextView extends TextView {
 
                     break;
                 case R.styleable.SefariaTextView_lang:
-                    int langInt = a.getInt(attr,-1);
+                    int langInt = a.getInt(attr,0); //Default to english
                     if (langInt == 0) lang = Util.Lang.EN;
                     else if (langInt == 1) lang = Util.Lang.HE;
                     break;

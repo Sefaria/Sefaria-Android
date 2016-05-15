@@ -24,6 +24,7 @@
         <item name="custom_actionbar_border">@color/custom_actionbar_border_w</item>
         <item name="text_bg">@color/text_bg_w</item>
         <item name="text_color_main">@color/text_color_main_w</item>
+        <item name="text_color_soft">@color/text_color_soft_w</item>
         <item name="text_color_english">@color/text_color_english_w</item>
         <item name="text_color_faded">@color/text_color_faded_w</item>
         <item name="text_chapter_header_color">@color/text_chapter_header_color_w</item>
@@ -56,6 +57,7 @@
         <item name="custom_actionbar_border">@color/custom_actionbar_border_g</item>
         <item name="text_bg">@color/text_bg_g</item>
         <item name="text_color_main">@color/text_color_main_g</item>
+        <item name="text_color_soft">@color/text_color_soft_g</item>
         <item name="text_color_english">@color/text_color_english_g</item>
         <item name="text_color_faded">@color/text_color_faded_g</item>
         <item name="text_chapter_header_color">@color/text_chapter_header_color_g</item>
@@ -88,6 +90,7 @@
         <item name="custom_actionbar_border">@color/custom_actionbar_border_b</item>
         <item name="text_bg">@color/text_bg_b</item>
         <item name="text_color_main">@color/text_color_main_b</item>
+        <item name="text_color_soft">@color/text_color_soft_b</item>
         <item name="text_color_english">@color/text_color_english_b</item>
         <item name="text_color_faded">@color/text_color_faded_b</item>
         <item name="text_chapter_header_color">@color/text_chapter_header_color_b</item>
