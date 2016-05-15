@@ -296,6 +296,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
         GoogleTracker.sendEvent(GoogleTracker.CATEGORY_NEW_TEXT, book.title, Settings.lang2Int(textLang));
         if(!veryFirstTime) {
             setMenuLang(Settings.getMenuLang());
+            homeFragment.setLang(Settings.getMenuLang());
         }else
             veryFirstTime = false;
 
