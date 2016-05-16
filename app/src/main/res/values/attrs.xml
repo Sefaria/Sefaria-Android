@@ -21,6 +21,7 @@
     <attr name="button_selected" format="reference|color"/>
     <attr name="custom_actionbar_bg" format="reference|color"/>
     <attr name="custom_actionbar_border" format="reference|color"/>
+    <attr name="custom_actionbar_button_tint" format="reference|color"/>
     <attr name="text_bg" format="reference|color" />
     <attr name="text_color_main" format="reference|color"/>
     <attr name="text_color_soft" format="reference|color"/>

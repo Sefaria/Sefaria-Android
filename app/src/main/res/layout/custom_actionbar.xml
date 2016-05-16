@@ -36,8 +36,7 @@
                 android:layout_width="@dimen/custom_action_bar_pic_size"
                 android:layout_height="@dimen/custom_action_bar_pic_size"
                 android:src="@drawable/go10"
-                android:tint="?text_color_main"
-                android:alpha="0.5"
+                android:tint="?custom_actionbar_button_tint"
                 android:scaleType="fitCenter"
                 android:layout_gravity="center"
 
@@ -56,8 +55,7 @@
                 android:layout_width="@dimen/custom_action_bar_pic_size"
                 android:layout_height="@dimen/custom_action_bar_pic_size"
                 android:src="@drawable/close"
-                android:tint="?text_color_main"
-                android:alpha="0.5"
+                android:tint="?custom_actionbar_button_tint"
                 android:scaleType="fitCenter"
                 android:layout_gravity="center"
                 />
@@ -92,8 +90,7 @@
                 android:layout_width="@dimen/custom_action_bar_pic_size"
                 android:layout_height="@dimen/custom_action_bar_pic_size"
                 android:src="@drawable/hamburger"
-                android:tint="?text_color_main"
-                android:alpha="0.5"
+                android:tint="?custom_actionbar_button_tint"
                 android:scaleType="fitCenter"
                 android:layout_gravity="center"
                 />
