@@ -22,8 +22,6 @@ import java.util.regex.Pattern;
  */
 public class TextChapterHeader extends LinearLayout {
 
-    public static final String[] ANONYMOUS_HEADER_CATS = {"Tanach","Mishnah","Talmud","Tosefta"}; //list of categories whose headers shouldn't be shown (b/c they're too obvious)
-
     //private Util.Lang lang;
     private SefariaTextView tv;
     public String enText;
@@ -73,18 +71,9 @@ public class TextChapterHeader extends LinearLayout {
         }
     }
 
-    public void setSectionTitle(Text segment, Book book) {
-        String cat = book.getRootCategory();
-        boolean isAnonymous = Arrays.asList(ANONYMOUS_HEADER_CATS).indexOf(cat) != -1;
+    public void setSectionTitle(Text segment) {
         enText = segment.getText(Util.Lang.EN);
         heText = segment.getText(Util.Lang.HE);
-        if (isAnonymous) {
-            String[] enTextSplit = enText.split(" ");
-            String[] heTextSplit = heText.split(" ");
-            enText = enTextSplit[enTextSplit.length-1];
-            heText = heTextSplit[heTextSplit.length-1];
-        }
-
         setLang(Settings.getMenuLang());
     }
 
