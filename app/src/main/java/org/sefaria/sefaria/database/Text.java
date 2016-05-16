@@ -100,9 +100,8 @@ public class Text implements Parcelable {
         if (node != null) {
             boolean doSectionName = true;
             try {
-                ;
                 String category  = node.getBook().categories[0];
-                if ((category.equals("Tanach") || category.equals("Talmud") || category.equals("Mishnah")) && (node.getTocRootNum() == 0))
+                if ((category.equals("Tanach") || category.equals("Talmud") || category.equals("Mishnah") || category.equals("Tosefta")) && (node.getTocRootNum() == 0))
                     doSectionName = false;
             } catch (Exception e) {
                 e.printStackTrace();
