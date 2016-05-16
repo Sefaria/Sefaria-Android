@@ -14,15 +14,18 @@
 
     <org.sefaria.sefaria.layouts.SefariaTextView
         android:id="@+id/tv"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:minHeight="43dp"
         android:maxHeight="65dp"
-        android:padding="3dp"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
         android:textSize="15sp"
-        android:text="yoyo"
+        android:text="בלה"
         android:textColor="?text_color_main"
-        android:gravity="center"
+        android:gravity="center_vertical"
         >
     </org.sefaria.sefaria.layouts.SefariaTextView>
 </LinearLayout>

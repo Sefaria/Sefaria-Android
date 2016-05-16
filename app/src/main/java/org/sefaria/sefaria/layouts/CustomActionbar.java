@@ -180,7 +180,7 @@ public class CustomActionbar extends MenuElement {
 
         setTitle(title);
         setTOCbtn(lang,forTOC);
-        titleTV.setFont(lang,false);
+        titleTV.setFont(lang,true);
     }
 
     public MenuNode getNode(){

@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_weight="1"
-    android:layout_margin="5dp"
+    android:layout_margin="2dp"
     android:padding="12dp"
     android:textSize="15sp"
     android:background="?button_selector_solid_drawable"
