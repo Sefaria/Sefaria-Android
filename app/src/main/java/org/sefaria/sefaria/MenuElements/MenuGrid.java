@@ -184,8 +184,9 @@ public class MenuGrid extends LinearLayout {
 
     //adds the 'Other' button for home page
     private MenuButton addMoreButton(LinearLayout ll) {
-        MenuNode moreNode = new MenuNode("More >","< עוד",null);
+        MenuNode moreNode = new MenuNode("More","עוד",null);
         moreMenuButton = new MenuButton(context,moreNode,null, menuState.getLang());
+        moreMenuButton.setIsMore(true);
         moreMenuButton.setOnClickListener(moreButtonClick);
         ll.addView(moreMenuButton);
 

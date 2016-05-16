@@ -45,7 +45,7 @@ public class MyApp extends Application {
             "Philosophy","Chasidut","Musar",
             "Other","Halakhah","Midrash",
             "Kabbalah","Responsa","Parshanut",
-            "Apocrypha","More >", LinkFilter.QUOTING_COMMENTARY,
+            "Apocrypha","More", LinkFilter.QUOTING_COMMENTARY,
             "Modern Works", LinkFilter.COMMENTARY, LinkFilter.ALL_CONNECTIONS,
             "Targum"
             };
