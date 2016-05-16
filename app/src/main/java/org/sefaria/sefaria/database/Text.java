@@ -34,6 +34,7 @@ public class Text implements Parcelable {
     private int heTextLength = 0;
     private byte [] heTextCompress;
     private boolean isChapter = false;
+    private boolean isLoader = false; //true when this is a filler text which indicates that the next/prev section is loading
     //protected int parentNID;
     private String ref = null;
 
@@ -74,6 +75,7 @@ public class Text implements Parcelable {
 
     public String getRef(){ return ref; }
     public boolean isChapter() { return isChapter;}
+    public boolean isLoader() { return isLoader;}
     /**
      * Little sections (like verse) to Big (like chap) and the rest zeros
      * For ex. chapter 3, verse 8 would be {8,3,0,0,0,0}
@@ -110,6 +112,14 @@ public class Text implements Parcelable {
             this.enText = node.getWholeTitle(Util.Lang.EN,doSectionName);
             this.heText = node.getWholeTitle(Util.Lang.HE,doSectionName);
         }
+    }
+
+    /**
+     * Filler constructor to make a Text object which indicates that the next/prev section is loading
+     * @param isLoader
+     */
+    public Text(boolean isLoader) {
+        this.isLoader = isLoader;
     }
 
     public Text(Cursor cursor ){
