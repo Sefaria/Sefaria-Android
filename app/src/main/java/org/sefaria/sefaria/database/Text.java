@@ -98,8 +98,18 @@ public class Text implements Parcelable {
         levels = new int [MAX_LEVELS];
 
         if (node != null) {
-            this.enText = node.getWholeTitle(Util.Lang.EN);
-            this.heText = node.getWholeTitle(Util.Lang.HE);
+            boolean doSectionName = true;
+            try {
+                ;
+                String category  = node.getBook().categories[0];
+                if ((category.equals("Tanach") || category.equals("Talmud") || category.equals("Mishnah")) && (node.getTocRootNum() == 0))
+                    doSectionName = false;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            this.enText = node.getWholeTitle(Util.Lang.EN,doSectionName);
+            this.heText = node.getWholeTitle(Util.Lang.HE,doSectionName);
         }
     }
 
