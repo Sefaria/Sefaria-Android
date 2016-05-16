@@ -96,6 +96,10 @@ public class Book implements Parcelable {
         }
     }
 
+    public String getRootCategory() {
+        return categories[0];
+    }
+
     public String getCategories(){
         String string = "";
         for(int i=0;i<categories.length;i++){

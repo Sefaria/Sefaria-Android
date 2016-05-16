@@ -17,11 +17,12 @@ import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.activities.SectionActivity;
 import org.sefaria.sefaria.activities.TOCActivity;
 import org.sefaria.sefaria.database.Node;
+import org.sefaria.sefaria.layouts.SefariaTextView;
 
 /**
  *
  */
-public class TOCNumBox extends TextView implements TOCElement {
+public class TOCNumBox extends SefariaTextView implements TOCElement {
 
     private Context context;
     private Node node;
@@ -51,10 +52,9 @@ public class TOCNumBox extends TextView implements TOCElement {
         //setHeight((int) r.getDimension(R.dimen.toc_numbox));
 
         setPadding(1, 1, 1, 1);
-        setTextSize(10);
         setGravity(Gravity.CENTER);
         setBackgroundResource(Util.getDrawable(context,R.attr.button_selector_solid_drawable));
-        setTextColor(Util.getColor(context,R.attr.text_color_main));
+        setTextColor(Util.getColor(context,R.attr.text_color_soft));
 
         this.node = node;
         this.context = context;
@@ -71,6 +71,7 @@ public class TOCNumBox extends TextView implements TOCElement {
 
     @Override
     public void setLang(Util.Lang lang) {
+        setFont(lang,false,15);
         setText(node.getNiceGridNum(lang));
     }
 

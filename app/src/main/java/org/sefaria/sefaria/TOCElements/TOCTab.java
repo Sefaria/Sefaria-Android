@@ -60,7 +60,7 @@ public class TOCTab extends LinearLayout implements TOCElement {
 
     public void setLang(Util.Lang lang) {
         this.lang = lang;
-        tv.setFont(lang,true);
+        tv.setFont(lang,false,15);
         String newTvText;
         if (lang == Util.Lang.HE) {
             newTvText = "מפרשים" ;//Mifarshim //

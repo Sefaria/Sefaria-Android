@@ -3,6 +3,7 @@ package org.sefaria.sefaria.TOCElements;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.support.v7.widget.GridLayout;
 import android.util.Log;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import org.sefaria.sefaria.MyApp;
@@ -91,7 +93,7 @@ public class TOCGrid extends LinearLayout {
 
         bookTitleView.setGravity(Gravity.CENTER);
         final int bookTitlepaddding =10;
-        bookTitleView.setPadding(bookTitlepaddding, bookTitlepaddding, bookTitlepaddding, bookTitlepaddding);
+        bookTitleView.setPadding(bookTitlepaddding, 2*bookTitlepaddding, bookTitlepaddding, bookTitlepaddding);
         this.addView(bookTitleView, 0);
 
         AutoResizeTextView bookCategoryView = new AutoResizeTextView(context);
@@ -127,14 +129,22 @@ public class TOCGrid extends LinearLayout {
         currSectionTitleView.setGravity(Gravity.CENTER);
         this.addView(currSectionTitleView, 2);
 
+        //ADD GREY DIVIDER
+        View divider = new View(context);
+        LinearLayout.LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, 1);
+        lp.setMargins(0,Math.round(Util.dpToPixels(context, 20)),0,Math.round(Util.dpToPixels(context,20)));
+        divider.setLayoutParams(lp);
+        divider.setBackgroundColor(Color.parseColor("#CCCCCC"));
+        this.addView(divider,3);
+
         tabRoot = makeTabSections(tocNodesRoots);
-        this.addView(tabRoot,3);//It's the 3nd view starting with bookTitle and CurrSectionName
+        this.addView(tabRoot,4);//It's the 3nd view starting with bookTitle and CurrSectionName
 
         this.gridRoot = new LinearLayout(context);
         gridRoot.setOrientation(LinearLayout.VERTICAL);
         gridRoot.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 
-        this.addView(gridRoot, 4);
+        this.addView(gridRoot, 5);
 
         TocTabList.get(defaultTab).setActive(true);//set it true, such that the setLang function will start the right tab
 

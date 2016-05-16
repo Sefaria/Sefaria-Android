@@ -23,6 +23,7 @@
         <item name="button_selected">@color/button_selected_w</item> <!-- this is a permanent color-->
         <item name="custom_actionbar_bg">@color/menu_background</item>
         <item name="custom_actionbar_border">@color/custom_actionbar_border_w</item>
+        <item name="custom_actionbar_button_tint">@color/custom_actionbar_button_tint_w</item>
         <item name="text_bg">@color/text_bg_w</item>
         <item name="text_color_main">@color/text_color_main_w</item>
         <item name="text_color_soft">@color/text_color_soft_w</item>
@@ -57,6 +58,7 @@
         <item name="button_selected">@color/button_selected_g</item> <!-- this is a permanent color-->
         <item name="custom_actionbar_bg">@color/custom_actionbar_bg_g</item>
         <item name="custom_actionbar_border">@color/custom_actionbar_border_g</item>
+        <item name="custom_actionbar_button_tint">@color/custom_actionbar_button_tint_g</item>
         <item name="text_bg">@color/text_bg_g</item>
         <item name="text_color_main">@color/text_color_main_g</item>
         <item name="text_color_soft">@color/text_color_soft_g</item>
@@ -91,6 +93,7 @@
         <item name="button_selected">@color/button_selected_b</item> <!-- this is a permanent color-->
         <item name="custom_actionbar_bg">@color/custom_actionbar_bg_b</item>
         <item name="custom_actionbar_border">@color/custom_actionbar_border_b</item>
+        <item name="custom_actionbar_button_tint">@color/custom_actionbar_button_tint_b</item>
         <item name="text_bg">@color/text_bg_b</item>
         <item name="text_color_main">@color/text_color_main_b</item>
         <item name="text_color_soft">@color/text_color_soft_b</item>

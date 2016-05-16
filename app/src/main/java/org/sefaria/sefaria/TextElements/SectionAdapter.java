@@ -117,7 +117,7 @@ public class SectionAdapter extends ArrayAdapter<Text> {
                 enNum.setVisibility(View.GONE);
                 heNum.setVisibility(View.GONE);
 
-                tch.setSectionTitle(segment);
+                tch.setSectionTitle(segment,sectionActivity.getBook());
                 tch.setTextSize(sectionActivity.getTextSize());
             } else {
                 view.setClickable(false);
@@ -161,7 +161,7 @@ public class SectionAdapter extends ArrayAdapter<Text> {
                 enNum.setVisibility(View.GONE);
                 heNum.setVisibility(View.GONE);
 
-                tch.setSectionTitle(segment);
+                tch.setSectionTitle(segment,sectionActivity.getBook());
                 tch.setTextSize(sectionActivity.getTextSize());
 
             } else {
