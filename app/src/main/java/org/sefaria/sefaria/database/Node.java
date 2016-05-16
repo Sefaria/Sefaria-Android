@@ -51,6 +51,8 @@ public class Node{// implements  Parcelable{
     private String startLevels;
     private List<Node> children;
     private List<Text> textList;
+
+    private Book book;
     private boolean isTextSection = false;
     private boolean isGridItem = false;
     private boolean isComplex = false;
@@ -141,7 +143,7 @@ public class Node{// implements  Parcelable{
         return getWholeTitle(lang,true);
     }
 
-    private String getWholeTitle(Util.Lang lang, boolean doSectionName){
+    public String getWholeTitle(Util.Lang lang, boolean doSectionName){
         String str = "";
         Node node = this;
         boolean usedSpaceAlready = true;
@@ -301,6 +303,13 @@ public class Node{// implements  Parcelable{
      * @return bid
      */
     public int getBid(){ return bid; }
+
+    public Book getBook() throws Book.BookNotFoundException {
+        if(book != null)
+            return book;
+        book = new Book(bid);
+        return book;
+    }
     /*
     private void addSectionNames1(){
         //TODO move to create SQL
