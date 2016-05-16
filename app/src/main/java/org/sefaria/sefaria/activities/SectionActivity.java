@@ -359,6 +359,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
     public class AsyncLoadSection extends AsyncTask<Void,Void,List<Text>> {
 
         private TextEnums dir;
+        private Text loaderText;
 
         public AsyncLoadSection (TextEnums dir) {
             this.dir = dir;
@@ -368,6 +369,14 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
         protected void onPreExecute() {
             super.onPreExecute();
             isLoadingSection = true;
+            loaderText = new Text(true);
+
+            if (this.dir == TextEnums.NEXT_SECTION) {
+                sectionAdapter.add(loaderText);
+            } else if (this.dir == TextEnums.PREV_SECTION){
+                sectionAdapter.add(0,loaderText);
+                listView.setSelection(1);
+            }
         }
 
         @Override
@@ -388,9 +397,12 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
 
             Text sectionHeader = getSectionHeaderText(dir);
             if (dir == TextEnums.NEXT_SECTION) {
+                sectionAdapter.remove(loaderText);
+
                 if(sectionHeader.getText(Util.Lang.EN).length() > 0 || sectionHeader.getText(Util.Lang.HE).length() > 0)
                     sectionAdapter.add(sectionHeader);
                 sectionAdapter.addAll(textsList);
+
 
                 scrolledDownTimes++;
                 if(openedNewBookTime >0 && !reportedNewBookScroll && scrolledDownTimes==2 && (System.currentTimeMillis() - openedNewBookTime < 10000)){
@@ -404,6 +416,8 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
                 }
 
             } else if (dir == TextEnums.PREV_SECTION) {
+                sectionAdapter.remove(loaderText);
+
                 sectionAdapter.addAll(0, textsList);
                 sectionAdapter.add(0, sectionHeader);
                 listView.setSelection(textsList.size()+1);

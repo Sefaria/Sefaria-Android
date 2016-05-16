@@ -47,6 +47,14 @@ public class SectionAdapter extends ArrayAdapter<Text> {
     @Override
     public View getView(int position, View view, ViewGroup parent) {
         Text segment = texts.get(position);
+
+        if (segment.isLoader()) {
+            LayoutInflater inflater = (LayoutInflater)
+                    sectionActivity.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+            view = inflater.inflate(R.layout.adapter_text_loader,null);
+            return view;
+        }
+
         String enText = segment.getText(Util.Lang.EN);
         String heText = segment.getText(Util.Lang.HE);
         Util.Lang lang = sectionActivity.getTextLang();

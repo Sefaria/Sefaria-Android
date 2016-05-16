@@ -143,11 +143,15 @@ public class LinkFragment extends android.support.v4.app.Fragment {
         currState = state;
         View linkBackButton = view.findViewById(R.id.link_back_btn);
         View colorBar = view.findViewById(R.id.main_color_bar);
+        View topDivider = view.findViewById(R.id.top_divider);
         SefariaTextView noLinksTV = (SefariaTextView) view.findViewById(R.id.no_links_tv);
         if (state == State.MAIN) {
-            view.setBackgroundColor(Util.getColor(activity,R.attr.link_bg));
+            view.setBackgroundColor(Util.getColor(activity, R.attr.link_bg));
 
-            colorBar.setBackgroundColor(Util.getColor(activity, R.attr.custom_actionbar_border));
+            //colorBar.setBackgroundColor(Util.getColor(activity, R.attr.custom_actionbar_border));
+            colorBar.setVisibility(View.GONE);
+            topDivider.setVisibility(View.VISIBLE);
+
             linkBackButton.setVisibility(View.INVISIBLE);
             noLinksTV.setVisibility(View.GONE);
             GridLayoutManager gridLayoutManager = new GridLayoutManager(activity,2);
@@ -179,6 +183,7 @@ public class LinkFragment extends android.support.v4.app.Fragment {
             else cat = linkCount.getRealTitle(Util.Lang.EN); //CAT
 
             colorBar.setVisibility(View.VISIBLE);
+            topDivider.setVisibility(View.GONE);
             int color = MyApp.getCatColor(cat);
             colorBar.setBackgroundColor(activity.getResources().getColor(color));
             //linkSelectorBar.setVisibility(View.VISIBLE);
