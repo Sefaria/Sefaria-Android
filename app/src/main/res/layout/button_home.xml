@@ -11,21 +11,41 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/color_bar_height"
         android:background="@color/tanach"></View>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <org.sefaria.sefaria.layouts.SefariaTextView
+            android:id="@+id/tv"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:minHeight="43dp"
+            android:maxHeight="65dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="5dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:textSize="15sp"
+            android:text="fadfafdf"
+            android:textColor="?text_color_main"
+            android:gravity="center_vertical"
+            >
+        </org.sefaria.sefaria.layouts.SefariaTextView>
+        <FrameLayout
+            android:visibility="gone"
+            android:id="@+id/moreArrow"
+            android:layout_width="20dp"
+            android:layout_height="match_parent">
 
-    <org.sefaria.sefaria.layouts.SefariaTextView
-        android:id="@+id/tv"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:minHeight="43dp"
-        android:maxHeight="65dp"
-        android:paddingLeft="15dp"
-        android:paddingRight="15dp"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
-        android:textSize="15sp"
-        android:text="בלה"
-        android:textColor="?text_color_main"
-        android:gravity="center_vertical"
-        >
-    </org.sefaria.sefaria.layouts.SefariaTextView>
+            <ImageView
+                android:layout_width="12sp"
+                android:layout_height="12sp"
+                android:src="@drawable/arrow_25"
+                android:tint="?text_color_main"
+                android:layout_margin="@dimen/text_menu_bar_box_margin"
+                android:layout_gravity="center" />
+
+        </FrameLayout>
+    </LinearLayout>
+
 </LinearLayout>
