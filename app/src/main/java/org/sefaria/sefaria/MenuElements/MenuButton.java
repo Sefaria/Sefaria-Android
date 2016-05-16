@@ -84,4 +84,12 @@ public class MenuButton extends MenuElement {
         //NOTE: Need to use pixels here b/c I'm using getDimension which already converts
         tv.setFont(lang, true, getResources().getDimension(R.dimen.menu_button_font_size), TypedValue.COMPLEX_UNIT_PX);
     }
+
+    public void setIsMore(boolean isMore) {
+        if (isMore) {
+            findViewById(R.id.moreArrow).setVisibility(View.VISIBLE);
+        } else {
+            findViewById(R.id.moreArrow).setVisibility(View.GONE);
+        }
+    }
 }
