@@ -36,9 +36,9 @@
                 android:paddingLeft="10dp">
                 <org.sefaria.sefaria.layouts.SefariaTextView
                     android:id="@+id/recentTextsTV"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
+                    android:gravity="center_vertical"
                     android:paddingLeft="3dp"
                     android:paddingRight="3dp"
                     android:paddingTop="20dp"
@@ -55,9 +55,9 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"></LinearLayout>
                 <org.sefaria.sefaria.layouts.SefariaTextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
+                    android:gravity="center_vertical"
                     android:paddingLeft="3dp"
                     android:paddingRight="3dp"
                     android:paddingTop="15dp"
@@ -75,9 +75,9 @@
                     android:orientation="vertical"/>
 
                 <org.sefaria.sefaria.layouts.SefariaTextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
+                    android:gravity="center_vertical"
                     android:paddingLeft="3dp"
                     android:paddingRight="3dp"
                     android:paddingTop="20dp"
