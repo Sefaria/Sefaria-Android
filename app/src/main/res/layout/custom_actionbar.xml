@@ -142,16 +142,17 @@
             android:layout_margin="0dp"
             android:background="?selectableItemBackgroundBorderless"
             >
-            <org.sefaria.sefaria.layouts.SefariaTextView
-                android:id="@+id/lang_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:text="Aא"
-                android:textColor="?text_verse_num_color"
-                android:textSize="22dp" />
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:src="@drawable/a_aleph"
+                android:tint="?custom_actionbar_button_tint"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center"
+                />
         </FrameLayout>
         <FrameLayout
+            android:visibility="gone"
             android:id="@+id/menu_lang_btn"
             android:layout_alignParentRight="true"
             android:layout_width="@dimen/custom_action_bar_button_frame_width"

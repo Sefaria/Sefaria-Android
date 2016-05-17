@@ -80,7 +80,7 @@
             android:id="@+id/progressBar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#99ffffff">
+            android:background="?link_progress_bg">
             <ProgressBar
 
                 style="?android:attr/progressBarStyleLarge"

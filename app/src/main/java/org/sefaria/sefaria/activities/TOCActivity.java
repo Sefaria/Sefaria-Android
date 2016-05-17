@@ -2,6 +2,7 @@ package org.sefaria.sefaria.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -84,27 +85,8 @@ public class TOCActivity extends AppCompatActivity {
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(customActionbar);
 
-
-        //was init(){
-        List<Node> tocNodesRoots = null;
-        try {
-            tocNodesRoots = book.getTOCroots();
-        } catch (API.APIException e) {
-            API.makeAPIErrorToast(context);
-            finish();
-            return;
-        }
-        Log.d("toc", "ROOTs SIZE " + tocNodesRoots.size());
-        List<Book> commentaries = book.getAllCommentaries();
-
-        ScrollView tocRoot = (ScrollView) findViewById(R.id.toc_root);
-
-        tocGrid = new TOCGrid(this,book, tocNodesRoots,false,lang,pathDefiningNode);
-
-        tocRoot.addView(tocGrid);
-        //}
-
-
+        AsyncLoadTOC altoc = new AsyncLoadTOC();
+        altoc.execute();
     }
 
     @Override
@@ -206,5 +188,36 @@ public class TOCActivity extends AppCompatActivity {
             onBackPressed();
         }
     };
+
+    private class AsyncLoadTOC extends AsyncTask<Void,Void, List<Node>> {
+        @Override
+        protected void onPreExecute() {
+            findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected List<Node> doInBackground(Void... params) {
+            List<Node> tocNodesRoots = null;
+            try {
+                tocNodesRoots = book.getTOCroots();
+            } catch (API.APIException e) {
+                API.makeAPIErrorToast(context);
+                finish();
+            }
+
+            return tocNodesRoots;
+        }
+
+        @Override
+        protected void onPostExecute(List<Node> tocNodesRoots) {
+            findViewById(R.id.progressBar).setVisibility(View.GONE);
+            //Log.d("toc", "ROOTs SIZE " + tocNodesRoots.size());
+            List<Book> commentaries = book.getAllCommentaries();
+
+            ScrollView tocRoot = (ScrollView) findViewById(R.id.toc_root);
+            tocGrid = new TOCGrid(TOCActivity.this,book, tocNodesRoots,false,lang,pathDefiningNode);
+            tocRoot.addView(tocGrid);
+        }
+    }
 
 }

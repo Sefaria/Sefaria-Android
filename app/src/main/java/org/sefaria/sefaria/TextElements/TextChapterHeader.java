@@ -62,7 +62,7 @@ public class TextChapterHeader extends LinearLayout {
     }
 
     public void setLang(Util.Lang lang) {
-        tv.setFont(lang, true);
+        tv.setFont(lang, false);
         if (lang == Util.Lang.HE) {
             tv.setText(heText);
         }

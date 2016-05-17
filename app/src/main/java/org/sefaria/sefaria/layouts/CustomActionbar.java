@@ -54,10 +54,6 @@ public class CustomActionbar extends MenuElement {
         wholeTitleLinearLayout = (LinearLayout) findViewById(R.id.whole_title);
         titleTV = (SefariaTextView) findViewById(R.id.title);
 
-
-        SefariaTextView langBtn = (SefariaTextView) menuBtn.findViewById(R.id.lang_btn);
-        langBtn.setFont(Util.Lang.HE,true);
-
         SefariaTextView menuLangBtnTextView = (SefariaTextView) menuLangBtn.findViewById(R.id.langTV);
         menuLangBtnTextView.setFont(Util.Lang.HE,true);
 

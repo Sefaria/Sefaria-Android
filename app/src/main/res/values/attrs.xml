@@ -35,6 +35,7 @@
     <attr name="link_bg" format="reference|color"/>
     <attr name="link_text_bg" format="reference|color"/>
     <attr name="link_selector_bar_bg" format="reference|color"/>
+    <attr name="link_progress_bg" format="reference|color"/>
 
 
     <declare-styleable name="SplitView">

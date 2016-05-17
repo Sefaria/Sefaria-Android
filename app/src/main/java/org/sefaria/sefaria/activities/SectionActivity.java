@@ -357,7 +357,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
 
 
 
-    public class AsyncLoadSection extends AsyncTask<Void,Void,List<Text>> {
+    private class AsyncLoadSection extends AsyncTask<Void,Void,List<Text>> {
 
         private TextEnums dir;
         private Text loaderText;
