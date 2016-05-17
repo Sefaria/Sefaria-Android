@@ -34,7 +34,7 @@
     <dimen name="color_bar_height">5dp</dimen>
 
     <dimen name="text_activtiy_between_segment_padding">6dp</dimen>
-    <dimen name="text_activtiy_numbering_padding">11dp</dimen>
+    <dimen name="text_activtiy_numbering_padding">10dp</dimen>
 
     <dimen name="link_main_padding">20dp</dimen>
 

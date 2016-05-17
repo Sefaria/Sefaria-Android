@@ -18,8 +18,13 @@ public class TextMenuBar extends LinearLayout {
     private View ctsBtn,sepBtn,sbsBtn,tbBtn,whiteBtn,greyBtn,blackBtn,smallBtn,bigBtn;
 
     private Context context;
+    private boolean isCtsText; //true for texts that can be set to cts (e.g. Talmud, hopefully)
 
     public TextMenuBar(Context context, OnClickListener btnListener) {
+        this(context,btnListener,false); //default isCtsText is false
+    }
+
+    public TextMenuBar(Context context, OnClickListener btnListener, boolean isCtsText) {
         super(context);
         inflate(context, R.layout.text_menu_bar, this);
         this.context = context;
@@ -50,10 +55,11 @@ public class TextMenuBar extends LinearLayout {
         smallBtn.setOnClickListener(btnListener);
         bigBtn.setOnClickListener(btnListener);
 
-        enBtn.setFont(Util.Lang.HE,true);
+        enBtn.setFont(Util.Lang.HE, true);
         biBtn.setFont(Util.Lang.HE, true);
         heBtn.setFont(Util.Lang.HE, true);
 
+        this.isCtsText = isCtsText;
     }
 
     //to make either the mono or bi formatting options visible
@@ -62,7 +68,10 @@ public class TextMenuBar extends LinearLayout {
             findViewById(R.id.mono_formatting).setVisibility(View.GONE);
             findViewById(R.id.bi_formatting).setVisibility(View.VISIBLE);
         } else {
-            findViewById(R.id.mono_formatting).setVisibility(View.GONE);//instead of visible  b/c continuous isn't a thing yet
+            if (isCtsText)
+                findViewById(R.id.mono_formatting).setVisibility(View.VISIBLE);
+            else
+                findViewById(R.id.mono_formatting).setVisibility(View.GONE);
             findViewById(R.id.bi_formatting).setVisibility(View.GONE);
         }
     }

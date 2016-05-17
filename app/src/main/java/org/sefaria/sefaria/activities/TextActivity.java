@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import org.sefaria.sefaria.R;
+import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.layouts.PerekTextView;
 import org.sefaria.sefaria.layouts.ScrollViewExt;
 import org.sefaria.sefaria.layouts.ScrollViewListener;
@@ -18,7 +19,7 @@ import org.sefaria.sefaria.database.Text;
 
 import java.util.List;
 
-public class TextActivity extends SuperTextActivity {
+public class TextActivity extends SuperTextActivity implements LinkFragment.OnLinkFragInteractionListener {
 
     private LinearLayout textRoot;
     //variables to properly handle scrolling on prev loaded chapter
@@ -50,6 +51,8 @@ public class TextActivity extends SuperTextActivity {
             AsyncLoadSection als = new AsyncLoadSection(TextEnums.NEXT_SECTION);
             als.execute();
         }
+
+
     }
 
 
@@ -83,11 +86,13 @@ public class TextActivity extends SuperTextActivity {
     }
 
     protected void setIsCts(boolean isCts) {
-        this.isCts = isCts;
+        Settings.setIsCts(isCts);
+        restartActivity();
+        /*this.isCts = isCts;
         for (PerekTextView ptv : perekTextViews) {
             ptv.setIsCts(isCts);
             ptv.update();
-        }
+        }*/
     }
 
     protected void setIsSideBySide(boolean isSideBySide) {

@@ -43,6 +43,7 @@ import org.sefaria.sefaria.layouts.ScrollViewExt;
 import org.sefaria.sefaria.MenuElements.MenuNode;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.sefaria.sefaria.MyApp.getRString;
@@ -167,7 +168,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
         //These vars are specifically initialized here and not in init() so that they don't get overidden when coming from TOC
         //defaults
-        isCts = false;
+        isCts = Settings.getIsCts();
         isSideBySide = Settings.getIsSideBySide();
         colorTheme = Settings.getTheme();
         setTheme(colorTheme);
@@ -187,7 +188,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
     private int getValuesFromIntent(Bundle savedInstanceState){
         Intent intent = getIntent();
-        MyApp.handleIncomingURL(this,intent);
+        MyApp.handleIncomingURL(this, intent);
         int nodeHash;
         if (savedInstanceState != null) {//it's coming back after it cleared the activity from ram
             linkFragment = (LinkFragment) getSupportFragmentManager().getFragment(savedInstanceState,LINK_FRAG_TAG);
@@ -354,24 +355,12 @@ public abstract class SuperTextActivity extends FragmentActivity {
     public static void startNewTextActivityIntent(Context context, Book book, Text text, Node node,boolean openNewTask,String searchingTerm,int textNum) {
         Intent intent;
 
-        /*
-        //SHUOLD ONLY BE IN BOOK IS NOT NULL
-        List<String> cats = Arrays.asList(book.categories);
-        boolean isCtsText = false;
-        final String[] CTS_TEXT_CATS = {};// {"Tanach","Talmud"};//
-        for (String ctsText : CTS_TEXT_CATS) {
-            isCtsText = cats.contains(ctsText);
-            if (isCtsText) break;
-        }
-
-        if (isCtsText) {
+        //Open TextActivity if the current book can be cts, and your settings are cts
+        if (getIsCtsText(book) && Settings.getIsCts()) {
             intent = new Intent(context, TextActivity.class);
         } else {
             intent = new Intent(context, SectionActivity.class);
         }
-        */
-
-        intent = new Intent(context, SectionActivity.class);
 
         if(book != null)
             intent.putExtra("currBook", book);
@@ -409,7 +398,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
         isTextMenuVisible = false;
         textMenuRoot = (LinearLayout) findViewById(R.id.textMenuRoot);
-        textMenuBar = new TextMenuBar(SuperTextActivity.this,textMenuBtnClick);
+        textMenuBar = new TextMenuBar(SuperTextActivity.this,textMenuBtnClick,getIsCtsText(book));
         textMenuBar.setState(textLang, isCts, isSideBySide, colorTheme);
         textMenuRoot.addView(textMenuBar);
         textMenuRoot.setVisibility(View.GONE);
@@ -761,6 +750,20 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
     public Book getBook() { return book; }
     public boolean getIsCts(){ return isCts;}
+
+    public static boolean getIsCtsText(Book book) {
+        //SHUOLD ONLY BE IN BOOK IS NOT NULL
+        List<String> cats = Arrays.asList(book.categories);
+
+        boolean isCtsText = false;
+        final String[] CTS_TEXT_CATS = {"Talmud"};
+        for (String ctsText : CTS_TEXT_CATS) {
+            isCtsText = cats.contains(ctsText);
+            if (isCtsText) break;
+        }
+        return isCtsText;
+    }
+
     public boolean getIsSideBySide() { return isSideBySide; }
     public int getColorTheme() { return colorTheme; }
     private void setColorTheme(int colorTheme) {
@@ -770,7 +773,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
     protected void restartActivity(){
         finish();
-        startNewTextActivityIntent(this, book, currText, currNode, false, searchingTerm,-1);
+        startNewTextActivityIntent(this, book, currText, currNode, false, searchingTerm, -1);
     }
 
     protected abstract void setTextLang(Util.Lang textLang);
