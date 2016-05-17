@@ -1,5 +1,12 @@
 <resources>
-    <string name="app_name">Sefaria</string>
+    <string name="app_name" translatable="false">Sefaria</string>
+    <string name="LATER">Later</string>
+    <string name="YES">Yes</string>
+    <string name="no">No</string>
+    <string name="CONTINUE">Continue</string>
+    <string name="OK">OK</string>
+    <string name="CANCEL">Cancel</string>
+    <string name="none">None</string>
     <string name="action_settings">Settings</string>
     <string name="home_more_button">More ></string>
     <string name="no_links">No connections available. Use the ● next to each verse to check if that verse has connections. </string>
@@ -31,116 +38,28 @@
     <string name="consider_downloading">consider downloading Offline Library</string>
     <string name="searching_requires_internet">searching requires internet connection</string>
     <string name="how_to_report_mistake">How to report mistake</string>
-    <!-- not used --><string name="how_to_report_mistake_message">No one is perfect, and Sefaria is no exception. If you spot a mistake, we want to know about it. However, we find that most textual errors that get reported to us are not in fact mistakes. This is in part due to textual variances between different editions of a text. To properly report a typo or textual error to Sefaria, make sure to include what you think the text should be and what you are using to make your determination. If you are looking at a printed book, please provide enough information to uniquely identify the book you\'re using. If the edition you\'re using is not the same as the edition we are using, we will be unlikely to change the text based simply on differing textual traditions. We will only change it if we believe that either the printer made a mistake, or we made a mistake when we digitized a text. Textual differences can be handled by adding the second textual tradition as another text version.</string>
+    <!-- not used...dont translate --><string name="how_to_report_mistake_message">No one is perfect, and Sefaria is no exception. If you spot a mistake, we want to know about it. However, we find that most textual errors that get reported to us are not in fact mistakes. This is in part due to textual variances between different editions of a text. To properly report a typo or textual error to Sefaria, make sure to include what you think the text should be and what you are using to make your determination. If you are looking at a printed book, please provide enough information to uniquely identify the book you\'re using. If the edition you\'re using is not the same as the edition we are using, we will be unlikely to change the text based simply on differing textual traditions. We will only change it if we believe that either the printer made a mistake, or we made a mistake when we digitized a text. Textual differences can be handled by adding the second textual tradition as another text version.</string>
     <string name="how_to_report_mistake_message_short">If you spot a mistake, we want to know about it. However, we find that most textual errors that get reported to us are not in fact mistakes. This is in part due to textual variances between different editions of a text. To properly report a typo or textual error to Sefaria, make sure to include:\n\n1. What you think the text should be.\n\n2. What you are using to make your determination. If you are looking at a printed book, please provide enough information to uniquely identify the book you\'re using.</string>
-
-
-    <string name="action_bookmarks">Bookmarks</string>
-    <string name="activity_filterlinks">Filter Sources</string>
-    <string name="activity_help">Help</string>
-    <string name="activity_about">About</string>
-    <string name="shortcut_label">Shortcut</string>
-    <string name="activity_search">Search</string>
-    <string name="activity_text">Text Activity</string>
-    <string name="activity_main">Main Activity</string>
-    <string name="LIBRARY_EMPTY_MESSAGE" translatable="false">To use the app, you need to download the Sefaria library. Do you want to do this now?\nYou can always click \'Update Library\' in settings to update.</string>
-    <string name="NEW_UPDATE_MESSAGE" translatable="false">Do you want to download the new Sefaria library now?\nYou can always tap \'Update Library\' in settings to update.</string>
-    <string name="NO_INTERNET_MESSAGE" translatable="false">You need internet in order to download the update. Try again later.</string>
-    <string name="USING_DATA_MESSAGE">You are using mobile data (not WIFI). The library is about 200MB. Do you want to download it anyways?</string>
-    <string name="FIRST_UPDATE_FAIL_MESSAGE" translatable="false">You don\'t have internet to download the library. You can install it manually when you have internet by going to Settings and tapping \'Update Library\'.</string>
-    <string name="NO_NEW_UPDATE_MESSAGE" translatable="false">There is no new update to download. Try again later.</string>
-    <string name="UPDATE_STARTED_MESSAGE">Your library is downloading and installing. This should only take a few minutes. If it is taking longer than 5-10 minutes after downloading, then cancel update.</string>
-    <string name="LIBRARY_EMPTY_TITLE" translatable="false">Library Empty</string>
-    <string name="NEW_UPDATE_TITLE" translatable="false">Update Available</string>
-    <string name="YES">Yes</string>
-    <string name="LATER" translatable="false">Later</string>
-    <string name="NO_INTERNET_TITLE" translatable="false">No Internet</string>
-    <string name="CONTINUE" translatable="false">Continue</string>
-    <string name="CANCEL" translatable="false">Cancel</string>
-    <string name="USING_DATA_TITLE">Using mobile data</string>
-    <string name="FIRST_UPDATE_FAIL_TITLE" translatable="false">Can\'t download library</string>
-    <string name="OK" translatable="false">OK</string>
-    <string name="NO_NEW_UPDATE_TITLE" translatable="false">No New Update</string>
-    <string name="UPDATE_STARTED_TITLE">Installing New Offline Library</string>
-    <string name="MESSAGE_CANT_STOP_NOW" translatable="false">The update cannot be canceled at this point. Please wait for it to finish.</string>
-    <string name="FIRST_TIME_TEXT_MESSAGE" translatable="false">Go through the help dialogs to learn about the app</string>
-    <string name="FIRST_TIME_TEXT_TITLE" translatable="false">Welcome to Sefaria!</string>
-    <string name="DL_INTERNET_LOST_TITLE" translatable="false">Internet Lost</string>
-    <string name="DL_INTERNET_LOST_MESSAGE" translatable="false">Please try to update again when you have internet</string>
-    <string name="DL_NOT_ENOUGH_SPACE_TITLE" translatable="false">Not Enough Space</string>
-    <string name="DL_NOT_ENOUGH_SPACE_MESSAGE">Your phone doesn\'t have enough space to store the entire library</string>
-    <string name="DL_UNKNOWN_ERROR_TITLE" translatable="false">Unknown Download Error</string>
-    <string name="DL_UNKNOWN_ERROR_MESSAGE" translatable="false">Please try again</string>
-    <string name="book_not_available">Book currently not available&#8230;</string>
-    <string name="found">Found</string>
-    <string name="occurrences">occurrences of</string>
-    <string name="no_other_lang">No other language available</string>
-    <string name="bookmark_added">Bookmark added</string>
-    <string name="texts_contain">texts contain</string>
-    <string name="defaults_restored">Defaults Restored</string>
-    <string name="saved">Saved Successfully</string>
-    <string name="no_match_filter">No sources match filter</string>
-    <string name="search">Search</string>
     <string name="enter_word_to_search">Enter word to search in Book</string>
-
-    <string name="upgrade_to_newest">Upgrade to the newest version of</string>
-    <string name="view_bookmarks">View Bookmarks</string>
-
-    <string name="update_preparing">Update is still setting up. Wait a moment to cancel.</string>
-    <string name="error_parsing_query_n">Error Parsing Query - trying nikudah dependent search.</string>
-    <string name="error_parsing_query">Error Parsing Query</string>
-    <string name="kill_switch_message">I\'m sorry, but this version has been discontinued.</string>
-    <string name="problem_writting_file">There was a problem writing file. Please check app permissions.</string>
+    <string name="CHECKING_FOR_UPDATE_TITLE">Checking for update</string>
+    <string name="search">Search</string>
     <string name="app_version_is">App Version:\u0020</string>
     <string name="library_version_is">Library Version:\u0020</string>
-    <string name="copyright_2015">Copyright 2015</string>
-    <string name="no_bookmarks">No Bookmarks.\nTo add, go to any text and tap the star icon.</string>
-    <string name="add_bookmarks">Add Bookmark</string>
-    <string name="remove_bookmarks">Remove Bookmark</string>
-    <string name="previous">Previous</string>
-    <string name="next">Next</string>
-    <string name="all">All</string>
-    <string name="done">Done</string>
-    <string name="none">None</string>
-    <string name="no_sources_avilable">(No sources available for this text)</string>
-    <string name="search_library">Search Texts</string>
-    <string name="white">White</string>
-    <string name="black">Black</string>
-    <string name="book_title_language">Book Title Language</string>
-    <string name="text_background_color">Text Background Color</string>
-    <string name="default_text_language">Default Book Language</string>
-    <string name="show_hebrew_vowels_">Show Hebrew Vowels / Cantillation Marks</string>
-    <string name="nekudot_not_supported_">(Note: Nekudot are not fully supported on your version of Android)</string>
-    <string name="no">No</string>
-    <string name="layout_for_bilingual_texts">Layout for bilingual texts</string>
-    <string name="hebrew_and_English_side_by_side">Hebrew and English side by side</string>
-    <string name="hebrew_on_top_of_english">Hebrew on top of English</string>
-    <string name="font_size">Font Size</string>
-    <string name="save_settings">Save Settings</string>
-    <string name="restore_defaults">Restore Defaults</string>
-    <string name="update_library">Update Library</string>
-    <string name="edit">Edit</string>
-    <string name="stop_edit">Stop Edit</string>
-    <string name="find_on_page">Find on Page</string>
-    <string name="view_on_sefaria">View on Sefaria</string>
-    <string name="help">Help</string>
-    <string name="filter_sources">Filter Sources</string>
-    <string name="eng_heb">Eng/Heb</string>
-    <string name="home">Home</string>
-    <string name="exit_search">Exit Search</string>
-    <string name="next_search">Next Search</string>
-    <string name="previous_search">Previous Search</string>
-    <string name="finished_searching">Finished searching</string>
-    <string name="searching_help1">You can search in Hebrew or English.</string>
-    <string name="searching_help2">English will only return texts containing the exact expression (case insensitive).</string>
-    <string name="searching_help2_5">Hebrew will return texts which contain all of the searched words (irrelevant of their location in the text). It ignores leading vavs (כל will also return וכל).</string>
-    <string name="searching_help3">For advanced search use _ as single character and % as zero or more characters.</string>
-    <string name="searching_help3_5" formatted="false">For example: b_g returns texts with big or bag. Name % city returns texts like name of the city. %ברא returns texts with בראם or בראשון. And כלי_ returns texts with הכלי or בכלי.</string>
-    <string name="askjosh">If you\'re looking for something in Gemara or Chumash &lt;a href=\'mailto:askjosh@torahsummary.com\'&gt;askjosh@torahsummary.com&lt;/a&gt; might be able to help.</string>
-    <string name="ARE_YOU_SURE_TITLE" translatable="false">Are you sure you want to cancel?</string>
-    <string name="ARE_YOU_SURE_MESSAGE" translatable="false">Your update would need to be restarted</string>
-    <string name="CHECKING_FOR_UPDATE_TITLE" translatable="false">Checking for update</string>
-    <string name="finish">Finish</string>
-    <string name="mainMenuSearchHint">Search Texts or Book Titles</string>
-
+    <string name="NO_INTERNET_TITLE">No Internet</string>
+    <string name="NO_INTERNET_MESSAGE">You need internet in order to download the update. Try again later.</string>
+    <string name="problem_writting_file">There was a problem writing file. Please check app permissions.</string>
+    <string name="error_parsing_query_n">Error Parsing Query - trying nikudah dependent search.</string>
+    <string name="error_parsing_query">Error Parsing Query</string>
+    <string name="upgrade_to_newest">Upgrade to the newest version of</string>
+    <string name="update_preparing">Update is still setting up. Wait a moment to cancel.</string>
+    <string name="UPDATE_STARTED_TITLE">Installing New Offline Library</string>
+    <string name="UPDATE_STARTED_MESSAGE">Your library is downloading and installing. This should only take a few minutes. If it is taking longer than 5-10 minutes after downloading, then cancel update.</string>
+    <string name="NO_NEW_UPDATE_MESSAGE">There is no new update to download. Try again later.</string>
+    <string name="NO_NEW_UPDATE_TITLE">No New Update</string>
+    <string name="NEW_UPDATE_TITLE" >Update Available</string>
+    <string name="NEW_UPDATE_MESSAGE">Do you want to download the new Sefaria library now?\nYou can always tap \'Update Library\' in settings to update.</string>
+    <string name="ARE_YOU_SURE_TITLE">Are you sure you want to cancel?</string>
+    <string name="ARE_YOU_SURE_MESSAGE">Your update would need to be restarted</string>
+    <string name="USING_DATA_MESSAGE">You are using mobile data (not WIFI). The library is about 200MB. Do you want to download it anyways?</string>
+    <string name="USING_DATA_TITLE">Using mobile data</string>
 </resources>
