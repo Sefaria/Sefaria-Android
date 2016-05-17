@@ -1,6 +1,7 @@
 package org.sefaria.sefaria.activities;
 
 import android.app.Activity;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -49,6 +50,7 @@ public class LinkFragment extends android.support.v4.app.Fragment {
     private SefariaTextView linkSelectorBarTitle;
     private RecyclerView linkRecycler;
 
+    private View loadingTV;
     private SuperTextActivity activity;
 
 
@@ -100,7 +102,7 @@ public class LinkFragment extends android.support.v4.app.Fragment {
 
         View view = inflater.inflate(R.layout.fragment_link, container, false);
         linkRecycler = (RecyclerView) view.findViewById(R.id.recview);
-
+        loadingTV = view.findViewById(R.id.loading_tv);
 
         LinearLayout linkSelectorBarRoot = (LinearLayout) view.findViewById(R.id.link_selector_bar_root);
         linkSelectorBarTitle = (SefariaTextView) view.findViewById(R.id.link_selector_bar_title);
@@ -229,25 +231,11 @@ public class LinkFragment extends android.support.v4.app.Fragment {
 
 
             if (currState == State.MAIN) { //load new linkCounts
-                LinkFilter linkFilterAll = null;
-                try {
-                    linkFilterAll = LinkFilter.getFromLinks_small(segment);
-                } catch (API.APIException e) {
-                    API.makeAPIErrorToast(activity);
-                    linkFilterAll = LinkFilter.makeAllLinkCounts();
-                }
-                if (!linkSelectorBar.getHasBeenInitialized())
-                    linkSelectorBar.initialUpdate(linkFilterAll,activity.getMenuLang());
-
-                linkMainAdapter.setItemList(LinkFilter.getList(linkFilterAll));
+                AsyncLoadLinkFilter alf = new AsyncLoadLinkFilter();
+                alf.execute();
             } else if (currState == State.BOOK || currState == State.CAT) { //change visibilty of links
-                try {
-                    linkTextAdapter.setItemList(Link.getLinkedTexts(segment,linkTextAdapter.getCurrLinkCount()));
-                } catch (API.APIException e) {
-                    linkTextAdapter.setItemList(new ArrayList<Text>());
-                    API.makeAPIErrorToast(activity);
-
-                }
+                AsyncLoadLinks all = new AsyncLoadLinks();
+                all.execute();
             } else { //CAT load new cat links
 
             }
@@ -255,7 +243,7 @@ public class LinkFragment extends android.support.v4.app.Fragment {
             linkRecycler.scrollToPosition(0); //reset scroll to top
 
         } else {
-            Log.d("frag", "DONT UPDATE");
+            //Log.d("frag", "DONT UPDATE");
         }
 
     }
@@ -315,5 +303,63 @@ public class LinkFragment extends android.support.v4.app.Fragment {
             gotoState(State.MAIN,getView(),null);
         }
     };
+
+    public class AsyncLoadLinkFilter extends AsyncTask<Void, Void, LinkFilter> {
+
+        @Override
+        protected void onPreExecute() {
+            loadingTV.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected LinkFilter doInBackground(Void... params) {
+            LinkFilter linkFilterAll = null;
+            try {
+                linkFilterAll = LinkFilter.getFromLinks_small(segment);
+            } catch (API.APIException e) {
+                API.makeAPIErrorToast(activity);
+                linkFilterAll = LinkFilter.makeAllLinkCounts();
+            }
+
+            return linkFilterAll;
+        }
+
+        @Override
+        protected void onPostExecute(LinkFilter linkFilter) {
+            if (!linkSelectorBar.getHasBeenInitialized())
+                linkSelectorBar.initialUpdate(linkFilter,activity.getMenuLang());
+
+            linkMainAdapter.setItemList(LinkFilter.getList(linkFilter));
+
+            loadingTV.setVisibility(View.GONE);
+        }
+    }
+
+    public class AsyncLoadLinks extends AsyncTask<Void, Void, List<Text>> {
+
+        @Override
+        protected void onPreExecute() {
+            loadingTV.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected List<Text> doInBackground(Void... params) {
+
+            List<Text> linkList = new ArrayList<>();
+            try {
+                linkList = Link.getLinkedTexts(segment, linkTextAdapter.getCurrLinkCount());
+            } catch (API.APIException e) {
+                API.makeAPIErrorToast(activity);
+
+            }
+            return linkList;
+        }
+
+        @Override
+        protected void onPostExecute(List<Text> linkList) {
+            linkTextAdapter.setItemList(linkList);
+            loadingTV.setVisibility(View.GONE);
+        }
+    }
 
 }
