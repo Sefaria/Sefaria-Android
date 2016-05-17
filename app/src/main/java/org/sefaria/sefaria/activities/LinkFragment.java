@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.LinkElements.LinkMainAdapter;
@@ -50,7 +51,7 @@ public class LinkFragment extends android.support.v4.app.Fragment {
     private SefariaTextView linkSelectorBarTitle;
     private RecyclerView linkRecycler;
 
-    private View loadingTV;
+    private View progressCircle;
     private SuperTextActivity activity;
 
 
@@ -102,7 +103,7 @@ public class LinkFragment extends android.support.v4.app.Fragment {
 
         View view = inflater.inflate(R.layout.fragment_link, container, false);
         linkRecycler = (RecyclerView) view.findViewById(R.id.recview);
-        loadingTV = view.findViewById(R.id.loading_tv);
+        progressCircle = view.findViewById(R.id.progressBar);
 
         LinearLayout linkSelectorBarRoot = (LinearLayout) view.findViewById(R.id.link_selector_bar_root);
         linkSelectorBarTitle = (SefariaTextView) view.findViewById(R.id.link_selector_bar_title);
@@ -308,7 +309,7 @@ public class LinkFragment extends android.support.v4.app.Fragment {
 
         @Override
         protected void onPreExecute() {
-            loadingTV.setVisibility(View.VISIBLE);
+            progressCircle.setVisibility(View.VISIBLE);
         }
 
         @Override
@@ -331,7 +332,7 @@ public class LinkFragment extends android.support.v4.app.Fragment {
 
             linkMainAdapter.setItemList(LinkFilter.getList(linkFilter));
 
-            loadingTV.setVisibility(View.GONE);
+            progressCircle.setVisibility(View.GONE);
         }
     }
 
@@ -339,7 +340,7 @@ public class LinkFragment extends android.support.v4.app.Fragment {
 
         @Override
         protected void onPreExecute() {
-            loadingTV.setVisibility(View.VISIBLE);
+            progressCircle.setVisibility(View.VISIBLE);
         }
 
         @Override
@@ -358,7 +359,7 @@ public class LinkFragment extends android.support.v4.app.Fragment {
         @Override
         protected void onPostExecute(List<Text> linkList) {
             linkTextAdapter.setItemList(linkList);
-            loadingTV.setVisibility(View.GONE);
+            progressCircle.setVisibility(View.GONE);
         }
     }
 
