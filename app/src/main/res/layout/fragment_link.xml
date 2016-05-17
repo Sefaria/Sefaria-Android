@@ -52,6 +52,19 @@
         android:textSize="15dp"
         android:text="@string/no_links_filtered"
         android:textColor="?text_color_english"/>
+
+    <org.sefaria.sefaria.layouts.SefariaTextView
+        android:visibility="gone"
+        android:id="@+id/loading_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:gravity="center_horizontal"
+        android:textStyle="italic"
+        android:textSize="15dp"
+        android:text="Loading..."
+        android:textColor="?text_color_english"/>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recview"
         android:layout_width="match_parent"
