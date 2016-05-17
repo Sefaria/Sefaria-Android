@@ -227,8 +227,11 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
 
 
     protected void setIsCts(boolean isCts) {
-        this.isCts = isCts;
-        sectionAdapter.notifyDataSetChanged();
+
+        Settings.setIsCts(isCts);
+        restartActivity();
+        /*this.isCts = isCts;
+        ectionAdapter.notifyDataSetChanged();*/
     }
 
     @Override

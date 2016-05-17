@@ -151,6 +151,19 @@ public class Settings {
         editor.commit();
     }
 
+    public static boolean getIsCts() {
+        SharedPreferences generalSettings = getGeneralSettings();
+        boolean isCts = generalSettings.getBoolean("cts", false);
+        return isCts;
+    }
+
+    public static void setIsCts(boolean isCts) {
+        SharedPreferences generalSettings = getGeneralSettings();
+        SharedPreferences.Editor editor = generalSettings.edit();
+        editor.putBoolean("cts", isCts);
+        editor.commit();
+    }
+
     public static boolean getIsFirstTimeOpened(){
         SharedPreferences generalSettings = getGeneralSettings();
         return generalSettings.getBoolean("isFirstTimeOpened", true);
