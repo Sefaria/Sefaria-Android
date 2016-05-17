@@ -67,7 +67,7 @@
     <color name="text_verse_num_color_w">#666666</color>
     <color name="link_bg_w">#f9f9f7</color>
     <color name="link_selector_bar_bg_w">#f3f3f2</color>
-
+    <color name="link_progress_bg_w">#99ffffff</color>
 
 
 
@@ -90,6 +90,7 @@
     <color name="text_verse_num_color_g">#000</color>
     <color name="link_bg_g">#a8a8a8</color>
     <color name="link_selector_bar_bg_g">#999</color>
+    <color name="link_progress_bg_g">#99ffffff</color>
 
 
 
@@ -112,6 +113,7 @@
     <color name="text_verse_num_color_b">#dddddd</color>
     <color name="link_bg_b">#2d2d2b</color>
     <color name="link_selector_bar_bg_b">#333</color>
+    <color name="link_progress_bg_b">#99666666</color>
 
 
 </resources>

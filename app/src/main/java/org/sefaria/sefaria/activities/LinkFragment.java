@@ -305,7 +305,7 @@ public class LinkFragment extends android.support.v4.app.Fragment {
         }
     };
 
-    public class AsyncLoadLinkFilter extends AsyncTask<Void, Void, LinkFilter> {
+    private class AsyncLoadLinkFilter extends AsyncTask<Void, Void, LinkFilter> {
 
         @Override
         protected void onPreExecute() {
@@ -336,7 +336,7 @@ public class LinkFragment extends android.support.v4.app.Fragment {
         }
     }
 
-    public class AsyncLoadLinks extends AsyncTask<Void, Void, List<Text>> {
+    private class AsyncLoadLinks extends AsyncTask<Void, Void, List<Text>> {
 
         @Override
         protected void onPreExecute() {

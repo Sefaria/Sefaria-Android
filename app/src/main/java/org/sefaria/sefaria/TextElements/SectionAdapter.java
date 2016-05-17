@@ -52,6 +52,7 @@ public class SectionAdapter extends ArrayAdapter<Text> {
             LayoutInflater inflater = (LayoutInflater)
                     sectionActivity.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.adapter_text_loader,null);
+            view.setClickable(false);
             return view;
         }
 
@@ -151,10 +152,10 @@ public class SectionAdapter extends ArrayAdapter<Text> {
                     heNum.setText("");
 
                 heNum.setAlpha(1);
-                heNum.setFont(Util.Lang.HE,true);
+                heNum.setFont(Util.Lang.HE,false);
                 enNum.setText(Util.VERSE_BULLET);
                 enNum.setAlpha(linkAlpha);
-                enNum.setFont(Util.Lang.HE, true);
+                enNum.setFont(Util.Lang.HE, false);
 
             }
 
@@ -189,13 +190,13 @@ public class SectionAdapter extends ArrayAdapter<Text> {
                     //tv.setText(Html.fromHtml(monoText));
                     enNum.setText(Util.VERSE_BULLET);
                     enNum.setAlpha(linkAlpha);
-                    enNum.setFont(Util.Lang.HE, true);
+                    enNum.setFont(Util.Lang.HE, false);
                     if(segment.displayNum)
                         heNum.setText(Util.int2heb(segment.levels[0]));
                     else
                         heNum.setText("");
                     heNum.setAlpha(1);
-                    heNum.setFont(Util.Lang.HE, true);
+                    heNum.setFont(Util.Lang.HE, false);
 
 
                 } else /*if (lang == Util.Lang.EN)*/ {
@@ -205,11 +206,11 @@ public class SectionAdapter extends ArrayAdapter<Text> {
                     else
                         enNum.setText("");
 
-                    enNum.setFont(Util.Lang.EN, true);
+                    enNum.setFont(Util.Lang.EN, false);
                     enNum.setAlpha(1);
                     heNum.setText(Util.VERSE_BULLET);
                     heNum.setAlpha(linkAlpha);
-                    heNum.setFont(Util.Lang.HE, true);
+                    heNum.setFont(Util.Lang.HE, false);
                 }
                 tv.setFont(lang,true);
                 float newTextSize = sectionActivity.getTextSize();
