@@ -43,6 +43,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
     private SectionAdapter sectionAdapter;
 
     private int preLast;
+    private Text problemLoadedText;
 
     private int scrolledDownTimes = 0;
     //text formatting props
@@ -81,8 +82,8 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
             }
         });
 
-        AsyncLoadSection als = new AsyncLoadSection(TextEnums.NEXT_SECTION);
-        als.execute();
+        AsyncLoadSection als = new AsyncLoadSection(TextEnums.NEXT_SECTION,null);
+        als.preExecute();
 
 
 
@@ -279,13 +280,13 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
                 if (!isLoadingSection && !isLoadingInit) {
                     int lastItem = firstVisibleItem + visibleItemCount;
                     if (firstVisibleItem == 0) {
-                        AsyncLoadSection als = new AsyncLoadSection(TextEnums.PREV_SECTION);
-                        als.execute();
+                        AsyncLoadSection als = new AsyncLoadSection(TextEnums.PREV_SECTION,sectionAdapter.getItem(0));
+                        als.preExecute();
                     }
                     if (lastItem == totalItemCount ) {
                         preLast = lastItem;
-                        AsyncLoadSection als = new AsyncLoadSection(TextEnums.NEXT_SECTION);
-                        als.execute();
+                        AsyncLoadSection als = new AsyncLoadSection(TextEnums.NEXT_SECTION,sectionAdapter.getItem(lastItem-1));
+                        als.preExecute();
                     }
 
                     Text topSegment = sectionAdapter.getItem(firstVisibleItem);
@@ -360,9 +361,24 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
 
         private TextEnums dir;
         private Text loaderText;
+        private Text catalystText;
 
-        public AsyncLoadSection (TextEnums dir) {
+        /**
+         *
+         * @param dir - direction in which you want to load a section (either prev or next)
+         * @param catalystText - the Text which caused this loading to happen. Important, in case this text has already failed to generate any new content, meaning that it's either the beginning or end of a book
+         */
+        public AsyncLoadSection (TextEnums dir, Text catalystText) {
             this.dir = dir;
+            this.catalystText = catalystText;
+        }
+
+        public void preExecute() {
+            if (catalystText == null || !catalystText.equals(problemLoadedText)) {
+                this.execute();
+            } else {
+                //Log.d("SectionActivity","Problem text not loaded");
+            }
         }
 
         @Override
@@ -373,9 +389,8 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
 
             if (this.dir == TextEnums.NEXT_SECTION) {
                 sectionAdapter.add(loaderText);
-            } else if (this.dir == TextEnums.PREV_SECTION){
+            } else /*if (this.dir == TextEnums.PREV_SECTION)*/ {
                 sectionAdapter.add(0,loaderText);
-                listView.setSelection(1);
             }
         }
 
@@ -391,13 +406,16 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
             isLoadingInit = false;
 
 
-
-            if (textsList == null) return;
+            sectionAdapter.remove(loaderText);
+            if (textsList == null) {
+                problemLoadedText = catalystText;
+                return;
+            }
             //if (textsList.size() == 0) return;//removed this line so that when it doesn't find text it continues to look for the next item for text
 
             Text sectionHeader = getSectionHeaderText(dir);
             if (dir == TextEnums.NEXT_SECTION) {
-                sectionAdapter.remove(loaderText);
+
 
                 if(sectionHeader.getText(Util.Lang.EN).length() > 0 || sectionHeader.getText(Util.Lang.HE).length() > 0)
                     sectionAdapter.add(sectionHeader);
@@ -415,8 +433,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
                     GoogleTracker.sendEvent(category,"Scrolled down",scrolledDownTimes/openedNewBookTime);
                 }
 
-            } else if (dir == TextEnums.PREV_SECTION) {
-                sectionAdapter.remove(loaderText);
+            } else /*if (dir == TextEnums.PREV_SECTION)*/ {
 
                 sectionAdapter.addAll(0, textsList);
                 sectionAdapter.add(0, sectionHeader);
