@@ -234,7 +234,7 @@ public class MyApp extends Application {
         activity.startActivity(intent2);
     }
 
-    public static void handleIncomingURL(Activity activity, Intent intent){
+    public static boolean handleIncomingURL(Activity activity, Intent intent){
         try {
             if (intent != null && intent.getAction().equalsIgnoreCase(Intent.ACTION_VIEW)
                 //&&  intent.getCategories().contains(Intent.CATEGORY_BROWSABLE)
@@ -253,11 +253,13 @@ public class MyApp extends Application {
                     openURLInBrowser(activity,url);
                 }
                 activity.finish();
+                return true;
             }
         }catch (Exception e){
             //Toast.makeText(activity, MyApp.getRString(R.string.cannot_parse_link), Toast.LENGTH_SHORT).show();
             Log.e("HomeActivity","not able to open intent for URL parse " + e.getMessage());
         }
+        return false;
     }
 
 
