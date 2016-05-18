@@ -4,5 +4,9 @@
 
     <style name="SefariaTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="SefariaTheme.White.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="SefariaTheme.White.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
 
 </resources>

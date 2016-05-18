@@ -100,6 +100,8 @@ public class MenuState implements Parcelable {
             try {
                 JSONArray tempChildNode = tempNode.getJSONArray("contents");
                 enTitle = tempNode.getString("category");
+                if(enTitle.equals("Commentary2"))
+                    continue;
                 heTitle = tempNode.getString("heCategory");
                 tempMenuNode = new MenuNode(enTitle, heTitle, parent);
                 createChildrenNodes(tempChildNode, tempMenuNode, false);

@@ -115,7 +115,7 @@ public class CustomActionbar extends MenuElement {
 
 
     private void setTitle(String title) {
-        if(title.length() > 18) titleTV.setTextSize(9);
+        if(title.length() > 16) titleTV.setTextSize(9);
         titleTV.setText(title);
     }
 
