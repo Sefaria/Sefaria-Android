@@ -188,7 +188,6 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
     private int getValuesFromIntent(Bundle savedInstanceState){
         Intent intent = getIntent();
-        MyApp.handleIncomingURL(this, intent);
         int nodeHash;
         if (savedInstanceState != null) {//it's coming back after it cleared the activity from ram
             linkFragment = (LinkFragment) getSupportFragmentManager().getFragment(savedInstanceState,LINK_FRAG_TAG);
@@ -356,7 +355,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
         Intent intent;
 
         //Open TextActivity if the current book can be cts, and your settings are cts
-        if (getIsCtsText(book) && Settings.getIsCts()) {
+        if (Settings.getIsCts() && book != null && getIsCtsText(book)) {
             intent = new Intent(context, TextActivity.class);
         } else {
             intent = new Intent(context, SectionActivity.class);
@@ -387,7 +386,6 @@ public abstract class SuperTextActivity extends FragmentActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        MyApp.handleIncomingURL(this, intent);
         comingFromTOC(intent);
     }
 
