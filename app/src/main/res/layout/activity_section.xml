@@ -37,28 +37,14 @@
             android:background="@color/menu_background"
             android:layout_height="wrap_content"></LinearLayout>
 
-        <FrameLayout
+
+        <org.sefaria.sefaria.layouts.ListViewExt
+            android:id="@+id/listview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/actionbarRoot">
-            <org.sefaria.sefaria.layouts.ListViewExt
-                android:id="@+id/listview"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+            android:layout_below="@+id/actionbarRoot"
+            />
 
-                />
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/halkhah"
-                    android:layout_gravity="center"
-                    />
-            </FrameLayout>
-
-        </FrameLayout>
 
 
         <RelativeLayout
