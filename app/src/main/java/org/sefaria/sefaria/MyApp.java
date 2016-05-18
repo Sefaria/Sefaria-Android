@@ -60,7 +60,7 @@ public class MyApp extends Application {
             };
 
     public enum Font {
-        MONTSERRAT,TAAMEY_FRANK,OPEN_SANS_EN,OPEN_SANS_HE,GARAMOND,NEW_ATHENA,CRIMSON,QUATTROCENTO
+        MONTSERRAT,TAAMEY_FRANK,OPEN_SANS_EN,OPEN_SANS_HE,GARAMOND,NEW_ATHENA,CRIMSON,QUATTROCENTO,CARDO
     }
 
     private static Typeface monserrat_tf;
@@ -71,6 +71,7 @@ public class MyApp extends Application {
     private static Typeface new_athena_tf;
     private static Typeface crimson_tf;
     private static Typeface quattrocento_tf;
+    private static Typeface cardo_tf;
 
     private static Context context;
     public static final String APP_NAME = "Sefaria";//TODO get rid of variable
@@ -102,6 +103,7 @@ public class MyApp extends Application {
         new_athena_tf = Typeface.createFromAsset(context.getAssets(), "fonts/new_athena_unicode.ttf");
         crimson_tf = Typeface.createFromAsset(context.getAssets(), "fonts/CrimsonText-Regular.ttf");
         quattrocento_tf = Typeface.createFromAsset(context.getAssets(), "fonts/Quattrocento-Regular.otf");
+        cardo_tf = Typeface.createFromAsset(context.getAssets(),"fonts/Cardo-Regular.ttf");
     }
 
     public static Typeface getFont(Font font) {
@@ -122,6 +124,8 @@ public class MyApp extends Application {
                 return crimson_tf;
             case QUATTROCENTO:
                 return quattrocento_tf;
+            case CARDO:
+                return cardo_tf;
         }
         return null;
     }
