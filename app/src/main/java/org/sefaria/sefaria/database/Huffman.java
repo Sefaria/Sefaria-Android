@@ -58,6 +58,8 @@ public class Huffman {
         parents[index] = parent;
     }
 
+    public static boolean getCreatedTree(){ return createdTree; }
+
 
     private static void allocate(int size){
         plainTexts = new String[size];

@@ -8,7 +8,6 @@
     <string name="CANCEL">Cancel</string>
     <string name="none">None</string>
     <string name="action_settings">Settings</string>
-    <string name="home_more_button">More ></string>
     <string name="no_links">No connections available. Use the ● next to each verse to check if that verse has connections. </string>
     <string name="no_links_filtered">No connections available </string>
     <string name="no_text">&lt;i&gt;(No text for this language)&lt;/i&gt;</string>
@@ -38,7 +37,8 @@
     <string name="consider_downloading">consider downloading Offline Library</string>
     <string name="searching_requires_internet">searching requires internet connection</string>
     <string name="how_to_report_mistake">How to report mistake</string>
-    <!-- not used...dont translate --><string name="how_to_report_mistake_message">No one is perfect, and Sefaria is no exception. If you spot a mistake, we want to know about it. However, we find that most textual errors that get reported to us are not in fact mistakes. This is in part due to textual variances between different editions of a text. To properly report a typo or textual error to Sefaria, make sure to include what you think the text should be and what you are using to make your determination. If you are looking at a printed book, please provide enough information to uniquely identify the book you\'re using. If the edition you\'re using is not the same as the edition we are using, we will be unlikely to change the text based simply on differing textual traditions. We will only change it if we believe that either the printer made a mistake, or we made a mistake when we digitized a text. Textual differences can be handled by adding the second textual tradition as another text version.</string>
+    <!-- not used...dont translate -->
+    <string name="how_to_report_mistake_message">No one is perfect, and Sefaria is no exception. If you spot a mistake, we want to know about it. However, we find that most textual errors that get reported to us are not in fact mistakes. This is in part due to textual variances between different editions of a text. To properly report a typo or textual error to Sefaria, make sure to include what you think the text should be and what you are using to make your determination. If you are looking at a printed book, please provide enough information to uniquely identify the book you\'re using. If the edition you\'re using is not the same as the edition we are using, we will be unlikely to change the text based simply on differing textual traditions. We will only change it if we believe that either the printer made a mistake, or we made a mistake when we digitized a text. Textual differences can be handled by adding the second textual tradition as another text version.</string>
     <string name="how_to_report_mistake_message_short">If you spot a mistake, we want to know about it. However, we find that most textual errors that get reported to us are not in fact mistakes. This is in part due to textual variances between different editions of a text. To properly report a typo or textual error to Sefaria, make sure to include:\n\n1. What you think the text should be.\n\n2. What you are using to make your determination. If you are looking at a printed book, please provide enough information to uniquely identify the book you\'re using.</string>
     <string name="enter_word_to_search">Enter word to search in Book</string>
     <string name="CHECKING_FOR_UPDATE_TITLE">Checking for update</string>
@@ -56,7 +56,7 @@
     <string name="UPDATE_STARTED_MESSAGE">Your library is downloading and installing. This should only take a few minutes. If it is taking longer than 5-10 minutes after downloading, then cancel update.</string>
     <string name="NO_NEW_UPDATE_MESSAGE">There is no new update to download. Try again later.</string>
     <string name="NO_NEW_UPDATE_TITLE">No New Update</string>
-    <string name="NEW_UPDATE_TITLE" >Update Available</string>
+    <string name="NEW_UPDATE_TITLE">Update Available</string>
     <string name="NEW_UPDATE_MESSAGE">Do you want to download the new Sefaria library now?\nYou can always tap \'Update Library\' in settings to update.</string>
     <string name="ARE_YOU_SURE_TITLE">Are you sure you want to cancel?</string>
     <string name="ARE_YOU_SURE_MESSAGE">Your update would need to be restarted</string>

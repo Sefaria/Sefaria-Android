@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context="org.sefaria.sefaria.activities.SplashScreenActivity"
+    android:background="@color/splash_screen_bg"
+    >
+    <ImageView
+        android:layout_width="230dp"
+        android:layout_height="230dp"
+        android:src="@drawable/splash_graphic"
+        android:layout_centerInParent="true"
+        android:alpha=".8"
+        />
+</RelativeLayout>
+
+
+
