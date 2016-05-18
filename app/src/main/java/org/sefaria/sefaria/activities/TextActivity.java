@@ -2,198 +2,108 @@ package org.sefaria.sefaria.activities;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
+import android.text.Layout;
 import android.util.Log;
 import android.view.View;
-import android.widget.LinearLayout;
+import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.RelativeLayout;
 
+import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.R;
-import org.sefaria.sefaria.Settings;
-import org.sefaria.sefaria.layouts.PerekTextView;
-import org.sefaria.sefaria.layouts.ScrollViewExt;
-import org.sefaria.sefaria.layouts.ScrollViewListener;
-import org.sefaria.sefaria.TextElements.TextChapterHeader;
+import org.sefaria.sefaria.TextElements.TextAdapter;
 import org.sefaria.sefaria.Util;
+import org.sefaria.sefaria.database.Section;
 import org.sefaria.sefaria.database.Text;
+import org.sefaria.sefaria.layouts.ListViewExt;
+import org.sefaria.sefaria.layouts.SefariaTextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class TextActivity extends SuperTextActivity implements LinkFragment.OnLinkFragInteractionListener {
+public class TextActivity extends SuperTextActivity implements AbsListView.OnScrollListener, LinkFragment.OnLinkFragInteractionListener {
 
-    private LinearLayout textRoot;
-    //variables to properly handle scrolling on prev loaded chapter
-    private boolean justLoadedPrevChap;
-    public int oldScroll;
-    private int addH;
-    private PerekTextView justLoadedPTV;
-    private TextChapterHeader justLoadedTCH;
+    private ListViewExt listView;
+    private TextAdapter textAdapter;
+
+    private int preLast;
+    private Section problemLoadedSection;
+
+    private int scrolledDownTimes = 0;
 
     @Override
     protected void onCreate(Bundle in) {
         super.onCreate(in);
         if(!goodOnCreate){
-            //finish();
+            finish();
             return;
         }
-        setContentView(R.layout.activity_text);
-        justLoadedPrevChap = true;
+        //NOTE: using the same layout as SectionActivity
+        setContentView(R.layout.activity_section);
+
         init();
     }
 
     protected void init() {
         super.init();
-
-        textRoot = (LinearLayout) findViewById(R.id.textRoot);
-        textRoot.removeAllViews();
-        textScrollView.setScrollViewListener(scrollViewListener);
-        if (!isLoadingSection) {
-            AsyncLoadSection als = new AsyncLoadSection(TextEnums.NEXT_SECTION);
-            als.execute();
-        }
+        listView = (ListViewExt) findViewById(R.id.listview);
+        textAdapter = new TextAdapter(this,R.layout.adapter_text_mono,new ArrayList<Section>());
 
 
-    }
+        listView.setAdapter(textAdapter);
+        listView.setOnScrollListener(this);
+        listView.setDivider(null);
 
+        //listView.setOnItemLongClickListener(onItemLongClickListener);
+        listView.setOnScrollStoppedListener(new ListViewExt.OnScrollStoppedListener() {
 
-    @Override
-    public void onSaveInstanceState(Bundle out) {
-        super.onSaveInstanceState(out);
-        //out.putParcelable("menuState", menuState);
-    }
-
-
-
-    protected void setTextLang(Util.Lang textLang) {
-        this.textLang = textLang;
-        for (PerekTextView ptv : perekTextViews) {
-            ptv.setLang(textLang);
-            ptv.update();
-        }
-    }
-
-    @Override
-    protected void setMenuLang(Util.Lang menuLang) {
-        super.setMenuLang(menuLang);
-        for (TextChapterHeader tch : textChapterHeaders) {
-            tch.setLang(menuLang);
-        }
-    }
-
-    @Override
-    protected void postFindOnPageBackground() {
-        //TODO
-    }
-
-    protected void setIsCts(boolean isCts) {
-        Settings.setIsCts(isCts);
-        restartActivity();
-        /*this.isCts = isCts;
-        for (PerekTextView ptv : perekTextViews) {
-            ptv.setIsCts(isCts);
-            ptv.update();
-        }*/
-    }
-
-    protected void setIsSideBySide(boolean isSideBySide) {
-        this.isSideBySide = isSideBySide;
-        //TODO IMPLEMENT ME!!!
-    }
-
-    protected void updateFocusedSegment() {
-        //TODO IMPLEMENT ME!!!
-    }
-
-    protected void incrementTextSize(boolean isIncrement) {
-        float increment = getResources().getDimension(R.dimen.text_font_size_increment);
-
-        for (TextChapterHeader tch : textChapterHeaders) {
-            if (isIncrement)
-                tch.setTextSize(textSize + increment);
-            else
-                tch.setTextSize(textSize - increment);
-        }
-
-        for (PerekTextView ptv : perekTextViews) {
-            if (isIncrement)
-                ptv.setTextSize(textSize + increment);
-            else
-                ptv.setTextSize(textSize - increment);
-        }
-    }
-
-
-    ScrollViewListener scrollViewListener = new ScrollViewListener() {
-        @Override
-        public void onScrollChanged(ScrollViewExt scrollView, int x, int y, int oldx, int oldy) {
-            // We take the last son in the scrollview
-            View view = (View) scrollView.getChildAt(scrollView.getChildCount() - 1);
-
-            int scrollY = scrollView.getScrollY();
-            int scrollH = scrollView.getHeight();
-            int topDiff = (view.getTop() - scrollY);
-            int bottomDiff = (view.getBottom() - (scrollView.getHeight() + scrollY));
-
-            // if diff is zero, then the bottom has been reached
-
-
-            if (!isLoadingSection) {
-                if (bottomDiff <= LOAD_PIXEL_THRESHOLD) {
-                    //Log.d("text","NEXT");
-                    AsyncLoadSection als = new AsyncLoadSection(TextEnums.NEXT_SECTION);
-                    als.execute();
-                }
-                if (topDiff >= -LOAD_PIXEL_THRESHOLD && !justLoadedPrevChap) {
-                    //Log.d("text","PREV");
-                    AsyncLoadSection als = new AsyncLoadSection(TextEnums.PREV_SECTION);
-                    als.execute();
-
-                    //if you add prev, you need to update all tops of all chaps
-                    for (PerekTextView ptv : perekTextViews) {
-                        ptv.setRelativeTop(Util.getRelativeTop(ptv));
-                    }
-                }
+            public void onScrollStopped() {
+                //updateFocusedSegment();
             }
+        });
 
-            boolean inVisiblePTVRange = false;
-            for (PerekTextView ptv : perekTextViews) {
-                if (scrollY > ptv.getTop()-3*scrollH && scrollY < ptv.getBottom()+3*scrollH) {
-                    inVisiblePTVRange = true;
-                    try {
-                        int newFirst = ptv.getNewFirstDrawnLine(scrollY)-PerekTextView.EXTRA_LOAD_LINES;
-                        int newLast = ptv.getNewLastDrawnLine(scrollY)+PerekTextView.EXTRA_LOAD_LINES;
-                        int currFirst = ptv.getFirstDrawnLine();
-                        int currLast = ptv.getLastDrawnLine();
-                        //Log.d("text","First " + newFirst + " < " + currFirst + " LAST " + newLast + " > " + currLast);
-                        if (newFirst < currFirst || newLast > currLast) {
-                            ptv.updateScroll(scrollY,scrollH);
-                        }
-                    } catch (NullPointerException e) {
-                        //in case layout is null, just continue. it'll work out
-                        continue;
-                    }
+        AsyncLoadSection als = new AsyncLoadSection(TextEnums.NEXT_SECTION,null);
+        als.preExecute();
 
-                } else {
-                    //once you leave the visible ptv range, you're done
-                    if (inVisiblePTVRange) break;
-                }
-            }
-        }
-    };
 
-    public class AsyncLoadSection extends AsyncTask<Void,Void,List<Text>> {
+
+        registerForContextMenu(listView);
+    }
+
+    private class AsyncLoadSection extends AsyncTask<Void,Void,List<Text>> {
 
         private TextEnums dir;
-        private int levels[];
+        private Section loaderSection;
+        private Section catalystSection;
 
-        public AsyncLoadSection (TextEnums dir) {
+        /**
+         * @param dir          - direction in which you want to load a section (either prev or next)
+         * @param catalystSection - the Text which caused this loading to happen. Important, in case this text has already failed to generate any new content, meaning that it's either the beginning or end of a book
+         */
+        public AsyncLoadSection(TextEnums dir, Section catalystSection) {
             this.dir = dir;
+            this.catalystSection = catalystSection;
+        }
+
+        public void preExecute() {
+            if (catalystSection == null || !catalystSection.equals(problemLoadedSection)) {
+                this.execute();
+            } else {
+                //Log.d("SectionActivity","Problem text not loaded");
+            }
         }
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             isLoadingSection = true;
+            loaderSection = new Section(true);
+
+            if (this.dir == TextEnums.NEXT_SECTION) {
+                textAdapter.add(loaderSection);
+            } else /*if (this.dir == TextEnums.PREV_SECTION)*/ {
+                textAdapter.add(0, loaderSection);
+            }
         }
 
         @Override
@@ -201,60 +111,164 @@ public class TextActivity extends SuperTextActivity implements LinkFragment.OnLi
             return loadSection(dir);
         }
 
+
         @Override
         protected void onPostExecute(List<Text> textsList) {
             isLoadingSection = false;
-            if (textsList.size() == 0) return;
+            isLoadingInit = false;
 
 
-            TextChapterHeader tch;
-            Text segment = getSectionHeaderText(dir);
-            tch = new TextChapterHeader(TextActivity.this,segment,textSize);
-            textChapterHeaders.add(tch);
-
-            PerekTextView content;
-
-            if (dir == null || dir == TextEnums.NEXT_SECTION) {
-                content = new PerekTextView(TextActivity.this,textsList,isCts,textLang,textSize,textScrollView.getScrollY(),false);
-                perekTextViews.add(content);
-                //YES, order that you add these two views matters (note difference in PREV_SECTION)
-                if (tch != null)
-                    textRoot.addView(tch);
-                textRoot.addView(content); //add to end by default
-            } else if (dir == TextEnums.PREV_SECTION) {
-                content = new PerekTextView(TextActivity.this,textsList,isCts,textLang,textSize,textScrollView.getScrollY(),true);
-                perekTextViews.add(content);
-                oldScroll = textScrollView.getScrollY();
-                addH = 0;
-                textRoot.addView(content, 0); //add to before
-                justLoadedPrevChap = true;
-                //make sure to keep equivalent scroll position
-                /*textScrollView.post(new Runnable() {
-                    public void run() {
-                        textScrollView.scrollTo(0,oldScroll + content.getHeight() + tch.getHeight());
-                    }
-                });*/
+            textAdapter.remove(loaderSection);
+            if (textsList == null) {
+                problemLoadedSection = catalystSection;
+                return;
             }
+            //if (textsList.size() == 0) return;//removed this line so that when it doesn't find text it continues to look for the next item for text
+
+            Text sectionHeader = getSectionHeaderText(dir);
+            Section newSection = new Section(textsList, sectionHeader);
+            if (dir == TextEnums.NEXT_SECTION) {
+
+
+                /*if(sectionHeader.getText(Util.Lang.EN).length() > 0 || sectionHeader.getText(Util.Lang.HE).length() > 0)
+                    textAdapter.add(sectionHeader);*/
+                textAdapter.add(newSection);
+
+                scrolledDownTimes++;
+                if (openedNewBookTime > 0 && !reportedNewBookScroll && scrolledDownTimes == 2 && (System.currentTimeMillis() - openedNewBookTime < 10000)) {
+                    reportedNewBookScroll = true;
+                    String category;
+                    if (reportedNewBookTOC || reportedNewBookBack)
+                        category = GoogleTracker.CATEGORY_OPEN_NEW_BOOK_ACTION_2;
+                    else
+                        category = GoogleTracker.CATEGORY_OPEN_NEW_BOOK_ACTION;
+                    GoogleTracker.sendEvent(category, "Scrolled down", scrolledDownTimes / openedNewBookTime);
+                }
+
+            } else /*if (dir == TextEnums.PREV_SECTION)*/ {
+                textAdapter.add(0, newSection);
+                listView.setSelection(1);
+            }
+
+            if (openToText != null) {
+                try {
+                    Thread.sleep(50);
+                    //this is to help solve the race condition causing it to jump to the wrong place
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                jumpToText(openToText);
+                openToText = null;
+            }
+
         }
     }
 
-    public static Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case PREV_CHAP_DRAWN:
+    protected void setTextLang(Util.Lang textLang) {
+        this.textLang = textLang;
+        textAdapter.notifyDataSetChanged();
+        linkFragment.notifyDataSetChanged();
+    }
 
-                    PerekTextView.PrevMessage prevMessage = (PerekTextView.PrevMessage) msg.obj;
-                    Log.d("text","DRAWN " + prevMessage.height);
-                    break;
+    @Override
+    protected void setIsSideBySide(boolean isSideBySide) {
+        super.setIsSideBySide(isSideBySide);
+        textAdapter.notifyDataSetChanged();
+    }
+
+    protected void incrementTextSize(boolean isIncrement) {
+        super.incrementTextSize(isIncrement);
+        textAdapter.notifyDataSetChanged();
+    }
+
+    protected void updateFocusedSegment() {
+        float mid = ((float)listView.getHeight())/2;
+
+        int midViewPos = listView.getFirstVisiblePosition();
+        View midView = null;
+        boolean foundMidView = false;
+        while(!foundMidView && midViewPos < textAdapter.getCount()) {
+            midView = listView.getViewByPosition(midViewPos);
+
+            foundMidView = midView.getBottom() > mid;
+
+            midViewPos++;
+        }
+        if (midView != null) {
+            SefariaTextView sectionTv = (SefariaTextView) midView.findViewById(R.id.sectionTV);
+            if (sectionTv != null) {
+                Layout layout = sectionTv.getLayout();
+                int lineNum = layout.getLineForVertical((int) mid - sectionTv.getTop() - midView.getTop());
+                int lineStart = layout.getLineStart(lineNum);
+                int lineEnd = layout.getLineEnd(lineNum);
+
+                String allText =  sectionTv.getText().toString();
+
+                String line = allText.substring(lineStart, lineEnd);
+                Log.d("TextActivity", line);
             }
         }
-    };
 
-    //TODO fill in this function
+    }
+
+
     @Override
-    protected void jumpToText(Text incomingLink) {
-        //blah. this is actually going to be really annoying to do in cts texts...
+    public void onScroll(AbsListView lw, final int firstVisibleItem,
+                         final int visibleItemCount, final int totalItemCount) {
+
+        switch(lw.getId()) {
+            case R.id.listview:
+
+                int scrollY = 0;
+                if (totalItemCount > 0) {
+                    View firstView = listView.getViewByPosition(0);
+                    scrollY = firstView.getTop();
+                }
+
+                if (!isLoadingSection && !isLoadingInit) {
+                    int lastItem = firstVisibleItem + visibleItemCount;
+                    if (firstVisibleItem == 0 && scrollY > -3) {
+                        AsyncLoadSection als = new AsyncLoadSection(TextEnums.PREV_SECTION,textAdapter.getItem(0));
+                        als.preExecute();
+                    }
+                    if (lastItem == totalItemCount ) {
+                        preLast = lastItem;
+                        AsyncLoadSection als = new AsyncLoadSection(TextEnums.NEXT_SECTION,textAdapter.getItem(lastItem - 1));
+                        als.preExecute();
+                    }
+
+                    Section topSegment = textAdapter.getItem(firstVisibleItem);
+                    //setCurrNode(topSegment);
+                }
+
+                updateFocusedSegment();
+        }
+    }
+
+    @Override
+    protected void jumpToText(Text text) {
+        //int index = textAdapter.getPosition(text);
+        //textAdapter.highlightIncomingText(text);
+        //listView.setSelection(index);
+    }
+
+    /*public void jumpSection(View view) {
+        if (view.getId() == R.id.jump_section_down) {
+            Log.d("SectionActivity","DOWN");
+        } else if (view.getId() == R.id.jump_section_up) {
+            Log.d("SectionActivity","UP");
+        }
+    }*/
+
+    //YOU actually need this function implemented because you're implementing AbsListView, but it's stupid...
+    @Override
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
+        //blah...
+    }
+
+    @Override
+    protected void postFindOnPageBackground() {
+        textAdapter.notifyDataSetChanged();
     }
 
     /**
@@ -262,12 +276,24 @@ public class TextActivity extends SuperTextActivity implements LinkFragment.OnLi
      */
 
     @Override
-    protected void onStartLinkFragClose() {
+    protected void onFinishLinkFragOpen() {
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        lp.addRule(RelativeLayout.BELOW, R.id.actionbarRoot);
+        lp.addRule(RelativeLayout.ABOVE, R.id.linkRoot);
+
+        listView.setLayoutParams(lp);
+
 
     }
 
     @Override
-    protected void onFinishLinkFragOpen() {
+    protected void onStartLinkFragClose() {
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        lp.addRule(RelativeLayout.BELOW, R.id.actionbarRoot);
+        //lp.addRule(RelativeLayout.ABOVE,R.id.linkRoot);
 
+        listView.setLayoutParams(lp);
     }
 }

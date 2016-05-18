@@ -224,16 +224,6 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
         linkFragment.notifyDataSetChanged();
     }
 
-
-
-    protected void setIsCts(boolean isCts) {
-
-        Settings.setIsCts(isCts);
-        restartActivity();
-        /*this.isCts = isCts;
-        ectionAdapter.notifyDataSetChanged();*/
-    }
-
     @Override
     protected void setIsSideBySide(boolean isSideBySide) {
         super.setIsSideBySide(isSideBySide);
@@ -301,9 +291,15 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
 
     @Override
     protected void jumpToText(Text text) {
-        int index = sectionAdapter.getPosition(text);
+        final int index = sectionAdapter.getPosition(text);
         sectionAdapter.highlightIncomingText(text);
-        listView.setSelection(index);
+        listView.post(new Runnable() {
+
+            @Override
+            public void run() {
+                listView.setSelection(index);
+            }
+        });
     }
 
     /*public void jumpSection(View view) {
@@ -444,12 +440,12 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
             }
 
             if (openToText != null) {
-                try {
+                /*try {
                     Thread.sleep(50);
                     //this is to help solve the race condition causing it to jump to the wrong place
                 } catch (InterruptedException e) {
                     e.printStackTrace();
-                }
+                }*/
                 jumpToText(openToText);
                 openToText = null;
             }

@@ -752,14 +752,16 @@ public abstract class SuperTextActivity extends FragmentActivity {
     public boolean getIsCts(){ return isCts;}
 
     public static boolean getIsCtsText(Book book) {
-        //SHUOLD ONLY BE IN BOOK IS NOT NULL
-        List<String> cats = Arrays.asList(book.categories);
-
         boolean isCtsText = false;
-        final String[] CTS_TEXT_CATS = {"Talmud"};
-        for (String ctsText : CTS_TEXT_CATS) {
-            isCtsText = cats.contains(ctsText);
-            if (isCtsText) break;
+        if (book != null) {
+            List<String> cats = Arrays.asList(book.categories);
+
+
+            final String[] CTS_TEXT_CATS = {"Talmud"};
+            for (String ctsText : CTS_TEXT_CATS) {
+                isCtsText = cats.contains(ctsText);
+                if (isCtsText) break;
+            }
         }
         return isCtsText;
     }
@@ -772,12 +774,17 @@ public abstract class SuperTextActivity extends FragmentActivity {
     }
 
     protected void restartActivity(){
+        Settings.BookSettings.setSavedBook(book, currNode, currText, textLang);
         finish();
         startNewTextActivityIntent(this, book, currText, currNode, false, searchingTerm, -1);
     }
 
     protected abstract void setTextLang(Util.Lang textLang);
-    protected abstract void setIsCts(boolean isCts);
+
+    protected void setIsCts(boolean isCts) {
+        Settings.setIsCts(isCts);
+        restartActivity();
+    }
     protected void setIsSideBySide(boolean isSideBySide){
         this.isSideBySide = isSideBySide;
         Settings.setIsSideBySide(isSideBySide);

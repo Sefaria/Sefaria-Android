@@ -2,6 +2,7 @@ package org.sefaria.sefaria.layouts;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.ListView;
 
 /**
@@ -64,6 +65,18 @@ public class ListViewExt extends ListView {
 
     public void setOnScrollStoppedListener(ListViewExt.OnScrollStoppedListener listener){
         onScrollStoppedListener = listener;
+    }
+
+    public View getViewByPosition(int pos) {
+        final int firstListItemPosition = this.getFirstVisiblePosition();
+        final int lastListItemPosition = firstListItemPosition + this.getChildCount() - 1;
+
+        if (pos < firstListItemPosition || pos > lastListItemPosition ) {
+            return this.getAdapter().getView(pos, null, this);
+        } else {
+            final int childIndex = pos - firstListItemPosition;
+            return this.getChildAt(childIndex);
+        }
     }
 
 }
