@@ -231,7 +231,7 @@
             android:gravity="center"
             android:padding="0dp"
             android:layout_weight="1"
-            android:ellipsize="middle"
+            android:ellipsize="end"
             android:singleLine="true"
             />
         <FrameLayout
