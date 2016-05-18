@@ -152,7 +152,7 @@
                 />
         </FrameLayout>
         <FrameLayout
-            android:visibility="gone"
+            android:visibility="visible"
             android:id="@+id/menu_lang_btn"
             android:layout_alignParentRight="true"
             android:layout_width="@dimen/custom_action_bar_button_frame_width"
