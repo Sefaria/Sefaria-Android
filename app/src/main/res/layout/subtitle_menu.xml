@@ -6,7 +6,9 @@
     android:gravity="center"
     android:text="yoyoyoy"
     android:textSize="17sp"
-    android:padding="15dp"
+
+    android:paddingTop="15dp"
+    android:paddingBottom="15dp"
     android:maxLines="1"
     android:textStyle="bold"
     android:textColor="@color/subtitle"
