@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name" translatable="false">Sefaria</string>
     <string name="LATER">מאוחר יותר</string>
     <string name="YES">כן</string>
     <string name="no">לא</string>
