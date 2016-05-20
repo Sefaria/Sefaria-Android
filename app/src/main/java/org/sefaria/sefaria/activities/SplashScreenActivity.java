@@ -58,7 +58,7 @@ public class SplashScreenActivity extends AppCompatActivity {
             Book book;
             try {
                 book = new Book(Settings.getLastBook());
-            } catch (Book.BookNotFoundException e) {
+            } catch (Exception e) {
                 book = null;
             }
             if(MyApp.handleIncomingURL(SplashScreenActivity.this, getIntent()))
