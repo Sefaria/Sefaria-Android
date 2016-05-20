@@ -1,9 +1,8 @@
-package org.sefaria.sefaria.layouts;
+/*package org.sefaria.sefaria.layouts;
 
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.os.Message;
 import android.text.Layout;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
@@ -14,9 +13,8 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.ViewTreeObserver;
 
-import org.sefaria.sefaria.TextElements.VerseSpannable;
+import org.sefaria.sefaria.TextElements.SegmentSpannable;
 import org.sefaria.sefaria.Util;
-import org.sefaria.sefaria.activities.TextActivity;
 import org.sefaria.sefaria.database.Text;
 
 import java.util.ArrayList;
@@ -24,9 +22,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * Created by nss on 10/28/15.
- */
+
 public class PerekTextView1 extends JustifyTextView {
 
     public static final int EXTRA_LOAD_LINES = 5;
@@ -147,7 +143,7 @@ public class PerekTextView1 extends JustifyTextView {
         //offset = currScreenTop % lineHeight
         canvas.translate(0, startY);//-offset);
         mTextLayout.draw(canvas);
-        canvas.restore();*/
+        canvas.restore();
     }
 
     private void noahDraw() {
@@ -352,7 +348,7 @@ public class PerekTextView1 extends JustifyTextView {
 
 
             SpannableString ss = new SpannableString(words);
-            ss.setSpan(new VerseSpannable(words), 0, ss.length(), 0);
+            ss.setSpan(new SegmentSpannable(words), 0, ss.length(), 0);
             ssb.append(ss);
             isFirst = false;
         }
@@ -448,7 +444,7 @@ public class PerekTextView1 extends JustifyTextView {
             return line.charAt(line.length() - 1) != '\n';
         }
     }
-    /*
+
     //this class draws justified text (kinda) and draws only the text on the screen (kinda)
     public class AsyncDraw extends AsyncTask<Void, Void, String> {
 
@@ -520,7 +516,7 @@ public class PerekTextView1 extends JustifyTextView {
         }
 
 
-    }*/
+    }
 
     //used to inform TextActivity that the PTV has just been drawn
     public class PrevMessage {
@@ -531,6 +527,6 @@ public class PerekTextView1 extends JustifyTextView {
             this.height = height;
         }
     }
-}
+}*/
 
 

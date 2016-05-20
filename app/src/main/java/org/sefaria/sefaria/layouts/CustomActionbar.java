@@ -1,6 +1,7 @@
 package org.sefaria.sefaria.layouts;
 
 import android.app.Activity;
+import android.os.Build;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,10 +34,11 @@ public class CustomActionbar extends MenuElement {
     private String enText = null;
     private MenuNode menuNode;
     private boolean forTOC = false;
+    private boolean isSerif;
 
     private static final boolean noBackButton = false;
 
-    public CustomActionbar(Activity activity, MenuNode menuNode, Util.Lang lang, OnClickListener homeClick, OnLongClickListener homeLongClick, OnClickListener closeClick, OnClickListener searchClick, OnClickListener titleClick, OnClickListener menuClick, OnClickListener backClick, OnClickListener menuLangClick, int catColor) {
+    public CustomActionbar(Activity activity, MenuNode menuNode, Util.Lang lang, OnClickListener homeClick, OnLongClickListener homeLongClick, OnClickListener closeClick, OnClickListener searchClick, OnClickListener titleClick, OnClickListener menuClick, OnClickListener backClick, OnClickListener menuLangClick, int catColor,boolean isSerif) {
         super(activity);
         inflate(activity, R.layout.custom_actionbar, this);
 
@@ -53,6 +55,10 @@ public class CustomActionbar extends MenuElement {
         colorBar = findViewById(R.id.color_bar);
         wholeTitleLinearLayout = (LinearLayout) findViewById(R.id.whole_title);
         titleTV = (SefariaTextView) findViewById(R.id.title);
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            titleTV.setLetterSpacing(0.1f);
+        }
+
 
         SefariaTextView menuLangBtnTextView = (SefariaTextView) menuLangBtn.findViewById(R.id.langTV);
         menuLangBtnTextView.setFont(Util.Lang.HE,true);
@@ -109,14 +115,11 @@ public class CustomActionbar extends MenuElement {
         //TODO - make this look normal centered
         //tocBtn.setVisibility(View.GONE);
 
+
+        this.isSerif = isSerif;
+        titleTV.setAllCaps(!isSerif);
         //DEAL WITH DIALOGSNACKBAR
         DialogNoahSnackbar.checkCurrentDialog(activity,(ViewGroup) this.findViewById(R.id.dialogNoahSnackbarRoot));
-    }
-
-
-    private void setTitle(String title) {
-        if(title.length() > 16) titleTV.setTextSize(9);
-        titleTV.setText(title);
     }
 
     private void setTOCbtn(Util.Lang lang, boolean forTOC){
@@ -173,10 +176,17 @@ public class CustomActionbar extends MenuElement {
             title = menuNode.getTitle(lang);
         }
 
+        int textSize = 20;
+        if(title.length() > 20) {
+            textSize = 10;
+            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                titleTV.setLetterSpacing(0f);
+            }
+        }
+        titleTV.setText(title);
 
-        setTitle(title);
         setTOCbtn(lang,forTOC);
-        titleTV.setFont(lang,true);
+        titleTV.setFont(lang,isSerif,textSize);
     }
 
     public MenuNode getNode(){

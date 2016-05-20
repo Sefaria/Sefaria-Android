@@ -38,6 +38,8 @@ public class MyApp extends Application {
         MultiDex.install(this);
     }*/
 
+    public static final int DEFAULT_TEXT_SIZE = 17;
+
     public static final boolean DEBUGGING = false;
 
     public static final String[] CAT_NAMES = {"Tanach","Mishnah","Talmud",

@@ -145,6 +145,7 @@ public class HomeFragment extends android.support.v4.app.Fragment {
     private void addRecentTexts(View view){
         Log.d("homeFrag","adding recent Texts");
         //Recent Texts
+
         if(recentRoot == null) {
             recentRoot = (LinearLayout) view.findViewById(R.id.recentRoot);
         }

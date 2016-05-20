@@ -9,15 +9,14 @@
         <org.sefaria.sefaria.layouts.SefariaTextView
             android:id="@+id/enVerseNum"
             android:textColor="?text_verse_num_color"
-            android:layout_width="40dp"
+            android:layout_width="@dimen/text_activity_nums_width"
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/mono"
             android:layout_alignParentLeft="true"
-            android:paddingRight="10dp"
-            android:paddingLeft="0dp"
             android:paddingTop="@dimen/text_activtiy_numbering_padding"
+            android:paddingLeft="0dp"
             android:gravity="center"
-            android:textSize="15sp"
+            android:textSize="12sp"
             android:text="26"/>
         <org.sefaria.sefaria.layouts.SefariaTextView
             android:id="@+id/mono"
@@ -29,22 +28,22 @@
             android:layout_height="wrap_content"
             android:layout_alignLeft="@+id/enVerseNum"
             android:layout_alignRight="@+id/heVerseNum"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
+            android:layout_marginLeft="@dimen/text_activity_main_margin"
+            android:layout_marginRight="@dimen/text_activity_main_margin"
             android:textColor="?text_color_main"
             android:text="Now the earth was unformed and void, and darkness was upon the face of the deep; and the spirit of God hovered over the face of the waters."/>
         <org.sefaria.sefaria.layouts.SefariaTextView
             android:id="@+id/heVerseNum"
             android:textColor="?text_verse_num_color"
-            android:layout_width="40dp"
+            android:layout_width="@dimen/text_activity_nums_width"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_alignTop="@+id/mono"
             android:paddingTop="@dimen/text_activtiy_numbering_padding"
-            android:paddingLeft="10dp"
-            android:textSize="15sp"
+            android:paddingRight="0dp"
+            android:textSize="12sp"
             android:gravity="center"
-            android:text="26"/>
+            android:text="26" />
     </RelativeLayout>
 
 

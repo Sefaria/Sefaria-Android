@@ -1,17 +1,23 @@
 package org.sefaria.sefaria.activities;
 
+import android.graphics.Rect;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Layout;
+import android.text.SpannableString;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.R;
+import org.sefaria.sefaria.TextElements.OnSegmentSpanClickListener;
 import org.sefaria.sefaria.TextElements.TextAdapter;
+import org.sefaria.sefaria.TextElements.SegmentSpannable;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.Section;
 import org.sefaria.sefaria.database.Text;
@@ -47,18 +53,24 @@ public class TextActivity extends SuperTextActivity implements AbsListView.OnScr
     protected void init() {
         super.init();
         listView = (ListViewExt) findViewById(R.id.listview);
-        textAdapter = new TextAdapter(this,R.layout.adapter_text_mono,new ArrayList<Section>());
-
+        listView.setSensitivity(10);
+        textAdapter = new TextAdapter(this,R.layout.adapter_text_mono,new ArrayList<Section>(),onSegmentSpanClickListener);
 
         listView.setAdapter(textAdapter);
         listView.setOnScrollListener(this);
         listView.setDivider(null);
-
+        /*listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                updateFocusedSegment();
+                onSegmentClick(linkFragment.getSegment());
+            }
+        });*/
         //listView.setOnItemLongClickListener(onItemLongClickListener);
         listView.setOnScrollStoppedListener(new ListViewExt.OnScrollStoppedListener() {
 
             public void onScrollStopped() {
-                //updateFocusedSegment();
+                updateFocusedSegment();
             }
         });
 
@@ -197,18 +209,136 @@ public class TextActivity extends SuperTextActivity implements AbsListView.OnScr
         if (midView != null) {
             SefariaTextView sectionTv = (SefariaTextView) midView.findViewById(R.id.sectionTV);
             if (sectionTv != null) {
-                Layout layout = sectionTv.getLayout();
-                int lineNum = layout.getLineForVertical((int) mid - sectionTv.getTop() - midView.getTop());
+                int midmid = (int) mid - sectionTv.getTop() - midView.getTop();
+                /*int lineNum = layout.getLineForVertical((int) mid - sectionTv.getTop() - midView.getTop());
                 int lineStart = layout.getLineStart(lineNum);
                 int lineEnd = layout.getLineEnd(lineNum);
 
-                String allText =  sectionTv.getText().toString();
+                String allText =  sectionTv.getText().toString();*/
 
-                String line = allText.substring(lineStart, lineEnd);
-                Log.d("TextActivity", line);
+
+
+                SegmentSpannable midVs = getSpanNearY(sectionTv, midmid);
+
+                Text currSeg = midVs.getSegment();
+
+                if (currSeg.equals(linkFragment.getSegment())) return; //no need to update
+
+
+                linkFragment.updateFragment(currSeg);
+                textAdapter.notifyDataSetChanged(); //redraw visible views to make current segment view darker
             }
         }
 
+    }
+
+
+    private SegmentSpannable getSpanNearY(TextView stv, int y) {
+        SpannableString ss = (SpannableString) stv.getText();
+        SegmentSpannable[] segmentSpannables = ss.getSpans(0, ss.length(), SegmentSpannable.class);
+
+        int lo = 0;
+        int hi = segmentSpannables.length-1;
+
+        int[] spanYs = new int[segmentSpannables.length];
+        int[] mids = new int[segmentSpannables.length];
+        int counter = 0;
+        while (lo <= hi) {
+            mids[counter] = lo + (hi - lo) / 2;
+            spanYs[counter] = getSpanY(ss, stv, segmentSpannables[mids[counter]]);
+
+            if (y > spanYs[counter]) {
+                lo = mids[counter] + 1;
+            } else if (y < spanYs[counter]) {
+                hi = mids[counter] - 1;
+            } else {
+                return segmentSpannables[mids[counter]]; //perfect match
+            }
+            counter++;
+        }
+
+        SegmentSpannable vs = null;
+        if (counter > 1) {
+            if (Math.abs(y - spanYs[counter-1]) < Math.abs(y - spanYs[counter-2])) {
+                vs = segmentSpannables[mids[counter-1]];
+            } else {
+                vs = segmentSpannables[mids[counter-2]];
+            }
+        } else if (counter == 1){
+            vs = segmentSpannables[0];
+        }
+
+        return vs;
+    }
+
+    private int getSpanY(SpannableString ss, TextView stv, SegmentSpannable vs) {
+        // Initialize global value
+        Rect parentTextViewRect = new Rect();
+
+
+        // Initialize values for the computing of clickedText position
+        Layout textViewLayout = stv.getLayout();
+
+        int startOffsetOfClickedText = ss.getSpanStart(vs);
+        //int endOffsetOfClickedText = ss.getSpanEnd(vs);
+        //double startXCoordinatesOfClickedText = textViewLayout.getPrimaryHorizontal(startOffsetOfClickedText);
+        //double endXCoordinatesOfClickedText = textViewLayout.getPrimaryHorizontal(endOffsetOfClickedText);
+
+
+        // Get the rectangle of the clicked text
+        int currentLineStartOffset = textViewLayout.getLineForOffset(startOffsetOfClickedText);
+        //int currentLineEndOffset = textViewLayout.getLineForOffset(endOffsetOfClickedText);
+        //boolean keywordIsInMultiLine = currentLineStartOffset != currentLineEndOffset;
+        textViewLayout.getLineBounds(currentLineStartOffset, parentTextViewRect);
+
+        return (parentTextViewRect.top + parentTextViewRect.bottom)/2;
+        /*
+        // Update the rectangle position to his real position on screen
+        int[] parentTextViewLocation = {0,0};
+        stv.getLocationOnScreen(parentTextViewLocation);
+
+        double parentTextViewTopAndBottomOffset = (
+                parentTextViewLocation[1] -
+                        stv.getScrollY() +
+                        stv.getCompoundPaddingTop()
+        );
+        parentTextViewRect.top += parentTextViewTopAndBottomOffset;
+        parentTextViewRect.bottom += parentTextViewTopAndBottomOffset;
+
+        // In the case of multi line text, we have to choose what rectangle take
+        if (keywordIsInMultiLine){
+
+            int screenHeight = this.mWindowManager.getDefaultDisplay().getHeight();
+            int dyTop = this.parentTextViewRect.top;
+            int dyBottom = screenHeight - this.parentTextViewRect.bottom;
+            boolean onTop = dyTop > dyBottom;
+
+            if (onTop){
+                endXCoordinatesOfClickedText = textViewLayout.getLineRight(currentLineStartOffset);
+            }
+            else{
+                this.parentTextViewRect = new Rect();
+                textViewLayout.getLineBounds(currentLineEndOffset, this.parentTextViewRect);
+                this.parentTextViewRect.top += parentTextViewTopAndBottomOffset;
+                this.parentTextViewRect.bottom += parentTextViewTopAndBottomOffset;
+                startXCoordinatesOfClickedText = textViewLayout.getLineLeft(currentLineEndOffset);
+            }
+
+        }
+
+        parentTextViewRect.left += (
+                parentTextViewLocation[0] +
+                        startXCoordinatesOfClickedText +
+                        stv.getCompoundPaddingLeft() -
+                        stv.getScrollX()
+        );
+        parentTextViewRect.right = (int) (
+                parentTextViewRect.left +
+                        endXCoordinatesOfClickedText -
+                        startXCoordinatesOfClickedText
+        );
+
+        return (parentTextViewRect.top + parentTextViewRect.bottom)/2;*/
     }
 
 
@@ -238,10 +368,9 @@ public class TextActivity extends SuperTextActivity implements AbsListView.OnScr
                     }
 
                     Section topSegment = textAdapter.getItem(firstVisibleItem);
-                    //setCurrNode(topSegment);
+                    setCurrNode(topSegment);
                 }
 
-                updateFocusedSegment();
         }
     }
 
@@ -295,5 +424,42 @@ public class TextActivity extends SuperTextActivity implements AbsListView.OnScr
         //lp.addRule(RelativeLayout.ABOVE,R.id.linkRoot);
 
         listView.setLayoutParams(lp);
+    }
+
+    OnSegmentSpanClickListener onSegmentSpanClickListener = new OnSegmentSpanClickListener() {
+        @Override
+        public void onSegmentClick(TextView tv,SegmentSpannable segmentSpannable) {
+            TextActivity.this.onSegmentClick(segmentSpannable.getSegment());
+        }
+    };
+
+    public void onSegmentClick(Text currSegment) {
+        if (isTextMenuVisible) {
+            toggleTextMenu();
+            return;
+        }
+
+        if(getFindOnPageIsOpen()){
+            findOnPageClose();
+        }
+
+        View linkRoot = findViewById(R.id.linkRoot);
+        if (linkFragment.getIsOpen()) { //&& false
+
+            //linkRoot.setVisibility(View.GONE);
+            AnimateLinkFragClose(linkRoot);
+
+        } else {
+            //sectionAdapter.highlightIncomingText(null);
+            //SpannableString ss = (SpannableString) tv.getText();
+            //int spanY = getSpanY(ss,tv,segmentSpannable);
+
+            //if (spanY > 0) //don't auto-scroll if the text is super long.
+            //    listView.smoothScrollToPositionFromTop(position,SuperTextActivity.SEGMENT_SELECTOR_LINE_FROM_TOP,SuperTextActivity.LINK_FRAG_ANIM_TIME);
+            linkFragment.setClicked(true);
+            linkFragment.updateFragment(currSegment);
+            //linkRoot.setVisibility(View.VISIBLE);
+            AnimateLinkFragOpen(linkRoot);
+        }
     }
 }

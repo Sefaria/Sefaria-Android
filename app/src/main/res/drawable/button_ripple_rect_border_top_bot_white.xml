@@ -2,5 +2,5 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:drawable="@color/button_clicked_w" android:state_pressed="true"/>
     <item android:drawable="@color/button_clicked_w" android:state_focused="true"/>
-    <item android:drawable="@color/button_bg_w"/>
+    <item android:drawable="@color/text_bg_w"/>
 </selector>

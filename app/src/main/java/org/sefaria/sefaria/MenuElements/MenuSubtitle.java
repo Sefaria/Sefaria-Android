@@ -1,6 +1,7 @@
 package org.sefaria.sefaria.MenuElements;
 
 import android.content.Context;
+import android.os.Build;
 
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
@@ -20,6 +21,9 @@ public class MenuSubtitle extends MenuElement {
         this.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, 1f));
         this.node = node;
         this.tv = (SefariaTextView) findViewById(R.id.tv);
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            tv.setLetterSpacing(0.1f);
+        }
         setLang(lang);
     }
 
@@ -27,6 +31,6 @@ public class MenuSubtitle extends MenuElement {
 
     public void setLang(Util.Lang lang) {
         tv.setText(node.getPrettyTitle(lang));
-        tv.setFont(lang,false);
+        tv.setFont(lang,false,17);
     }
 }

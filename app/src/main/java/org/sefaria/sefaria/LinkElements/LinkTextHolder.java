@@ -16,8 +16,6 @@ import java.util.List;
 public class LinkTextHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
 
-    public SefariaTextView enVerseNum;
-    public SefariaTextView heVerseNum;
     public SefariaTextView title;
 
     private List<Text> itemList;
@@ -33,8 +31,6 @@ public class LinkTextHolder extends RecyclerView.ViewHolder implements View.OnCl
         this.activity = activity;
 
         v.setOnClickListener(this);
-        enVerseNum = (SefariaTextView) v.findViewById(R.id.enVerseNum);
-        heVerseNum = (SefariaTextView) v.findViewById(R.id.heVerseNum);
         title = (SefariaTextView) v.findViewById(R.id.title);
     }
 

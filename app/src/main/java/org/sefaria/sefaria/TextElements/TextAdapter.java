@@ -13,12 +13,9 @@ import android.widget.TextView;
 
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
-import org.sefaria.sefaria.activities.SectionActivity;
 import org.sefaria.sefaria.activities.SuperTextActivity;
-import org.sefaria.sefaria.activities.TextActivity;
 import org.sefaria.sefaria.database.Section;
 import org.sefaria.sefaria.database.Text;
-import org.sefaria.sefaria.layouts.PerekTextView;
 import org.sefaria.sefaria.layouts.SefariaTextView;
 
 import java.util.Collection;
@@ -42,11 +39,14 @@ public class TextAdapter extends ArrayAdapter<Section> {
     private int resourceId;
     private int preLast;
 
-    public TextAdapter(SuperTextActivity activity, int resourceId, List<Section> objects) {
+    private OnSegmentSpanClickListener onSegmentSpanClickListener;
+
+    public TextAdapter(SuperTextActivity activity, int resourceId, List<Section> objects, OnSegmentSpanClickListener onSegmentSpanClickListener) {
         super(activity, resourceId, objects);
         this.activity = activity;
         this.sections = objects;
         this.resourceId = resourceId;
+        this.onSegmentSpanClickListener = onSegmentSpanClickListener;
     }
 
     @Override
@@ -105,7 +105,8 @@ public class TextAdapter extends ArrayAdapter<Section> {
 
 
             SpannableString ss = new SpannableString(Html.fromHtml(words));
-            ss.setSpan(new VerseSpannable(words), 0, ss.length(), 0);
+            SegmentSpannable segmentSpannable = new SegmentSpannable(words,segment,onSegmentSpanClickListener);
+            ss.setSpan(segmentSpannable, 0, ss.length(), 0);
             ssb.append(ss);
             isFirst = false;
         }

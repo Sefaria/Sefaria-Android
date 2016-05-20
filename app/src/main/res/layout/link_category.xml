@@ -13,6 +13,8 @@
         android:id="@+id/color_bar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/color_bar_height"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"
         android:background="@color/halkhah"/>
     <org.sefaria.sefaria.layouts.SefariaTextView
         android:id="@+id/tv"
@@ -25,5 +27,5 @@
         android:textColor="?text_color_main"
         android:gravity="center"
         android:background="?button_selector_solid_drawable"
-        android:layout_margin="3dp"/>
+        android:layout_margin="2dp"/>
 </LinearLayout>

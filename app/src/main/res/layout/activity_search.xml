@@ -22,9 +22,11 @@
         android:textColor="?text_color_main"
         android:text=""/>
     <View
+        android:visibility="gone"
+        android:id="@+id/results_border"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="?actionBarDivider">
+        android:background="?custom_actionbar_border">
 
     </View>
     <org.sefaria.sefaria.layouts.ListViewExt

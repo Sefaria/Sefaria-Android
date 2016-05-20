@@ -1,4 +1,4 @@
-package org.sefaria.sefaria.layouts;
+/*package org.sefaria.sefaria.layouts;
 
 import android.content.Context;
 import android.text.Html;
@@ -7,7 +7,7 @@ import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
 
 import org.sefaria.sefaria.R;
-import org.sefaria.sefaria.TextElements.VerseSpannable;
+import org.sefaria.sefaria.TextElements.SegmentSpannable;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.Text;
 
@@ -65,7 +65,7 @@ public class PerekTextView extends SefariaTextView {
 
 
             SpannableString ss = new SpannableString(Html.fromHtml(words));
-            ss.setSpan(new VerseSpannable(words), 0, ss.length(), 0);
+            ss.setSpan(new SegmentSpannable(words), 0, ss.length(), 0);
             ssb.append(ss);
             isFirst = false;
         }
@@ -78,4 +78,4 @@ public class PerekTextView extends SefariaTextView {
     }
 
     public boolean getIsLoader() { return isLoader; }
-}
+}*/
