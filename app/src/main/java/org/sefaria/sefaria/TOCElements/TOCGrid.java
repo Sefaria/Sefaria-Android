@@ -52,6 +52,7 @@ public class TOCGrid extends LinearLayout {
     private List<Node> tocNodesRoots;
     private Util.Lang lang;
     private TOCTab lastActivatedTab;
+    private String pathDefiningNode;
 
     private boolean flippedForHe;
 
@@ -66,13 +67,14 @@ public class TOCGrid extends LinearLayout {
         //this.limitGridSize = limitGridSize;
         this.lang = lang;
         this.book = book;
+        this.pathDefiningNode = pathDefiningNode;
 
         if(pathDefiningNode == null)
             pathDefiningNode = "";
-        init(pathDefiningNode);
+        init();
     }
 
-    private void init(String pathDefiningNode) {
+    private void init() {
         this.setOrientation(LinearLayout.VERTICAL);
         this.setPadding(10, 10, 10, 100);
         this.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
@@ -86,8 +88,7 @@ public class TOCGrid extends LinearLayout {
 
 
         bookTitleView = new SefariaTextView(context);
-        bookTitleView.setFont(lang, true);
-        bookTitleView.setTextSize(25);
+        bookTitleView.setFont(lang, true, 25);
         bookTitleView.setTextColor(Util.getColor(context, R.attr.text_color_main));
         bookTitleView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
@@ -100,7 +101,7 @@ public class TOCGrid extends LinearLayout {
         bookCategoryView.setTextColor(getResources().getColor(R.color.toc_curr_section_title));
         bookCategoryView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         bookCategoryView.setText(book.getCategories());
-        bookCategoryView.setFont(lang,true,20);
+        bookCategoryView.setFont(lang, true, 20);
         final int padding = 6;
         bookCategoryView.setPadding(padding, 0, padding, padding);
         bookCategoryView.setGravity(Gravity.CENTER);
@@ -112,20 +113,7 @@ public class TOCGrid extends LinearLayout {
         currSectionTitleView = new AutoResizeTextView(context);
         currSectionTitleView.setTextColor(getResources().getColor(R.color.toc_curr_chap));
         currSectionTitleView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        int defaultTab = 0;
-        try {
-            Node node = book.getNodeFromPathStr(pathDefiningNode);
-            defaultTab = node.getTocRootNum();
-            String sectionTitle = node.getWholeTitle(lang); //TODO move lang to setLang
-            currSectionTitleView.setText(sectionTitle);
-            currSectionTitleView.setFont(lang,false,20);
-
-            currSectionTitleView.setPadding(padding, 4*padding, padding, padding);
-        } catch (Node.InvalidPathException e) {
-            currSectionTitleView.setHeight(0);
-        } catch (API.APIException e) {
-            Toast.makeText(context,"Problem getting data from internet", Toast.LENGTH_SHORT).show();
-        }
+        int defaultTab = setCurrSectionText();
         currSectionTitleView.setGravity(Gravity.CENTER);
         this.addView(currSectionTitleView, 2);
 
@@ -402,6 +390,8 @@ public class TOCGrid extends LinearLayout {
         }*/
         gridRoot.setGravity(Gravity.CENTER);
         bookTitleView.setText(book.getTitle(lang));
+        bookTitleView.setFont(lang,true,25);
+        setCurrSectionText();
         //TODO also setLang of all the Header feilds
         if ((lang == Util.Lang.HE && !flippedForHe) ||
                 (lang == Util.Lang.EN && flippedForHe)) {
@@ -427,6 +417,26 @@ public class TOCGrid extends LinearLayout {
                 tabRoot.addView(tempView, i);
             }
         }
+    }
+
+    private int setCurrSectionText() {
+        int padding = 6;
+        int defaultTab = 0;
+        try {
+            Node node = book.getNodeFromPathStr(pathDefiningNode);
+            defaultTab = node.getTocRootNum();
+            String sectionTitle = node.getWholeTitle(lang); //TODO move lang to setLang
+            currSectionTitleView.setText(sectionTitle);
+            currSectionTitleView.setFont(lang,false,20);
+
+            currSectionTitleView.setPadding(padding, 4*padding, padding, padding);
+        } catch (Node.InvalidPathException e) {
+            currSectionTitleView.setHeight(0);
+        } catch (API.APIException e) {
+            Toast.makeText(context,"Problem getting data from internet", Toast.LENGTH_SHORT).show();
+        }
+
+        return defaultTab;
     }
 
 
