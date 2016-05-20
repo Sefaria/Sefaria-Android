@@ -15,6 +15,7 @@ import android.widget.TextView;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
@@ -63,8 +64,8 @@ public class SearchAdapter extends ArrayAdapter<Text> {
         title.setText(text.getLocationString(Settings.getMenuLang()));
         mono.setText(Html.fromHtml(Util.getBidiString(text.getText(lang),lang)));
 
-        title.setFont(Settings.getMenuLang(), true);
-        mono.setFont(lang, true);
+        title.setFont(Settings.getMenuLang(), true, 18);
+        mono.setFont(lang, true,18);
 
 
         return view;

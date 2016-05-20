@@ -66,7 +66,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
 
 
         LinearLayout actionbarRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
-        actionbarRoot.addView(new SearchActionbar(this, closeClick, searchClick, null, null, -1, MyApp.getRString(R.string.search) + " Sefaria"));
+        actionbarRoot.addView(new SearchActionbar(this, closeClick, searchClick, null, null, -1, "<i>" + MyApp.getRString(R.string.search) + "</i>"));
 
 
 
@@ -78,7 +78,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
         autoCompleteTextView.setOnItemClickListener(autoCompleteItemClick);
         //autoCompleteTextView.setOnFocusChangeListener(autoComFocus);
         autoCompleteTextView.setOnEditorActionListener(autoComEnterClick);
-        autoCompleteTextView.setCompletionHint("Click book to open");
+        //autoCompleteTextView.setCompletionHint("Click book to open");
     }
 
     TextView.OnEditorActionListener autoComEnterClick = new TextView.OnEditorActionListener() {
@@ -127,6 +127,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
             listView.setAdapter(adapter);
             listView.setOnScrollListener(this);
             listView.setOnItemClickListener(onItemClickListener);
+            listView.setDivider(null);
         }
         numResultsTV = (SefariaTextView) findViewById(R.id.numResults);
         numResultsTV.setFont(Settings.getSystemLang(),false);
@@ -229,6 +230,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
                 adapter.setResults(results,false);
             }
             numberOfResults = SearchAPI.getNumResults() + " Results";
+            findViewById(R.id.results_border).setVisibility(View.VISIBLE);
             numResultsTV.setText(numberOfResults);
             if(APIError) {
                 GoogleTracker.sendEvent(GoogleTracker.CATEGORY_RANDOM_ERROR,MyApp.getRString(R.string.searching_requires_internet));

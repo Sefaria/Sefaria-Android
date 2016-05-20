@@ -93,16 +93,16 @@ public class TOCGrid extends LinearLayout {
 
         bookTitleView.setGravity(Gravity.CENTER);
         final int bookTitlepaddding =10;
-        bookTitleView.setPadding(bookTitlepaddding, 2*bookTitlepaddding, bookTitlepaddding, bookTitlepaddding);
+        bookTitleView.setPadding(bookTitlepaddding, 2*bookTitlepaddding, bookTitlepaddding, bookTitlepaddding/2);
         this.addView(bookTitleView, 0);
 
         AutoResizeTextView bookCategoryView = new AutoResizeTextView(context);
         bookCategoryView.setTextColor(getResources().getColor(R.color.toc_curr_section_title));
         bookCategoryView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         bookCategoryView.setText(book.getCategories());
-        bookCategoryView.setTextSize(40);
-        final int padding = 8;
-        bookCategoryView.setPadding(padding, padding, padding, padding);
+        bookCategoryView.setFont(lang,true,20);
+        final int padding = 6;
+        bookCategoryView.setPadding(padding, 0, padding, padding);
         bookCategoryView.setGravity(Gravity.CENTER);
         this.addView(bookCategoryView, 1);
 
@@ -110,7 +110,7 @@ public class TOCGrid extends LinearLayout {
 
 
         currSectionTitleView = new AutoResizeTextView(context);
-        currSectionTitleView.setTextColor(getResources().getColor(R.color.toc_curr_section_title));
+        currSectionTitleView.setTextColor(getResources().getColor(R.color.toc_curr_chap));
         currSectionTitleView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         int defaultTab = 0;
         try {
@@ -118,9 +118,9 @@ public class TOCGrid extends LinearLayout {
             defaultTab = node.getTocRootNum();
             String sectionTitle = node.getWholeTitle(lang); //TODO move lang to setLang
             currSectionTitleView.setText(sectionTitle);
-            currSectionTitleView.setTextSize(40);
+            currSectionTitleView.setFont(lang,false,20);
 
-            currSectionTitleView.setPadding(padding, padding, padding, padding);
+            currSectionTitleView.setPadding(padding, 4*padding, padding, padding);
         } catch (Node.InvalidPathException e) {
             currSectionTitleView.setHeight(0);
         } catch (API.APIException e) {
@@ -132,7 +132,7 @@ public class TOCGrid extends LinearLayout {
         //ADD GREY DIVIDER
         View divider = new View(context);
         LinearLayout.LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, 1);
-        lp.setMargins(0,Math.round(Util.dpToPixels(context, 20)),0,Math.round(Util.dpToPixels(context,20)));
+        lp.setMargins(Math.round(Util.dpToPixels(context, 25)),Math.round(Util.dpToPixels(context, 20)),Math.round(Util.dpToPixels(context, 25)),Math.round(Util.dpToPixels(context,20)));
         divider.setLayoutParams(lp);
         divider.setBackgroundColor(Color.parseColor("#CCCCCC"));
         this.addView(divider,3);
@@ -347,7 +347,7 @@ public class TOCGrid extends LinearLayout {
     }
 
     private LinearLayout makeTabSections(List<Node> nodeList) {
-        Log.d("TOCGrid", "makeTabSections started");
+        //Log.d("TOCGrid", "makeTabSections started");
         LinearLayout tabs = new LinearLayout(context);
         tabs.setOrientation(LinearLayout.HORIZONTAL);
         tabs.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
@@ -355,7 +355,7 @@ public class TOCGrid extends LinearLayout {
         tabs.setGravity(Gravity.CENTER);
 
 
-        Log.d("TOC", "nodeList.size(): " + nodeList.size());
+        //Log.d("TOC", "nodeList.size(): " + nodeList.size());
         int numberOfTabs = nodeList.size();
         if(book.getAllCommentaries().size()>0)
             numberOfTabs++;

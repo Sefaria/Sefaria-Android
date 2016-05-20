@@ -36,9 +36,9 @@ import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Database;
 import org.sefaria.sefaria.database.Node;
+import org.sefaria.sefaria.database.Section;
 import org.sefaria.sefaria.database.Text;
 import org.sefaria.sefaria.layouts.CustomActionbar;
-import org.sefaria.sefaria.layouts.PerekTextView;
 import org.sefaria.sefaria.layouts.ScrollViewExt;
 import org.sefaria.sefaria.MenuElements.MenuNode;
 
@@ -76,7 +76,6 @@ public abstract class SuperTextActivity extends FragmentActivity {
     protected ScrollViewExt textScrollView;
     protected TextMenuBar textMenuBar;
     protected Book book;
-    protected List<PerekTextView> perekTextViews;
     protected List<TextChapterHeader> textChapterHeaders;
 
     protected Node firstLoadedNode = null;
@@ -391,7 +390,6 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
     protected void init(){
         isLoadingInit = true;
-        perekTextViews = new ArrayList<>();
         textChapterHeaders = new ArrayList<>();
 
         isTextMenuVisible = false;
@@ -450,7 +448,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
                 searchClick = null;
             backClick = null;
             homeLongClick = null;
-            customActionbar = new CustomActionbar(this, menuNode, menuLang,homeClick,homeLongClick, null,searchClick,titleClick,menuClick,backClick,null,catColor); //TODO.. I'm not actually sure this should be lang.. instead it shuold be MENU_LANG from Util.S
+            customActionbar = new CustomActionbar(this, menuNode, menuLang,homeClick,homeLongClick, null,searchClick,titleClick,menuClick,backClick,null,catColor,true); //TODO.. I'm not actually sure this should be lang.. instead it shuold be MENU_LANG from Util.S
             LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
             abRoot.addView(customActionbar);
             customActionbar.setLang(menuLang);
@@ -807,6 +805,20 @@ public abstract class SuperTextActivity extends FragmentActivity {
         if (text == null) node = null;
         else node = text.parentNode;
         setCurrNode(node, text);
+    }
+
+    protected void setCurrNode(Section section) {
+        Node node;
+        Text text;
+        if (section == null || section.getTextList() == null || section.getTextList().size() == 0) {
+            node = null;
+            text = null;
+        } else {
+            text = section.getTextList().get(0);
+            node = text.parentNode;
+        }
+
+        setCurrNode(node,text);
     }
 
     private void setCurrNode(Node node, Text text){

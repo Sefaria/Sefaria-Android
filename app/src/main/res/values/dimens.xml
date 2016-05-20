@@ -19,7 +19,7 @@
     <dimen name="settings_button_font_size">12sp</dimen>
     <dimen name="settings_subsection_font_size">12sp</dimen>
 
-    <dimen name="toc_numbox">45dp</dimen>
+    <dimen name="toc_numbox">40dp</dimen>
 
     <dimen name="text_menu_bar_box">20dp</dimen>
     <dimen name="text_menu_bar_box_margin">5dp</dimen>
@@ -35,8 +35,11 @@
 
     <dimen name="text_activtiy_between_segment_padding">6dp</dimen>
     <dimen name="text_activtiy_numbering_padding">10dp</dimen>
+    <dimen name="text_activity_main_margin">30dp</dimen>
+    <dimen name="text_activity_nums_width">40dp</dimen>
 
     <dimen name="link_main_padding">20dp</dimen>
+    <dimen name="link_betweens_segment_padding">15dp</dimen>
 
     <dimen name="menu_button_font_size">18sp</dimen>
 

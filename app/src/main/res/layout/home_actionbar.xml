@@ -42,8 +42,8 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
-            android:textStyle="normal|italic"
-            android:textSize="15sp"
+            android:textStyle="italic"
+            android:textSize="17sp"
             android:textColor="?text_color_english"
             android:text="@string/search"/>
 

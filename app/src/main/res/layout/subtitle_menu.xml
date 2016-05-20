@@ -5,7 +5,7 @@
     android:layout_height="70dp"
     android:gravity="center"
     android:text="yoyoyoy"
-    android:textSize="20dp"
+    android:textSize="17sp"
     android:padding="15dp"
     android:maxLines="1"
     android:textStyle="bold"

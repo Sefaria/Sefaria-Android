@@ -6,80 +6,54 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp"
+        android:layout_marginRight="@dimen/text_activity_main_margin"
+        android:layout_marginLeft="@dimen/text_activity_main_margin"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
         android:orientation="horizontal">
         <org.sefaria.sefaria.layouts.SefariaTextView
             android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="this is a cool title"
-            android:textColor="?text_verse_num_color"
-            android:paddingRight="5dp"
+            android:textColor="?text_color_faded"
+            android:paddingTop="@dimen/link_betweens_segment_padding"
+            android:paddingBottom="@dimen/link_betweens_segment_padding"
             />
-        <org.sefaria.sefaria.layouts.SefariaTextView
-            android:visibility="gone"
-            android:id="@+id/enVerseNum"
-            android:textColor="?text_verse_num_color"
-            android:layout_width="30dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/title"
-            android:layout_alignParentLeft="true"
-            android:paddingRight="10dp"
-            android:paddingTop="@dimen/text_activtiy_numbering_padding"
-            android:gravity="center"
-            android:textSize="15sp"
-            android:text="26"/>
         <LinearLayout
+            android:id="@+id/enhe"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_below="@+id/title">
+            android:layout_below="@+id/title"
+            android:paddingBottom="@dimen/link_betweens_segment_padding">
 
             <org.sefaria.sefaria.layouts.SefariaTextView
                 android:id="@+id/he"
-                android:paddingTop="@dimen/text_activtiy_between_segment_padding"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:paddingBottom="@dimen/text_activtiy_between_segment_padding"
+                android:paddingBottom="@dimen/link_betweens_segment_padding"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/enVerseNum"
-                android:layout_alignRight="@+id/heVerseNum"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
                 android:textColor="?text_color_main"
                 android:gravity="right"
                 android:text="וְהָאָ֗רֶץ הָיְתָ֥ה תֹ֙הוּ֙ וָבֹ֔הוּ וְחֹ֖שֶׁךְ עַל־פְּנֵ֣י תְה֑וֹם וְר֣וּחַ אֱלֹהִ֔ים מְרַחֶ֖פֶת עַל־פְּנֵ֥י הַמָּֽיִם׃"/>
             <org.sefaria.sefaria.layouts.SefariaTextView
                 android:id="@+id/en"
-                android:paddingBottom="@dimen/text_activtiy_between_segment_padding"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:paddingTop="@dimen/text_activtiy_between_segment_padding"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/enVerseNum"
-                android:layout_alignRight="@+id/heVerseNum"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="10dp"
                 android:textColor="?text_color_english"
                 android:gravity="left"
                 android:text="Now the earth was unformed and void, and darkness was upon the face of the deep; and the spirit of God hovered over the face of the waters."/>
 
         </LinearLayout>
-        <org.sefaria.sefaria.layouts.SefariaTextView
-            android:visibility="gone"
-            android:id="@+id/heVerseNum"
-            android:textColor="?text_verse_num_color"
-            android:layout_width="30dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_below="@+id/title"
-            android:paddingTop="@dimen/text_activtiy_numbering_padding"
-            android:paddingLeft="10dp"
-            android:textSize="15sp"
-            android:gravity="center"
-            android:text="26"/>
+
+        <View
+            android:layout_alignParentBottom="true"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?custom_actionbar_border">
+        </View>
     </RelativeLayout>
+
+
 
 </LinearLayout>

@@ -41,7 +41,7 @@
                 android:layout_width="12sp"
                 android:layout_height="12sp"
                 android:src="@drawable/arrow_25"
-                android:tint="?text_color_main"
+                android:tint="?text_color_faded"
                 android:layout_margin="@dimen/text_menu_bar_box_margin"
                 android:layout_gravity="center" />
 

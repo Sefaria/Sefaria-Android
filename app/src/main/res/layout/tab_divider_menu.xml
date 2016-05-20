@@ -7,7 +7,7 @@
     <View android:layout_width="1dp"
         android:layout_height="12dp"
         android:layout_gravity="center"
-        android:background="?text_color_main">
+        android:background="?text_color_faded">
 
     </View>
 </LinearLayout>

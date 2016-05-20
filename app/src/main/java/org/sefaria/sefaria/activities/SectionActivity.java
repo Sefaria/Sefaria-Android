@@ -233,6 +233,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
     protected void incrementTextSize(boolean isIncrement) {
         super.incrementTextSize(isIncrement);
         sectionAdapter.notifyDataSetChanged();
+        linkFragment.notifyDataSetChanged();
     }
 
     protected void updateFocusedSegment() {

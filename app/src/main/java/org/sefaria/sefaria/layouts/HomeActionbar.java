@@ -2,6 +2,7 @@ package org.sefaria.sefaria.layouts;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.text.Html;
 import android.util.TypedValue;
 import android.widget.LinearLayout;
 
@@ -20,6 +21,8 @@ public class HomeActionbar extends LinearLayout {
 
         SefariaTextView tv = (SefariaTextView) findViewById(R.id.search_tv);
         tv.setFont(Util.Lang.EN, true);
+        //reset text because there are i tags in text
+        tv.setText(Html.fromHtml("<i>" + getResources().getString(R.string.search) + "</i>"));
         tv.setOnClickListener(searchClick);
         findViewById(R.id.search_btn).setOnClickListener(searchClick);
         findViewById(R.id.lang_btn).setOnClickListener(langClick);

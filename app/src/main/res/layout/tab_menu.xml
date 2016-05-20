@@ -6,8 +6,8 @@
     android:text="yoyoy"
     android:textSize="15sp"
     android:gravity="center"
-    android:paddingLeft="20dp"
-    android:paddingRight="20dp"
-    android:textAllCaps="true">
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:textAllCaps="false">
 
 </org.sefaria.sefaria.layouts.SefariaTextView>

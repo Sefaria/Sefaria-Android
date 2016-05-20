@@ -1,6 +1,7 @@
 package org.sefaria.sefaria.SearchElements;
 
 import android.content.Context;
+import android.text.Html;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
@@ -34,8 +35,8 @@ public class SearchActionbar extends LinearLayout {
 
         AutoCompleteTextView autoCompleteTextView = (AutoCompleteTextView) findViewById(R.id.auto_complete_text_view);
         if(hintText != null)
-            autoCompleteTextView.setHint(hintText);
-        autoCompleteTextView.setTypeface(MyApp.getFont(MyApp.Font.QUATTROCENTO));
+            autoCompleteTextView.setHint(Html.fromHtml(hintText));
+        autoCompleteTextView.setTypeface(MyApp.getFont(MyApp.Font.CARDO));
         autoCompleteTextView.setDropDownWidth((int) Math.floor(MyApp.getScreenSizePixels().x - MyApp.convertDpToPixel(60)));
     }
 

@@ -2,6 +2,7 @@ package org.sefaria.sefaria.activities;
 
 import android.app.Activity;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -108,6 +110,9 @@ public class LinkFragment extends android.support.v4.app.Fragment {
         LinearLayout linkSelectorBarRoot = (LinearLayout) view.findViewById(R.id.link_selector_bar_root);
         linkSelectorBarTitle = (SefariaTextView) view.findViewById(R.id.link_selector_bar_title);
         linkSelectorBarTitle.setFont(activity.getMenuLang(),false);
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            linkSelectorBarTitle.setLetterSpacing(0.1f);
+        }
 
         linkSelectorBar = new LinkSelectorBar(activity,linkSelectorBarButtonClick,linkSelectorBackClick);
         linkSelectorBarRoot.addView(linkSelectorBar);
@@ -164,6 +169,13 @@ public class LinkFragment extends android.support.v4.app.Fragment {
 
             linkRecycler.setLayoutManager(gridLayoutManager);
             linkRecycler.setAdapter(linkMainAdapter);
+
+            //add margins
+            FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            int sideMargin = (int) getContext().getResources().getDimension(R.dimen.text_activity_main_margin) + 10;
+            lp.setMargins(sideMargin,0,sideMargin,0);
+            linkRecycler.setLayoutParams(lp);
+
             updateFragment(segment);
 
             //make all buttons gray
@@ -204,6 +216,12 @@ public class LinkFragment extends android.support.v4.app.Fragment {
             linkRecycler.setLayoutManager(linearLayoutManager);
             linkRecycler.setAdapter(linkTextAdapter);
             linkTextAdapter.setCurrLinkCount(linkCount,null);
+
+            //remove margins
+            FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            int sideMargin = 0;
+            lp.setMargins(sideMargin, 0, sideMargin, 0);
+            linkRecycler.setLayoutParams(lp);
 
         }
     }

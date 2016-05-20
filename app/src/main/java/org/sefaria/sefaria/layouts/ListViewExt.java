@@ -11,7 +11,7 @@ import android.widget.ListView;
  */
 public class ListViewExt extends ListView {
 
-    private static int SENSITIVITY = 0;
+    private int sensitivity = 0;
 
     private long lastScrollUpdate = -1;
 
@@ -34,12 +34,16 @@ public class ListViewExt extends ListView {
     }
 
 
+    public void setSensitivity(int sensitivity) {
+        this.sensitivity = sensitivity;
+    }
+
     @Override
     protected void onScrollChanged(int x, int y, int oldX, int oldY) {
         super.onScrollChanged(x, y, oldX, oldY);
         if (lastScrollUpdate == -1) {
             //onScrollStart();
-            postDelayed(new ScrollStateHandler(), SENSITIVITY);
+            postDelayed(new ScrollStateHandler(), sensitivity);
         }
 
         lastScrollUpdate = System.currentTimeMillis();
@@ -52,13 +56,13 @@ public class ListViewExt extends ListView {
         @Override
         public void run() {
             long currentTime = System.currentTimeMillis();
-            if ((currentTime - lastScrollUpdate) > SENSITIVITY) {
+            if ((currentTime - lastScrollUpdate) > sensitivity) {
                 lastScrollUpdate = -1;
                 if(onScrollStoppedListener!=null){
                     onScrollStoppedListener.onScrollStopped();
                 }
             } else {
-                postDelayed(this, SENSITIVITY);
+                postDelayed(this, sensitivity);
             }
         }
     }

@@ -79,19 +79,9 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextHolder> {
         Text link = itemList.get(position);
         if (link.getText(lang).length() == 0) lang = Util.Lang.BI; //TODO noah, make this better.
 
-        boolean showFullTitle = false;// && currLinkCount.getCategory().equals("Commentary") && currLinkCount.getDepthType() == LinkFilter.DEPTH_TYPE.BOOK;
-        if (showFullTitle) {
-            holder.title.setVisibility(View.GONE);
-            holder.enVerseNum.setVisibility(View.VISIBLE);
-            holder.enVerseNum.setText("" + link.levels[1]); //TODO make this change lang
-            holder.enVerseNum.setFont(Util.Lang.EN,false);
-        } else {
-            holder.enVerseNum.setVisibility(View.GONE);
-            holder.title.setVisibility(View.VISIBLE);
-            holder.title.setText(Html.fromHtml("<i>" + link.getLocationString(Settings.getMenuLang()) + "</i>"));
-            holder.title.setFont(lang,false);
-            holder.title.setTextSize(15);
-        }
+        holder.title.setVisibility(View.VISIBLE);
+        holder.title.setText(Html.fromHtml(link.getLocationString(Settings.getMenuLang())));
+        holder.title.setFont(Settings.getMenuLang(),true,activity.getTextSize());
 
         if (holder instanceof LinkMonoTextHolder) {
             LinkMonoTextHolder monoHolder = (LinkMonoTextHolder) holder;
@@ -102,9 +92,8 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextHolder> {
             else
                 text = link.getText(lang);
 
-            monoHolder.monoTv.setText(Html.fromHtml(Util.getBidiString(text,lang)));
-            monoHolder.monoTv.setFont(lang,true);
-            monoHolder.monoTv.setTextSize(activity.getTextSize());
+            monoHolder.monoTv.setText(Html.fromHtml(Util.getBidiString(text, lang)));
+            monoHolder.monoTv.setFont(lang, true, activity.getTextSize());
             monoHolder.monoTv.setLangGravity(lang);
 
         } else if (holder instanceof LinkBiTextHolder) {
