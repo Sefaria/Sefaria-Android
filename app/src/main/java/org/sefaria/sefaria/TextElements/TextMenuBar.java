@@ -14,8 +14,7 @@ import org.sefaria.sefaria.layouts.SefariaTextView;
  */
 public class TextMenuBar extends LinearLayout {
 
-    private SefariaTextView enBtn,heBtn,biBtn;
-    private View ctsBtn,sepBtn,sbsBtn,tbBtn,whiteBtn,greyBtn,blackBtn,smallBtn,bigBtn;
+    private View enBtn,heBtn,biBtn,ctsBtn,sepBtn,sbsBtn,tbBtn,whiteBtn,greyBtn,blackBtn,smallBtn,bigBtn;
 
     private Context context;
     private boolean isCtsText; //true for texts that can be set to cts (e.g. Talmud, hopefully)
@@ -29,18 +28,18 @@ public class TextMenuBar extends LinearLayout {
         inflate(context, R.layout.text_menu_bar, this);
         this.context = context;
 
-        enBtn = (SefariaTextView) findViewById(R.id.en_btn);
-        heBtn = (SefariaTextView) findViewById(R.id.he_btn);
-        biBtn = (SefariaTextView) findViewById(R.id.bi_btn);
-        ctsBtn = findViewById(R.id.cts_btn);
-        sepBtn = findViewById(R.id.sep_btn);
-        sbsBtn = findViewById(R.id.sbs_btn);
-        tbBtn = findViewById(R.id.tb_btn);
+        enBtn    = findViewById(R.id.en_btn);
+        heBtn    = findViewById(R.id.he_btn);
+        biBtn    = findViewById(R.id.bi_btn);
+        ctsBtn   = findViewById(R.id.cts_btn);
+        sepBtn   = findViewById(R.id.sep_btn);
+        sbsBtn   = findViewById(R.id.sbs_btn);
+        tbBtn    = findViewById(R.id.tb_btn);
         whiteBtn = findViewById(R.id.white_btn);
-        greyBtn = findViewById(R.id.grey_btn);
+        greyBtn  = findViewById(R.id.grey_btn);
         blackBtn = findViewById(R.id.black_btn);
         smallBtn = findViewById(R.id.small_btn);
-        bigBtn = findViewById(R.id.big_btn);
+        bigBtn   = findViewById(R.id.big_btn);
 
         enBtn.setOnClickListener(btnListener);
         heBtn.setOnClickListener(btnListener);
@@ -54,10 +53,6 @@ public class TextMenuBar extends LinearLayout {
         blackBtn.setOnClickListener(btnListener);
         smallBtn.setOnClickListener(btnListener);
         bigBtn.setOnClickListener(btnListener);
-
-        enBtn.setFont(Util.Lang.HE, true);
-        biBtn.setFont(Util.Lang.HE, true);
-        heBtn.setFont(Util.Lang.HE, true);
 
         this.isCtsText = isCtsText;
     }

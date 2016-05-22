@@ -28,8 +28,8 @@
             android:orientation="vertical"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
-            android:paddingRight="@dimen/text_activity_main_margin"
-            android:paddingLeft="@dimen/text_activity_main_margin">
+            android:paddingRight="@dimen/main_margin_lr"
+            android:paddingLeft="@dimen/main_margin_lr">
             <LinearLayout
                 android:id="@+id/menu_lang_group"
                 android:layout_width="match_parent"

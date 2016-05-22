@@ -2,8 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingRight="@dimen/text_activity_main_margin"
-    android:paddingLeft="@dimen/text_activity_main_margin">
+    android:paddingRight="@dimen/main_margin_lr"
+    android:paddingLeft="@dimen/main_margin_lr">
 
     <org.sefaria.sefaria.layouts.SefariaTextView
         android:id="@+id/title"
