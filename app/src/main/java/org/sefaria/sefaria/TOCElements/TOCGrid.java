@@ -436,7 +436,7 @@ public class TOCGrid extends LinearLayout {
         } catch (Node.InvalidPathException e) {
             currSectionTitleView.setHeight(0);
         } catch (API.APIException e) {
-            Toast.makeText(context,"Problem getting data from internet", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context,MyApp.getRString(R.string.problem_internet), Toast.LENGTH_SHORT).show();
         }
 
         return defaultTab;

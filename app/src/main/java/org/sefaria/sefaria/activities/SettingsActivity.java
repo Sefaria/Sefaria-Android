@@ -123,7 +123,7 @@ public class SettingsActivity extends Activity {
         @Override
         public boolean onLongClick(View v) {
             Settings.setUseAPI(true);
-            Toast.makeText(SettingsActivity.this, "Switching to online mode", Toast.LENGTH_SHORT).show();
+            Toast.makeText(SettingsActivity.this, MyApp.getRString(R.string.switching_to_api), Toast.LENGTH_SHORT).show();
             setState(currMenuLang, currBookLang, Settings.getUseAPI());
             return true;
         }
@@ -139,7 +139,7 @@ public class SettingsActivity extends Activity {
     View.OnLongClickListener longDownloadClick = new View.OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
-            Toast.makeText(SettingsActivity.this, "Switching to offline library", Toast.LENGTH_SHORT).show();
+            Toast.makeText(SettingsActivity.this, MyApp.getRString(R.string.switching_to_offline), Toast.LENGTH_SHORT).show();
             Settings.setUseAPI(false);
             Database.checkAndSwitchToNeededDB(SettingsActivity.this);
             setState(currMenuLang,currBookLang,Settings.getUseAPI());
@@ -157,7 +157,7 @@ public class SettingsActivity extends Activity {
     View.OnLongClickListener longUpdateLibrary = new View.OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
-            Toast.makeText(SettingsActivity.this, "Downloading Library (even if it's not a new version).", Toast.LENGTH_SHORT).show();
+            Toast.makeText(SettingsActivity.this, MyApp.getRString(R.string.downloading_library_even_not_newest), Toast.LENGTH_SHORT).show();
             Downloader.updateLibrary(SettingsActivity.this, true);
             DialogNoahSnackbar.showDialog(SettingsActivity.this, (ViewGroup) findViewById(R.id.dialogNoahSnackbarRoot));
             return true;

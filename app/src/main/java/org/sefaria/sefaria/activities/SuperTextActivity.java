@@ -256,7 +256,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
             if (firstLoadedNode == null) {
                 List<Node> TOCroots = book.getTOCroots();
                 if (TOCroots.size() == 0) {
-                    Toast.makeText(this, "Unable to load Table of Contents for this book", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, MyApp.getRString(R.string.unable_to_load_toc_for_book), Toast.LENGTH_SHORT).show();
                     return false;
                 }
                 Node root = TOCroots.get(0);
