@@ -16,13 +16,13 @@
             android:gravity="center"
             android:layout_toRightOf="@+id/progressBar"
             android:textColor="?text_color_main"
-            android:text="Downloading Library"/>
+            android:text="@string/downloading_library"/>
         <TextView
             android:id="@+id/cancel_action"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:padding="10dp"
-            android:text="Cancel"
+            android:text="@string/CANCEL"
             android:textColor="?text_color_main"
             android:textAllCaps="true"
             android:textStyle="bold"

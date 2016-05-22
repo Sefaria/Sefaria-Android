@@ -79,4 +79,6 @@
     <string name="donate_now">Donate Now</string>
     <string name="connections">Connections</string>
 
+
+    <string name="downloading_library">Downloading Library</string>
 </resources>
