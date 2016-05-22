@@ -306,9 +306,9 @@ public class FindOnPage {
             isWorking = false;
             if (success == false) {
                 if(APIError)
-                    Toast.makeText(superTextActivity,"Not available in Online mode",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(superTextActivity,MyApp.getRString(R.string.not_avil_in_online_mode),Toast.LENGTH_SHORT).show();
                 if (finishedEverything)
-                    Toast.makeText(superTextActivity, "Didn't find query in book", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(superTextActivity,MyApp.getRString(R.string.didnt_find_query_in_book), Toast.LENGTH_SHORT).show();
                 return;
             }
             superTextActivity.postFindOnPageBackground();

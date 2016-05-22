@@ -83,7 +83,7 @@ public class Downloader {
 
     public static void updateLibrary(Activity activity, boolean evenOverwriteOldDB) {
         if(Database.isDownloadingDatabase == true){
-            Toast.makeText(activity, "Still downloading Library", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, MyApp.getRString(R.string.still_downloading_library), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -95,7 +95,7 @@ public class Downloader {
                 MyApp.REQUEST_WRITE_STORAGE);
         }
         if(!hasPermission(activity)){
-            Toast.makeText(activity,"Can't download Library without storage permissions.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity,MyApp.getRString(R.string.cant_download_without_storage_perms), Toast.LENGTH_SHORT).show();
             return;
         }
         Downloader.activity = activity;
