@@ -39,7 +39,7 @@
                 <org.sefaria.sefaria.layouts.SefariaTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Menu Language"
+                    android:text="@string/menu_lang"
                     android:textAllCaps="true"
                     app:isSerif="false"
                     android:gravity="center"
@@ -95,7 +95,7 @@
                 <org.sefaria.sefaria.layouts.SefariaTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Default Book Language"
+                    android:text="@string/default_book_lang"
                     android:textAllCaps="true"
                     android:textColor="?text_color_soft"
                     app:isSerif="false"
@@ -164,7 +164,7 @@
                 android:layout_gravity="center_vertical"
                 android:gravity="center"
                 android:background="@drawable/text_menu_button_background_system"
-                android:text="Save Settings"
+                android:text="@string/save_settings"
                 android:textSize="@dimen/settings_button_font_size"
                 android:textColor="#ffffff"/>
 
@@ -186,7 +186,7 @@
                 <org.sefaria.sefaria.layouts.SefariaTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Offline Access"
+                    android:text="@string/offline_access"
                     android:textColor="?text_color_soft"
                     android:textAllCaps="true"
                     app:isSerif="false"
@@ -203,9 +203,9 @@
                     android:gravity="center"
                     android:paddingTop="5dp"
                     android:paddingBottom="10dp"
-                    android:textSize="10sp"
+                    android:textSize="12sp"
                     android:textColor="?text_color_soft"
-                    android:clickable="true" />
+                    />
 
                 <org.sefaria.sefaria.layouts.SefariaTextView
                     android:id="@+id/update_library"
@@ -215,7 +215,7 @@
                     android:layout_gravity="center_vertical"
                     android:gravity="center"
                     android:background="?text_menu_button_background_drawable"
-                    android:text="Update Library"
+                    android:text="@string/update_library"
                     android:textSize="@dimen/settings_button_font_size"
                     android:textColor="?text_color_soft"/>
 
@@ -227,7 +227,7 @@
                     android:layout_gravity="center_vertical"
                     android:gravity="center"
                     android:background="?text_menu_button_background_drawable"
-                    android:text="Delete Library"
+                    android:text="@string/delete_library"
                     android:textSize="@dimen/settings_button_font_size"
                     android:textColor="?text_color_soft"/>
 
@@ -239,7 +239,7 @@
                     android:layout_gravity="center_vertical"
                     android:gravity="center"
                     android:background="?text_menu_button_background_drawable"
-                    android:text="Download Library"
+                    android:text="@string/download_library"
                     android:textSize="@dimen/settings_button_font_size"
                     android:textColor="?text_color_soft"/>
 

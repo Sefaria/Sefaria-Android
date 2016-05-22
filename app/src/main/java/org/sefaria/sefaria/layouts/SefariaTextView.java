@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
+import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
 
 /**
@@ -43,6 +44,7 @@ public class SefariaTextView extends TextView {
                     int langInt = a.getInt(attr,0); //Default to english
                     if (langInt == 0) lang = Util.Lang.EN;
                     else if (langInt == 1) lang = Util.Lang.HE;
+                    else if(langInt == 2) lang = Settings.getSystemLang();
                     break;
             }
         }

@@ -241,7 +241,6 @@ public class HomeFragment extends android.support.v4.app.Fragment {
 
 
 
-
     View.OnClickListener searchClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -259,5 +258,11 @@ public class HomeFragment extends android.support.v4.app.Fragment {
             homeActionbar.setLang(newLang);
         }
     };
+
+    //onclick listener (see xml)
+    public void donateNode(View view) {
+
+
+    }
 
 }
