@@ -1057,6 +1057,12 @@ public abstract class SuperTextActivity extends FragmentActivity {
         startActivity(intent);
     }
 
+    public void donateClick(View v){
+        String url = "https://sefaria.org/donate";
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        startActivity(intent);
+    }
+
     public void feedbackClick(View v) {
 
 

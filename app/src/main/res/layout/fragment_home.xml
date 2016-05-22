@@ -44,7 +44,7 @@
                     android:paddingTop="20dp"
                     android:paddingBottom="10dp"
                     android:textSize="15sp"
-                    android:text="Recent"
+                    android:text="@string/recent"
                     app:isSerif="false"
                     app:lang="english"
                     android:textColor="?text_color_english"
@@ -54,6 +54,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"></LinearLayout>
+
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="?custom_actionbar_border"
+
+                    android:layout_marginTop="15dp"/>
+
                 <org.sefaria.sefaria.layouts.SefariaTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -63,7 +72,7 @@
                     android:paddingTop="15dp"
                     android:paddingBottom="10dp"
                     android:textSize="15sp"
-                    android:text="Browse"
+                    android:text="@string/browse"
                     app:isSerif="false"
                     app:lang="english"
                     android:textColor="?text_color_english"
@@ -74,6 +83,13 @@
                     android:layout_height="match_parent"
                     android:orientation="vertical"/>
 
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="?custom_actionbar_border"
+
+                    android:layout_marginTop="15dp"/>
+
                 <org.sefaria.sefaria.layouts.SefariaTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -83,7 +99,7 @@
                     android:paddingTop="20dp"
                     android:paddingBottom="10dp"
                     android:textSize="15sp"
-                    android:text="Calendar"
+                    android:text="@string/calendar"
                     app:isSerif="false"
                     app:lang="english"
                     android:textColor="?text_color_english"
@@ -93,6 +109,51 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"></LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="?custom_actionbar_border"
+
+                    android:layout_marginTop="15dp"/>
+
+                <org.sefaria.sefaria.layouts.SefariaTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="3dp"
+                    android:paddingRight="3dp"
+                    android:paddingTop="20dp"
+                    android:paddingBottom="10dp"
+                    android:textSize="15sp"
+                    android:text="@string/support_sefaria"
+                    app:isSerif="false"
+                    app:lang="english"
+                    android:textColor="?text_color_english"
+                    android:textAllCaps="true"/>
+
+                <org.sefaria.sefaria.layouts.SefariaTextView
+
+                    android:layout_marginBottom="15dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="43dp"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="15dp"
+                    android:paddingRight="5dp"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:background="?donate_button_background_drawable"
+                    android:text="@string/donate_now"
+                    android:textSize="15sp"
+                    android:onClick="donateClick"
+                    android:textColor="?text_color_main"
+                    app:lang="system"
+                    app:isSerif="false"
+
+                    />
+
+
 
 
             </LinearLayout>

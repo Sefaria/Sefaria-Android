@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.sefaria.sefaria.BuildConfig;
+import org.sefaria.sefaria.Dialog.DialogManager2;
 import org.sefaria.sefaria.Dialog.DialogNoahSnackbar;
 import org.sefaria.sefaria.MenuElements.MenuNode;
 import org.sefaria.sefaria.MyApp;
@@ -54,7 +55,7 @@ public class SettingsActivity extends Activity {
         numDebugDBUnlockClicks = 0;
 
         backClick = null;
-        CustomActionbar customActionbar = new CustomActionbar(this, new MenuNode("Settings","Settings (he)", null), Settings.getSystemLang(),null,null,closeClick,null,null,null,null,null,R.color.system,false);
+        CustomActionbar customActionbar = new CustomActionbar(this, new MenuNode("Settings","הגדרות", null), Settings.getSystemLang(),null,null,closeClick,null,null,null,null,null,R.color.system,false);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(customActionbar);
         //fontSize   = (EditText)findViewById(R.id.fontSize);
@@ -114,10 +115,7 @@ public class SettingsActivity extends Activity {
     View.OnClickListener deleteClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            //TODO make dialog
-
-            Database.deleteDatabase();
-            setState(currMenuLang,currBookLang,Settings.getUseAPI());
+        DialogManager2.showDialog(SettingsActivity.this, DialogManager2.DialogPreset.ARE_YOU_SURE_DELETE);
         }
     };
 
@@ -215,8 +213,15 @@ public class SettingsActivity extends Activity {
 
     public void setState(Util.Lang menuLang, Util.Lang bookLang, boolean useAPI) {
 
-        currMenuLang = menuLang;
-        currBookLang = bookLang;
+        if(menuLang != null)
+            currMenuLang = menuLang;
+        else
+            menuLang = currMenuLang;
+        if(bookLang != null)
+            currBookLang = bookLang;
+        else
+            bookLang = currBookLang;
+
 
         //BOOK LANG
         int currBookLangViewId;
