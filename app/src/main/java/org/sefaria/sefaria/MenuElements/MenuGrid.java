@@ -70,7 +70,7 @@ public class MenuGrid extends LinearLayout {
 
     private void init() {
         this.setOrientation(LinearLayout.VERTICAL);
-        this.setPadding(10, 10, 10, 10);
+        this.setPadding(0, 10, 0, 10);
         this.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 
         this.gridRoot = new LinearLayout(context);
