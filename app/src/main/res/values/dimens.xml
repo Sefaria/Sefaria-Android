@@ -22,6 +22,7 @@
     <dimen name="toc_numbox">40dp</dimen>
 
     <dimen name="text_menu_bar_box">20dp</dimen>
+    <dimen name="text_menu_bar_lang_box">15dp</dimen>
     <dimen name="text_menu_bar_box_margin">5dp</dimen>
 
     <dimen name="custom_action_bar_pic_size">20dp</dimen>

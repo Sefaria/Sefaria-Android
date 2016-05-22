@@ -122,7 +122,7 @@ public class TOCGrid extends LinearLayout {
         //ADD GREY DIVIDER
         View divider = new View(context);
         LinearLayout.LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, 1);
-        lp.setMargins(0,Math.round(Util.dpToPixels(context, 20)),0,Math.round(Util.dpToPixels(context,20)));
+        lp.setMargins(0, Math.round(Util.dpToPixels(context, 20)), 0, Math.round(Util.dpToPixels(context, 20)));
         divider.setLayoutParams(lp);
         divider.setBackgroundColor(Color.parseColor("#CCCCCC"));
         this.addView(divider,3);
@@ -133,7 +133,6 @@ public class TOCGrid extends LinearLayout {
         this.gridRoot = new LinearLayout(context);
         gridRoot.setOrientation(LinearLayout.VERTICAL);
         gridRoot.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-        gridRoot.setPadding(0,0,0,20);
 
         this.addView(gridRoot, 5);
 
@@ -342,6 +341,7 @@ public class TOCGrid extends LinearLayout {
         LinearLayout tabs = new LinearLayout(context);
         tabs.setOrientation(LinearLayout.HORIZONTAL);
         tabs.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+        tabs.setPadding(0,0,0,30);
 
         tabs.setGravity(Gravity.CENTER);
 

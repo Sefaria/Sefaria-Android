@@ -16,40 +16,51 @@
         android:layout_marginLeft="@dimen/main_margin_lr"
         android:layout_marginRight="@dimen/main_margin_lr"
         android:layout_marginBottom="10dp">
-
-        <org.sefaria.sefaria.layouts.SefariaTextView
+        <FrameLayout
             android:id="@+id/en_btn"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="@dimen/text_menu_button_height"
-            android:layout_gravity="center_vertical"
-            android:text="A"
-            android:textSize="20dp"
-            android:textColor="?text_color_main"
-            android:gravity="center"
-            android:background="?text_menu_button_background_left_drawable" />
-        <org.sefaria.sefaria.layouts.SefariaTextView
+            android:background="?text_menu_button_background_left_drawable"
+            android:padding="10dp">
+            <ImageView
+                android:layout_width="@dimen/text_menu_bar_lang_box"
+                android:layout_height="@dimen/text_menu_bar_lang_box"
+                android:src="@drawable/a_icon"
+                android:tint="?text_color_main"
+                android:layout_margin="@dimen/text_menu_bar_box_margin"
+                android:layout_gravity="center" />
+        </FrameLayout>
+        <FrameLayout
             android:id="@+id/bi_btn"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="@dimen/text_menu_button_height"
-            android:layout_gravity="center_vertical"
-            android:text="Aא"
-            android:textSize="20dp"
-            android:textColor="?text_color_main"
-            android:gravity="center"
-            android:background="?text_menu_button_background_center_drawable" />
-        <org.sefaria.sefaria.layouts.SefariaTextView
+            android:background="?text_menu_button_background_center_drawable"
+            android:padding="10dp">
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:src="@drawable/a_aleph2"
+                android:tint="?text_color_main"
+                android:layout_margin="@dimen/text_menu_bar_box_margin"
+                android:layout_gravity="center" />
+        </FrameLayout>
+        <FrameLayout
             android:id="@+id/he_btn"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="@dimen/text_menu_button_height"
-            android:layout_gravity="center_vertical"
-            android:text="א"
-            android:textSize="20dp"
-            android:textColor="?text_color_main"
-            android:gravity="center"
-            android:background="?text_menu_button_background_right_drawable" />
+            android:background="?text_menu_button_background_right_drawable"
+            android:padding="10dp">
+            <ImageView
+                android:layout_width="@dimen/text_menu_bar_lang_box"
+                android:layout_height="@dimen/text_menu_bar_lang_box"
+                android:src="@drawable/aleph"
+                android:tint="?text_color_main"
+                android:layout_margin="@dimen/text_menu_bar_box_margin"
+                android:layout_gravity="center" />
+        </FrameLayout>
 
 
     </LinearLayout>
