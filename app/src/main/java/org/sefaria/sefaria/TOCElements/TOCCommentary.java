@@ -45,7 +45,7 @@ public class TOCCommentary extends LinearLayout implements TOCElement {
     @Override
     public void setLang(Util.Lang lang) {
         String text = Book.removeOnMainBookFromTitle(commentary.getTitle(lang),mainBook);
-        content_root.setFont(lang,true);
+        content_root.setFont(lang,true,17);
         content_root.setText(text);
     }
 

@@ -76,7 +76,9 @@ public class TOCGrid extends LinearLayout {
 
     private void init() {
         this.setOrientation(LinearLayout.VERTICAL);
-        this.setPadding(10, 10, 10, 100);
+
+        int sidePadding = (int)context.getResources().getDimension(R.dimen.main_margin_lr);
+        this.setPadding(sidePadding, 10, sidePadding, 100);
         this.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
         this.flippedForHe = false;
 
@@ -94,7 +96,7 @@ public class TOCGrid extends LinearLayout {
 
         bookTitleView.setGravity(Gravity.CENTER);
         final int bookTitlepaddding =10;
-        bookTitleView.setPadding(bookTitlepaddding, 2*bookTitlepaddding, bookTitlepaddding, bookTitlepaddding/2);
+        bookTitleView.setPadding(0, 2*bookTitlepaddding, 0, bookTitlepaddding/2);
         this.addView(bookTitleView, 0);
 
         AutoResizeTextView bookCategoryView = new AutoResizeTextView(context);
@@ -103,7 +105,7 @@ public class TOCGrid extends LinearLayout {
         bookCategoryView.setText(book.getCategories());
         bookCategoryView.setFont(lang, true, 20);
         final int padding = 6;
-        bookCategoryView.setPadding(padding, 0, padding, padding);
+        bookCategoryView.setPadding(0, 0, 0, padding);
         bookCategoryView.setGravity(Gravity.CENTER);
         this.addView(bookCategoryView, 1);
 
@@ -120,7 +122,7 @@ public class TOCGrid extends LinearLayout {
         //ADD GREY DIVIDER
         View divider = new View(context);
         LinearLayout.LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, 1);
-        lp.setMargins(Math.round(Util.dpToPixels(context, 25)),Math.round(Util.dpToPixels(context, 20)),Math.round(Util.dpToPixels(context, 25)),Math.round(Util.dpToPixels(context,20)));
+        lp.setMargins(0, Math.round(Util.dpToPixels(context, 20)), 0, Math.round(Util.dpToPixels(context, 20)));
         divider.setLayoutParams(lp);
         divider.setBackgroundColor(Color.parseColor("#CCCCCC"));
         this.addView(divider,3);
@@ -163,7 +165,7 @@ public class TOCGrid extends LinearLayout {
     private double getRegularColumnCount(){
         if(regularColumnCount == 0.0){
             Point size = MyApp.getScreenSize();
-            regularColumnCount = (size.x)/51.0;
+            regularColumnCount = (size.x)/53.0;
             if(regularColumnCount < 1.0)
                 regularColumnCount = 1.0;
         }
@@ -197,7 +199,7 @@ public class TOCGrid extends LinearLayout {
 
         double numColumns = getRegularColumnCount();
         if(depth > 0) depth--;
-        numColumns -= (int) (depth*1.5);
+        numColumns -= (int) (depth*1);
         if(numColumns <1) numColumns = 1.0;
 
         gl.setColumnCount((int) numColumns);
@@ -339,6 +341,7 @@ public class TOCGrid extends LinearLayout {
         LinearLayout tabs = new LinearLayout(context);
         tabs.setOrientation(LinearLayout.HORIZONTAL);
         tabs.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+        tabs.setPadding(0,0,0,30);
 
         tabs.setGravity(Gravity.CENTER);
 
@@ -390,7 +393,7 @@ public class TOCGrid extends LinearLayout {
         }*/
         gridRoot.setGravity(Gravity.CENTER);
         bookTitleView.setText(book.getTitle(lang));
-        bookTitleView.setFont(lang,true,25);
+        bookTitleView.setFont(lang, true, 25);
         setCurrSectionText();
         //TODO also setLang of all the Header feilds
         if ((lang == Util.Lang.HE && !flippedForHe) ||
@@ -429,7 +432,7 @@ public class TOCGrid extends LinearLayout {
             currSectionTitleView.setText(sectionTitle);
             currSectionTitleView.setFont(lang,false,20);
 
-            currSectionTitleView.setPadding(padding, 4*padding, padding, padding);
+            currSectionTitleView.setPadding(0, 4*padding, 0, padding);
         } catch (Node.InvalidPathException e) {
             currSectionTitleView.setHeight(0);
         } catch (API.APIException e) {

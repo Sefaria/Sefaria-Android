@@ -18,7 +18,10 @@
         android:id="@+id/numResults"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="15dp"
+        android:layout_marginLeft="@dimen/main_margin_lr"
+        android:layout_marginRight="@dimen/main_margin_lr"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
         android:textColor="?text_color_main"
         android:text=""/>
     <View
