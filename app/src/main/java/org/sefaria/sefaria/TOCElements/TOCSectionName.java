@@ -52,7 +52,7 @@ public class TOCSectionName extends LinearLayout implements TOCElement {
     @Override
     public void setLang(Util.Lang lang) {
         if (!displayLevel) {
-            sectionroot.setVisibility(View.INVISIBLE);
+            sectionroot.setVisibility(View.GONE);
             this.setPadding(0, 0, 0, 0);
             return;
         }

@@ -13,8 +13,8 @@
         android:layout_marginTop="25dp"
         android:gravity="center"
         android:layout_gravity="center"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
+        android:layout_marginLeft="@dimen/main_margin_lr"
+        android:layout_marginRight="@dimen/main_margin_lr"
         android:layout_marginBottom="10dp">
 
         <org.sefaria.sefaria.layouts.SefariaTextView
@@ -60,7 +60,10 @@
         android:layout_width="match_parent"
         android:orientation="horizontal"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="@dimen/main_margin_lr"
+        android:layout_marginRight="@dimen/main_margin_lr"
         >
         <FrameLayout
             android:id="@+id/cts_btn"
@@ -103,7 +106,10 @@
         android:layout_width="match_parent"
         android:orientation="horizontal"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="@dimen/main_margin_lr"
+        android:layout_marginRight="@dimen/main_margin_lr"
         >
         <FrameLayout
             android:id="@+id/sbs_btn"
@@ -158,7 +164,10 @@
         android:layout_width="match_parent"
         android:orientation="horizontal"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp">
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="@dimen/main_margin_lr"
+        android:layout_marginRight="@dimen/main_margin_lr">
 
         <View
             android:id="@+id/white_btn"
@@ -200,10 +209,10 @@
         android:layout_width="match_parent"
         android:orientation="horizontal"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
         android:layout_marginTop="10dp"
-        android:layout_marginBottom="25dp">
+        android:layout_marginBottom="25dp"
+        android:layout_marginLeft="@dimen/main_margin_lr"
+        android:layout_marginRight="@dimen/main_margin_lr">
 
         <org.sefaria.sefaria.layouts.SefariaTextView
             android:id="@+id/small_btn"
