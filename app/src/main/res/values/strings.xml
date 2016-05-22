@@ -71,7 +71,7 @@
     <string name="delete_library">Delete Library</string>
     <string name="download_library">Download Library</string>
     <string name="are_you_sure_delete_title">Are you sure you want to delete the library?</string>
-    <string name="are_you_sure_delete_message">If you delete the library, you can not use Sefaria without an internet connection and the experience is slower.</string>
+    <string name="are_you_sure_delete_message">If you delete the library, you will need an internet connection to use Sefaria</string>
     <string name="recent">Recent</string>
     <string name="browse">Browse</string>
     <string name="calendar">Calendar</string>
@@ -85,7 +85,7 @@
     <string name="results">Results</string>
     <string name="error_getting_book">Error getting book</string>
     <string name="not_avil_in_online_mode">Not available in Online mode</string>
-    <string name="didnt_find_query_in_book">Didn't find query in book</string>
+    <string name="didnt_find_query_in_book">Didn\'t find query in book</string>
     <string name="downloading_library_even_not_newest">Downloading Library (even if it is not a new version)</string>
     <string name="unable_to_load_toc_for_book">Unable to load Table of Contents for this book</string>
     <string name="starting_download">Starting Download</string>
