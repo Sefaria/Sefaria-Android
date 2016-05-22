@@ -36,15 +36,14 @@ public class SettingsActivity extends Activity {
     private SefariaTextView bookEnBtn;
     private SefariaTextView bookBiBtn;
     private SefariaTextView bookHeBtn;
-    private SefariaTextView offlineBtn;
-    private SefariaTextView onlineBtn;
 
     private SefariaTextView saveBtn;
     private SefariaTextView updateBtn;
+    private SefariaTextView deleteBtn;
+    private SefariaTextView downloadBtn;
 
     private Util.Lang currMenuLang;
     private Util.Lang currBookLang;
-    private boolean currIsOffline;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,21 +64,23 @@ public class SettingsActivity extends Activity {
         bookEnBtn = (SefariaTextView) findViewById(R.id.book_en_btn);
         bookHeBtn = (SefariaTextView) findViewById(R.id.book_he_btn);
         bookBiBtn = (SefariaTextView) findViewById(R.id.book_bi_btn);
-        onlineBtn = (SefariaTextView) findViewById(R.id.online_btn);
-        offlineBtn = (SefariaTextView) findViewById(R.id.offline_btn);
+
         saveBtn = (SefariaTextView) findViewById(R.id.save_btn);
         updateBtn = (SefariaTextView) findViewById(R.id.update_library);
+        deleteBtn = (SefariaTextView) findViewById(R.id.delete_library);
+        downloadBtn = (SefariaTextView) findViewById(R.id.download_library);
 
         menuEnBtn.setOnClickListener(btnClick);
         menuHeBtn.setOnClickListener(btnClick);
         bookEnBtn.setOnClickListener(btnClick);
         bookBiBtn.setOnClickListener(btnClick);
         bookHeBtn.setOnClickListener(btnClick);
-        onlineBtn.setOnClickListener(btnClick);
-        offlineBtn.setOnClickListener(btnClick);
+
         saveBtn.setOnClickListener(saveClick);
         updateBtn.setOnClickListener(updateClick);
         updateBtn.setOnLongClickListener(longUpdateLibrary);
+
+
     }
     View.OnClickListener backClick = new View.OnClickListener() {
         @Override
@@ -91,7 +92,7 @@ public class SettingsActivity extends Activity {
     View.OnClickListener closeClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            done(v);
+            done();
         }
     };
 
@@ -99,7 +100,31 @@ public class SettingsActivity extends Activity {
     View.OnClickListener saveClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            done(v);
+            done();
+        }
+    };
+
+    View.OnClickListener deleteClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            ;//
+        }
+    };
+
+    View.OnClickListener downloadClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            updateLibrary(v);
+        }
+    };
+
+    View.OnLongClickListener longDownloadClick = new View.OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+            Settings.setUseAPI(false);
+            Database.checkAndSwitchToNeededDB(SettingsActivity.this);
+            setState(currMenuLang,currBookLang,Settings.getUseAPI());
+            return true;
         }
     };
 
@@ -110,12 +135,22 @@ public class SettingsActivity extends Activity {
         }
     };
 
+    View.OnLongClickListener longUpdateLibrary = new View.OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+            Toast.makeText(SettingsActivity.this, "Downloading Library (even if it's not a new version).", Toast.LENGTH_SHORT).show();
+            Downloader.updateLibrary(SettingsActivity.this, true);
+            DialogNoahSnackbar.showDialog(SettingsActivity.this, (ViewGroup) findViewById(R.id.dialogNoahSnackbarRoot));
+            return true;
+        }
+    };
+
     public void updateLibrary(View v){
         Downloader.updateLibrary(this, false);
         DialogNoahSnackbar.showDialog(this, (ViewGroup) findViewById(R.id.dialogNoahSnackbarRoot));
     }
 
-    public void done(View v){
+    public void done(){
         //saveFontSize();
         Database.checkAndSwitchToNeededDB(this);
         finish();
@@ -151,23 +186,16 @@ public class SettingsActivity extends Activity {
                 case R.id.book_he_btn:
                     currBookLang = Util.Lang.HE;
                     break;
-                case R.id.offline_btn:
-                    currIsOffline = true;
-                    break;
-                case R.id.online_btn:
-                    currIsOffline = false;
-                    break;
             }
 
-            setState(currMenuLang,currBookLang,currIsOffline);
+            setState(currMenuLang,currBookLang,Settings.getUseAPI());
         }
     };
 
-    public void setState(Util.Lang menuLang, Util.Lang bookLang, boolean isOffline) {
+    public void setState(Util.Lang menuLang, Util.Lang bookLang, boolean useAPI) {
 
         currMenuLang = menuLang;
         currBookLang = bookLang;
-        currIsOffline = isOffline;
 
         //BOOK LANG
         int currBookLangViewId;
@@ -209,25 +237,16 @@ public class SettingsActivity extends Activity {
             menuHeBtn.setBackgroundResource(Util.getDrawable(this,R.attr.text_menu_button_background_right_ripple_drawable));
 
         //IS OFFLINE???
-        int currOfflineViewId;
-        if (isOffline) currOfflineViewId = R.id.offline_btn;
-        else currOfflineViewId = R.id.online_btn;
 
-        if (currOfflineViewId == R.id.online_btn) {
-            Settings.setUseAPI(true);
-            onlineBtn.setBackgroundResource(Util.getDrawable(this, R.attr.text_menu_button_background_left_clicked_drawable));
-        } else
-            onlineBtn.setBackgroundResource(Util.getDrawable(this,R.attr.text_menu_button_background_left_ripple_drawable));
-        if (currOfflineViewId == R.id.offline_btn) {
-            Settings.setUseAPI(false);
-            boolean isDownloading = Database.getOfflineDBIfNeeded(this, true);
-            if (isDownloading) {
-                DialogNoahSnackbar.showDialog(this, (ViewGroup) findViewById(R.id.dialogNoahSnackbarRoot));
-            }
-            offlineBtn.setBackgroundResource(Util.getDrawable(this, R.attr.text_menu_button_background_right_clicked_drawable));
-        } else
-            offlineBtn.setBackgroundResource(Util.getDrawable(this,R.attr.text_menu_button_background_right_ripple_drawable));
-
+        if(useAPI){
+            downloadBtn.setVisibility(View.VISIBLE);
+            deleteBtn.setVisibility(View.GONE);
+            updateBtn.setVisibility(View.GONE);
+        }else{
+            downloadBtn.setVisibility(View.GONE);
+            deleteBtn.setVisibility(View.VISIBLE);
+            updateBtn.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -235,9 +254,10 @@ public class SettingsActivity extends Activity {
         super.onResume();
         Util.Lang defaultTextLang = Settings.getDefaultTextLang();
         Util.Lang menuLang = Settings.getMenuLang();
-        boolean isOnline = Settings.getUseAPI();
+        boolean useAPI = Settings.getUseAPI();
 
-        setState(menuLang,defaultTextLang,!isOnline);
+
+        setState(menuLang,defaultTextLang,useAPI);
 
         //fontSize.setText(""+Settings.getDefaultFontSize());
         //fontSize.clearFocus();
@@ -280,16 +300,6 @@ public class SettingsActivity extends Activity {
 
 
 
-
-    View.OnLongClickListener longUpdateLibrary = new View.OnLongClickListener() {
-        @Override
-        public boolean onLongClick(View v) {
-            Toast.makeText(SettingsActivity.this, "Downloading Library (even if it's not a new version).", Toast.LENGTH_SHORT).show();
-            Downloader.updateLibrary(SettingsActivity.this, true);
-            DialogNoahSnackbar.showDialog(SettingsActivity.this, (ViewGroup) findViewById(R.id.dialogNoahSnackbarRoot));
-            return true;
-        }
-    };
 
     public void clearAllBookSettings(View v){
         Settings.BookSettings.clearAllBookSettings();
