@@ -16,7 +16,10 @@ import android.widget.Toast;
 
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
+import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
+import org.sefaria.sefaria.activities.SettingsActivity;
+import org.sefaria.sefaria.database.Database;
 import org.sefaria.sefaria.database.Downloader;
 import org.sefaria.sefaria.database.Text;
 import org.sefaria.sefaria.database.UpdateReceiver;
@@ -33,7 +36,7 @@ public class DialogManager2 {
         NO_NEW_UPDATE,UPDATE_STARTED,
         ARE_YOU_SURE_CANCEL,CHECKING_FOR_UPDATE,
         SWITCHING_TO_API,NO_INTERNET,DATA_CONNECTED,
-        HOW_TO_REPORT_CORRECTIONS
+        HOW_TO_REPORT_CORRECTIONS,ARE_YOU_SURE_DELETE
     }
 
     private static Dialog currDialog;
@@ -213,13 +216,25 @@ public class DialogManager2 {
                         emailIntent.putExtra(Intent.EXTRA_TEXT,
 
                                 MyApp.getEmailHeader()
-                                        + text.getURL(true,false) + "\n\n"
+                                        + text.getURL(true, false) + "\n\n"
                                         + Html.fromHtml(text.getText(Util.Lang.BI))
                                         + "\n\nDescribe the error: \n\n"
                         );
                         emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{email});
                         activity.startActivity(Intent.createChooser(emailIntent, "Send email"));
 
+                    }
+                });
+                break;
+            case ARE_YOU_SURE_DELETE:
+                DialogManager2.showDialog(activity, new DialogCallable(MyApp.getRString(R.string.are_you_sure_delete_title),
+                        MyApp.getRString(R.string.are_you_sure_delete_message), MyApp.getRString(R.string.delete_library),
+                        MyApp.getRString(R.string.CANCEL), null, DialogCallable.DialogType.ALERT) {
+                    @Override
+                    public void positiveClick() {
+                        Database.deleteDatabase();
+                        SettingsActivity settingsActivity = (SettingsActivity) activity;
+                        settingsActivity.setState(null,null,Settings.getUseAPI());
                     }
                 });
                 break;

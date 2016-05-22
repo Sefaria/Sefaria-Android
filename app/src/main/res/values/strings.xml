@@ -64,4 +64,18 @@
     <string name="USING_DATA_TITLE">Using mobile data</string>
 
     <string name="requires_250">Requires ~250MB of storage on your device</string>
+    <string name="save_settings">Save Settings</string>
+    <string name="offline_access">Offline Access</string>
+    <string name="default_book_lang">Default Book Language</string>
+    <string name="update_library">Update Library</string>
+    <string name="delete_library">Delete Library</string>
+    <string name="download_library">Download Library</string>
+    <string name="are_you_sure_delete_title">Are you sure you want to delete the library?</string>
+    <string name="are_you_sure_delete_message">If you delete the library, you can not use Sefaria without an internet connection and the experience is slower.</string>
+    <string name="recent">Recent</string>
+    <string name="browse">Browse</string>
+    <string name="calendar">Calendar</string>
+    <string name="support_sefaria">Support Sefaria</string>
+    <string name="donate_now">Donate Now</string>
+
 </resources>
