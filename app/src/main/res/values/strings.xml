@@ -62,4 +62,6 @@
     <string name="ARE_YOU_SURE_MESSAGE">Your update would need to be restarted</string>
     <string name="USING_DATA_MESSAGE">You are using mobile data (not WIFI). The library is about 200MB. Do you want to download it anyways?</string>
     <string name="USING_DATA_TITLE">Using mobile data</string>
+
+    <string name="requires_250">Requires ~250MB of storage on your device</string>
 </resources>

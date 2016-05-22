@@ -77,8 +77,15 @@ public class SettingsActivity extends Activity {
         bookHeBtn.setOnClickListener(btnClick);
 
         saveBtn.setOnClickListener(saveClick);
+
         updateBtn.setOnClickListener(updateClick);
         updateBtn.setOnLongClickListener(longUpdateLibrary);
+
+        deleteBtn.setOnClickListener(deleteClick);
+        deleteBtn.setOnLongClickListener(longDeleteClick);
+
+        downloadBtn.setOnClickListener(downloadClick);
+        downloadBtn.setOnLongClickListener(longDownloadClick);
 
 
     }
@@ -107,7 +114,20 @@ public class SettingsActivity extends Activity {
     View.OnClickListener deleteClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            ;//
+            //TODO make dialog
+
+            Database.deleteDatabase();
+            setState(currMenuLang,currBookLang,Settings.getUseAPI());
+        }
+    };
+
+    View.OnLongClickListener longDeleteClick = new View.OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+            Settings.setUseAPI(true);
+            Toast.makeText(SettingsActivity.this, "Switching to online mode", Toast.LENGTH_SHORT).show();
+            setState(currMenuLang, currBookLang, Settings.getUseAPI());
+            return true;
         }
     };
 
@@ -121,6 +141,7 @@ public class SettingsActivity extends Activity {
     View.OnLongClickListener longDownloadClick = new View.OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
+            Toast.makeText(SettingsActivity.this, "Switching to offline library", Toast.LENGTH_SHORT).show();
             Settings.setUseAPI(false);
             Database.checkAndSwitchToNeededDB(SettingsActivity.this);
             setState(currMenuLang,currBookLang,Settings.getUseAPI());

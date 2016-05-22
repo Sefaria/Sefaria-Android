@@ -64,7 +64,7 @@ public class MenuActivity extends Activity {
         abRoot.addView(customActionbar);
 
         menuGrid = new MenuGrid(this,NUM_COLUMNS, menuState,LIMIT_GRID_SIZE,menuLang);
-        ScrollView root = (ScrollView) findViewById(R.id.gridRoot);
+        LinearLayout root = (LinearLayout) findViewById(R.id.gridRoot);
         root.addView(menuGrid);
         setLang(menuLang);
     }
