@@ -70,9 +70,10 @@
     <string name="download_library">Download Library</string>
     <string name="are_you_sure_delete_title">Are you sure you want to delete the library?</string>
     <string name="are_you_sure_delete_message">If you delete the library, you can not use Sefaria without an internet connection and the experience is slower.</string>
-    <string name="recent">Recent</string>
-    <string name="browse">Browse</string>
-    <string name="calendar">Calendar</string>
-    <string name="support_sefaria">Support Sefaria</string>
-    <string name="donate_now">תורם עכשיו</string>
+    <string name="recent">נצפו לאחרונה</string>
+    <string name="browse">טקסטים</string>
+    <string name="calendar">לוח יומי</string>
+    <string name="support_sefaria">תתמוך בספאריה</string>
+    <string name="donate_now">תתרום עכשיו</string>
+    <string name="connections">קישורים</string>
 </resources>
