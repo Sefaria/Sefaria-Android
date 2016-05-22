@@ -103,7 +103,7 @@ public class Database extends SQLiteOpenHelper{
      */
     static public boolean getOfflineDBIfNeeded(Activity activity, boolean evenIfUsingAPI){
         if(!isDownloadingDatabase && (evenIfUsingAPI || !Settings.getUseAPI()) && (!Database.isValidOfflineDB()|| !Database.hasOfflineDB())) {
-            Toast.makeText(activity, "Starting Download", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, MyApp.getRString(R.string.starting_download), Toast.LENGTH_SHORT).show();
             Downloader.updateLibrary(activity,false);
             return true;
         }

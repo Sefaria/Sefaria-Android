@@ -122,7 +122,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
                 Book book = new Book(title,true);
                 SuperTextActivity.startNewTextActivityIntent(SearchActivity.this,book,false);
             } catch (Book.BookNotFoundException e) {
-                Toast.makeText(SearchActivity.this,"Error getting book",Toast.LENGTH_SHORT).show();
+                Toast.makeText(SearchActivity.this,MyApp.getRString(R.string.error_getting_book),Toast.LENGTH_SHORT).show();
             }
         }
     };
@@ -224,7 +224,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
         protected void onPreExecute() {
             super.onPreExecute();
             isLoadingSearch = true;
-            numResultsTV.setText(numberOfResults + " Loading...");
+            numResultsTV.setText(numberOfResults + " " + MyApp.getRString(R.string.loading));
             query = autoCompleteTextView.getText().toString();
         }
 
@@ -250,7 +250,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
             } else {
                 adapter.setResults(results,false);
             }
-            numberOfResults = SearchAPI.getNumResults() + " Results";
+            numberOfResults = SearchAPI.getNumResults() + " " + MyApp.getRString(R.string.results);
             findViewById(R.id.results_border).setVisibility(View.VISIBLE);
             numResultsTV.setText(numberOfResults);
             if(APIError) {
