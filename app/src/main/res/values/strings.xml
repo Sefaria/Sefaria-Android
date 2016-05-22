@@ -77,5 +77,6 @@
     <string name="calendar">Calendar</string>
     <string name="support_sefaria">Support Sefaria</string>
     <string name="donate_now">Donate Now</string>
+    <string name="connections">Connections</string>
 
 </resources>
