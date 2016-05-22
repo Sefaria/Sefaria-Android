@@ -17,12 +17,12 @@
         android:orientation="horizontal">
         <org.sefaria.sefaria.layouts.SefariaTextView
             android:id="@+id/tv"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:minHeight="43dp"
             android:maxHeight="65dp"
             android:paddingLeft="15dp"
-            android:paddingRight="5dp"
+            android:paddingRight="15dp"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
             android:textSize="15sp"

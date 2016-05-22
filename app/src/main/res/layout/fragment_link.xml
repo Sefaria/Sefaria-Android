@@ -28,7 +28,7 @@
             android:id="@+id/link_selector_bar_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Connections"
+            android:text="@string/connections"
             android:textColor="?text_color_english"
             android:gravity="center"
             android:padding="15dp"
