@@ -173,7 +173,6 @@ public class TOCGrid extends LinearLayout {
     }
 
     public void addNumGrid(List<Node> gridNodes,LinearLayout linearLayoutRoot, int depth) {
-
         //List<Integer> chaps = node.getChaps();
         if (gridNodes.size() == 0){
             Log.e("Node","Node.addNumGrid() never should have been called with 0 items");
@@ -307,11 +306,13 @@ public class TOCGrid extends LinearLayout {
     private void displayTree(Node node, LinearLayout linearLayout, boolean displayLevel){
         TOCSectionName tocSectionName = new TOCSectionName(context, node, lang, displayLevel);
         linearLayout.addView(tocSectionName);
-        if(lang == Util.Lang.HE) { //TODO make sure this is  still called at setLang()
+
+        if (lang == Util.Lang.HE) { //TODO make sure this is  still called at setLang()
             tocSectionName.setGravity(Gravity.RIGHT);
-        }else {
+        } else {
             tocSectionName.setGravity(Gravity.LEFT);
         }
+
         List<Node> gridNodes = new ArrayList<>();
         for (int i = 0; i < node.getChildren().size(); i++) {
             Node child = node.getChildren().get(i);
@@ -328,7 +329,8 @@ public class TOCGrid extends LinearLayout {
         }
         if (gridNodes.size() > 0) {
             //There's some gridsNodes that haven't been displayed yet
-            addNumGrid(gridNodes, tocSectionName.getChildrenView(),node.getDepth());
+            tocSectionName.setSubGravity(Gravity.CENTER);//this will make it that the gridItems will be centered on the page (say for all chaps in Genesis, but other things will be left or right
+            addNumGrid(gridNodes, tocSectionName.getChildrenView(), node.getDepth());
         }
         if(displayLevel && node.getDepth()>=2){
             tocSectionName.setDisplayingChildren(false);

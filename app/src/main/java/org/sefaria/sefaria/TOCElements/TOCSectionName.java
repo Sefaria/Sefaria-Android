@@ -48,7 +48,7 @@ public class TOCSectionName extends LinearLayout implements TOCElement {
 
     private void init(Util.Lang lang){
         sectionNameTitle = (SefariaTextView) findViewById(R.id.toc_section_name_title);
-        sectionNameTitle.setFont(lang,true);
+        sectionNameTitle.setFont(lang, true);
 
         sectionNameGroup = (LinearLayout) findViewById(R.id.toc_section_name_group);
         sectionChildren = (LinearLayout) findViewById(R.id.toc_section_name_children);
@@ -121,6 +121,13 @@ public class TOCSectionName extends LinearLayout implements TOCElement {
         sectionNameGroup.setGravity(gravity);
         sectionNameTitle.setGravity(gravity);
         ((LinearLayout) findViewById(R.id.section_name_total_root)).setGravity(gravity);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        params.gravity = gravity;
+        this.setLayoutParams(params);
+    }
+
+    public void setSubGravity(int gravity){
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
         params.gravity = gravity;
