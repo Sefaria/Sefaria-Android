@@ -92,13 +92,14 @@ public class TOCActivity extends AppCompatActivity {
         } catch (API.APIException e) {
             API.makeAPIErrorToast(context);
             finish();
+            return;
         }
 
         //List<Book> commentaries = book.getAllCommentaries();
-
         ScrollView tocRoot = (ScrollView) findViewById(R.id.toc_root);
         tocGrid = new TOCGrid(TOCActivity.this,book, tocNodesRoots,false,lang,pathDefiningNode);
         tocRoot.addView(tocGrid);
+
     }
 
     @Override
