@@ -4,6 +4,8 @@ import android.content.Context;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import org.sefaria.sefaria.MyApp;
@@ -20,12 +22,16 @@ import java.util.Objects;
  */
 public class TOCSectionName extends LinearLayout implements TOCElement {
 
-    private SefariaTextView sectionroot;
+    private SefariaTextView sectionNameTitle;
+    private LinearLayout sectionNameGroup;
+    private LinearLayout sectionChildren;
     private Context context;
     private Node node;
     private boolean displayLevel;
     private Util.Lang lang;
     private boolean displayingChildren = true;
+    ImageView iconLeft;
+    ImageView iconRight;
 
     public TOCSectionName(Context context, Node node, Util.Lang lang, boolean displayLevel){
         super(context);
@@ -41,27 +47,29 @@ public class TOCSectionName extends LinearLayout implements TOCElement {
     }
 
     private void init(Util.Lang lang){
-        sectionroot = (SefariaTextView) findViewById(R.id.toc_sectionroot);
-        sectionroot.setFont(lang,true);
+        sectionNameTitle = (SefariaTextView) findViewById(R.id.toc_section_name_title);
+        sectionNameTitle.setFont(lang,true);
+
+        sectionNameGroup = (LinearLayout) findViewById(R.id.toc_section_name_group);
+        sectionChildren = (LinearLayout) findViewById(R.id.toc_section_name_children);
+
+        iconLeft = (ImageView) findViewById(R.id.toc_section_icon_left);
+        iconRight = (ImageView) findViewById(R.id.toc_section_icon_right);
 
         setLang(lang);
-        this.setOnClickListener(clickListener);
-        this.setOnLongClickListener(onLongClickListener);
+        sectionNameTitle.setOnClickListener(clickListener);
+        sectionNameTitle.setOnLongClickListener(onLongClickListener);
     }
 
     @Override
     public void setLang(Util.Lang lang) {
         if (!displayLevel) {
-            sectionroot.setVisibility(View.GONE);
+            sectionNameGroup.setVisibility(View.GONE);
             this.setPadding(0, 0, 0, 0);
             return;
         }
         int padding = (int) MyApp.convertDpToPixel(4.5f);
         final int sidePadding = (int) MyApp.convertDpToPixel(13f);
-        if(node.isTextSection()) {
-            //padding = 21;
-            //sidePadding += 4;
-        }
         if(lang == Util.Lang.EN) {
             this.setPadding(sidePadding, padding, 0, padding);
             this.setGravity(Gravity.LEFT);
@@ -70,52 +78,73 @@ public class TOCSectionName extends LinearLayout implements TOCElement {
             this.setGravity(Gravity.RIGHT);
         }
         String text = node.getTitle(lang);
+        Log.d("TOCSection",text + " " + node);
 
         //http://stackoverflow.com/questions/2701192/character-for-up-down-triangle-arrow-to-display-in-html
         if(node.isTextSection()) {
-            text = text + " >";//" \u25b8";// "   " + text
+            text = text + " >";
         }else if(node.getChildren().size() == 0){//it has no children but it's not a section, so it should be greyed out
-            sectionroot.setTextColor(getResources().getColor(R.color.toc_greyed_out_section_name));
+            sectionNameTitle.setTextColor(getResources().getColor(R.color.toc_greyed_out_section_name));
         }else if(text.length() >0){
-            if(!displayingChildren){
-                //text += " \u2304";////25BC //25BD //25BE //25BF
-                if(lang == Util.Lang.EN)
-                    text = "\u25b8  " + text;
-                else //lang == HE
-                    text = "\u25c2  " + text;
-            }else {// if(displayingChildren)
-                text = "\u25be  " + text;
+            ImageView viewableIcon;
+            if(lang == Util.Lang.EN){
+                iconLeft.setVisibility(VISIBLE);
+                iconLeft.setImageResource(R.drawable.right_arrow);
+                iconRight.setVisibility(GONE);
+                viewableIcon = iconLeft;
+            }
+            else{//lang == HE
+                iconRight.setVisibility(VISIBLE);
+                iconRight.setImageResource(R.drawable.left_arrow);
+                iconLeft.setVisibility(GONE);
+                viewableIcon = iconRight;
+            }
+            if(displayingChildren){
+                viewableIcon.setImageResource(R.drawable.down_arrow);
             }
         }
 
 
-
-        //else    ;//text += " " + "\u2228";
-        sectionroot.setText(text);
+        sectionNameTitle.setText(text);
         /*
         This is for a case of a node that holds just a grid and is a sibling of a sectionName which istextSection()
         Look at Ohr Hashem for an example.
          */
         if(text.length() == 0 && !node.isTextSection())
-            sectionroot.setVisibility(View.GONE);
+            sectionNameGroup.setVisibility(View.GONE);
 
     }
 
+    @Override
+    public void setGravity(int gravity) {
+        super.setGravity(gravity);
+        sectionNameGroup.setGravity(gravity);
+        sectionNameTitle.setGravity(gravity);
+        ((LinearLayout) findViewById(R.id.section_name_total_root)).setGravity(gravity);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        params.gravity = gravity;
+        this.setLayoutParams(params);
+    }
+
+    public LinearLayout getChildrenView(){
+        return sectionChildren;
+    }
+
     private void setDisplayingChildren(boolean displayingChildren,boolean forceChildren) {
-        if (sectionroot.getVisibility() != VISIBLE)
+        if (sectionNameGroup.getVisibility() != VISIBLE)
             return;
         this.displayingChildren = displayingChildren;
-        for (int i = 0; i < getChildCount(); i++) {
-            View child = getChildAt(i);
-            if (!(child instanceof SefariaTextView)) {//don't hid the text of the sectionName itself
-                if (displayingChildren) {
-                    child.setVisibility(View.VISIBLE);
-                } else {
-                    child.setVisibility(View.GONE);
-                }
-                if (forceChildren && child instanceof TOCSectionName) {
-                    ((TOCSectionName) child).setDisplayingChildren(displayingChildren,forceChildren);
-                }
+
+        for (int i = 0; i < sectionChildren.getChildCount(); i++) {
+            View child = sectionChildren.getChildAt(i);
+            if (displayingChildren) {
+                child.setVisibility(View.VISIBLE);
+            } else {
+                child.setVisibility(View.GONE);
+            }
+            if (forceChildren && child instanceof TOCSectionName) {
+                ((TOCSectionName) child).setDisplayingChildren(displayingChildren,forceChildren);
             }
             setLang(lang);
         }

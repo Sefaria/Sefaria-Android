@@ -1,23 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<org.sefaria.sefaria.layouts.SefariaTextView xmlns:android="http://schemas.android.com/apk/res/android"
-
-
-
-    android:id="@+id/toc_sectionroot"
-
-    android:text="Intro To Sample"
-
-    android:layout_centerHorizontal="true"
-    android:layout_centerVertical="true"
-    android:textColor="?text_color_main"
-
-    android:layout_width="wrap_content"
+<LinearLayout
     android:layout_height="wrap_content"
-    android:layout_weight="1"
-    android:layout_margin="1dp"
-    android:textSize="18sp"
-    android:gravity="center"
-
+    android:layout_width="wrap_content"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/section_name_total_root"
     >
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/toc_section_name_group"
+        android:layoutDirection="rtl"
+        >
+        <FrameLayout
 
-</org.sefaria.sefaria.layouts.SefariaTextView>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="6dp"
+
+            android:layout_gravity="center_vertical"
+            >
+            <ImageView
+                android:id="@+id/toc_section_icon_left"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:src="@drawable/down_arrow"
+                android:tint="?text_color_faded"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center"
+                android:visibility="invisible"
+
+                />
+        </FrameLayout>
+        <org.sefaria.sefaria.layouts.SefariaTextView xmlns:android="http://schemas.android.com/apk/res/android"
+
+
+            android:id="@+id/toc_section_name_title"
+
+            android:text="Intro To Sample"
+
+            android:layout_centerVertical="true"
+            android:textColor="?text_color_main"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_margin="1dp"
+            android:textSize="18sp"
+
+            >
+
+        </org.sefaria.sefaria.layouts.SefariaTextView>
+        <FrameLayout
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="6dp"
+
+            android:layout_gravity="center_vertical"
+            >
+            <ImageView
+                android:id="@+id/toc_section_icon_right"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:src="@drawable/down_arrow"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center"
+                android:tint="?text_color_faded"
+                android:visibility="invisible"
+
+                />
+        </FrameLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id="@+id/toc_section_name_children"
+        >
+
+    </LinearLayout>
+</LinearLayout>

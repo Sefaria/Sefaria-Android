@@ -318,17 +318,17 @@ public class TOCGrid extends LinearLayout {
             if(!child.isGridItem()) {
                 if (gridNodes.size() > 0) {
                     //There's some gridsNodes that haven't been displayed yet
-                    addNumGrid(gridNodes, tocSectionName,node.getDepth());
+                    addNumGrid(gridNodes, tocSectionName.getChildrenView(),node.getDepth());
                     gridNodes = new ArrayList<>();
                 }
-                displayTree(child, tocSectionName);
+                displayTree(child, tocSectionName.getChildrenView());
             }else{
                 gridNodes.add(child);
             }
         }
         if (gridNodes.size() > 0) {
             //There's some gridsNodes that haven't been displayed yet
-            addNumGrid(gridNodes, tocSectionName,node.getDepth());
+            addNumGrid(gridNodes, tocSectionName.getChildrenView(),node.getDepth());
         }
         if(displayLevel && node.getDepth()>=2){
             tocSectionName.setDisplayingChildren(false);
