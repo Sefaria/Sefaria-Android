@@ -27,8 +27,9 @@ import org.sefaria.sefaria.layouts.SefariaTextView;
 
 public class SettingsActivity extends Activity {
 
-    private final int TOT_NUM_DEBUG_DB_CLICKS = 7;
+    private final int TOT_NUM_DEBUG_DB_CLICKS = 6;
     private int numDebugDBUnlockClicks;
+    private int numDebugAPIClicks;
     //private EditText fontSize;
 
     //buttons
@@ -79,14 +80,11 @@ public class SettingsActivity extends Activity {
 
         saveBtn.setOnClickListener(saveClick);
 
-        updateBtn.setOnClickListener(updateClick);
-        updateBtn.setOnLongClickListener(longUpdateLibrary);
 
         deleteBtn.setOnClickListener(deleteClick);
-        deleteBtn.setOnLongClickListener(longDeleteClick);
-
         downloadBtn.setOnClickListener(downloadClick);
-        downloadBtn.setOnLongClickListener(longDownloadClick);
+        updateBtn.setOnClickListener(updateClick);
+        updateBtn.setOnLongClickListener(longUpdateLibrary);
 
 
     }
@@ -119,15 +117,6 @@ public class SettingsActivity extends Activity {
         }
     };
 
-    View.OnLongClickListener longDeleteClick = new View.OnLongClickListener() {
-        @Override
-        public boolean onLongClick(View v) {
-            Settings.setUseAPI(true);
-            Toast.makeText(SettingsActivity.this, MyApp.getRString(R.string.switching_to_api), Toast.LENGTH_SHORT).show();
-            setState(currMenuLang, currBookLang, Settings.getUseAPI());
-            return true;
-        }
-    };
 
     View.OnClickListener downloadClick = new View.OnClickListener() {
         @Override
@@ -136,16 +125,6 @@ public class SettingsActivity extends Activity {
         }
     };
 
-    View.OnLongClickListener longDownloadClick = new View.OnLongClickListener() {
-        @Override
-        public boolean onLongClick(View v) {
-            Toast.makeText(SettingsActivity.this, MyApp.getRString(R.string.switching_to_offline), Toast.LENGTH_SHORT).show();
-            Settings.setUseAPI(false);
-            Database.checkAndSwitchToNeededDB(SettingsActivity.this);
-            setState(currMenuLang,currBookLang,Settings.getUseAPI());
-            return true;
-        }
-    };
 
     View.OnClickListener updateClick = new View.OnClickListener() {
         @Override
@@ -341,6 +320,19 @@ public class SettingsActivity extends Activity {
 
         } else {
             numDebugDBUnlockClicks++;
+        }
+
+    }
+
+    public void switchAPIClick(View view) {
+        if (numDebugAPIClicks >= TOT_NUM_DEBUG_DB_CLICKS) {
+            numDebugAPIClicks = 0;
+            Settings.setUseAPI(!Settings.getUseAPI()); //toggle
+            Toast.makeText(this,"usingAPI == " + Settings.getUseAPI(),Toast.LENGTH_SHORT).show();
+            Database.checkAndSwitchToNeededDB(this);
+            setState(currMenuLang,currBookLang,Settings.getUseAPI());
+        } else {
+            numDebugAPIClicks++;
         }
 
     }

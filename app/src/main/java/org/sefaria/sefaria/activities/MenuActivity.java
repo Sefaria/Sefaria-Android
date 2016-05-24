@@ -21,6 +21,8 @@ import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.MenuElements.MenuGrid;
 import org.sefaria.sefaria.MenuElements.MenuState;
 
+import java.util.Set;
+
 public class MenuActivity extends Activity {
 
     private final int NUM_COLUMNS = 2;
@@ -31,6 +33,7 @@ public class MenuActivity extends Activity {
     private boolean isPopup;
     private boolean hasSectionBack; //true when you clicked a subsection to get to this menu
     private CustomActionbar customActionbar;
+    private int oldTheme = Settings.getTheme();
 
     @Override
     protected void onCreate(Bundle in) {
@@ -82,6 +85,12 @@ public class MenuActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        if(oldTheme != Settings.getTheme()){
+            restartActivity();
+            return;
+        }
+
         Huffman.makeTree(true);
         GoogleTracker.sendScreen("MenuActivity");
         GoogleTracker.sendEvent(GoogleTracker.CATEGORY_OPEN_MENU,menuState.getCurrNode().getTitle(Util.Lang.EN));
@@ -113,6 +122,14 @@ public class MenuActivity extends Activity {
             }
         }
         //menuGrid.setLang(menuGrid.getLang());//TODO noah this line seems useless
+    }
+
+    private void restartActivity(){
+        Intent intent = new Intent(this,MenuActivity.class);
+        intent.putExtra("menuState",menuState);
+        intent.putExtra("hasSectionBack",hasSectionBack);
+        startActivity(intent);
+        finish();
     }
 
     @Override

@@ -37,15 +37,24 @@ public class TOCActivity extends AppCompatActivity {
     public boolean cameInFromBackPress;
     //public static final int COMING_BACK_TO_TOC_REQUEST_CODE = 1784;
     private CustomActionbar customActionbar;
+    private int oldTheme = Settings.getTheme();
 
-    public static Intent getStartTOCActivityIntent(Context superTextActivityThis, Book book, Node currNode){
-        Intent intent = new Intent(superTextActivityThis, TOCActivity.class);
+
+    public static Intent getStartTOCActivityIntent(Context context, Book book, Node currNode, String pathDefiningNode){
+        Intent intent = new Intent(context, TOCActivity.class);
         intent.putExtra("currBook", book);
-        if(currNode != null) {
-            String pathDefiningNode = currNode.makePathDefiningNode();
+        if(pathDefiningNode != null){
+            intent.putExtra("pathDefiningNode", pathDefiningNode);
+        }
+        else if(currNode != null) {
+            pathDefiningNode = currNode.makePathDefiningNode();
             intent.putExtra("pathDefiningNode", pathDefiningNode);
         }
         return intent;
+    }
+
+    public static Intent getStartTOCActivityIntent(Context context, Book book, Node currNode){
+        return getStartTOCActivityIntent(context,book,currNode,null);
     }
 
     @Override
@@ -105,13 +114,17 @@ public class TOCActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        if(Settings.getTheme() != oldTheme){
+            finish();
+            startActivity(getStartTOCActivityIntent(this,book,null,pathDefiningNode));
+            return;
+        }
         Huffman.makeTree(true);
         GoogleTracker.sendScreen("TOCActivity");
         //Log.d("TOCAct","onResume");
 
         DialogNoahSnackbar.checkCurrentDialog(this, (ViewGroup) this.findViewById(R.id.dialogNoahSnackbarRoot));
     }
-
 
 
 

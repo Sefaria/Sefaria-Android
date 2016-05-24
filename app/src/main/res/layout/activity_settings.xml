@@ -47,7 +47,7 @@
                     android:paddingBottom="10dp"
                     android:textColor="?text_color_soft"
                     android:textSize="@dimen/settings_subsection_font_size"
-                    app:lang="english"
+                    app:lang="system"
                     />
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -68,7 +68,9 @@
                         android:textSize="@dimen/settings_button_font_size"
                         android:textColor="?text_color_soft"
                         android:gravity="center"
-                        android:background="?text_menu_button_background_left_drawable" />
+                        android:background="?text_menu_button_background_left_drawable"
+                        app:lang="system"
+                        />
                     <org.sefaria.sefaria.layouts.SefariaTextView
                         android:id="@+id/menu_he_btn"
                         android:layout_width="0dp"
@@ -80,6 +82,7 @@
                         android:textSize="@dimen/settings_button_font_size"
                         android:textColor="?text_color_soft"
                         android:gravity="center"
+                        app:lang="system"
                         android:background="?text_menu_button_background_right_drawable" />
 
 
@@ -103,7 +106,7 @@
                     android:paddingBottom="10dp"
                     android:paddingTop="10dp"
                     android:textSize="@dimen/settings_subsection_font_size"
-                    app:lang="english"/>
+                    app:lang="system"/>
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:orientation="horizontal"
@@ -123,6 +126,7 @@
                         android:textSize="@dimen/settings_button_font_size"
                         android:textColor="?text_color_soft"
                         android:gravity="center"
+                        app:lang="system"
                         android:background="?text_menu_button_background_left_drawable" />
                     <org.sefaria.sefaria.layouts.SefariaTextView
                         android:id="@+id/book_bi_btn"
@@ -135,6 +139,7 @@
                         android:textSize="@dimen/settings_button_font_size"
                         android:textColor="?text_color_soft"
                         android:gravity="center"
+                        app:lang="system"
                         android:background="?text_menu_button_background_center_drawable" />
                     <org.sefaria.sefaria.layouts.SefariaTextView
                         android:id="@+id/book_he_btn"
@@ -147,6 +152,7 @@
                         android:textSize="@dimen/settings_button_font_size"
                         android:textColor="?text_color_soft"
                         android:gravity="center"
+                        app:lang="system"
                         android:background="?text_menu_button_background_right_drawable" />
 
 
@@ -166,6 +172,7 @@
                 android:background="@drawable/text_menu_button_background_system"
                 android:text="@string/save_settings"
                 android:textSize="@dimen/settings_button_font_size"
+                app:lang="system"
                 android:textColor="#ffffff"/>
 
             <View
@@ -194,7 +201,9 @@
                     android:paddingTop="5dp"
                     android:paddingBottom="5dp"
                     android:textSize="@dimen/settings_subsection_font_size"
-                    app:lang="english"/>
+                    app:lang="system"
+                    android:onClick="switchAPIClick"
+                    />
 
                 <org.sefaria.sefaria.layouts.SefariaTextView
                     android:layout_width="match_parent"
@@ -205,6 +214,7 @@
                     android:paddingBottom="10dp"
                     android:textSize="12sp"
                     android:textColor="?text_color_soft"
+                    app:lang="system"
                     />
 
                 <org.sefaria.sefaria.layouts.SefariaTextView
@@ -217,7 +227,9 @@
                     android:background="?text_menu_button_background_drawable"
                     android:text="@string/update_library"
                     android:textSize="@dimen/settings_button_font_size"
-                    android:textColor="?text_color_soft"/>
+                    android:textColor="?text_color_soft"
+                    app:lang="system"
+                    />
 
                 <org.sefaria.sefaria.layouts.SefariaTextView
                     android:id="@+id/delete_library"
@@ -229,6 +241,7 @@
                     android:background="?text_menu_button_background_drawable"
                     android:text="@string/delete_library"
                     android:textSize="@dimen/settings_button_font_size"
+                    app:lang="system"
                     android:textColor="?text_color_soft"/>
 
                 <org.sefaria.sefaria.layouts.SefariaTextView
@@ -241,6 +254,7 @@
                     android:background="?text_menu_button_background_drawable"
                     android:text="@string/download_library"
                     android:textSize="@dimen/settings_button_font_size"
+                    app:lang="system"
                     android:textColor="?text_color_soft"/>
 
             </LinearLayout>
@@ -252,6 +266,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/app_version_is"
+                app:lang="system"
                 android:gravity="center"
                 android:padding="1dp"
                 android:layout_marginTop="15dp"
@@ -262,6 +277,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/library_version_is"
+                app:lang="system"
                 android:gravity="center"
                 android:padding="1dp"
                 android:textColor="?text_color_soft"
@@ -273,6 +289,7 @@
                 android:text="@string/library_version_is"
                 android:gravity="center"
                 android:padding="1dp"
+                app:lang="system"
                 android:textColor="?text_color_soft"
                 android:onClick="debubDBUnlockClick" />
 

@@ -2,6 +2,7 @@ package org.sefaria.sefaria.activities;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.text.BidiFormatter;
@@ -48,7 +49,9 @@ import java.util.List;
 
 public class SearchActivity extends Activity implements AbsListView.OnScrollListener {
 
+
     private static final int PAGE_SIZE = 30;
+    private static final String INTENT_SEARCH_TERM = "searchTerm";
 
     private SearchAdapter adapter;
     private ListView listView;
@@ -58,6 +61,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
     private int preLast;
     private boolean APIError = false;
     private AutoCompleteTextView autoCompleteTextView;
+    private int oldTheme = Settings.getTheme();
 
     private String numberOfResults = "";
     @Override
@@ -67,28 +71,36 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
         setContentView(R.layout.activity_search);
 
 
+
         LinearLayout actionbarRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         actionbarRoot.addView(new SearchActionbar(this, closeClick, searchClick, null, null, -1, "<i>" + MyApp.getRString(R.string.search) + "</i>"));
 
 
 
+        String searchTerm;
+        if(savedInstanceState == null){//it's coming from a saved to ram state
+            Intent intent = getIntent();
+            searchTerm = intent.getStringExtra(INTENT_SEARCH_TERM);
+        }else{
+            searchTerm = savedInstanceState.getString(INTENT_SEARCH_TERM);
+        }
+
         autoCompleteTextView = (AutoCompleteTextView) findViewById(R.id.auto_complete_text_view);
+        if(searchTerm != null)
+            autoCompleteTextView.setText(searchTerm);
         autoCompleteTextView.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
                 // TODO Auto-generated method stub
             }
 
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
                 // TODO Auto-generated method stub
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-
                 // TODO Auto-generated method stub
             }
         });
@@ -135,8 +147,27 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
     };
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(INTENT_SEARCH_TERM,autoCompleteTextView.getText().toString());
+    }
+
+    private void restartActivity(){
+        Intent intent = new Intent(this,SearchActivity.class);
+        intent.putExtra(INTENT_SEARCH_TERM,autoCompleteTextView.getText().toString());
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
+
+        if(Settings.getTheme() != oldTheme){
+            restartActivity();
+            return;
+        }
+
         //open the keyboard focused in the edtSearch
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.showSoftInput(autoCompleteTextView, InputMethodManager.SHOW_IMPLICIT);
@@ -157,6 +188,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
 
         DialogNoahSnackbar.checkCurrentDialog(this, (ViewGroup) findViewById(R.id.dialogNoahSnackbarRoot));
     }
+
 
     private void runSearch(){
         autoCompleteTextView.clearFocus();
