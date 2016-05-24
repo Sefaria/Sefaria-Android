@@ -165,7 +165,7 @@ public class TOCGrid extends LinearLayout {
     private double getRegularColumnCount(){
         if(regularColumnCount == 0.0){
             Point size = MyApp.getScreenSize();
-            regularColumnCount = (size.x)/53.0;
+            regularColumnCount = (size.x)/48.0;
             if(regularColumnCount < 1.0)
                 regularColumnCount = 1.0;
         }

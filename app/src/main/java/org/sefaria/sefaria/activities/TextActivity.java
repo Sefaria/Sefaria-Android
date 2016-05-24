@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.R;
+import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.TextElements.OnSegmentSpanClickListener;
 import org.sefaria.sefaria.TextElements.TextAdapter;
 import org.sefaria.sefaria.TextElements.SegmentSpannable;
@@ -45,7 +46,7 @@ public class TextActivity extends SuperTextActivity implements AbsListView.OnScr
             return;
         }
         //NOTE: using the same layout as SectionActivity
-        setContentView(R.layout.activity_section);
+        setContentView(R.layout.activity_text);
 
         init();
     }
@@ -114,7 +115,7 @@ public class TextActivity extends SuperTextActivity implements AbsListView.OnScr
             if (this.dir == TextEnums.NEXT_SECTION) {
                 textAdapter.add(loaderSection);
             } else /*if (this.dir == TextEnums.PREV_SECTION)*/ {
-                textAdapter.add(0, loaderSection);
+                //textAdapter.add(0, loaderSection);
             }
         }
 
@@ -130,7 +131,7 @@ public class TextActivity extends SuperTextActivity implements AbsListView.OnScr
             isLoadingInit = false;
 
 
-            textAdapter.remove(loaderSection);
+
             if (textsList == null) {
                 problemLoadedSection = catalystSection;
                 return;
@@ -141,7 +142,7 @@ public class TextActivity extends SuperTextActivity implements AbsListView.OnScr
             Section newSection = new Section(textsList, sectionHeader);
             if (dir == TextEnums.NEXT_SECTION) {
 
-
+                textAdapter.remove(loaderSection);
                 /*if(sectionHeader.getText(Util.Lang.EN).length() > 0 || sectionHeader.getText(Util.Lang.HE).length() > 0)
                     textAdapter.add(sectionHeader);*/
                 textAdapter.add(newSection);
@@ -178,6 +179,11 @@ public class TextActivity extends SuperTextActivity implements AbsListView.OnScr
 
     protected void setTextLang(Util.Lang textLang) {
         this.textLang = textLang;
+        if (textLang == Util.Lang.BI) {
+            Settings.setIsCts(false);
+            restartActivity();
+        }
+
         textAdapter.notifyDataSetChanged();
         linkFragment.notifyDataSetChanged();
     }

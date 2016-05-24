@@ -43,7 +43,6 @@ import org.sefaria.sefaria.layouts.ScrollViewExt;
 import org.sefaria.sefaria.MenuElements.MenuNode;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.sefaria.sefaria.MyApp.getRString;
@@ -73,7 +72,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
     protected boolean isTextMenuVisible;
     protected LinearLayout textMenuRoot;
 
-    protected ScrollViewExt textScrollView;
+
     protected TextMenuBar textMenuBar;
     protected Book book;
     protected List<TextChapterHeader> textChapterHeaders;
@@ -354,7 +353,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
         Intent intent;
 
         //Open TextActivity if the current book can be cts, and your settings are cts
-        if (Settings.getIsCts() && book != null && getIsCtsText(book)) {
+        if (Settings.getIsCts() && Settings.getDefaultTextLang() != Util.Lang.BI && book != null && canBeCts(book)) {
             intent = new Intent(context, TextActivity.class);
         } else {
             intent = new Intent(context, SectionActivity.class);
@@ -394,12 +393,11 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
         isTextMenuVisible = false;
         textMenuRoot = (LinearLayout) findViewById(R.id.textMenuRoot);
-        textMenuBar = new TextMenuBar(SuperTextActivity.this,textMenuBtnClick,getIsCtsText(book));
+        textMenuBar = new TextMenuBar(SuperTextActivity.this,textMenuBtnClick, canBeCts(book));
         textMenuBar.setState(textLang, isCts, isSideBySide, colorTheme);
         textMenuRoot.addView(textMenuBar);
         textMenuRoot.setVisibility(View.GONE);
 
-        textScrollView = (ScrollViewExt) findViewById(R.id.textScrollView);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this,drawerLayout,R.string.OK,R.string.CANCEL) {
             @Override
@@ -747,16 +745,17 @@ public abstract class SuperTextActivity extends FragmentActivity {
     public Book getBook() { return book; }
     public boolean getIsCts(){ return isCts;}
 
-    public static boolean getIsCtsText(Book book) {
+    public static boolean canBeCts(Book book) {
         boolean isCtsText = false;
         if (book != null) {
-            List<String> cats = Arrays.asList(book.categories);
 
 
             final String[] CTS_TEXT_CATS = {"Talmud"};
             for (String ctsText : CTS_TEXT_CATS) {
-                isCtsText = cats.contains(ctsText);
-                if (isCtsText) break;
+                isCtsText = book.categories[0].equals(ctsText);
+                if (isCtsText) {
+                    break;
+                }
             }
         }
         return isCtsText;

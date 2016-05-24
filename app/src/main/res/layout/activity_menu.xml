@@ -23,11 +23,12 @@
         android:clipToPadding="false"
         >
         <LinearLayout
+            android:orientation="vertical"
             android:id="@+id/gridRoot"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingLeft="@dimen/text_activity_main_margin"
-            android:paddingRight="@dimen/text_activity_main_margin">
+            android:paddingLeft="@dimen/main_margin_lr"
+            android:paddingRight="@dimen/main_margin_lr">
 
         </LinearLayout>
 
