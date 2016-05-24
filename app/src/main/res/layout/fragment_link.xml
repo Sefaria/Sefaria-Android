@@ -20,8 +20,8 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:background="?link_selector_bar_bg"
-        android:paddingLeft="@dimen/text_activity_main_margin"
-        android:paddingRight="@dimen/text_activity_main_margin"
+        android:paddingLeft="@dimen/main_margin_lr"
+        android:paddingRight="@dimen/main_margin_lr"
         custom:dragView="@+id/linkRoot">
 
         <org.sefaria.sefaria.layouts.SefariaTextView
