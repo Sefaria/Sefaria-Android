@@ -39,8 +39,8 @@ public class SearchAPI {
                         "}" +
                         "}," +
                         "\"highlight\": {" +
-                        "\"pre_tags\": [\"<b>\"]," +
-                        "\"post_tags\": [\"</b>\"]," +
+                        "\"pre_tags\": [\"<big><b>\"]," +
+                        "\"post_tags\": [\"</b></big>\"]," +
                         "\"fields\": {" +
                         "\"content\": {\"fragment_size\": 200}" +
                         "}" +

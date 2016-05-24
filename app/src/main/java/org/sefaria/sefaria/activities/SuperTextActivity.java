@@ -289,6 +289,11 @@ public abstract class SuperTextActivity extends FragmentActivity {
         if(!goodOnCreate)
             return;
 
+        if(Settings.getTheme() != colorTheme){
+            restartActivity();
+            return;
+        }
+
         textLang = Settings.BookSettings.getSavedBook(book).lang;
 
         GoogleTracker.sendEvent(GoogleTracker.CATEGORY_NEW_TEXT, book.title, Settings.lang2Int(textLang));
