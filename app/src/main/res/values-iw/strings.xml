@@ -76,4 +76,17 @@
     <string name="support_sefaria">תתמוך בספאריה</string>
     <string name="donate_now">תתרום עכשיו</string>
     <string name="connections">קישורים</string>
+
+    <string name="downloading_library">Downloading Library</string>
+    <string name="loading">Loading...</string>
+    <string name="results">Results</string>
+    <string name="error_getting_book">Error getting book</string>
+    <string name="not_avil_in_online_mode">Not available in Online mode</string>
+    <string name="didnt_find_query_in_book">Didn\'t find query in book</string>
+    <string name="downloading_library_even_not_newest">Downloading Library (even if it is not a new version)</string>
+    <string name="unable_to_load_toc_for_book">Unable to load Table of Contents for this book</string>
+    <string name="starting_download">Starting Download</string>
+    <string name="still_downloading_library">Still downloading Library</string>
+    <string name="cant_download_without_storage_perms">Can\'t download Library without storage permissions</string>
+    <string name="sorry_book_not_found">Sorry, book not found</string>
 </resources>
