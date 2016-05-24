@@ -715,8 +715,6 @@ public class Node{// implements  Parcelable{
     }
 
     private static void addSubChaps(Node upperNode, int currDepth, JSONArray counts) throws JSONException {
-        Log.d("Node", "addSubChaps" + upperNode + "__" + currDepth);
-
         //currDepth = getDepth(counts,0);
 
 

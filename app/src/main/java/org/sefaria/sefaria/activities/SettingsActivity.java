@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.sefaria.sefaria.BuildConfig;
+import org.sefaria.sefaria.Dialog.DialogCallable;
 import org.sefaria.sefaria.Dialog.DialogManager2;
 import org.sefaria.sefaria.Dialog.DialogNoahSnackbar;
 import org.sefaria.sefaria.MenuElements.MenuNode;
@@ -113,7 +114,16 @@ public class SettingsActivity extends Activity {
     View.OnClickListener deleteClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-        DialogManager2.showDialog(SettingsActivity.this, DialogManager2.DialogPreset.ARE_YOU_SURE_DELETE);
+        DialogManager2.showDialog(SettingsActivity.this, new DialogCallable(MyApp.getRString(R.string.are_you_sure_delete_title),
+                MyApp.getRString(R.string.are_you_sure_delete_message), MyApp.getRString(R.string.delete_library),
+                MyApp.getRString(R.string.CANCEL), null, DialogCallable.DialogType.ALERT) {
+            @Override
+            public void positiveClick() {
+                Database.deleteDatabase();
+                setState(null,null,Settings.getUseAPI());
+                setDatabaseInfo();
+            }
+        });
         }
     };
 

@@ -36,7 +36,7 @@ public class DialogManager2 {
         NO_NEW_UPDATE,UPDATE_STARTED,
         ARE_YOU_SURE_CANCEL,CHECKING_FOR_UPDATE,
         SWITCHING_TO_API,NO_INTERNET,DATA_CONNECTED,
-        HOW_TO_REPORT_CORRECTIONS,ARE_YOU_SURE_DELETE
+        HOW_TO_REPORT_CORRECTIONS
     }
 
     private static Dialog currDialog;
@@ -223,18 +223,6 @@ public class DialogManager2 {
                         emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{email});
                         activity.startActivity(Intent.createChooser(emailIntent, "Send email"));
 
-                    }
-                });
-                break;
-            case ARE_YOU_SURE_DELETE:
-                DialogManager2.showDialog(activity, new DialogCallable(MyApp.getRString(R.string.are_you_sure_delete_title),
-                        MyApp.getRString(R.string.are_you_sure_delete_message), MyApp.getRString(R.string.delete_library),
-                        MyApp.getRString(R.string.CANCEL), null, DialogCallable.DialogType.ALERT) {
-                    @Override
-                    public void positiveClick() {
-                        Database.deleteDatabase();
-                        SettingsActivity settingsActivity = (SettingsActivity) activity;
-                        settingsActivity.setState(null,null,Settings.getUseAPI());
                     }
                 });
                 break;

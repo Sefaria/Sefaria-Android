@@ -230,6 +230,7 @@ public class Database extends SQLiteOpenHelper{
             Log.d("db","deleting");
             oldDB.delete();
         }
+        hasOfflineDB = null;
         Settings.setUseAPI(true);
     }
 

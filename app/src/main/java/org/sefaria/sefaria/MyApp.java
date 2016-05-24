@@ -1,7 +1,9 @@
 package org.sefaria.sefaria;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.Application;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -18,6 +20,7 @@ import android.view.Display;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import org.sefaria.sefaria.activities.SectionActivity;
 import org.sefaria.sefaria.activities.SuperTextActivity;
 import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.database.Book;
@@ -268,6 +271,14 @@ public class MyApp extends Application {
         return false;
     }
 
+    public static void restart(){
+        Intent mStartActivity = new Intent(MyApp.getContext(), SectionActivity.class);
+        int mPendingIntentId = 31415;
+        PendingIntent mPendingIntent = PendingIntent.getActivity(MyApp.getContext(), mPendingIntentId,  mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
+        AlarmManager mgr = (AlarmManager)MyApp.getContext().getSystemService(Context.ALARM_SERVICE);
+        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
+        System.exit(0);
+    }
 
 
 

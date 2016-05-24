@@ -372,13 +372,7 @@ public class UpdateService extends Service {
         //Toast.makeText(MyApp.currActivityContext, "Installation complete. Enjoy the Torah!", Toast.LENGTH_SHORT).show();
         unlockOrientation((Activity)MyApp.getContext());
         //total restart. To be safe, restart so the database is readable.
-        Intent mStartActivity = new Intent(MyApp.getContext(), SectionActivity.class);
-        int mPendingIntentId = 31415;
-        PendingIntent mPendingIntent = PendingIntent.getActivity(MyApp.getContext(), mPendingIntentId,  mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
-
-        AlarmManager mgr = (AlarmManager)MyApp.getContext().getSystemService(Context.ALARM_SERVICE);
-        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
-        System.exit(0);
+        MyApp.restart();
     }
 
     public static void endService() {
