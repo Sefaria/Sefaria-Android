@@ -85,8 +85,21 @@ public class TOCActivity extends AppCompatActivity {
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(customActionbar);
 
-        AsyncLoadTOC altoc = new AsyncLoadTOC();
-        altoc.execute();
+
+        List<Node> tocNodesRoots = null;
+        try {
+            tocNodesRoots = book.getTOCroots();
+        } catch (API.APIException e) {
+            API.makeAPIErrorToast(context);
+            finish();
+            return;
+        }
+
+        //List<Book> commentaries = book.getAllCommentaries();
+        ScrollView tocRoot = (ScrollView) findViewById(R.id.toc_root);
+        tocGrid = new TOCGrid(TOCActivity.this,book, tocNodesRoots,false,lang,pathDefiningNode);
+        tocRoot.addView(tocGrid);
+
     }
 
     @Override
@@ -171,7 +184,6 @@ public class TOCActivity extends AppCompatActivity {
     View.OnClickListener langClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            //TODO change icon (maybe)
             lang = Settings.switchMenuLang();
             tocGrid.setLang(lang);
             //cab regular lang does not changed b/c it stays as the systemLang
@@ -188,36 +200,5 @@ public class TOCActivity extends AppCompatActivity {
             onBackPressed();
         }
     };
-
-    private class AsyncLoadTOC extends AsyncTask<Void,Void, List<Node>> {
-        @Override
-        protected void onPreExecute() {
-            findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected List<Node> doInBackground(Void... params) {
-            List<Node> tocNodesRoots = null;
-            try {
-                tocNodesRoots = book.getTOCroots();
-            } catch (API.APIException e) {
-                API.makeAPIErrorToast(context);
-                finish();
-            }
-
-            return tocNodesRoots;
-        }
-
-        @Override
-        protected void onPostExecute(List<Node> tocNodesRoots) {
-            findViewById(R.id.progressBar).setVisibility(View.GONE);
-            //Log.d("toc", "ROOTs SIZE " + tocNodesRoots.size());
-            List<Book> commentaries = book.getAllCommentaries();
-
-            ScrollView tocRoot = (ScrollView) findViewById(R.id.toc_root);
-            tocGrid = new TOCGrid(TOCActivity.this,book, tocNodesRoots,false,lang,pathDefiningNode);
-            tocRoot.addView(tocGrid);
-        }
-    }
 
 }
