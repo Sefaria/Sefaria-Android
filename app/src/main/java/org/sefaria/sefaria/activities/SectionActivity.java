@@ -390,7 +390,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
             if (this.dir == TextEnums.NEXT_SECTION) {
                 sectionAdapter.add(loaderText);
             } else /*if (this.dir == TextEnums.PREV_SECTION)*/ {
-                sectionAdapter.add(0,loaderText);
+                //sectionAdapter.add(0,loaderText);
             }
         }
 
@@ -406,7 +406,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
             isLoadingInit = false;
 
 
-            sectionAdapter.remove(loaderText);
+
             if (textsList == null) {
                 problemLoadedText = catalystText;
                 return;
@@ -416,7 +416,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
             Text sectionHeader = getSectionHeaderText(dir);
             if (dir == TextEnums.NEXT_SECTION) {
 
-
+                sectionAdapter.remove(loaderText);
                 if(sectionHeader.getText(Util.Lang.EN).length() > 0 || sectionHeader.getText(Util.Lang.HE).length() > 0)
                     sectionAdapter.add(sectionHeader);
                 sectionAdapter.addAll(textsList);

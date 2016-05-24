@@ -5,7 +5,6 @@
     android:orientation="vertical"
     android:id="@+id/root"
     android:layout_height="match_parent"
-    tools:context=".HomeActivity"
     android:background="?link_bg">
 
     <LinearLayout
@@ -32,17 +31,17 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:layout_gravity="center"
-                android:paddingRight="@dimen/text_activity_main_margin"
-                android:paddingLeft="@dimen/text_activity_main_margin">
+                android:paddingRight="@dimen/main_margin_lr"
+                android:paddingLeft="@dimen/main_margin_lr">
                 <org.sefaria.sefaria.layouts.SefariaTextView
                     android:id="@+id/recentTextsTV"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
-                    android:paddingLeft="3dp"
-                    android:paddingRight="3dp"
                     android:paddingTop="20dp"
                     android:paddingBottom="10dp"
+                    android:paddingLeft="3dp"
+                    android:paddingRight="3dp"
                     android:textSize="15sp"
                     android:text="@string/recent"
                     app:isSerif="false"
@@ -161,8 +160,8 @@
             <LinearLayout
                 android:orientation="horizontal" android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:paddingLeft="@dimen/text_activity_main_margin"
-                android:paddingRight="@dimen/text_activity_main_margin"
+                android:paddingLeft="@dimen/main_margin_lr"
+                android:paddingRight="@dimen/main_margin_lr"
                 android:paddingBottom="30dp">
                 <org.sefaria.sefaria.layouts.SefariaTextView
                     android:text="Settings"
@@ -172,7 +171,7 @@
                     android:gravity="center_vertical"
                     android:clickable="true"
                     android:textColor="?text_color_faded"
-                    android:textSize="12sp"
+                    android:textSize="13sp"
                     android:onClick="settingsClick" />
                 <org.sefaria.sefaria.layouts.SefariaTextView
                     android:text="●"
@@ -181,7 +180,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:clickable="true"
-                    android:textColor="#ccc"
+                    android:textColor="?text_color_faded"
                     android:textSize="5sp"
                     android:onClick="settingsClick" />
                 <org.sefaria.sefaria.layouts.SefariaTextView
@@ -192,7 +191,7 @@
                     android:gravity="center_vertical"
                     android:clickable="true"
                     android:textColor="?text_color_faded"
-                    android:textSize="12sp"
+                    android:textSize="13sp"
                     android:onClick="aboutClick" />
                 <org.sefaria.sefaria.layouts.SefariaTextView
                     android:text="●"
@@ -201,7 +200,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:clickable="true"
-                    android:textColor="#ccc"
+                    android:textColor="?text_color_faded"
                     android:textSize="5sp"
                     android:onClick="settingsClick" />
                 <org.sefaria.sefaria.layouts.SefariaTextView
@@ -212,7 +211,7 @@
                     android:gravity="center_vertical"
                     android:clickable="true"
                     android:textColor="?text_color_faded"
-                    android:textSize="12sp"
+                    android:textSize="13sp"
                     android:onClick="feedbackClick" />
                 <org.sefaria.sefaria.layouts.SefariaTextView
                     android:text="●"
@@ -221,7 +220,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:clickable="true"
-                    android:textColor="#ccc"
+                    android:textColor="?text_color_faded"
                     android:textSize="5sp"
                     android:onClick="settingsClick" />
                 <org.sefaria.sefaria.layouts.SefariaTextView
@@ -232,7 +231,7 @@
                     android:gravity="center_vertical"
                     android:clickable="true"
                     android:textColor="?text_color_faded"
-                    android:textSize="12sp"
+                    android:textSize="13sp"
                     android:onClick="siteClick" />
             </LinearLayout>
         </LinearLayout>

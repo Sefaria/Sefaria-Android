@@ -36,21 +36,17 @@
             android:translationZ="20dp"
             android:background="@color/menu_background"
             android:layout_height="wrap_content"></LinearLayout>
-        <org.sefaria.sefaria.layouts.ScrollViewExt
-            android:id="@+id/textScrollView"
+
+
+        <org.sefaria.sefaria.layouts.ListViewExt
+            android:id="@+id/listview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/actionbarRoot"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp">
-            <LinearLayout
-                android:id="@+id/textRoot"
-                android:layout_width="match_parent"
-                android:orientation="vertical"
-                android:layout_height="wrap_content">
+            android:layout_below="@+id/actionbarRoot"
+            />
 
-            </LinearLayout>
-        </org.sefaria.sefaria.layouts.ScrollViewExt>
+
+
 
         <RelativeLayout
             android:visibility="gone"
