@@ -63,6 +63,7 @@
                     android:layout_marginTop="15dp"/>
 
                 <org.sefaria.sefaria.layouts.SefariaTextView
+                    android:id="@+id/browseTV"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
@@ -90,6 +91,7 @@
                     android:layout_marginTop="15dp"/>
 
                 <org.sefaria.sefaria.layouts.SefariaTextView
+                    android:id="@+id/calendarTV"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
@@ -117,6 +119,7 @@
                     android:layout_marginTop="15dp"/>
 
                 <org.sefaria.sefaria.layouts.SefariaTextView
+                    android:id="@+id/supportTV"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
@@ -132,7 +135,7 @@
                     android:textAllCaps="true"/>
 
                 <org.sefaria.sefaria.layouts.SefariaTextView
-
+                    android:id="@+id/donateTV"
                     android:layout_marginBottom="15dp"
                     android:layout_width="match_parent"
                     android:layout_height="43dp"
