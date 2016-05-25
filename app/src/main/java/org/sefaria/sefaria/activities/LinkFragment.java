@@ -172,7 +172,7 @@ public class LinkFragment extends android.support.v4.app.Fragment {
 
             //add margins
             FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            int sideMargin = (int) getContext().getResources().getDimension(R.dimen.text_activity_main_margin) + 10;
+            int sideMargin = (int) getContext().getResources().getDimension(R.dimen.main_margin_lr) ;
             lp.setMargins(sideMargin,0,sideMargin,0);
             linkRecycler.setLayoutParams(lp);
 
