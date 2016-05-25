@@ -32,7 +32,8 @@
                 android:orientation="vertical"
                 android:layout_gravity="center"
                 android:paddingRight="@dimen/main_margin_lr"
-                android:paddingLeft="@dimen/main_margin_lr">
+                android:paddingLeft="@dimen/main_margin_lr"
+                android:clipToPadding="false">
                 <org.sefaria.sefaria.layouts.SefariaTextView
                     android:id="@+id/recentTextsTV"
                     android:layout_width="match_parent"
@@ -58,6 +59,8 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
+                    android:layout_marginEnd="@dimen/main_margin_lr_neg"
+                    android:layout_marginStart="@dimen/main_margin_lr_neg"
                     android:background="?custom_actionbar_border"
 
                     android:layout_marginTop="15dp"/>
@@ -86,6 +89,8 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
+                    android:layout_marginEnd="@dimen/main_margin_lr_neg"
+                    android:layout_marginStart="@dimen/main_margin_lr_neg"
                     android:background="?custom_actionbar_border"
 
                     android:layout_marginTop="15dp"/>
@@ -114,6 +119,8 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
+                    android:layout_marginEnd="@dimen/main_margin_lr_neg"
+                    android:layout_marginStart="@dimen/main_margin_lr_neg"
                     android:background="?custom_actionbar_border"
 
                     android:layout_marginTop="15dp"/>

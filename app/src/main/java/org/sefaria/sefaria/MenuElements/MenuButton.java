@@ -20,6 +20,7 @@ public class MenuButton extends MenuElement {
     private MenuNode menuNode;
     private SefariaTextView entv;
     private SefariaTextView hetv;
+    private SefariaTextView tv;
     private View colorBar;
 
     public MenuButton(Context context) {
@@ -49,8 +50,7 @@ public class MenuButton extends MenuElement {
             setColor(menuNode.getColor());
         } else {//menu
             inflate(context, R.layout.button_menu, this);
-            this.entv = (SefariaTextView) this.findViewById(R.id.en_tv);
-            this.hetv = (SefariaTextView) this.findViewById(R.id.he_tv);
+            this.tv = (SefariaTextView) findViewById(R.id.tv);
 
         }
         this.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, 1f));
@@ -90,13 +90,21 @@ public class MenuButton extends MenuElement {
     public void setLang(Util.Lang lang) {
         SefariaTextView tv;
         if (lang == Util.Lang.EN) {
-            tv = entv;
-            findViewById(R.id.en).setVisibility(View.VISIBLE);
-            findViewById(R.id.he).setVisibility(View.GONE);
+            try {
+                tv = entv;
+                findViewById(R.id.en).setVisibility(View.VISIBLE);
+                findViewById(R.id.he).setVisibility(View.GONE);
+            } catch (NullPointerException e) {
+                tv = this.tv;
+            }
         } else {
-            tv = hetv;
-            findViewById(R.id.en).setVisibility(View.GONE);
-            findViewById(R.id.he).setVisibility(View.VISIBLE);
+            try {
+                tv = hetv;
+                findViewById(R.id.en).setVisibility(View.GONE);
+                findViewById(R.id.he).setVisibility(View.VISIBLE);
+            } catch (NullPointerException e) {
+                tv = this.tv;
+            }
         }
         tv.setText(menuNode.getPrettyTitle(lang));
         //NOTE: Need to use pixels here b/c I'm using getDimension which already converts
