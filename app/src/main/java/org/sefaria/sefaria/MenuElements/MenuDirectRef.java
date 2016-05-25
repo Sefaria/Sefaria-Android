@@ -32,7 +32,7 @@ public class MenuDirectRef extends LinearLayout{
 
     public MenuDirectRef(Context context, String enTitle, String heTitle, String nodePath, Book book, String colorWording){
         super(context);
-        inflate(context, R.layout.button_home, this);
+        inflate(context, R.layout.button_menu_direct_ref, this);
 
 
         this.context = context;
