@@ -57,7 +57,7 @@ public class SettingsActivity extends Activity {
         numDebugDBUnlockClicks = 0;
 
         backClick = null;
-        CustomActionbar customActionbar = new CustomActionbar(this, new MenuNode("Settings","הגדרות", null), Settings.getSystemLang(),null,null,closeClick,null,null,null,null,null,R.color.system,false);
+        CustomActionbar customActionbar = new CustomActionbar(this, new MenuNode("Settings","הגדרות", null), Settings.getSystemLang(),null,null,closeClick,null,null,null,null,null,R.color.system,false,false);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(customActionbar);
         //fontSize   = (EditText)findViewById(R.id.fontSize);

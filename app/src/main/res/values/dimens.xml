@@ -37,7 +37,7 @@
     <dimen name="text_activtiy_between_segment_padding">6dp</dimen>
     <dimen name="text_activtiy_numbering_padding">10dp</dimen>
     <dimen name="text_activity_main_margin">30dp</dimen>
-    <dimen name="main_margin_lr">12dp</dimen>
+    <dimen name="main_margin_lr">16dp</dimen>
     <dimen name="main_margin_lr_neg">-12dp</dimen>
     <dimen name="text_activity_nums_width">40dp</dimen>
 
@@ -45,6 +45,8 @@
     <dimen name="link_betweens_segment_padding">15dp</dimen>
 
     <dimen name="menu_button_font_size">18sp</dimen>
+
+    <dimen name="home_btw_section_padding">20dp</dimen>
 
 
 </resources>

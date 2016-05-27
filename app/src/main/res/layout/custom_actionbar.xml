@@ -205,7 +205,7 @@
                 android:id="@+id/toc_btn_left"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingRight="3dp"
+                android:paddingRight="6dp"
                 android:visibility="gone"
                 android:layout_weight="1"
                 android:layout_gravity="center"
