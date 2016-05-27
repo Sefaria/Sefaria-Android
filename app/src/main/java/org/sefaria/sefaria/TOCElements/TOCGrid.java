@@ -77,8 +77,8 @@ public class TOCGrid extends LinearLayout {
     private void init() {
         this.setOrientation(LinearLayout.VERTICAL);
 
-        int sidePadding = (int)context.getResources().getDimension(R.dimen.main_margin_lr);
-        this.setPadding(sidePadding, 10, sidePadding, 100);
+        int sidePadding = Math.round(Util.dpToPixels(context, context.getResources().getDimension(R.dimen.main_margin_lr)));
+        this.setPadding(sidePadding/2, 10, sidePadding/2, 100);
         this.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
         this.flippedForHe = false;
 
@@ -122,7 +122,7 @@ public class TOCGrid extends LinearLayout {
         //ADD GREY DIVIDER
         View divider = new View(context);
         LinearLayout.LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, 1);
-        lp.setMargins(0, Math.round(Util.dpToPixels(context, 20)), 0, Math.round(Util.dpToPixels(context, 20)));
+        lp.setMargins(0,Math.round(Util.dpToPixels(context, 20)), 0,Math.round(Util.dpToPixels(context, 20)));
         divider.setLayoutParams(lp);
         divider.setBackgroundColor(Color.parseColor("#CCCCCC"));
         this.addView(divider,3);

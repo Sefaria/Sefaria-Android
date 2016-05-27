@@ -39,10 +39,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
-                    android:paddingTop="20dp"
+                    android:paddingTop="@dimen/home_btw_section_padding"
                     android:paddingBottom="10dp"
-                    android:paddingLeft="3dp"
-                    android:paddingRight="3dp"
                     android:textSize="15sp"
                     android:text="@string/recent"
                     app:isSerif="false"
@@ -63,16 +61,14 @@
                     android:layout_marginStart="@dimen/main_margin_lr_neg"
                     android:background="?custom_actionbar_border"
 
-                    android:layout_marginTop="15dp"/>
+                    android:layout_marginTop="@dimen/home_btw_section_padding"/>
 
                 <org.sefaria.sefaria.layouts.SefariaTextView
                     android:id="@+id/browseTV"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
-                    android:paddingLeft="3dp"
-                    android:paddingRight="3dp"
-                    android:paddingTop="15dp"
+                    android:paddingTop="@dimen/home_btw_section_padding"
                     android:paddingBottom="10dp"
                     android:textSize="15sp"
                     android:text="@string/browse"
@@ -93,16 +89,14 @@
                     android:layout_marginStart="@dimen/main_margin_lr_neg"
                     android:background="?custom_actionbar_border"
 
-                    android:layout_marginTop="15dp"/>
+                    android:layout_marginTop="@dimen/home_btw_section_padding"/>
 
                 <org.sefaria.sefaria.layouts.SefariaTextView
                     android:id="@+id/calendarTV"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
-                    android:paddingLeft="3dp"
-                    android:paddingRight="3dp"
-                    android:paddingTop="20dp"
+                    android:paddingTop="@dimen/home_btw_section_padding"
                     android:paddingBottom="10dp"
                     android:textSize="15sp"
                     android:text="@string/calendar"
@@ -123,16 +117,14 @@
                     android:layout_marginStart="@dimen/main_margin_lr_neg"
                     android:background="?custom_actionbar_border"
 
-                    android:layout_marginTop="15dp"/>
+                    android:layout_marginTop="@dimen/home_btw_section_padding"/>
 
                 <org.sefaria.sefaria.layouts.SefariaTextView
                     android:id="@+id/supportTV"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
-                    android:paddingLeft="3dp"
-                    android:paddingRight="3dp"
-                    android:paddingTop="20dp"
+                    android:paddingTop="@dimen/home_btw_section_padding"
                     android:paddingBottom="10dp"
                     android:textSize="15sp"
                     android:text="@string/support_sefaria"
@@ -143,7 +135,7 @@
 
                 <org.sefaria.sefaria.layouts.SefariaTextView
                     android:id="@+id/donateTV"
-                    android:layout_marginBottom="15dp"
+                    android:layout_marginBottom="0dp"
                     android:layout_width="match_parent"
                     android:layout_height="43dp"
                     android:layout_gravity="center_vertical"
@@ -169,7 +161,7 @@
 
             <LinearLayout
                 android:orientation="horizontal" android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="wrap_content"
                 android:paddingLeft="@dimen/main_margin_lr"
                 android:paddingRight="@dimen/main_margin_lr"
                 android:paddingBottom="30dp">
@@ -181,7 +173,7 @@
                     android:gravity="center_vertical"
                     android:clickable="true"
                     android:textColor="?text_color_faded"
-                    android:textSize="13sp"
+                    android:textSize="12sp"
                     android:onClick="settingsClick" />
                 <org.sefaria.sefaria.layouts.SefariaTextView
                     android:text="●"
@@ -201,7 +193,7 @@
                     android:gravity="center_vertical"
                     android:clickable="true"
                     android:textColor="?text_color_faded"
-                    android:textSize="13sp"
+                    android:textSize="12sp"
                     android:onClick="aboutClick" />
                 <org.sefaria.sefaria.layouts.SefariaTextView
                     android:text="●"
@@ -221,7 +213,7 @@
                     android:gravity="center_vertical"
                     android:clickable="true"
                     android:textColor="?text_color_faded"
-                    android:textSize="13sp"
+                    android:textSize="12sp"
                     android:onClick="feedbackClick" />
                 <org.sefaria.sefaria.layouts.SefariaTextView
                     android:text="●"
@@ -241,7 +233,7 @@
                     android:gravity="center_vertical"
                     android:clickable="true"
                     android:textColor="?text_color_faded"
-                    android:textSize="13sp"
+                    android:textSize="12sp"
                     android:onClick="siteClick" />
             </LinearLayout>
         </LinearLayout>

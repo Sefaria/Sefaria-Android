@@ -6,12 +6,13 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     tools:context="org.sefaria.sefaria.activities.SplashScreenActivity"
-    android:background="@color/splash_screen_bg"
+    android:background="@color/system"
     >
     <ImageView
         android:layout_width="230dp"
         android:layout_height="230dp"
         android:src="@drawable/splash_graphic"
+        android:tint="@android:color/white"
         android:layout_centerInParent="true"
         android:alpha=".8"
         />

@@ -453,7 +453,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
                 searchClick = null;
             backClick = null;
             homeLongClick = null;
-            customActionbar = new CustomActionbar(this, menuNode, menuLang,homeClick,homeLongClick, null,searchClick,titleClick,menuClick,backClick,null,catColor,true); //TODO.. I'm not actually sure this should be lang.. instead it shuold be MENU_LANG from Util.S
+            customActionbar = new CustomActionbar(this, menuNode, menuLang,homeClick,homeLongClick, null,searchClick,titleClick,menuClick,backClick,null,catColor,true,false); //TODO.. I'm not actually sure this should be lang.. instead it shuold be MENU_LANG from Util.S
             LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
             abRoot.addView(customActionbar);
             customActionbar.setLang(menuLang);

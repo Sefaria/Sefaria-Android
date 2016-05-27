@@ -38,7 +38,7 @@ public class CustomActionbar extends MenuElement {
 
     private static final boolean noBackButton = false;
 
-    public CustomActionbar(Activity activity, MenuNode menuNode, Util.Lang lang, OnClickListener homeClick, OnLongClickListener homeLongClick, OnClickListener closeClick, OnClickListener searchClick, OnClickListener titleClick, OnClickListener menuClick, OnClickListener backClick, OnClickListener menuLangClick, int catColor,boolean isSerif) {
+    public CustomActionbar(Activity activity, MenuNode menuNode, Util.Lang lang, OnClickListener homeClick, OnLongClickListener homeLongClick, OnClickListener closeClick, OnClickListener searchClick, OnClickListener titleClick, OnClickListener menuClick, OnClickListener backClick, OnClickListener menuLangClick, int catColor,boolean isSerif, boolean isMenu) {
         super(activity);
         inflate(activity, R.layout.custom_actionbar, this);
 
@@ -117,7 +117,7 @@ public class CustomActionbar extends MenuElement {
 
 
         this.isSerif = isSerif;
-        titleTV.setAllCaps(!isSerif);
+        titleTV.setAllCaps(isMenu || !isSerif);
         //DEAL WITH DIALOGSNACKBAR
         DialogNoahSnackbar.checkCurrentDialog(activity,(ViewGroup) this.findViewById(R.id.dialogNoahSnackbarRoot));
     }
@@ -127,9 +127,9 @@ public class CustomActionbar extends MenuElement {
         if(forTOC) { //Add down arrow
             if(lang == Util.Lang.HE) {
                 findViewById(R.id.toc_btn_left).setVisibility(VISIBLE);
-                findViewById(R.id.toc_btn_right).setVisibility(GONE);
+                findViewById(R.id.toc_btn_right).setVisibility(INVISIBLE);
             }else{
-                findViewById(R.id.toc_btn_left).setVisibility(GONE);
+                findViewById(R.id.toc_btn_left).setVisibility(INVISIBLE);
                 findViewById(R.id.toc_btn_right).setVisibility(VISIBLE);
             }
         }else{
