@@ -60,13 +60,13 @@ public class TextActivity extends SuperTextActivity implements AbsListView.OnScr
         listView.setAdapter(textAdapter);
         listView.setOnScrollListener(this);
         listView.setDivider(null);
-        /*listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 updateFocusedSegment();
                 onSegmentClick(linkFragment.getSegment());
             }
-        });*/
+        });
         //listView.setOnItemLongClickListener(onItemLongClickListener);
         listView.setOnScrollStoppedListener(new ListViewExt.OnScrollStoppedListener() {
 
@@ -451,6 +451,7 @@ public class TextActivity extends SuperTextActivity implements AbsListView.OnScr
     };
 
     public void onSegmentClick(Text currSegment) {
+
         if (isTextMenuVisible) {
             toggleTextMenu();
             return;
