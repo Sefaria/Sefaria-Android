@@ -14,14 +14,15 @@
         android:layout_height="1dp"
         android:background="?custom_actionbar_border"/>
 
+    <!--note that padding isn't main_margin_lr b/c of some strange phantom padding -->
     <org.sefaria.sefaria.layouts.LinkDraggerView
         android:id="@+id/link_selector_bar_root"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:background="?link_selector_bar_bg"
-        android:paddingLeft="@dimen/main_margin_lr"
-        android:paddingRight="@dimen/main_margin_lr"
+        android:paddingRight="5dp"
+        android:paddingLeft="17dp"
         custom:dragView="@+id/linkRoot">
 
         <org.sefaria.sefaria.layouts.SefariaTextView

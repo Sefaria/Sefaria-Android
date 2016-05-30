@@ -89,7 +89,7 @@ public class TOCActivity extends AppCompatActivity {
         homeClick = null;
         //pathDefiningNode = null;//this is so that when back is pressed (and not coming back from bundle.. TOTDO has to be dealt with) it will act differently
 
-        customActionbar = new CustomActionbar(this, titleNode, Settings.getSystemLang(),homeClick,null,closeClick,null,null,null,backClick,langClick,catColor,false);
+        customActionbar = new CustomActionbar(this, titleNode, Settings.getSystemLang(),homeClick,null,closeClick,null,null,null,backClick,langClick,catColor,false,false);
         customActionbar.setMenuBtnLang(lang);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(customActionbar);

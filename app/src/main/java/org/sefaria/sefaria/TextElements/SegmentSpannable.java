@@ -30,9 +30,8 @@ public class SegmentSpannable extends ClickableSpan {// extend ClickableSpan
     }
 
     public void onClick(View tv) {
-        Log.d("text", "CLICK " + segmentStr) ;
         //setActive(!isActive);
-        onSegmentSpanClickListener.onSegmentClick((TextView) tv, this);
+        //onSegmentSpanClickListener.onSegmentClick((TextView) tv, this);
     }
 
     private void setActive(boolean isActive) {

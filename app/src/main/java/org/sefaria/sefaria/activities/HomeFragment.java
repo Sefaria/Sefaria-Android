@@ -90,6 +90,25 @@ public class HomeFragment extends android.support.v4.app.Fragment {
         //abRoot.addView(cab);
         homeActionbar = new HomeActionbar(getContext(),Settings.getMenuLang(),searchClick,langClick);
         abRoot.addView(homeActionbar);
+
+        //set letter spacing
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+            SefariaTextView recentTV = (SefariaTextView) view.findViewById(R.id.recentTextsTV);
+            SefariaTextView browseTV = (SefariaTextView) view.findViewById(R.id.browseTV);
+            SefariaTextView calendarTV = (SefariaTextView) view.findViewById(R.id.calendarTV);
+            SefariaTextView supportTV = (SefariaTextView) view.findViewById(R.id.supportTV);
+            SefariaTextView donateTV = (SefariaTextView) view.findViewById(R.id.donateTV);
+
+            recentTV.setLetterSpacing(0.1f);
+            browseTV.setLetterSpacing(0.1f);
+            calendarTV.setLetterSpacing(0.1f);
+            supportTV.setLetterSpacing(0.1f);
+            donateTV.setLetterSpacing(0.1f);
+        }
+
+
+
+
         return view;
     }
 

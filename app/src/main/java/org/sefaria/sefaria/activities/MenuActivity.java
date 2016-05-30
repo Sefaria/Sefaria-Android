@@ -61,7 +61,7 @@ public class MenuActivity extends Activity {
         int catColor = menuState.getCurrNode().getTopLevelColor();
         homeClick = null;
         homeLongClick = null;
-        customActionbar = new CustomActionbar(this, menuState.getCurrNode(),menuLang,homeClick,homeLongClick, null,null,null,null,backClick,menuClick,catColor,true);
+        customActionbar = new CustomActionbar(this, menuState.getCurrNode(),menuLang,homeClick,homeLongClick, null,null,null,null,backClick,menuClick,catColor,true,true);
         customActionbar.setMenuBtnLang(menuLang);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(customActionbar);

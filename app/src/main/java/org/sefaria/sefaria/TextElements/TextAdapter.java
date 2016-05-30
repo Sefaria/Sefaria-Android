@@ -6,6 +6,7 @@ import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import org.sefaria.sefaria.layouts.SefariaTextView;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.StringTokenizer;
 
 /**
  * Created by nss on 5/17/16.
@@ -88,7 +90,7 @@ public class TextAdapter extends ArrayAdapter<Section> {
     }
 
     private void setSectionText(Section currSection,SefariaTextView tv, Util.Lang lang) {
-        boolean isFirst = true;
+        /*boolean isFirst = true;
         SpannableStringBuilder ssb = new SpannableStringBuilder();
         tv.setMovementMethod(LinkMovementMethod.getInstance());
 
@@ -112,7 +114,33 @@ public class TextAdapter extends ArrayAdapter<Section> {
             isFirst = false;
         }
 
-        tv.setText(ssb, TextView.BufferType.SPANNABLE);
+        tv.setText(ssb, TextView.BufferType.SPANNABLE);*/
+
+        tv.setMovementMethod(LinkMovementMethod.getInstance());
+        int[] lens = new int[currSection.getTextList().size()];
+        StringBuilder all = new StringBuilder();
+        int count = 0;
+        for (Text t : currSection.getTextList()) {
+            Spanned spanned;
+            if (count == 0)
+                spanned = Html.fromHtml(t.getText(lang));
+            else
+                spanned = Html.fromHtml("&nbsp;" + t.getText(lang));
+
+            lens[count] = spanned.length();
+            all.append(spanned);
+            count++;
+        }
+        SpannableString ss = new SpannableString(all);
+        int currPos = 0;
+        for (int i = 0; i < currSection.getTextList().size(); i++) {
+            Text segment = currSection.getTextList().get(i);
+            String s = segment.getText(lang);
+            SegmentSpannable segmentSpannable = new SegmentSpannable(s,segment,onSegmentSpanClickListener);
+            ss.setSpan(segmentSpannable,currPos,currPos+lens[i],0);
+            currPos += lens[i];
+        }
+        tv.setText(ss,TextView.BufferType.SPANNABLE);
     }
 
     @Override
