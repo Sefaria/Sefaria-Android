@@ -358,7 +358,9 @@ public abstract class SuperTextActivity extends FragmentActivity {
         Intent intent;
 
         //Open TextActivity if the current book can be cts, and your settings are cts
-        if (Settings.getIsCts() && Settings.getDefaultTextLang() != Util.Lang.BI && book != null && canBeCts(book)) {
+
+        Util.Lang bookLang = Settings.BookSettings.getSavedBook(book).lang;
+        if (Settings.getIsCts() && bookLang != Util.Lang.BI && book != null && canBeCts(book)) {
             intent = new Intent(context, TextActivity.class);
         } else {
             intent = new Intent(context, SectionActivity.class);
@@ -451,7 +453,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
                 searchClick = null;
             backClick = null;
             homeLongClick = null;
-            customActionbar = new CustomActionbar(this, menuNode, menuLang,homeClick,homeLongClick, null,searchClick,titleClick,menuClick,backClick,null,catColor,true); //TODO.. I'm not actually sure this should be lang.. instead it shuold be MENU_LANG from Util.S
+            customActionbar = new CustomActionbar(this, menuNode, menuLang,homeClick,homeLongClick, null,searchClick,titleClick,menuClick,backClick,null,catColor,true,false); //TODO.. I'm not actually sure this should be lang.. instead it shuold be MENU_LANG from Util.S
             LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
             abRoot.addView(customActionbar);
             customActionbar.setLang(menuLang);

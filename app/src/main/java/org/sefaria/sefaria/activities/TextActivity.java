@@ -60,13 +60,13 @@ public class TextActivity extends SuperTextActivity implements AbsListView.OnScr
         listView.setAdapter(textAdapter);
         listView.setOnScrollListener(this);
         listView.setDivider(null);
-        /*listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 updateFocusedSegment();
                 onSegmentClick(linkFragment.getSegment());
             }
-        });*/
+        });
         //listView.setOnItemLongClickListener(onItemLongClickListener);
         listView.setOnScrollStoppedListener(new ListViewExt.OnScrollStoppedListener() {
 
@@ -200,7 +200,6 @@ public class TextActivity extends SuperTextActivity implements AbsListView.OnScr
     }
 
     protected void updateFocusedSegment() {
-        float mid = ((float)listView.getHeight())/2;
 
         int midViewPos = listView.getFirstVisiblePosition();
         View midView = null;
@@ -208,14 +207,14 @@ public class TextActivity extends SuperTextActivity implements AbsListView.OnScr
         while(!foundMidView && midViewPos < textAdapter.getCount()) {
             midView = listView.getViewByPosition(midViewPos);
 
-            foundMidView = midView.getBottom() > mid;
+            foundMidView = midView.getBottom() > SEGMENT_SELECTOR_LINE_FROM_TOP;
 
             midViewPos++;
         }
         if (midView != null) {
             SefariaTextView sectionTv = (SefariaTextView) midView.findViewById(R.id.sectionTV);
             if (sectionTv != null) {
-                int midmid = (int) mid - sectionTv.getTop() - midView.getTop();
+                int midmid = (int) SEGMENT_SELECTOR_LINE_FROM_TOP - sectionTv.getTop() - midView.getTop();
                 /*int lineNum = layout.getLineForVertical((int) mid - sectionTv.getTop() - midView.getTop());
                 int lineStart = layout.getLineStart(lineNum);
                 int lineEnd = layout.getLineEnd(lineNum);
@@ -240,6 +239,10 @@ public class TextActivity extends SuperTextActivity implements AbsListView.OnScr
 
 
     private SegmentSpannable getSpanNearY(TextView stv, int y) {
+        //pre-initaliaze
+        Rect parentTextViewRect = new Rect();
+        Layout textViewLayout = stv.getLayout();
+
         SpannableString ss = (SpannableString) stv.getText();
         SegmentSpannable[] segmentSpannables = ss.getSpans(0, ss.length(), SegmentSpannable.class);
 
@@ -251,7 +254,7 @@ public class TextActivity extends SuperTextActivity implements AbsListView.OnScr
         int counter = 0;
         while (lo <= hi) {
             mids[counter] = lo + (hi - lo) / 2;
-            spanYs[counter] = getSpanY(ss, stv, segmentSpannables[mids[counter]]);
+            spanYs[counter] = getSpanYFast(ss, stv, segmentSpannables[mids[counter]],parentTextViewRect,textViewLayout);
 
             if (y > spanYs[counter]) {
                 lo = mids[counter] + 1;
@@ -275,6 +278,14 @@ public class TextActivity extends SuperTextActivity implements AbsListView.OnScr
         }
 
         return vs;
+    }
+
+    private int getSpanYFast(SpannableString ss, TextView stv, SegmentSpannable vs, Rect parentTextViewRect, Layout textViewLayout) {
+        int startOffsetOfClickedText = ss.getSpanStart(vs);
+        int currentLineStartOffset = textViewLayout.getLineForOffset(startOffsetOfClickedText);
+        textViewLayout.getLineBounds(currentLineStartOffset, parentTextViewRect);
+
+        return (parentTextViewRect.top + parentTextViewRect.bottom)/2;
     }
 
     private int getSpanY(SpannableString ss, TextView stv, SegmentSpannable vs) {
@@ -440,6 +451,7 @@ public class TextActivity extends SuperTextActivity implements AbsListView.OnScr
     };
 
     public void onSegmentClick(Text currSegment) {
+
         if (isTextMenuVisible) {
             toggleTextMenu();
             return;

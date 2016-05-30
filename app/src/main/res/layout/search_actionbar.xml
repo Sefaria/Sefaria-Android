@@ -75,7 +75,7 @@
             android:imeOptions="actionSearch"
             android:inputType="text"
             android:paddingTop="10dp"
-            android:paddingBottom="15dp"
+            android:paddingBottom="13dp"
             android:paddingEnd="50dp"
             android:paddingRight="50dp"
             android:layout_marginRight="20dp"

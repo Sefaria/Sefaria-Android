@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_weight="1"
+    android:layout_marginTop="3dp"
+    android:layout_marginBottom="3dp"
+    android:orientation="vertical"
+    android:background="?button_selector_solid_drawable">
+    <View
+        android:id="@+id/color_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/color_bar_height"
+        android:background="@color/tanach"></View>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <org.sefaria.sefaria.layouts.SefariaTextView
+            android:id="@+id/tv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:minHeight="43dp"
+            android:maxHeight="65dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:textSize="15sp"
+            android:text="fadfafdf"
+            android:textColor="?text_color_main"
+            android:gravity="center_vertical"
+            >
+        </org.sefaria.sefaria.layouts.SefariaTextView>
+        <!--TODO need to make arrow work -->
+        <FrameLayout
+
+            android:id="@+id/moreArrow"
+            android:layout_width="20dp"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_width="12sp"
+                android:layout_height="12sp"
+                android:src="@drawable/arrow_25"
+                android:tint="?text_color_faded"
+                android:layout_margin="@dimen/text_menu_bar_box_margin"
+                android:layout_gravity="center_vertical" />
+
+        </FrameLayout>
+    </LinearLayout>
+
+</LinearLayout>

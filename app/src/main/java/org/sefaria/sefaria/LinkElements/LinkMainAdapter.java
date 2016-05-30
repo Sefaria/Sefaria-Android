@@ -1,9 +1,16 @@
 package org.sefaria.sefaria.LinkElements;
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
@@ -100,7 +107,8 @@ public class LinkMainAdapter extends RecyclerView.Adapter<LinkMainAdapter.LinkHo
 
 
         } else { //ALL and CAT
-            holder.tv.setText(bookTitle + " " + Util.LINK_CAT_VERICAL_LINE + " " + linkCount.getCount());
+            String text =  bookTitle + " " + Util.LINK_CAT_VERICAL_LINE + " " + linkCount.getCount();
+            holder.tv.setText(text);
             holder.tv.setTextColor(Util.getColor(context, R.attr.text_color_main));
             if (android.os.Build.VERSION.SDK_INT >= 14) {//for older things it just will by non-capped (even though we can make a function to fix it, it's not worth it).
                 holder.tv.setAllCaps(true);
