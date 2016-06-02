@@ -116,7 +116,7 @@ public class TextAdapter extends ArrayAdapter<Section> {
 
         tv.setText(ssb, TextView.BufferType.SPANNABLE);*/
 
-        tv.setMovementMethod(LinkMovementMethod.getInstance());
+        //tv.setMovementMethod(LinkMovementMethod.getInstance());
         int[] lens = new int[currSection.getTextList().size()];
         StringBuilder all = new StringBuilder();
         int count = 0;
