@@ -1058,13 +1058,13 @@ public abstract class SuperTextActivity extends FragmentActivity {
     }
 
     public void aboutClick(View v) {
-        String url = "https://sefaria.org/about";
+        String url = "https://www.sefaria.org/about";
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         startActivity(intent);
     }
 
     public void donateClick(View v){
-        String url = "https://sefaria.org/donate";
+        String url = "https://www.sefaria.org/donate";
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         startActivity(intent);
     }
@@ -1092,7 +1092,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
     }
 
     public void siteClick(View v){
-        String url = "https://sefaria.org";
+        String url = "https://www.sefaria.org";
         Intent intent = new Intent(Intent.ACTION_VIEW,Uri.parse(url));
         startActivity(intent);
     }
