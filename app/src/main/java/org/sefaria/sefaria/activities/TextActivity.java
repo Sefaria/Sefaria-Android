@@ -1,11 +1,13 @@
 package org.sefaria.sefaria.activities;
 
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Layout;
 import android.text.SpannableString;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -38,6 +40,9 @@ public class TextActivity extends SuperTextActivity implements AbsListView.OnScr
 
     private int scrolledDownTimes = 0;
 
+    private int clickX;
+    private int clickY;
+
     @Override
     protected void onCreate(Bundle in) {
         super.onCreate(in);
@@ -60,11 +65,31 @@ public class TextActivity extends SuperTextActivity implements AbsListView.OnScr
         listView.setAdapter(textAdapter);
         listView.setOnScrollListener(this);
         listView.setDivider(null);
+
+        listView.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View view, MotionEvent event) {
+                listView.setClickPos(new Point((int)event.getX(),(int)event.getY()));
+                return false; // not consumed; forward to onClick
+            }
+        });
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                //Log.d("yo"," " + linkFragment.getIsOpen());
+
+                if (!linkFragment.getIsOpen()) {
+                    Point clickPos = listView.getClickPos();
+                    listView.smoothScrollBy(clickPos.y-SEGMENT_SELECTOR_LINE_FROM_TOP,LINK_FRAG_ANIM_TIME);
+                }
+
                 updateFocusedSegment();
                 onSegmentClick(linkFragment.getSegment());
+
+                //listView.smoothScrollByOffset(clickPos.y);
+                //listView.scrollBy(0,clickPos.y-SEGMENT_SELECTOR_LINE_FROM_TOP);
+
             }
         });
         //listView.setOnItemLongClickListener(onItemLongClickListener);

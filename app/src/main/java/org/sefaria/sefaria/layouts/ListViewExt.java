@@ -1,7 +1,9 @@
 package org.sefaria.sefaria.layouts;
 
 import android.content.Context;
+import android.graphics.Point;
 import android.util.AttributeSet;
+import android.util.Pair;
 import android.view.View;
 import android.widget.ListView;
 
@@ -14,6 +16,7 @@ public class ListViewExt extends ListView {
     private int sensitivity = 0;
 
     private long lastScrollUpdate = -1;
+    private Point clickPos;
 
     public interface OnScrollStoppedListener{
         void onScrollStopped();
@@ -82,5 +85,13 @@ public class ListViewExt extends ListView {
             return this.getChildAt(childIndex);
         }
     }
+
+    public void setClickPos(Point pos) {
+        clickPos = pos;
+    }
+
+    public Point getClickPos() { return clickPos; }
+
+
 
 }
