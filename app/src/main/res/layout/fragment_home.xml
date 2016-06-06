@@ -146,6 +146,7 @@
                     android:paddingBottom="10dp"
                     android:background="?donate_button_background_drawable"
                     android:text="@string/donate_now"
+                    android:clickable="true"
                     android:textSize="15sp"
                     android:onClick="donateClick"
                     android:textColor="?text_color_main"
@@ -184,7 +185,7 @@
                     android:clickable="true"
                     android:textColor="?text_color_faded"
                     android:textSize="5sp"
-                    android:onClick="settingsClick" />
+                     />
                 <org.sefaria.sefaria.layouts.SefariaTextView
                     android:text="About"
                     android:layout_margin="3dp"
@@ -204,7 +205,7 @@
                     android:clickable="true"
                     android:textColor="?text_color_faded"
                     android:textSize="5sp"
-                    android:onClick="settingsClick" />
+                    />
                 <org.sefaria.sefaria.layouts.SefariaTextView
                     android:text="Feedback"
                     android:layout_margin="3dp"
@@ -224,7 +225,7 @@
                     android:clickable="true"
                     android:textColor="?text_color_faded"
                     android:textSize="5sp"
-                    android:onClick="settingsClick" />
+                    />
                 <org.sefaria.sefaria.layouts.SefariaTextView
                     android:text="Visit Site"
                     android:layout_margin="3dp"
