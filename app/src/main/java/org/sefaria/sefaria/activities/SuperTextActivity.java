@@ -358,8 +358,12 @@ public abstract class SuperTextActivity extends FragmentActivity {
         Intent intent;
 
         //Open TextActivity if the current book can be cts, and your settings are cts
-
-        Util.Lang bookLang = Settings.BookSettings.getSavedBook(book).lang;
+        Util.Lang bookLang;
+        if (book != null)
+            bookLang = Settings.BookSettings.getSavedBook(book).lang;
+        else
+            bookLang = Settings.getDefaultTextLang();
+        
         if (Settings.getIsCts() && bookLang != Util.Lang.BI && book != null && canBeCts(book)) {
             intent = new Intent(context, TextActivity.class);
         } else {
