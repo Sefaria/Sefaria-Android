@@ -2,6 +2,7 @@ package org.sefaria.sefaria.LinkElements;
 
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,7 +74,7 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextHolder> {
 
     @Override
     public void onBindViewHolder(LinkTextHolder holder, int position) {
-
+        Log.d("SectionActivity","BIND " + position);
         Util.Lang lang = activity.getTextLang();
 
         Text link = itemList.get(position);
@@ -82,6 +83,10 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextHolder> {
         holder.title.setVisibility(View.VISIBLE);
         holder.title.setText(Html.fromHtml(link.getLocationString(Settings.getMenuLang())));
         holder.title.setFont(Settings.getMenuLang(),true,activity.getTextSize());
+        holder.setPosition(position);
+
+        if (!holder.getItemList().equals(itemList))
+            holder.setItemList(itemList);
 
         if (holder instanceof LinkMonoTextHolder) {
             LinkMonoTextHolder monoHolder = (LinkMonoTextHolder) holder;

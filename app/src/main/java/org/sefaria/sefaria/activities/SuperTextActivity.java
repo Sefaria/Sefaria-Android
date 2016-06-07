@@ -363,7 +363,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
             bookLang = Settings.BookSettings.getSavedBook(book).lang;
         else
             bookLang = Settings.getDefaultTextLang();
-        
+
         if (Settings.getIsCts() && bookLang != Util.Lang.BI && book != null && canBeCts(book)) {
             intent = new Intent(context, TextActivity.class);
         } else {
