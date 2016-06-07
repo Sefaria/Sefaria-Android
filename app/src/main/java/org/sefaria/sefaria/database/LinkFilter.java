@@ -286,7 +286,18 @@ public class LinkFilter {
             return getFromLinks_API(text);
         }
         LinkFilter allLinkCounts = makeAllLinkCounts();
-        LinkFilter commentaryGroup = getCommentaryOnChap(text.tid - 11, text.tid + 11, text.bid);//getting all commentaries +-11 of the current text
+
+        int commentaryAddonAmount = 11;
+        try {
+            Book book = new Book(text.bid);
+            if(book.categories[0].equals("Talmud")) {
+                commentaryAddonAmount = 35;
+                Log.d("FilterLink","commentaryAddonAmount" + commentaryAddonAmount);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        LinkFilter commentaryGroup = getCommentaryOnChap(text.tid - commentaryAddonAmount, text.tid + commentaryAddonAmount, text.bid);//getting all commentaries +-11 of the current text
 
 
         if(text.getNumLinks() == 0){
