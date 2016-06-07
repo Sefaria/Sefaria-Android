@@ -93,6 +93,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
     protected float textSize;
     protected boolean isLoadingSection; //to make sure multiple sections don't get loaded at once
     protected boolean isLoadingInit; //true while init is loading. previous loads should not take place until after isLoadingInit is false
+    protected long initTime;
 
     //fragment vars
     protected DrawerLayout drawerLayout;
@@ -399,6 +400,9 @@ public abstract class SuperTextActivity extends FragmentActivity {
     }
 
     protected void init(){
+
+
+
         isLoadingInit = true;
         textChapterHeaders = new ArrayList<>();
 

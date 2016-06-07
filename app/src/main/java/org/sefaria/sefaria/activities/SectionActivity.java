@@ -88,6 +88,8 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
 
 
         registerForContextMenu(listView);
+
+        initTime = System.currentTimeMillis();
     }
 
     @Override
@@ -273,7 +275,10 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
             case R.id.listview:
                 if (!isLoadingSection && !isLoadingInit) {
                     int lastItem = firstVisibleItem + visibleItemCount;
-                    if (firstVisibleItem == 0) {
+                    //Extra condition to make sure it doesn't load multiple prev sections in a row
+                    //wait 2 secs from init until you load prev
+                    Log.d("SectionActivity","TIME = " + (System.currentTimeMillis() - initTime));
+                    if (firstVisibleItem == 0 && listView.getViewByPosition(firstVisibleItem).getTop() >= 0 && System.currentTimeMillis() - initTime > 1700) {
                         Log.d("SectionActivity","STARTING PREV");
                         AsyncLoadSection als = new AsyncLoadSection(TextEnums.PREV_SECTION,sectionAdapter.getItem(0));
                         als.preExecute();
@@ -298,14 +303,14 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
     protected void jumpToText(Text text) {
         final int index = sectionAdapter.getPosition(text);
         sectionAdapter.highlightIncomingText(text);
-        listView.setSelection(index);
-        /*listView.post(new Runnable() {
+
+        listView.post(new Runnable() {
 
             @Override
             public void run() {
-
+                listView.setSelection(index);
             }
-        });*/
+        });
     }
 
     /*public void jumpSection(View view) {
@@ -408,6 +413,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
         @Override
         protected void onPostExecute(final List<Text> textsList) {
 
+
             if (textsList == null) {
                 problemLoadedText = catalystText;
                 isLoadingSection = false;
@@ -447,10 +453,10 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
                 sectionAdapter.add(0, sectionHeader);
                 listView.setSelection(textsList.size()+1);
 
-
             }
 
             isLoadingSection = false;
+            isLoadingInit = false;
             isLoadingInit = false;
 
         }

@@ -85,6 +85,7 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextHolder> {
         holder.title.setFont(Settings.getMenuLang(),true,activity.getTextSize());
         holder.setPosition(position);
 
+        //itemList might not have updated yet if you switched pesukim. make sure it's up to date
         if (!holder.getItemList().equals(itemList))
             holder.setItemList(itemList);
 
