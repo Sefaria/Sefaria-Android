@@ -274,10 +274,12 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
                 if (!isLoadingSection && !isLoadingInit) {
                     int lastItem = firstVisibleItem + visibleItemCount;
                     if (firstVisibleItem == 0) {
+                        Log.d("SectionActivity","STARTING PREV");
                         AsyncLoadSection als = new AsyncLoadSection(TextEnums.PREV_SECTION,sectionAdapter.getItem(0));
                         als.preExecute();
                     }
                     if (lastItem == totalItemCount ) {
+                        Log.d("SectionActivity","STARTING NEXT");
                         preLast = lastItem;
                         AsyncLoadSection als = new AsyncLoadSection(TextEnums.NEXT_SECTION,sectionAdapter.getItem(lastItem-1));
                         als.preExecute();
@@ -285,6 +287,8 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
 
                     Text topSegment = sectionAdapter.getItem(firstVisibleItem);
                     setCurrNode(topSegment);
+                } else {
+                    Log.d("SectionActivity","BLOCKED  ");
                 }
         }
     }
@@ -294,13 +298,14 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
     protected void jumpToText(Text text) {
         final int index = sectionAdapter.getPosition(text);
         sectionAdapter.highlightIncomingText(text);
-        listView.post(new Runnable() {
+        listView.setSelection(index);
+        /*listView.post(new Runnable() {
 
             @Override
             public void run() {
-                listView.setSelection(index);
+
             }
-        });
+        });*/
     }
 
     /*public void jumpSection(View view) {
@@ -401,25 +406,29 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
 
 
         @Override
-        protected void onPostExecute(List<Text> textsList) {
-            isLoadingSection = false;
-            isLoadingInit = false;
-
-
+        protected void onPostExecute(final List<Text> textsList) {
 
             if (textsList == null) {
                 problemLoadedText = catalystText;
+                isLoadingSection = false;
+                isLoadingInit = false;
                 return;
             }
             //if (textsList.size() == 0) return;//removed this line so that when it doesn't find text it continues to look for the next item for text
 
-            Text sectionHeader = getSectionHeaderText(dir);
+            final Text sectionHeader = getSectionHeaderText(dir);
             if (dir == TextEnums.NEXT_SECTION) {
-
+                Log.d("SectionActivity","ENDING NEXT");
                 sectionAdapter.remove(loaderText);
                 if(sectionHeader.getText(Util.Lang.EN).length() > 0 || sectionHeader.getText(Util.Lang.HE).length() > 0)
                     sectionAdapter.add(sectionHeader);
                 sectionAdapter.addAll(textsList);
+
+                if (openToText != null) {
+                    jumpToText(openToText);
+                    openToText = null;
+                }
+
 
 
                 scrolledDownTimes++;
@@ -432,24 +441,17 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
                         category = GoogleTracker.CATEGORY_OPEN_NEW_BOOK_ACTION;
                     GoogleTracker.sendEvent(category,"Scrolled down",scrolledDownTimes/openedNewBookTime);
                 }
-
             } else /*if (dir == TextEnums.PREV_SECTION)*/ {
-
+                Log.d("SectionActivity","ENDING PREV");
                 sectionAdapter.addAll(0, textsList);
                 sectionAdapter.add(0, sectionHeader);
                 listView.setSelection(textsList.size()+1);
+
+
             }
 
-            if (openToText != null) {
-                /*try {
-                    Thread.sleep(50);
-                    //this is to help solve the race condition causing it to jump to the wrong place
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }*/
-                jumpToText(openToText);
-                openToText = null;
-            }
+            isLoadingSection = false;
+            isLoadingInit = false;
 
         }
 

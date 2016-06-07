@@ -1,9 +1,11 @@
 package org.sefaria.sefaria.LinkElements;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 
 import org.sefaria.sefaria.R;
+import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.activities.SuperTextActivity;
 import org.sefaria.sefaria.database.Text;
 import org.sefaria.sefaria.layouts.SefariaTextView;
@@ -20,6 +22,7 @@ public class LinkTextHolder extends RecyclerView.ViewHolder implements View.OnCl
 
     private List<Text> itemList;
     private SuperTextActivity activity;
+    private int position;
 
 
     /*
@@ -36,7 +39,12 @@ public class LinkTextHolder extends RecyclerView.ViewHolder implements View.OnCl
 
     @Override
     public void onClick(View v) {
-        Text link = itemList.get(getAdapterPosition());
+        Text link = itemList.get(getLayoutPosition());
+        Log.d("SectionActivity","LINK " + link.getLocationString(Util.Lang.EN) + " POS " + position);
         SuperTextActivity.startNewTextActivityIntent(activity, link,false);
     }
+
+    public void setPosition(int position) { this.position = position; }
+    public void setItemList(List<Text> itemList) { this.itemList = itemList;}
+    public List<Text> getItemList() { return itemList; }
 }
