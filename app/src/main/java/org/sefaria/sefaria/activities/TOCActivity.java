@@ -144,7 +144,25 @@ public class TOCActivity extends AppCompatActivity {
      */
     public static void gotoTextActivity(Context context,Node node,Util.Lang lang){
         Node.saveNode(node);
-        Intent intent = new Intent(context, SectionActivity.class);
+
+        Book book;
+        try{
+            book = node.getBook();
+        } catch (Book.BookNotFoundException e) {
+            book = null;
+        }
+        Util.Lang bookLang;
+        if (book != null)
+            bookLang = Settings.BookSettings.getSavedBook(book).lang;
+        else
+            bookLang = Settings.getDefaultTextLang();
+
+        Intent intent;
+        if (Settings.getIsCts() && bookLang != Util.Lang.BI && book != null && SuperTextActivity.canBeCts(book)) {
+            intent = new Intent(context, TextActivity.class);
+        } else {
+            intent = new Intent(context, SectionActivity.class);
+        }
         intent.putExtra("nodeHash", node.hashCode());
         intent.putExtra("lang", lang);
         if(((TOCActivity) context).pathDefiningNode != null && ((TOCActivity) context).pathDefiningNode.length() >0 && !((TOCActivity) context).cameInFromBackPress)//it will only do this if a SectionAct was already opened
