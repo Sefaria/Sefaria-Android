@@ -60,8 +60,8 @@
     <string name="ARE_YOU_SURE_MESSAGE">העדכון יצטרך להתחיל מחדש</string>
     <string name="USING_DATA_MESSAGE">הנך משתמש בהעברת נתונים סלולרית (לא בחיבור לרשת). גודל הספריה הוא כ200 מגהבייט. האם ברצונך להוריד את הקובץ בכל זאת?</string>
     <string name="USING_DATA_TITLE">משתמש בהעברת נתונים סלולרית</string>
-
-    <string name="requires_250">Requires ~250MB of storage on your device</string>
+    <!--Requires ~250MB of storage on your device-->
+    <string name="requires_250"></string>
     <string name="save_settings">Save Settings</string>
     <string name="offline_access">Offline Access</string>
     <string name="default_book_lang">Default Book Language</string>
