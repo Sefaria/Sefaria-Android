@@ -291,7 +291,7 @@ public class LinkFilter {
         try {
             Book book = new Book(text.bid);
             if(book.categories[0].equals("Talmud")) {
-                commentaryAddonAmount = 35;
+                commentaryAddonAmount = 100;
                 Log.d("FilterLink","commentaryAddonAmount" + commentaryAddonAmount);
             }
         } catch (Exception e) {
