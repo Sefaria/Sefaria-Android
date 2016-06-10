@@ -57,6 +57,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
     public static int SEGMENT_SELECTOR_LINE_FROM_TOP = 150; //pixels from top of layout
     public static int MAX_LINK_FRAG_SNAP_DISTANCE = 230;
+    protected static int PREV_DELAY_TIME = 1700; //ms from initTime
     protected static int LINK_FRAG_ANIM_TIME = 300; //ms
     protected static CharSequence CONTEXT_MENU_COPY_TITLE = "Copy";
     protected static CharSequence CONTEXT_MENU_SEND_CORRECTION = "Report Mistake";

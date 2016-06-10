@@ -278,7 +278,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
                     //Extra condition to make sure it doesn't load multiple prev sections in a row
                     //wait 2 secs from init until you load prev
                     Log.d("SectionActivity","TIME = " + (System.currentTimeMillis() - initTime));
-                    if (firstVisibleItem == 0 && listView.getViewByPosition(firstVisibleItem).getTop() >= 0 && System.currentTimeMillis() - initTime > 1700) {
+                    if (firstVisibleItem == 0 && listView.getViewByPosition(firstVisibleItem).getTop() >= 0 && System.currentTimeMillis() - initTime > PREV_DELAY_TIME) {
                         Log.d("SectionActivity","STARTING PREV");
                         AsyncLoadSection als = new AsyncLoadSection(TextEnums.PREV_SECTION,sectionAdapter.getItem(0));
                         als.preExecute();

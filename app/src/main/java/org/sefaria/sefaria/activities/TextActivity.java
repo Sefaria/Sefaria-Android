@@ -106,6 +106,8 @@ public class TextActivity extends SuperTextActivity implements AbsListView.OnScr
 
 
         registerForContextMenu(listView);
+
+        initTime = System.currentTimeMillis();
     }
 
     private class AsyncLoadSection extends AsyncTask<Void,Void,List<Text>> {
@@ -189,12 +191,8 @@ public class TextActivity extends SuperTextActivity implements AbsListView.OnScr
             }
 
             if (openToText != null) {
-                try {
-                    Thread.sleep(50);
-                    //this is to help solve the race condition causing it to jump to the wrong place
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+
+                //TODO this doesn't actually do anything yet
                 jumpToText(openToText);
                 openToText = null;
             }
@@ -399,7 +397,7 @@ public class TextActivity extends SuperTextActivity implements AbsListView.OnScr
 
                 if (!isLoadingSection && !isLoadingInit) {
                     int lastItem = firstVisibleItem + visibleItemCount;
-                    if (firstVisibleItem == 0 && scrollY > -3) {
+                    if (firstVisibleItem == 0 && scrollY > -3 && System.currentTimeMillis() - initTime > PREV_DELAY_TIME) {
                         AsyncLoadSection als = new AsyncLoadSection(TextEnums.PREV_SECTION,textAdapter.getItem(0));
                         als.preExecute();
                     }

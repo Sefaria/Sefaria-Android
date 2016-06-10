@@ -60,16 +60,15 @@
     <string name="ARE_YOU_SURE_MESSAGE">העדכון יצטרך להתחיל מחדש</string>
     <string name="USING_DATA_MESSAGE">הנך משתמש בהעברת נתונים סלולרית (לא בחיבור לרשת). גודל הספריה הוא כ200 מגהבייט. האם ברצונך להוריד את הקובץ בכל זאת?</string>
     <string name="USING_DATA_TITLE">משתמש בהעברת נתונים סלולרית</string>
-    <!--Requires ~250MB of storage on your device-->
-    <string name="requires_250"></string>
-    <string name="save_settings">Save Settings</string>
-    <string name="offline_access">Offline Access</string>
-    <string name="default_book_lang">Default Book Language</string>
-    <string name="update_library">Update Library</string>
-    <string name="delete_library">Delete Library</string>
-    <string name="download_library">Download Library</string>
-    <string name="are_you_sure_delete_title">Are you sure you want to delete the library?</string>
-    <string name="are_you_sure_delete_message">If you delete the library, you can not use Sefaria without an internet connection and the experience is slower.</string>
+    <string name="requires_250">הורדת הספריה דורש 250MB~ בהאחסון של הפלאפון</string>
+    <string name="save_settings">שומר הגדרות</string>
+    <string name="offline_access">מצב בלתי מקוונת</string>
+    <string name="default_book_lang">בררת מחדל לשפת ספרים</string>
+    <string name="update_library">עדכן את הספריה</string>
+    <string name="delete_library">מחק את הספריה</string>
+    <string name="download_library">הוריד את הספריה</string>
+    <string name="are_you_sure_delete_title">האם ברצונך למחוק את הספריה?</string>
+    <string name="are_you_sure_delete_message">בלי הספריה האפליקציה ידרוש חיבור לרשת ויפעול יותר לאט</string>
     <string name="recent">נצפו לאחרונה</string>
     <string name="browse">טקסטים</string>
     <string name="calendar">לוח יומי</string>
@@ -77,16 +76,16 @@
     <string name="donate_now">תתרום עכשיו</string>
     <string name="connections">קישורים</string>
 
-    <string name="downloading_library">Downloading Library</string>
-    <string name="loading">Loading...</string>
-    <string name="results">Results</string>
-    <string name="error_getting_book">Error getting book</string>
-    <string name="not_avil_in_online_mode">Not available in Online mode</string>
+    <string name="downloading_library">מוריד את הספריה</string>
+    <string name="loading">טוען...</string>
+    <string name="results">תוצאות</string>
+    <string name="error_getting_book">שגיאה עם טוענת הספר</string>
+    <string name="not_avil_in_online_mode">לא זמין במצב מקוונת</string>
     <string name="didnt_find_query_in_book">Didn\'t find query in book</string>
-    <string name="downloading_library_even_not_newest">Downloading Library (even if it is not a new version)</string>
-    <string name="unable_to_load_toc_for_book">Unable to load Table of Contents for this book</string>
+    <!--debug string, dont translate--><string name="downloading_library_even_not_newest">Downloading Library (even if it is not a new version)</string>
+    <string name="unable_to_load_toc_for_book">לא ניתן לטעון את התוכן לספר זה</string>
     <string name="starting_download">Starting Download</string>
-    <string name="still_downloading_library">Still downloading Library</string>
-    <string name="cant_download_without_storage_perms">Can\'t download Library without storage permissions</string>
-    <string name="sorry_book_not_found">Sorry, book not found</string>
+    <string name="still_downloading_library">הספרייה עדיין מוריד</string>
+    <string name="cant_download_without_storage_perms">לא ניתן להוריד את הספריה בלי רשות</string>
+    <string name="sorry_book_not_found">ספר לא נמצא</string>
 </resources>
