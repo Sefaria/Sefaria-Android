@@ -7,20 +7,17 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.support.v7.widget.GridLayout;
 import android.util.Log;
-import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
-import org.sefaria.sefaria.activities.TextActivity;
+import org.sefaria.sefaria.activities.CtsTextActivity;
 import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Node;
@@ -472,7 +469,7 @@ public class TOCGrid extends LinearLayout {
             //MenuState newMenuState = menuState.goForward(mb.getNode(), mb.getSectionNode());
             Intent intent;
             if (mb.isBook()) {
-                intent = new Intent(context, TextActivity.class);
+                intent = new Intent(context, CtsTextActivity.class);
                 //trick to destroy all activities beforehand
                 //ComponentName cn = intent.getComponent();
                 //Intent mainIntent = IntentCompat.makeRestartActivityTask(cn);

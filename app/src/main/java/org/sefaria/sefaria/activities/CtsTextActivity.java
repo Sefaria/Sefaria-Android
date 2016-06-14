@@ -6,7 +6,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Layout;
 import android.text.SpannableString;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +16,8 @@ import android.widget.TextView;
 
 import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.R;
-import org.sefaria.sefaria.Settings;
+import org.sefaria.sefaria.TextElements.CtsTextAdapter;
 import org.sefaria.sefaria.TextElements.OnSegmentSpanClickListener;
-import org.sefaria.sefaria.TextElements.TextAdapter;
 import org.sefaria.sefaria.TextElements.SegmentSpannable;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.Section;
@@ -30,10 +28,10 @@ import org.sefaria.sefaria.layouts.SefariaTextView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TextActivity extends SuperTextActivity implements AbsListView.OnScrollListener, LinkFragment.OnLinkFragInteractionListener {
+public class CtsTextActivity extends SuperTextActivity implements AbsListView.OnScrollListener, LinkFragment.OnLinkFragInteractionListener {
 
     private ListViewExt listView;
-    private TextAdapter textAdapter;
+    private CtsTextAdapter ctsTextAdapter;
 
     private int preLast;
     private Section problemLoadedSection;
@@ -50,8 +48,8 @@ public class TextActivity extends SuperTextActivity implements AbsListView.OnScr
             finish();
             return;
         }
-        //NOTE: using the same layout as SectionActivity
-        setContentView(R.layout.activity_text);
+        //NOTE: using the same layout as SepTextActivity
+        setContentView(R.layout.activity_cts_text);
 
         init();
     }
@@ -60,9 +58,9 @@ public class TextActivity extends SuperTextActivity implements AbsListView.OnScr
         super.init();
         listView = (ListViewExt) findViewById(R.id.listview);
         listView.setSensitivity(10);
-        textAdapter = new TextAdapter(this,R.layout.adapter_text_mono,new ArrayList<Section>(),onSegmentSpanClickListener);
+        ctsTextAdapter = new CtsTextAdapter(this,R.layout.adapter_text_mono,new ArrayList<Section>(),onSegmentSpanClickListener);
 
-        listView.setAdapter(textAdapter);
+        listView.setAdapter(ctsTextAdapter);
         listView.setOnScrollListener(this);
         listView.setDivider(null);
 
@@ -129,7 +127,7 @@ public class TextActivity extends SuperTextActivity implements AbsListView.OnScr
             if (catalystSection == null || !catalystSection.equals(problemLoadedSection)) {
                 this.execute();
             } else {
-                //Log.d("SectionActivity","Problem text not loaded");
+                //Log.d("SepTextActivity","Problem text not loaded");
             }
         }
 
@@ -140,9 +138,9 @@ public class TextActivity extends SuperTextActivity implements AbsListView.OnScr
             loaderSection = new Section(true);
 
             if (this.dir == TextEnums.NEXT_SECTION) {
-                textAdapter.add(loaderSection);
+                ctsTextAdapter.add(loaderSection);
             } else /*if (this.dir == TextEnums.PREV_SECTION)*/ {
-                //textAdapter.add(0, loaderSection);
+                //ctsTextAdapter.add(0, loaderSection);
             }
         }
 
@@ -169,10 +167,10 @@ public class TextActivity extends SuperTextActivity implements AbsListView.OnScr
             Section newSection = new Section(textsList, sectionHeader);
             if (dir == TextEnums.NEXT_SECTION) {
 
-                textAdapter.remove(loaderSection);
+                ctsTextAdapter.remove(loaderSection);
                 /*if(sectionHeader.getText(Util.Lang.EN).length() > 0 || sectionHeader.getText(Util.Lang.HE).length() > 0)
-                    textAdapter.add(sectionHeader);*/
-                textAdapter.add(newSection);
+                    ctsTextAdapter.add(sectionHeader);*/
+                ctsTextAdapter.add(newSection);
 
                 scrolledDownTimes++;
                 if (openedNewBookTime > 0 && !reportedNewBookScroll && scrolledDownTimes == 2 && (System.currentTimeMillis() - openedNewBookTime < 10000)) {
@@ -186,7 +184,7 @@ public class TextActivity extends SuperTextActivity implements AbsListView.OnScr
                 }
 
             } else /*if (dir == TextEnums.PREV_SECTION)*/ {
-                textAdapter.add(0, newSection);
+                ctsTextAdapter.add(0, newSection);
                 listView.setSelection(1);
             }
 
@@ -206,19 +204,19 @@ public class TextActivity extends SuperTextActivity implements AbsListView.OnScr
             setIsCts(false,true); //force restart to apply changes
         }
 
-        textAdapter.notifyDataSetChanged();
+        ctsTextAdapter.notifyDataSetChanged();
         linkFragment.notifyDataSetChanged();
     }
 
     @Override
     protected void setIsSideBySide(boolean isSideBySide) {
         super.setIsSideBySide(isSideBySide);
-        textAdapter.notifyDataSetChanged();
+        ctsTextAdapter.notifyDataSetChanged();
     }
 
     protected void incrementTextSize(boolean isIncrement) {
         super.incrementTextSize(isIncrement);
-        textAdapter.notifyDataSetChanged();
+        ctsTextAdapter.notifyDataSetChanged();
     }
 
     protected void updateFocusedSegment() {
@@ -226,7 +224,7 @@ public class TextActivity extends SuperTextActivity implements AbsListView.OnScr
         int midViewPos = listView.getFirstVisiblePosition();
         View midView = null;
         boolean foundMidView = false;
-        while(!foundMidView && midViewPos < textAdapter.getCount()) {
+        while(!foundMidView && midViewPos < ctsTextAdapter.getCount()) {
             midView = listView.getViewByPosition(midViewPos);
 
             foundMidView = midView.getBottom() > SEGMENT_SELECTOR_LINE_FROM_TOP;
@@ -253,7 +251,7 @@ public class TextActivity extends SuperTextActivity implements AbsListView.OnScr
 
 
                 linkFragment.updateFragment(currSeg);
-                textAdapter.notifyDataSetChanged(); //redraw visible views to make current segment view darker
+                ctsTextAdapter.notifyDataSetChanged(); //redraw visible views to make current segment view darker
             }
         }
 
@@ -397,16 +395,16 @@ public class TextActivity extends SuperTextActivity implements AbsListView.OnScr
                 if (!isLoadingSection && !isLoadingInit) {
                     int lastItem = firstVisibleItem + visibleItemCount;
                     if (firstVisibleItem == 0 && scrollY > -3 && System.currentTimeMillis() - initTime > PREV_DELAY_TIME) {
-                        AsyncLoadSection als = new AsyncLoadSection(TextEnums.PREV_SECTION,textAdapter.getItem(0));
+                        AsyncLoadSection als = new AsyncLoadSection(TextEnums.PREV_SECTION, ctsTextAdapter.getItem(0));
                         als.preExecute();
                     }
                     if (lastItem == totalItemCount ) {
                         preLast = lastItem;
-                        AsyncLoadSection als = new AsyncLoadSection(TextEnums.NEXT_SECTION,textAdapter.getItem(lastItem - 1));
+                        AsyncLoadSection als = new AsyncLoadSection(TextEnums.NEXT_SECTION, ctsTextAdapter.getItem(lastItem - 1));
                         als.preExecute();
                     }
 
-                    Section topSegment = textAdapter.getItem(firstVisibleItem);
+                    Section topSegment = ctsTextAdapter.getItem(firstVisibleItem);
                     setCurrNode(topSegment);
                 }
 
@@ -415,16 +413,16 @@ public class TextActivity extends SuperTextActivity implements AbsListView.OnScr
 
     @Override
     protected void jumpToText(Text text) {
-        //int index = textAdapter.getPosition(text);
-        //textAdapter.highlightIncomingText(text);
+        //int index = ctsTextAdapter.getPosition(text);
+        //ctsTextAdapter.highlightIncomingText(text);
         //listView.setSelection(index);
     }
 
     /*public void jumpSection(View view) {
         if (view.getId() == R.id.jump_section_down) {
-            Log.d("SectionActivity","DOWN");
+            Log.d("SepTextActivity","DOWN");
         } else if (view.getId() == R.id.jump_section_up) {
-            Log.d("SectionActivity","UP");
+            Log.d("SepTextActivity","UP");
         }
     }*/
 
@@ -436,7 +434,7 @@ public class TextActivity extends SuperTextActivity implements AbsListView.OnScr
 
     @Override
     protected void postFindOnPageBackground() {
-        textAdapter.notifyDataSetChanged();
+        ctsTextAdapter.notifyDataSetChanged();
     }
 
     /**
@@ -468,7 +466,7 @@ public class TextActivity extends SuperTextActivity implements AbsListView.OnScr
     OnSegmentSpanClickListener onSegmentSpanClickListener = new OnSegmentSpanClickListener() {
         @Override
         public void onSegmentClick(TextView tv,SegmentSpannable segmentSpannable) {
-            TextActivity.this.onSegmentClick(segmentSpannable.getSegment());
+            CtsTextActivity.this.onSegmentClick(segmentSpannable.getSegment());
         }
     };
 

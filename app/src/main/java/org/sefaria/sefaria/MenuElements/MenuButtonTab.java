@@ -7,8 +7,6 @@ import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.layouts.SefariaTextView;
 
-import java.lang.reflect.TypeVariable;
-
 /**
  * Created by nss on 9/24/15.
  * Controls the tabs seen in Talmud page
@@ -21,7 +19,7 @@ public class MenuButtonTab extends MenuElement {
 
     public MenuButtonTab(Context context, MenuNode node, Util.Lang lang) {
         super(context);
-        inflate(context, R.layout.tab_menu, this);
+        inflate(context, R.layout.menu_tab, this);
         this.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT));
 
         this.context = context;

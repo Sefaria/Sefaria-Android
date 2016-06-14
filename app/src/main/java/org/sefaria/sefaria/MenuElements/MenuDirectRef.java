@@ -1,7 +1,6 @@
 package org.sefaria.sefaria.MenuElements;
 
 import android.content.Context;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -14,7 +13,6 @@ import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.activities.SuperTextActivity;
 import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Node;
-import org.sefaria.sefaria.database.Text;
 import org.sefaria.sefaria.layouts.SefariaTextView;
 
 
@@ -32,7 +30,7 @@ public class MenuDirectRef extends LinearLayout{
 
     public MenuDirectRef(Context context, String enTitle, String heTitle, String nodePath, Book book, String colorWording){
         super(context);
-        inflate(context, R.layout.button_menu_direct_ref, this);
+        inflate(context, R.layout.menu_direct_ref_button, this);
 
 
         this.context = context;

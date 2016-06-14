@@ -40,7 +40,7 @@ public class LinkTextHolder extends RecyclerView.ViewHolder implements View.OnCl
     @Override
     public void onClick(View v) {
         Text link = itemList.get(getLayoutPosition());
-        Log.d("SectionActivity","LINK " + link.getLocationString(Util.Lang.EN) + " POS " + position);
+        Log.d("SepTextActivity","LINK " + link.getLocationString(Util.Lang.EN) + " POS " + position);
         SuperTextActivity.startNewTextActivityIntent(activity, link,false);
     }
 

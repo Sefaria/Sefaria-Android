@@ -10,14 +10,11 @@ import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
 import android.view.ContextMenu;
-import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -27,20 +24,19 @@ import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Settings;
-import org.sefaria.sefaria.TextElements.SectionAdapter;
+import org.sefaria.sefaria.TextElements.SepTextAdapter;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.API;
-import org.sefaria.sefaria.database.Node;
 import org.sefaria.sefaria.database.Text;
 import org.sefaria.sefaria.layouts.ListViewExt;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SectionActivity extends SuperTextActivity implements AbsListView.OnScrollListener, LinkFragment.OnLinkFragInteractionListener {
+public class SepTextActivity extends SuperTextActivity implements AbsListView.OnScrollListener, LinkFragment.OnLinkFragInteractionListener {
 
     private ListViewExt listView;
-    private SectionAdapter sectionAdapter;
+    private SepTextAdapter sepTextAdapter;
 
     private int preLast;
     private Text problemLoadedText;
@@ -57,7 +53,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
             finish();
             return;
         }
-        setContentView(R.layout.activity_section);
+        setContentView(R.layout.activity_sep_text);
 
         init();
     }
@@ -67,10 +63,10 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
         super.init();
         listView = (ListViewExt) findViewById(R.id.listview);
         listView.setFastScrollEnabled(true);
-        sectionAdapter = new SectionAdapter(this,R.layout.adapter_text_mono,new ArrayList<Text>());
+        sepTextAdapter = new SepTextAdapter(this,R.layout.adapter_text_mono,new ArrayList<Text>());
 
 
-        listView.setAdapter(sectionAdapter);
+        listView.setAdapter(sepTextAdapter);
         listView.setOnScrollListener(this);
         listView.setDivider(null);
 
@@ -98,7 +94,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
         super.onResume();
         if(!veryFirstTime) {
             menuLang = Settings.getMenuLang();
-            sectionAdapter.notifyDataSetChanged();
+            sepTextAdapter.notifyDataSetChanged();
         }
     }
 
@@ -112,11 +108,11 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
         try {
             info = (AdapterView.AdapterContextMenuInfo) menuInfo;
         } catch (ClassCastException e) {
-            Log.e("SectionActivity", "bad menuInfo", e);
+            Log.e("SepTextActivity", "bad menuInfo", e);
             return;
         }
 
-        Text segment = sectionAdapter.getItem(info.position);
+        Text segment = sepTextAdapter.getItem(info.position);
         //it sets the title of the menu to loc string
         String header;
         if(segment.isChapter())
@@ -139,11 +135,11 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
         try {
             info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         } catch (ClassCastException e) {
-            Log.e("SectionActivity", "bad menuInfo", e);
+            Log.e("SepTextActivity", "bad menuInfo", e);
             return false;
         }
 
-        Text segment = sectionAdapter.getItem(info.position);
+        Text segment = sepTextAdapter.getItem(info.position);
         CharSequence title = item.getTitle();
 
         if (title == CONTEXT_MENU_COPY_TITLE) {
@@ -163,15 +159,15 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
     private void visit(Text text){
         String url = text.getURL(true,true);
         if(url.length() <1){
-            Toast.makeText(SectionActivity.this,"Unable to go to site",Toast.LENGTH_SHORT).show();
+            Toast.makeText(SepTextActivity.this,"Unable to go to site",Toast.LENGTH_SHORT).show();
             return;
         }
         try{
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
             startActivity(intent);
         }catch (Exception e){
-            Log.e("SectionActivity", e.getMessage());
-            Toast.makeText(SectionActivity.this,"Unable to go to site",Toast.LENGTH_SHORT).show();
+            Log.e("SepTextActivity", e.getMessage());
+            Toast.makeText(SepTextActivity.this,"Unable to go to site",Toast.LENGTH_SHORT).show();
             GoogleTracker.sendException(e,"URL:" + url);
         }
     }
@@ -210,7 +206,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
                 }
                 copiedText = url + "\n\n\n" + wholeChap.toString();
             } catch (API.APIException e) {
-                API.makeAPIErrorToast(SectionActivity.this);
+                API.makeAPIErrorToast(SepTextActivity.this);
                 copiedText = "";
             }
         }
@@ -218,7 +214,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
         ClipData clip = ClipData.newPlainText("Sefaria Text", copiedText);
         // Set the clipboard's primary clip.
         clipboard.setPrimaryClip(clip);
-        Toast.makeText(SectionActivity.this, "Copied to Clipboard", Toast.LENGTH_SHORT).show();
+        Toast.makeText(SepTextActivity.this, "Copied to Clipboard", Toast.LENGTH_SHORT).show();
     }
 
     protected void setTextLang(Util.Lang textLang) {
@@ -231,19 +227,19 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
             setIsCts(isCts,true); //force a restart so that your iscts setting is applied
         }
 
-        sectionAdapter.notifyDataSetChanged();
+        sepTextAdapter.notifyDataSetChanged();
         linkFragment.notifyDataSetChanged();
     }
 
     @Override
     protected void setIsSideBySide(boolean isSideBySide) {
         super.setIsSideBySide(isSideBySide);
-        sectionAdapter.notifyDataSetChanged();
+        sepTextAdapter.notifyDataSetChanged();
     }
 
     protected void incrementTextSize(boolean isIncrement) {
         super.incrementTextSize(isIncrement);
-        sectionAdapter.notifyDataSetChanged();
+        sepTextAdapter.notifyDataSetChanged();
         linkFragment.notifyDataSetChanged();
     }
 
@@ -257,16 +253,16 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
             if (v.getTop() <= SEGMENT_SELECTOR_LINE_FROM_TOP && v.getBottom() > SEGMENT_SELECTOR_LINE_FROM_TOP) {
                 if (linkFragment.getIsOpen()) {
                     int currInd = i + listView.getFirstVisiblePosition();
-                    Text currSeg = sectionAdapter.getItem(currInd);
+                    Text currSeg = sepTextAdapter.getItem(currInd);
                     if (currSeg.isChapter()) {//TODO maybe make this select the chapter links...but not actually
-                        currSeg = sectionAdapter.getItem(currInd + 1);
+                        currSeg = sepTextAdapter.getItem(currInd + 1);
                     }
 
                     if (currSeg.equals(linkFragment.getSegment())) return; //no need to update
 
 
                     linkFragment.updateFragment(currSeg);
-                    sectionAdapter.notifyDataSetChanged(); //redraw visible views to make current segment view darker
+                    sepTextAdapter.notifyDataSetChanged(); //redraw visible views to make current segment view darker
 
                 }
                 break;
@@ -286,23 +282,23 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
                     int lastItem = firstVisibleItem + visibleItemCount;
                     //Extra condition to make sure it doesn't load multiple prev sections in a row
                     //wait 2 secs from init until you load prev
-                    //Log.d("SectionActivity","TIME = " + (System.currentTimeMillis() - initTime));
+                    //Log.d("SepTextActivity","TIME = " + (System.currentTimeMillis() - initTime));
                     if (firstVisibleItem == 0 && listView.getViewByPosition(firstVisibleItem).getTop() >= 0 && System.currentTimeMillis() - initTime > PREV_DELAY_TIME) {
-                        //Log.d("SectionActivity","STARTING PREV");
-                        AsyncLoadSection als = new AsyncLoadSection(TextEnums.PREV_SECTION,sectionAdapter.getItem(0));
+                        //Log.d("SepTextActivity","STARTING PREV");
+                        AsyncLoadSection als = new AsyncLoadSection(TextEnums.PREV_SECTION, sepTextAdapter.getItem(0));
                         als.preExecute();
                     }
                     if (lastItem == totalItemCount ) {
-                        //Log.d("SectionActivity","STARTING NEXT");
+                        //Log.d("SepTextActivity","STARTING NEXT");
                         preLast = lastItem;
-                        AsyncLoadSection als = new AsyncLoadSection(TextEnums.NEXT_SECTION,sectionAdapter.getItem(lastItem-1));
+                        AsyncLoadSection als = new AsyncLoadSection(TextEnums.NEXT_SECTION, sepTextAdapter.getItem(lastItem-1));
                         als.preExecute();
                     }
 
-                    Text topSegment = sectionAdapter.getItem(firstVisibleItem);
+                    Text topSegment = sepTextAdapter.getItem(firstVisibleItem);
                     setCurrNode(topSegment);
                 } else {
-                    //Log.d("SectionActivity","BLOCKED  ");
+                    //Log.d("SepTextActivity","BLOCKED  ");
                 }
         }
     }
@@ -310,8 +306,8 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
 
     @Override
     protected void jumpToText(Text text) {
-        final int index = sectionAdapter.getPosition(text);
-        sectionAdapter.highlightIncomingText(text);
+        final int index = sepTextAdapter.getPosition(text);
+        sepTextAdapter.highlightIncomingText(text);
 
         listView.post(new Runnable() {
 
@@ -324,9 +320,9 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
 
     /*public void jumpSection(View view) {
         if (view.getId() == R.id.jump_section_down) {
-            Log.d("SectionActivity","DOWN");
+            Log.d("SepTextActivity","DOWN");
         } else if (view.getId() == R.id.jump_section_up) {
-            Log.d("SectionActivity","UP");
+            Log.d("SepTextActivity","UP");
         }
     }*/
 
@@ -356,11 +352,11 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
                 AnimateLinkFragClose(linkRoot);
 
             } else {
-                sectionAdapter.highlightIncomingText(null);
+                sepTextAdapter.highlightIncomingText(null);
                 if (view.getTop() > 0) //don't auto-scroll if the text is super long.
                     listView.smoothScrollToPositionFromTop(position,SuperTextActivity.SEGMENT_SELECTOR_LINE_FROM_TOP,SuperTextActivity.LINK_FRAG_ANIM_TIME);
                 linkFragment.setClicked(true);
-                linkFragment.updateFragment(sectionAdapter.getItem(position));
+                linkFragment.updateFragment(sepTextAdapter.getItem(position));
                 //linkRoot.setVisibility(View.VISIBLE);
                 AnimateLinkFragOpen(linkRoot);
             }
@@ -371,7 +367,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
 
     @Override
     protected void postFindOnPageBackground() {
-        sectionAdapter.notifyDataSetChanged();
+        sepTextAdapter.notifyDataSetChanged();
     }
 
 
@@ -396,7 +392,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
             if (catalystText == null || !catalystText.equals(problemLoadedText)) {
                 this.execute();
             } else {
-                //Log.d("SectionActivity","Problem text not loaded");
+                //Log.d("SepTextActivity","Problem text not loaded");
             }
         }
 
@@ -407,9 +403,9 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
             loaderText = new Text(true);
 
             if (this.dir == TextEnums.NEXT_SECTION) {
-                sectionAdapter.add(loaderText);
+                sepTextAdapter.add(loaderText);
             } else /*if (this.dir == TextEnums.PREV_SECTION)*/ {
-                //sectionAdapter.add(0,loaderText);
+                //sepTextAdapter.add(0,loaderText);
             }
         }
 
@@ -433,11 +429,11 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
 
             final Text sectionHeader = getSectionHeaderText(dir);
             if (dir == TextEnums.NEXT_SECTION) {
-                //Log.d("SectionActivity","ENDING NEXT");
-                sectionAdapter.remove(loaderText);
+                //Log.d("SepTextActivity","ENDING NEXT");
+                sepTextAdapter.remove(loaderText);
                 if(sectionHeader.getText(Util.Lang.EN).length() > 0 || sectionHeader.getText(Util.Lang.HE).length() > 0)
-                    sectionAdapter.add(sectionHeader);
-                sectionAdapter.addAll(textsList);
+                    sepTextAdapter.add(sectionHeader);
+                sepTextAdapter.addAll(textsList);
 
                 if (openToText != null) {
                     jumpToText(openToText);
@@ -457,9 +453,9 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
                     GoogleTracker.sendEvent(category,"Scrolled down",scrolledDownTimes/openedNewBookTime);
                 }
             } else /*if (dir == TextEnums.PREV_SECTION)*/ {
-                //Log.d("SectionActivity","ENDING PREV");
-                sectionAdapter.addAll(0, textsList);
-                sectionAdapter.add(0, sectionHeader);
+                //Log.d("SepTextActivity","ENDING PREV");
+                sepTextAdapter.addAll(0, textsList);
+                sepTextAdapter.add(0, sectionHeader);
                 listView.setSelection(textsList.size()+1);
 
             }
