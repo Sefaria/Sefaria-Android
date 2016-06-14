@@ -9,7 +9,7 @@ android {
         minSdkVersion 14
         targetSdkVersion 23
         versionCode 278
-        versionName "2.78"
+        versionName "2.78d"
         // Enabling multidex support
         //multiDexEnabled true
     }
