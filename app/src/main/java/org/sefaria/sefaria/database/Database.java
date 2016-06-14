@@ -91,7 +91,7 @@ public class Database extends SQLiteOpenHelper{
         }
 
         Util.deleteNonRecursiveDir(Downloader.FULL_DOWNLOAD_PATH); //remove any old temp downloads
-        Cache.clearExpiredCache();
+        Cache.clearExpiredCache(); //TODO I suspect this line is taking a lot of time to run. not sure
         Database.getOfflineDBIfNeeded(activity,false);
     }
 

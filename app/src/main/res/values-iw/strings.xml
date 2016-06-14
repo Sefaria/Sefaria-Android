@@ -84,7 +84,7 @@
     <string name="didnt_find_query_in_book">Didn\'t find query in book</string>
     <!--debug string, dont translate--><string name="downloading_library_even_not_newest">Downloading Library (even if it is not a new version)</string>
     <string name="unable_to_load_toc_for_book">לא ניתן לטעון את התוכן לספר זה</string>
-    <string name="starting_download">Starting Download</string>
+    <string name="starting_download">מתחיל הורדה</string>
     <string name="still_downloading_library">הספרייה עדיין מוריד</string>
     <string name="cant_download_without_storage_perms">לא ניתן להוריד את הספריה בלי רשות</string>
     <string name="sorry_book_not_found">ספר לא נמצא</string>

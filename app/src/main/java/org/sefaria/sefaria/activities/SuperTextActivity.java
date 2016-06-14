@@ -168,7 +168,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
         //These vars are specifically initialized here and not in init() so that they don't get overidden when coming from TOC
         //defaults
-        isCts = Settings.getIsCts();
+        isCts = Settings.getIsCts(book);
         isSideBySide = Settings.getIsSideBySide();
         colorTheme = Settings.getTheme();
         setTheme(colorTheme);
@@ -366,7 +366,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
         else
             bookLang = Settings.getDefaultTextLang();
 
-        if (Settings.getIsCts() && bookLang != Util.Lang.BI && book != null && canBeCts(book)) {
+        if (Settings.getIsCts() && bookLang != Util.Lang.BI && canBeCts(book)) {
             intent = new Intent(context, TextActivity.class);
         } else {
             intent = new Intent(context, SectionActivity.class);
@@ -419,7 +419,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
-                Log.d("SuperTextAct", "draw closed");
+                //Log.d("SuperTextAct", "draw closed");
                 setMenuLang(Settings.getMenuLang());
                 homeFragment.onHomeFragClose();
             }
@@ -427,7 +427,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                Log.d("SuperTextAct", "draw opened");
+                //Log.d("SuperTextAct", "draw opened");
                 Settings.BookSettings.setSavedBook(book, currNode, currText, textLang);//save this book b/f home frag so that this book is in recent list
                 homeFragment.onHomeFragOpen();
             }
@@ -625,7 +625,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
     View.OnClickListener searchClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Log.d("TextAct", "here");
+            //Log.d("TextAct", "here");
             if(searchActionbar == null) {
                 searchActionbar = new SearchActionbar(SuperTextActivity.this, findOnPageCloseClick, null,findOnPageUpClick,findOnPageDownClick,book.getCatColor(), getRString(R.string.search) + " " + book.getTitle(menuLang));
             }
@@ -793,8 +793,14 @@ public abstract class SuperTextActivity extends FragmentActivity {
     protected abstract void setTextLang(Util.Lang textLang);
 
     protected void setIsCts(boolean isCts) {
-        Settings.setIsCts(isCts);
-        restartActivity();
+        setIsCts(isCts,false);
+    }
+
+    protected void setIsCts(boolean isCts, boolean forceRestart) {
+        if (isCts != this.isCts || forceRestart) {
+            Settings.setIsCts(isCts);
+            restartActivity();
+        }
     }
     protected void setIsSideBySide(boolean isSideBySide){
         this.isSideBySide = isSideBySide;

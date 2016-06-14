@@ -66,6 +66,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
     protected void init() {
         super.init();
         listView = (ListViewExt) findViewById(R.id.listview);
+        listView.setFastScrollEnabled(true);
         sectionAdapter = new SectionAdapter(this,R.layout.adapter_text_mono,new ArrayList<Text>());
 
 
@@ -221,7 +222,15 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
     }
 
     protected void setTextLang(Util.Lang textLang) {
+
+
+
         this.textLang = textLang;
+
+        if (textLang != Util.Lang.BI && isCts) {
+            setIsCts(isCts,true); //force a restart so that your iscts setting is applied
+        }
+
         sectionAdapter.notifyDataSetChanged();
         linkFragment.notifyDataSetChanged();
     }
@@ -277,14 +286,14 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
                     int lastItem = firstVisibleItem + visibleItemCount;
                     //Extra condition to make sure it doesn't load multiple prev sections in a row
                     //wait 2 secs from init until you load prev
-                    Log.d("SectionActivity","TIME = " + (System.currentTimeMillis() - initTime));
+                    //Log.d("SectionActivity","TIME = " + (System.currentTimeMillis() - initTime));
                     if (firstVisibleItem == 0 && listView.getViewByPosition(firstVisibleItem).getTop() >= 0 && System.currentTimeMillis() - initTime > PREV_DELAY_TIME) {
-                        Log.d("SectionActivity","STARTING PREV");
+                        //Log.d("SectionActivity","STARTING PREV");
                         AsyncLoadSection als = new AsyncLoadSection(TextEnums.PREV_SECTION,sectionAdapter.getItem(0));
                         als.preExecute();
                     }
                     if (lastItem == totalItemCount ) {
-                        Log.d("SectionActivity","STARTING NEXT");
+                        //Log.d("SectionActivity","STARTING NEXT");
                         preLast = lastItem;
                         AsyncLoadSection als = new AsyncLoadSection(TextEnums.NEXT_SECTION,sectionAdapter.getItem(lastItem-1));
                         als.preExecute();
@@ -293,7 +302,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
                     Text topSegment = sectionAdapter.getItem(firstVisibleItem);
                     setCurrNode(topSegment);
                 } else {
-                    Log.d("SectionActivity","BLOCKED  ");
+                    //Log.d("SectionActivity","BLOCKED  ");
                 }
         }
     }
@@ -424,7 +433,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
 
             final Text sectionHeader = getSectionHeaderText(dir);
             if (dir == TextEnums.NEXT_SECTION) {
-                Log.d("SectionActivity","ENDING NEXT");
+                //Log.d("SectionActivity","ENDING NEXT");
                 sectionAdapter.remove(loaderText);
                 if(sectionHeader.getText(Util.Lang.EN).length() > 0 || sectionHeader.getText(Util.Lang.HE).length() > 0)
                     sectionAdapter.add(sectionHeader);
@@ -448,7 +457,7 @@ public class SectionActivity extends SuperTextActivity implements AbsListView.On
                     GoogleTracker.sendEvent(category,"Scrolled down",scrolledDownTimes/openedNewBookTime);
                 }
             } else /*if (dir == TextEnums.PREV_SECTION)*/ {
-                Log.d("SectionActivity","ENDING PREV");
+                //Log.d("SectionActivity","ENDING PREV");
                 sectionAdapter.addAll(0, textsList);
                 sectionAdapter.add(0, sectionHeader);
                 listView.setSelection(textsList.size()+1);
