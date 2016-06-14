@@ -7,7 +7,6 @@ import java.util.Map;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -36,7 +35,6 @@ import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.MenuElements.MenuState;
-import org.sefaria.sefaria.activities.SectionActivity;
 
 public class UpdateService extends Service {
     public static final int UPDATE_STAGE_2_COMPLETE = 1;

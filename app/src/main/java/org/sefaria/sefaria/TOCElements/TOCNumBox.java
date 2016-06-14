@@ -1,20 +1,15 @@
 package org.sefaria.sefaria.TOCElements;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Resources;
 
 import android.support.v7.widget.GridLayout;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 
-import android.widget.TextView;
-
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
-import org.sefaria.sefaria.activities.SectionActivity;
 import org.sefaria.sefaria.activities.TOCActivity;
 import org.sefaria.sefaria.database.Node;
 import org.sefaria.sefaria.layouts.SefariaTextView;

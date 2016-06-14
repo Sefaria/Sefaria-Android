@@ -11,16 +11,13 @@ import android.graphics.Point;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import org.sefaria.sefaria.activities.SectionActivity;
+import org.sefaria.sefaria.activities.SepTextActivity;
 import org.sefaria.sefaria.activities.SuperTextActivity;
 import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.database.Book;
@@ -272,7 +269,7 @@ public class MyApp extends Application {
     }
 
     public static void restart(){
-        Intent mStartActivity = new Intent(MyApp.getContext(), SectionActivity.class);
+        Intent mStartActivity = new Intent(MyApp.getContext(), SepTextActivity.class);
         int mPendingIntentId = 31415;
         PendingIntent mPendingIntent = PendingIntent.getActivity(MyApp.getContext(), mPendingIntentId,  mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
         AlarmManager mgr = (AlarmManager)MyApp.getContext().getSystemService(Context.ALARM_SERVICE);

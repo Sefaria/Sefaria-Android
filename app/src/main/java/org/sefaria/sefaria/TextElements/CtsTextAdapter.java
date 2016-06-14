@@ -27,7 +27,7 @@ import java.util.StringTokenizer;
 /**
  * Created by nss on 5/17/16.
  */
-public class TextAdapter extends ArrayAdapter<Section> {
+public class CtsTextAdapter extends ArrayAdapter<Section> {
 
     private static int MAX_ALPHA_NUM_LINKS = 70;
     private static int MIN_ALPHA_NUM_LINKS = 20;
@@ -44,7 +44,7 @@ public class TextAdapter extends ArrayAdapter<Section> {
 
     private OnSegmentSpanClickListener onSegmentSpanClickListener;
 
-    public TextAdapter(SuperTextActivity activity, int resourceId, List<Section> objects, OnSegmentSpanClickListener onSegmentSpanClickListener) {
+    public CtsTextAdapter(SuperTextActivity activity, int resourceId, List<Section> objects, OnSegmentSpanClickListener onSegmentSpanClickListener) {
         super(activity, resourceId, objects);
         this.activity = activity;
         this.sections = objects;

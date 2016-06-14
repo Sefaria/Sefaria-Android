@@ -2,9 +2,7 @@ package org.sefaria.sefaria.MenuElements;
 
 import android.content.Context;
 import android.os.Build;
-import android.util.Log;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.View;
 
 import org.sefaria.sefaria.R;
@@ -25,7 +23,7 @@ public class MenuButton extends MenuElement {
 
     public MenuButton(Context context) {
         super(context);
-        inflate(context, R.layout.button_menu, this);
+        inflate(context, R.layout.menu_button, this);
         this.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, 1f));
         this.setVisibility(View.INVISIBLE);
     }
@@ -35,7 +33,7 @@ public class MenuButton extends MenuElement {
         //home and menu buttons are slightly different.
         //annoyingly, it's difficult to set margin dynamically, instead I'll just switch views
         if (menuNode.isHomeButton()) {
-            inflate(context, R.layout.button_home, this);
+            inflate(context, R.layout.menu_home_button, this);
             this.entv = (SefariaTextView) this.findViewById(R.id.en_tv);
             this.hetv = (SefariaTextView) this.findViewById(R.id.he_tv);
             this.colorBar = this.findViewById(R.id.color_bar);
@@ -49,7 +47,7 @@ public class MenuButton extends MenuElement {
             //Log.d("color", "BTN " + menuNode.getTitle(Util.Lang.EN) + " " + Integer.toHexString(context.getResources().getColor(menuNode.getColor())));
             setColor(menuNode.getColor());
         } else {//menu
-            inflate(context, R.layout.button_menu, this);
+            inflate(context, R.layout.menu_button, this);
             this.tv = (SefariaTextView) findViewById(R.id.tv);
 
         }
@@ -72,7 +70,7 @@ public class MenuButton extends MenuElement {
 
     /*public MenuButton(Context context, String text) {
         super(context);
-        inflate(context, R.layout.button_menu, this);
+        inflate(context, R.layout.menu_button, this);
         this.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 1f));
 
         this.tv = (TextView) this.findViewById(R.id.tv);

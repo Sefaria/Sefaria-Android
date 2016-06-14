@@ -11,7 +11,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:background="?text_bg"
-        tools:context="org.sefaria.sefaria.activities.TextActivity">
+        tools:context=".activities.CtsTextActivity">
 
         <LinearLayout
             android:id="@+id/actionbarRoot"
@@ -21,12 +21,12 @@
             android:layout_height="wrap_content"
             android:translationZ="40dp"></LinearLayout>
         <LinearLayout
-        android:id="@+id/searchBarRoot"
-        android:orientation="horizontal"
-        android:layout_alignParentTop="true"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:translationZ="40dp"></LinearLayout>
+            android:id="@+id/searchBarRoot"
+            android:orientation="horizontal"
+            android:layout_alignParentTop="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:translationZ="40dp"></LinearLayout>
 
         <LinearLayout
             android:id="@+id/textMenuRoot"
@@ -43,7 +43,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/actionbarRoot"
+            android:clickable="true"
             />
+
 
 
 

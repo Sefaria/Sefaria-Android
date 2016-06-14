@@ -74,7 +74,7 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextHolder> {
 
     @Override
     public void onBindViewHolder(LinkTextHolder holder, int position) {
-        Log.d("SectionActivity","BIND " + position);
+        Log.d("SepTextActivity","BIND " + position);
         Util.Lang lang = activity.getTextLang();
 
         Text link = itemList.get(position);

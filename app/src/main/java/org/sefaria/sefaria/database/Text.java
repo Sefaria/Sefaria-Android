@@ -24,7 +24,7 @@ public class Text implements Parcelable {
 
 
 
-    public Node parentNode = null; //for SectionAdapter. not null indicates that this obj is actually a placeholder for a perek title (and the node represents that perek)
+    public Node parentNode = null; //for SepTextAdapter. not null indicates that this obj is actually a placeholder for a perek title (and the node represents that perek)
     public int tid;
     public int bid;
     private String enText;

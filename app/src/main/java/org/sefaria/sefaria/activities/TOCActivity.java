@@ -2,10 +2,8 @@ package org.sefaria.sefaria.activities;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -13,7 +11,6 @@ import android.widget.ScrollView;
 
 import org.sefaria.sefaria.Dialog.DialogNoahSnackbar;
 import org.sefaria.sefaria.GoogleTracker;
-import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.TOCElements.TOCGrid;
@@ -159,9 +156,9 @@ public class TOCActivity extends AppCompatActivity {
 
         Intent intent;
         if (Settings.getIsCts() && bookLang != Util.Lang.BI && SuperTextActivity.canBeCts(book)) {
-            intent = new Intent(context, TextActivity.class);
+            intent = new Intent(context, CtsTextActivity.class);
         } else {
-            intent = new Intent(context, SectionActivity.class);
+            intent = new Intent(context, SepTextActivity.class);
         }
         intent.putExtra("nodeHash", node.hashCode());
         intent.putExtra("lang", lang);
@@ -172,7 +169,7 @@ public class TOCActivity extends AppCompatActivity {
         //This don't need request b/c I'm no longer doing the REORDERING
         //((TOCActivity) context).startActivityForResult(intent, TOCActivity.COMING_BACK_TO_TOC_REQUEST_CODE); //using result so that we can know if someone presses back to come back fromo TextAct (instead of reopening the TOC).
 
-        //TODO determine if SectionActivity was already open... Make sure to be careful of multi-tab stuff
+        //TODO determine if SepTextActivity was already open... Make sure to be careful of multi-tab stuff
         //TODO I think it should also actually have the back button work for going to the TOC from textActivity
 
         context.startActivity(intent);

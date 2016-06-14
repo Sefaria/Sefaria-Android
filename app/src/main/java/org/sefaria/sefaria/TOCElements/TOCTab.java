@@ -25,7 +25,7 @@ public class TOCTab extends LinearLayout implements TOCElement {
 
     public TOCTab(Context context, Node node, Util.Lang lang) {
         super(context);
-        inflate(context, R.layout.tab_menu, this);
+        inflate(context, R.layout.menu_tab, this);
         this.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT));
         this.context = context;
         this.lang = lang;
@@ -43,7 +43,7 @@ public class TOCTab extends LinearLayout implements TOCElement {
      */
     public TOCTab(Context context,  Util.Lang lang) {
         super(context);
-        inflate(context, R.layout.tab_menu, this);
+        inflate(context, R.layout.menu_tab, this);
         this.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT));
 
         this.context = context;

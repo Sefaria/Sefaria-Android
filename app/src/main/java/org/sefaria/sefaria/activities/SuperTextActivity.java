@@ -39,7 +39,6 @@ import org.sefaria.sefaria.database.Node;
 import org.sefaria.sefaria.database.Section;
 import org.sefaria.sefaria.database.Text;
 import org.sefaria.sefaria.layouts.CustomActionbar;
-import org.sefaria.sefaria.layouts.ScrollViewExt;
 import org.sefaria.sefaria.MenuElements.MenuNode;
 
 import java.util.ArrayList;
@@ -359,7 +358,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
     public static void startNewTextActivityIntent(Context context, Book book, Text text, Node node,boolean openNewTask,String searchingTerm,int textNum) {
         Intent intent;
 
-        //Open TextActivity if the current book can be cts, and your settings are cts
+        //Open CtsTextActivity if the current book can be cts, and your settings are cts
         Util.Lang bookLang;
         if (book != null)
             bookLang = Settings.BookSettings.getSavedBook(book).lang;
@@ -367,9 +366,9 @@ public abstract class SuperTextActivity extends FragmentActivity {
             bookLang = Settings.getDefaultTextLang();
 
         if (Settings.getIsCts() && bookLang != Util.Lang.BI && canBeCts(book)) {
-            intent = new Intent(context, TextActivity.class);
+            intent = new Intent(context, CtsTextActivity.class);
         } else {
-            intent = new Intent(context, SectionActivity.class);
+            intent = new Intent(context, SepTextActivity.class);
         }
 
         if(book != null)

@@ -17,7 +17,7 @@ public class MenuSubtitle extends MenuElement {
 
     public MenuSubtitle(Context context, MenuNode node, Util.Lang lang) {
         super(context);
-        inflate(context, R.layout.subtitle_menu, this);
+        inflate(context, R.layout.menu_subtitle, this);
         this.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, 1f));
         this.node = node;
         this.tv = (SefariaTextView) findViewById(R.id.tv);
