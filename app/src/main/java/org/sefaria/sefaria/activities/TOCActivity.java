@@ -158,7 +158,7 @@ public class TOCActivity extends AppCompatActivity {
             bookLang = Settings.getDefaultTextLang();
 
         Intent intent;
-        if (Settings.getIsCts() && bookLang != Util.Lang.BI && book != null && SuperTextActivity.canBeCts(book)) {
+        if (Settings.getIsCts() && bookLang != Util.Lang.BI && SuperTextActivity.canBeCts(book)) {
             intent = new Intent(context, TextActivity.class);
         } else {
             intent = new Intent(context, SectionActivity.class);

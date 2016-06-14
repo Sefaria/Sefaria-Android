@@ -309,9 +309,14 @@ public class LinkFragment extends android.support.v4.app.Fragment {
         @Override
         public void onClick(View v) {
             LinkSelectorBarButton lsbb = (LinkSelectorBarButton) v;
-            gotoState(State.BOOK,getView(),lsbb.getLinkCount());
-            linkTextAdapter.setCurrLinkCount(lsbb.getLinkCount(), segment);
-            linkSelectorBar.update(lsbb.getLinkCount(),activity.getMenuLang());
+
+            //only update if different linkcount selected
+            if (lsbb.getLinkCount() != linkTextAdapter.getCurrLinkCount()) {
+                gotoState(State.BOOK, getView(), lsbb.getLinkCount());
+
+                linkTextAdapter.setCurrLinkCount(lsbb.getLinkCount(), segment);
+                linkSelectorBar.update(lsbb.getLinkCount(), activity.getMenuLang());
+            }
         }
     };
 

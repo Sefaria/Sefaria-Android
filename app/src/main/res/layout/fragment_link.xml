@@ -74,6 +74,8 @@
             android:layout_height="wrap_content"
             android:paddingTop="10dp"
             android:paddingBottom="30dp"
+            android:scrollbars="vertical"
+            android:scrollbarStyle="insideOverlay"
             android:clipToPadding="false">
 
         </android.support.v7.widget.RecyclerView>

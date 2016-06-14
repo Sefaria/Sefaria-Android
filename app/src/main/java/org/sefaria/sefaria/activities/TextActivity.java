@@ -203,8 +203,7 @@ public class TextActivity extends SuperTextActivity implements AbsListView.OnScr
     protected void setTextLang(Util.Lang textLang) {
         this.textLang = textLang;
         if (textLang == Util.Lang.BI) {
-            Settings.setIsCts(false);
-            restartActivity();
+            setIsCts(false,true); //force restart to apply changes
         }
 
         textAdapter.notifyDataSetChanged();

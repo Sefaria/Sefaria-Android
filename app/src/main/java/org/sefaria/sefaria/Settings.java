@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 import android.util.Pair;
 
+import org.sefaria.sefaria.activities.SuperTextActivity;
 import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Database;
@@ -152,8 +153,17 @@ public class Settings {
     }
 
     public static boolean getIsCts() {
+        return getIsCts(null);
+    }
+
+    /**
+     * default value is dependent on whether or not the text can be cts
+     * @param book
+     * @return
+     */
+    public static boolean getIsCts(Book book) {
         SharedPreferences generalSettings = getGeneralSettings();
-        boolean isCts = generalSettings.getBoolean("cts", false);
+        boolean isCts = generalSettings.getBoolean("cts", SuperTextActivity.canBeCts(book));
         return isCts;
     }
 
