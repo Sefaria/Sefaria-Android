@@ -7,6 +7,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 
 import org.sefaria.sefaria.MyApp;
@@ -22,7 +23,7 @@ public class SplashScreenActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_splash_screen);
+        //setContentView(R.layout.activity_splash_screen);
         new StartUp().execute();
     }
 
@@ -36,25 +37,27 @@ public class SplashScreenActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            Log.d("Splash","START");
             startTime = System.currentTimeMillis();
         }
 
         @Override
         protected Void doInBackground(Void... params) {
             Huffman.makeTree(false);
-            while (MIN_SPLASH_TIME > (System.currentTimeMillis() - startTime)) {
+            /*while (MIN_SPLASH_TIME > (System.currentTimeMillis() - startTime)) {
                 try {
                     Thread.sleep(50);
                 } catch (InterruptedException e) {
                     break;
                 }
-            }
+            }*/
             return null;
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
+            Log.d("Splash","STOP");
             Book book;
             try {
                 book = new Book(Settings.getLastBook());

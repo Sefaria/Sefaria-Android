@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:id="@+id/filterTitle"
+        android:layoutDirection="rtl"
+        >
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="6dp"
+            android:layout_gravity="center_vertical"
+            >
+            <ImageView
+                android:id="@+id/arrow_left"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:src="@drawable/down_arrow"
+                android:tint="?text_color_faded"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center"
+                android:visibility="invisible"
+
+                />
+        </FrameLayout>
+        <org.sefaria.sefaria.layouts.SefariaTextView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:text="@string/filter_by_text"
+            android:textColor="?text_color_main"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="1dp"
+            android:textSize="18sp">
+        </org.sefaria.sefaria.layouts.SefariaTextView>
+        <FrameLayout
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="6dp"
+            android:layout_gravity="center_vertical"
+            >
+            <ImageView
+                android:id="@+id/arrow_right"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:src="@drawable/down_arrow"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center"
+                android:tint="?text_color_faded"
+                android:visibility="visible"
+
+                />
+        </FrameLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/filterLists"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+        <ListView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent">
+        </ListView>
+        <ListView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent">
+        </ListView>
+    </LinearLayout>
+
+</LinearLayout>

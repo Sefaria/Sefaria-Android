@@ -41,7 +41,7 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextHolder> {
         this.itemList = itemList;
         this.activity = context;
         this.noLinksTV = noLinksTV;
-
+        if (itemList == null) itemList = new ArrayList<>();
         if (itemList.size() == 0) {
             noLinksTV.setVisibility(View.VISIBLE);
         } else {
@@ -74,7 +74,6 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextHolder> {
 
     @Override
     public void onBindViewHolder(LinkTextHolder holder, int position) {
-        Log.d("SepTextActivity","BIND " + position);
         Util.Lang lang = activity.getTextLang();
 
         Text link = itemList.get(position);

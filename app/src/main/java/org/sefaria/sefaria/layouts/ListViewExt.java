@@ -3,6 +3,7 @@ package org.sefaria.sefaria.layouts;
 import android.content.Context;
 import android.graphics.Point;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.widget.ListView;
@@ -22,7 +23,12 @@ public class ListViewExt extends ListView {
         void onScrollStopped();
     }
 
+    public interface OnScrollStartedListener{
+        void onScrollStarted();
+    }
+
     private OnScrollStoppedListener onScrollStoppedListener;
+    private OnScrollStartedListener onScrollStartedListener;
 
     public ListViewExt(Context context) {
         super(context);
@@ -45,14 +51,14 @@ public class ListViewExt extends ListView {
     protected void onScrollChanged(int x, int y, int oldX, int oldY) {
         super.onScrollChanged(x, y, oldX, oldY);
         if (lastScrollUpdate == -1) {
-            //onScrollStart();
+            if(onScrollStartedListener!=null){
+                onScrollStartedListener.onScrollStarted();
+            }
             postDelayed(new ScrollStateHandler(), sensitivity);
         }
 
         lastScrollUpdate = System.currentTimeMillis();
     }
-
-    private void onScrollStart() {}
 
     private class ScrollStateHandler implements Runnable {
 
@@ -72,6 +78,10 @@ public class ListViewExt extends ListView {
 
     public void setOnScrollStoppedListener(ListViewExt.OnScrollStoppedListener listener){
         onScrollStoppedListener = listener;
+    }
+
+    public void setOnScrollStartedListener(ListViewExt.OnScrollStartedListener listener){
+        onScrollStartedListener = listener;
     }
 
     public View getViewByPosition(int pos) {

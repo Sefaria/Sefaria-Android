@@ -606,15 +606,6 @@ public class Text implements Parcelable {
         Log.d("text", toString());
     }
 
-    private static String convertLangToLangText(String lang){
-        if(lang.equals("en"))
-            return KenText;
-        else if(lang.equals("he"))
-            return  KheText;
-        Log.e("sql_text_convertLang", "Unknown lang");
-        return "";
-    }
-
     @Override
     public int hashCode() {
         if(tid == 0)
@@ -676,13 +667,10 @@ public class Text implements Parcelable {
 
 
     private static final String Kbid = "bid";
-    private static final String KenText = "enText";
-    private static final String KheText = "heText";
     protected static final String Klevel1 = "level1";
     protected static final String Klevel2 = "level2";
     protected static final String Klevel3 = "level3";
     protected static final String Klevel4 = "level4";
-    //public static final String Khid = Header.Khid;
 
 
     //PARCELABLE------------------------------------------------------------------------

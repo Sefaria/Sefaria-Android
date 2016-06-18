@@ -62,7 +62,6 @@ public class SepTextActivity extends SuperTextActivity implements AbsListView.On
     protected void init() {
         super.init();
         listView = (ListViewExt) findViewById(R.id.listview);
-        listView.setFastScrollEnabled(true);
         sepTextAdapter = new SepTextAdapter(this,R.layout.adapter_text_mono,new ArrayList<Text>());
 
 
@@ -78,6 +77,7 @@ public class SepTextActivity extends SuperTextActivity implements AbsListView.On
                 updateFocusedSegment();
             }
         });
+
 
         AsyncLoadSection als = new AsyncLoadSection(TextEnums.NEXT_SECTION,null);
         als.preExecute();
@@ -223,7 +223,7 @@ public class SepTextActivity extends SuperTextActivity implements AbsListView.On
 
         this.textLang = textLang;
 
-        if (textLang != Util.Lang.BI && isCts) {
+        if (textLang != Util.Lang.BI && isCts && canBeCts(book)) {
             setIsCts(isCts,true); //force a restart so that your iscts setting is applied
         }
 
@@ -283,20 +283,24 @@ public class SepTextActivity extends SuperTextActivity implements AbsListView.On
                     //Extra condition to make sure it doesn't load multiple prev sections in a row
                     //wait 2 secs from init until you load prev
                     //Log.d("SepTextActivity","TIME = " + (System.currentTimeMillis() - initTime));
-                    if (firstVisibleItem == 0 && listView.getViewByPosition(firstVisibleItem).getTop() >= 0 && System.currentTimeMillis() - initTime > PREV_DELAY_TIME) {
-                        //Log.d("SepTextActivity","STARTING PREV");
-                        AsyncLoadSection als = new AsyncLoadSection(TextEnums.PREV_SECTION, sepTextAdapter.getItem(0));
-                        als.preExecute();
-                    }
-                    if (lastItem == totalItemCount ) {
-                        //Log.d("SepTextActivity","STARTING NEXT");
-                        preLast = lastItem;
-                        AsyncLoadSection als = new AsyncLoadSection(TextEnums.NEXT_SECTION, sepTextAdapter.getItem(lastItem-1));
-                        als.preExecute();
-                    }
+                    try {
+                        if (firstVisibleItem == 0 && listView.getViewByPosition(firstVisibleItem).getTop() >= 0 && System.currentTimeMillis() - initTime > PREV_DELAY_TIME) {
+                            //Log.d("SepTextActivity","STARTING PREV");
+                            AsyncLoadSection als = new AsyncLoadSection(TextEnums.PREV_SECTION, sepTextAdapter.getItem(0));
+                            als.preExecute();
+                        }
+                        if (lastItem == totalItemCount) {
+                            //Log.d("SepTextActivity","STARTING NEXT");
+                            preLast = lastItem;
+                            AsyncLoadSection als = new AsyncLoadSection(TextEnums.NEXT_SECTION, sepTextAdapter.getItem(lastItem - 1));
+                            als.preExecute();
+                        }
 
-                    Text topSegment = sepTextAdapter.getItem(firstVisibleItem);
-                    setCurrNode(topSegment);
+                        Text topSegment = sepTextAdapter.getItem(firstVisibleItem);
+                        setCurrNode(topSegment);
+                    } catch (IndexOutOfBoundsException e) {
+                        //listview.getViewByPosition might cause an error if you call this at the wrong time
+                    }
                 } else {
                     //Log.d("SepTextActivity","BLOCKED  ");
                 }

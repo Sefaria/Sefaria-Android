@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Layout;
 import android.text.SpannableString;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,12 +58,16 @@ public class CtsTextActivity extends SuperTextActivity implements AbsListView.On
     protected void init() {
         super.init();
         listView = (ListViewExt) findViewById(R.id.listview);
-        listView.setSensitivity(10);
+        listView.setSensitivity(250);
         ctsTextAdapter = new CtsTextAdapter(this,R.layout.adapter_text_mono,new ArrayList<Section>(),onSegmentSpanClickListener);
 
         listView.setAdapter(ctsTextAdapter);
         listView.setOnScrollListener(this);
         listView.setDivider(null);
+
+        /*
+        SET A TON OF EVENT LISTENERS
+         */
 
         listView.setOnTouchListener(new View.OnTouchListener() {
             public boolean onTouch(View view, MotionEvent event) {
@@ -94,9 +99,25 @@ public class CtsTextActivity extends SuperTextActivity implements AbsListView.On
         listView.setOnScrollStoppedListener(new ListViewExt.OnScrollStoppedListener() {
 
             public void onScrollStopped() {
+                /*if (linkFragment.getView() != null) {
+                    View yo = linkFragment.getView().findViewById(R.id.progressBar);
+                    if (yo != null) yo.setVisibility(View.GONE);
+                }*/
+
                 updateFocusedSegment();
             }
         });
+
+        /*listView.setOnScrollStartedListener(new ListViewExt.OnScrollStartedListener() {
+            @Override
+            public void onScrollStarted() {
+                Log.d("CtsTextActivity","START");
+                if (linkFragment.getView() != null) {
+                    View yo = linkFragment.getView().findViewById(R.id.progressBar);
+                    if (yo != null) yo.setVisibility(View.VISIBLE);
+                }
+            }
+        });*/
 
         AsyncLoadSection als = new AsyncLoadSection(TextEnums.NEXT_SECTION,null);
         als.preExecute();
