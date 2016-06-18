@@ -9,7 +9,7 @@
     <color name="kabbalah">#594176</color>
     <color name="liturgy">#ab4e66</color>
     <color name="philosophy">#7f85a9</color>
-    <color name="system_color">#073570</color>
+    <color name="system_color">#142b51</color> <!--073570-->
     <color name="tosefta">#00827F</color>
     <color name="parshanut">#9ab8cb</color>
     <color name="chasidut">#97b386</color>
@@ -19,7 +19,7 @@
     <color name="quoting_commentary">#cb6158</color>
     <color name="modern_works">#7c406f</color>
     <color name="commentary">#4871bf</color>
-    <color name="system">#212e50</color>
+    <color name="system">#142b51</color> <!--212e50-->
 
     <color name="menu_background">#F9F9F7</color>
     <color name="menu_foreground">#dddddd</color>
@@ -47,8 +47,8 @@
     <color name="link_background">#F9F9F7</color>
     <color name="button_clicked">#BBB</color>
 
-    <color name="splash_screen_bg">#f9f9f7</color>
 
+    <color name="splash_background">#142b51</color>
 
     <!--THEME STUPIDNESSS -->
     <!-- white -->

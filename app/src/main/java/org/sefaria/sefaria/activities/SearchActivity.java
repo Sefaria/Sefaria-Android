@@ -5,11 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.text.BidiFormatter;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,15 +17,11 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.sefaria.sefaria.Dialog.DialogNoahSnackbar;
 import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MyApp;
@@ -39,11 +33,9 @@ import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.SearchElements.SearchActionbar;
 import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.SearchAPI;
-import org.sefaria.sefaria.database.Searching;
 import org.sefaria.sefaria.database.Text;
 import org.sefaria.sefaria.layouts.SefariaTextView;
 
-import java.text.Bidi;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,6 +49,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
     private ListView listView;
     private SefariaTextView numResultsTV;
     private boolean isLoadingSearch;
+    private ArrayList<String> appliedFilters;
     private int currPageLoaded; //based on ElasticSearch page loaded
     private int preLast;
     private boolean APIError = false;
@@ -119,7 +112,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 Log.d("SearchAct","autoComEnterClick");
-                runSearch();
+                runNewSearch();
                 return true;
             }
             return false;
@@ -189,10 +182,10 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
         DialogNoahSnackbar.checkCurrentDialog(this, (ViewGroup) findViewById(R.id.dialogNoahSnackbarRoot));
     }
 
-
-    private void runSearch(){
+    //run a new search
+    private void runNewSearch(){
         autoCompleteTextView.clearFocus();
-        AsyncSearch asyncSearch = new AsyncSearch(0);
+        AsyncSearch asyncSearch = new AsyncSearch(true,null,0);
         asyncSearch.execute();
         // Check if no view has focus:
         View view = SearchActivity.this.getCurrentFocus();
@@ -213,7 +206,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
     View.OnClickListener searchClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            runSearch();
+            runNewSearch();
         }
     };
 
@@ -235,7 +228,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
                     if (lastItem == totalItemCount && preLast != lastItem) {
                         preLast = lastItem;
                         currPageLoaded++;
-                        AsyncSearch asyncSearch = new AsyncSearch(currPageLoaded);
+                        AsyncSearch asyncSearch = new AsyncSearch(false,appliedFilters,currPageLoaded);
                         asyncSearch.execute();
                     }
                 }
@@ -245,9 +238,13 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
     public class AsyncSearch extends AsyncTask<Void,Void,List<Text>> {
 
         private String query;
+        private boolean getFilters;
+        private ArrayList<String> appliedFilters;
         private int pageNum;
 
-        public AsyncSearch(int pageNum) {
+        public AsyncSearch(boolean getFilters, ArrayList<String> appliedFilters, int pageNum) {
+            this.getFilters = getFilters;
+            this.appliedFilters = appliedFilters;
             this.pageNum = pageNum;
             Log.d("Search","LOADING PAGE " + pageNum);
         }
@@ -264,7 +261,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
         protected List<Text> doInBackground(Void... params) {
             APIError = false;
             try {
-                return SearchAPI.search(query, pageNum, PAGE_SIZE);
+                return SearchAPI.search(query, getFilters, appliedFilters,pageNum, PAGE_SIZE);
             } catch (API.APIException e) {
                 APIError = true;
                 return new ArrayList<>();

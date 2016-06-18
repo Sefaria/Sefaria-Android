@@ -8,6 +8,7 @@ import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.sefaria.sefaria.BilingualNode;
 import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.Database;
@@ -113,7 +114,7 @@ public class MenuState implements Parcelable {
         }
 
         if (isRoot) {
-            MenuNode tosefta = rootNode.getChildren().remove(rootNode.getChildIndex("Tosefta",Util.Lang.EN));
+            MenuNode tosefta = (MenuNode) rootNode.getChildren().remove(rootNode.getChildIndex("Tosefta",Util.Lang.EN));
             rootNode.getChildren().add(rootNode.getChildIndex("Philosophy",Util.Lang.EN)+1,tosefta);
         }
     }
@@ -133,9 +134,9 @@ public class MenuState implements Parcelable {
         else tempNode = node;
 
         //if coming from memory restore, currPath contains half-nodes, but you need full-node
-        List<MenuNode> tempChildren = currPath.get(currPath.size()-1).getChildren();
+        List<BilingualNode> tempChildren = currPath.get(currPath.size()-1).getChildren();
         int ind = tempChildren.indexOf(tempNode);
-        MenuNode realNode = tempChildren.get(ind);
+        MenuNode realNode = (MenuNode) tempChildren.get(ind);
 
         List<MenuNode> tempCurrPath = new ArrayList<>(currPath);
         tempCurrPath.add(realNode);
@@ -149,7 +150,6 @@ public class MenuState implements Parcelable {
     }
 
     public MenuState goBack(boolean hasSectionBack, boolean hasTabBack) {
-        MenuNode tempParent = currNode.getParent();
 
         List<MenuNode> tempCurrPath = new ArrayList<>(currPath);
         tempCurrPath.remove(tempCurrPath.size() - 1);
@@ -200,10 +200,10 @@ public class MenuState implements Parcelable {
 
     //parameters are changed in-place and "returned"
     //TODO currently nonsections are only books. probs want to expand that to anything else
-    public void getPageSections(List<MenuNode> sectionList, List<List<MenuNode>> subsectionList, List<MenuNode> sectionlessNodes) {
+    public void getPageSections(List<BilingualNode> sectionList, List<List<BilingualNode>> subsectionList, List<BilingualNode> sectionlessNodes) {
         boolean isHome = currNode.equals(rootNode);
         for (int i = 0; i < currNode.getNumChildren(); i++) {
-            MenuNode tempChild = currNode.getChild(i);
+            MenuNode tempChild = (MenuNode) currNode.getChild(i);
             //commentary is not shown in the menu
             if (tempChild.getTitle(Util.Lang.EN).equals("Commentary")) continue;
 

@@ -8,5 +8,9 @@
 
     <style name="SefariaTheme.White.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash_background_drawable</item>
+    </style>
+
 
 </resources>

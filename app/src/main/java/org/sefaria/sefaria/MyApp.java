@@ -42,14 +42,14 @@ public class MyApp extends Application {
 
     public static final boolean DEBUGGING = false;
 
-    public static final String[] CAT_NAMES = {"Tanach","Mishnah","Talmud",
+    public static final String[] CAT_NAMES = {"Tanakh","Mishnah","Talmud",
             "Tosefta","Liturgy","Tefillah",
             "Philosophy","Chasidut","Musar",
             "Other","Halakhah","Midrash",
             "Kabbalah","Responsa","Parshanut",
             "Apocrypha","More", LinkFilter.QUOTING_COMMENTARY,
             "Modern Works", LinkFilter.COMMENTARY, LinkFilter.ALL_CONNECTIONS,
-            "Targum"
+            "Targum","Tanach"
             };
     public static final int[] CAT_COLORS = {R.color.tanach, R.color.mishnah,R.color.talmud,
             R.color.tosefta,R.color.liturgy,R.color.liturgy,
@@ -58,7 +58,7 @@ public class MyApp extends Application {
             R.color.kabbalah,R.color.responsa,R.color.parshanut,
             R.color.apocrypha,R.color.system_color,R.color.quoting_commentary,
             R.color.modern_works,R.color.commentary, R.color.system_color,
-            R.color.commentary
+            R.color.commentary,R.color.tanach
             };
 
     public enum Font {

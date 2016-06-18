@@ -68,13 +68,9 @@ public class HomeFragment extends android.support.v4.app.Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.d("HomeFrag", "onCreateView");
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         ThisView = view;
         LinearLayout homeRoot = (LinearLayout) view.findViewById(R.id.homeRoot);
-
-        //Don't mention the living library thing unless you're actually at the home screen
-        //addHeader(homeRoot);
         addMenuGrid(view);
         //addRecentTexts(view); //done in on HomeFrag open
         addCalendar(view);

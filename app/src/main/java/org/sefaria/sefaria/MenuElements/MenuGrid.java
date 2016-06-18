@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import org.sefaria.sefaria.BilingualNode;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Settings;
@@ -105,7 +106,7 @@ public class MenuGrid extends LinearLayout {
         return ll;
     }
 
-    public void addSubsection(MenuNode mainNode, List<MenuNode> subNodes, boolean limitGridSize) {
+    public void addSubsection(MenuNode mainNode, List<BilingualNode> subNodes, boolean limitGridSize) {
         if (subNodes.size() == 0) return;
 
         if (mainNode != null) {
@@ -119,7 +120,7 @@ public class MenuGrid extends LinearLayout {
         for (int i = 0; i <= Math.ceil(subNodes.size()/numColumns) && currNodeIndex < subNodes.size(); i++) {
             LinearLayout ll = addRow();
             for (int j = 0; j < numColumns && currNodeIndex < subNodes.size();  j++) {
-                MenuButton mb = addElement(subNodes.get(currNodeIndex),mainNode, ll,j);
+                MenuButton mb = addElement((MenuNode)subNodes.get(currNodeIndex),mainNode, ll,j);
                 if (currNodeIndex >= HOME_MENU_OVERFLOW_NUM-1 && limitGridSize) {
                     mb.setVisibility(View.GONE);
                     overflowButtonList.add(mb);
@@ -137,19 +138,19 @@ public class MenuGrid extends LinearLayout {
      *  Chapters | Parshas | Commentary
      * @param nodeList
      */
-    private void addTabsection(List<MenuNode> nodeList) {
+    private void addTabsection(List<BilingualNode> nodeList) {
         tabRoot = new LinearLayout(context);
         tabRoot.setOrientation(LinearLayout.HORIZONTAL);
         tabRoot.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
         tabRoot.setGravity(Gravity.CENTER);
         this.addView(tabRoot, 0); //make sure it's on top
 
-        int count = 0;
-        for (MenuNode menuNode : nodeList) {
+        for (int count = 0; count < nodeList.size(); count++) {
+            MenuNode menuNode = (MenuNode) nodeList.get(count);
             //although generally this isn't necessary b/c the nodes come from menuState.getSections
             //this is used when rebuilding after memory dump and nodes come from setHasTabs()
             if (menuNode.getTitle(Util.Lang.EN).equals("Commentary") || (menuNode.getTitle(Util.Lang.EN).equals("Rif"))) {
-                count++;
+
                 continue;
             }
             if (count > 0 && count < nodeList.size()) {
@@ -164,7 +165,6 @@ public class MenuGrid extends LinearLayout {
             tabRoot.addView(mbt);
             menuElementList.add(mbt);
             menuButtonTabList.add(mbt);
-            count++;
         }
     }
 
@@ -197,9 +197,9 @@ public class MenuGrid extends LinearLayout {
 
     public void buildPage() {
 
-        List<MenuNode> sections = new ArrayList<>();
-        List<List<MenuNode>> subsections = new ArrayList<>();
-        List<MenuNode> nonSections = new ArrayList<>();
+        List<BilingualNode> sections = new ArrayList<>();
+        List<List<BilingualNode>> subsections = new ArrayList<>();
+        List<BilingualNode> nonSections = new ArrayList<>();
 
         menuState.getPageSections(sections, subsections, nonSections);
         if (menuState.hasTabs()) {
@@ -207,7 +207,7 @@ public class MenuGrid extends LinearLayout {
 
             addTabsection(nonSections);
             //default to the first tab in the list
-            menuState = menuState.goForward(nonSections.get(0), null);
+            menuState = menuState.goForward((MenuNode)nonSections.get(0), null);
             menuButtonTabList.get(0).setActive(true);
 
             sections = new ArrayList<>();
@@ -220,7 +220,7 @@ public class MenuGrid extends LinearLayout {
 
         //thing that has subsections first (like Shulchan Arukh b/c the rest of Halacha
         for (int i = 0; i < sections.size(); i++) {
-            addSubsection(sections.get(i),subsections.get(i),false);
+            addSubsection((MenuNode)sections.get(i),subsections.get(i),false);
         }
 
         if(sections.size()>0){
@@ -400,13 +400,13 @@ public class MenuGrid extends LinearLayout {
             menuState = menuState.goForward(mbt.getNode(), null);
 
             menuElementList = new ArrayList<>();
-            List<MenuNode> sections = new ArrayList<>();
-            List<List<MenuNode>> subsections = new ArrayList<>();
-            List<MenuNode> nonSections = new ArrayList<>();
+            List<BilingualNode> sections = new ArrayList<>();
+            List<List<BilingualNode>> subsections = new ArrayList<>();
+            List<BilingualNode> nonSections = new ArrayList<>();
             menuState.getPageSections(sections, subsections, nonSections);
 
             for (int i = 0; i < sections.size(); i++) {
-                addSubsection(sections.get(i),subsections.get(i),false);
+                addSubsection((MenuNode)sections.get(i),subsections.get(i),false);
             }
             addSubsection(null, nonSections, false);
 
