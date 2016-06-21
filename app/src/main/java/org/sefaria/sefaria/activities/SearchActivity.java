@@ -27,6 +27,7 @@ import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.SearchElements.SearchAdapter;
+import org.sefaria.sefaria.SearchElements.SearchFilterBox;
 import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.API;
@@ -54,6 +55,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
     private int preLast;
     private boolean APIError = false;
     private AutoCompleteTextView autoCompleteTextView;
+    private SearchFilterBox searchFilterBox;
     private int oldTheme = Settings.getTheme();
 
     private String numberOfResults = "";
@@ -105,6 +107,8 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
         //autoCompleteTextView.setOnFocusChangeListener(autoComFocus);
         autoCompleteTextView.setOnEditorActionListener(autoComEnterClick);
         //autoCompleteTextView.setCompletionHint("Click book to open");
+
+        searchFilterBox = (SearchFilterBox) findViewById(R.id.search_filter_box);
     }
 
     TextView.OnEditorActionListener autoComEnterClick = new TextView.OnEditorActionListener() {
@@ -280,7 +284,8 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
                 adapter.setResults(results,false);
             }
             numberOfResults = SearchAPI.getNumResults() + " " + MyApp.getRString(R.string.results);
-            findViewById(R.id.results_border).setVisibility(View.VISIBLE);
+            findViewById(R.id.results_box).setVisibility(View.VISIBLE);
+            searchFilterBox.initFilters(SearchAPI.getAllFilters());
             numResultsTV.setText(numberOfResults);
             if(APIError) {
                 GoogleTracker.sendEvent(GoogleTracker.CATEGORY_RANDOM_ERROR,MyApp.getRString(R.string.searching_requires_internet));

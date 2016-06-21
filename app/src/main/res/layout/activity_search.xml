@@ -14,24 +14,37 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
     </LinearLayout>
-    <org.sefaria.sefaria.layouts.SefariaTextView
-        android:id="@+id/numResults"
+
+    <LinearLayout
+        android:id="@+id/results_box"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/main_margin_lr"
-        android:layout_marginRight="@dimen/main_margin_lr"
-        android:layout_marginBottom="10dp"
-        android:layout_marginTop="10dp"
-        android:textColor="?text_color_main"
-        android:text=""/>
-    <View
-        android:visibility="gone"
-        android:id="@+id/results_border"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="?custom_actionbar_border">
+        android:orientation="vertical">
+        <org.sefaria.sefaria.layouts.SefariaTextView
+            android:id="@+id/numResults"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/main_margin_lr"
+            android:layout_marginRight="@dimen/main_margin_lr"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:textColor="?text_color_main"
+            android:text=""/>
+        <org.sefaria.sefaria.SearchElements.SearchFilterBox
+            android:id="@+id/search_filter_box"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    </View>
+        </org.sefaria.sefaria.SearchElements.SearchFilterBox>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?custom_actionbar_border">
+
+        </View>
+    </LinearLayout>
+
     <org.sefaria.sefaria.layouts.ListViewExt
         android:id="@+id/listview"
         android:layout_width="match_parent"

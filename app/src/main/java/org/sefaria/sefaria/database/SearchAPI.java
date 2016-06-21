@@ -5,10 +5,14 @@ import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.sefaria.sefaria.BilingualNode;
+import org.sefaria.sefaria.SearchElements.SearchFilterNode;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -125,6 +129,46 @@ public class SearchAPI {
 
         return resultList;
 
+    }
+
+    /**
+     *
+     * @param filterNodes - all currently selected filters
+     * @return - the minimum number of filter nodes required to represent those filters
+     */
+    public static List<BilingualNode> getMinFilterNodes(List<BilingualNode> filterNodes) {
+        if (filterNodes.size() == 0) return filterNodes;
+
+        Map<BilingualNode, Integer> parentMap = new HashMap<>();
+        Set<BilingualNode> minNodesSet = new HashSet<>();
+
+        for (BilingualNode node : filterNodes) {
+            BilingualNode parent = node.getParent();
+            if (parent == null) continue;
+            if (!parentMap.containsKey(parent))
+                parentMap.put(parent,1);
+            else
+                parentMap.put(parent,parentMap.get(parent)+1);
+        }
+
+        for (BilingualNode node : filterNodes) {
+            BilingualNode parent = node.getParent();
+            if (parent == null) continue;
+
+            boolean hasAllChildren = parent.getNumChildren() == parentMap.get(parent);
+            if (hasAllChildren && !minNodesSet.contains(parent))
+                minNodesSet.add(parent);
+            else if (!hasAllChildren)
+                minNodesSet.add(node);
+        }
+
+
+        List<BilingualNode> minNodeList = new ArrayList<>(minNodesSet);
+        Set<BilingualNode> filterSet = new HashSet<>(filterNodes);
+        if (minNodesSet.equals(filterSet))
+            return minNodeList;
+        else
+            return getMinFilterNodes(minNodeList);
     }
 
     public static int getNumResults() { return numResults; }
