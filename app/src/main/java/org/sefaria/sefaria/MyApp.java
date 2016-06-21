@@ -183,7 +183,7 @@ public class MyApp extends Application {
         int color;
         int homeInd = Arrays.asList(CAT_NAMES).indexOf(catName);
         if (homeInd != -1) color = CAT_COLORS[homeInd];
-        else color = R.color.system; //default
+        else color = -1; //default
 
         return color;
     }

@@ -200,6 +200,7 @@ public class LinkFragment extends android.support.v4.app.Fragment {
             colorBar.setVisibility(View.VISIBLE);
             topDivider.setVisibility(View.GONE);
             int color = MyApp.getCatColor(cat);
+            if (color == -1) color = R.color.system;
             colorBar.setBackgroundColor(activity.getResources().getColor(color));
             //linkSelectorBar.setVisibility(View.VISIBLE);
             noLinksTV.setVisibility(View.VISIBLE);
