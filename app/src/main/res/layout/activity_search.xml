@@ -32,6 +32,7 @@
             android:textColor="?text_color_main"
             android:text=""/>
         <org.sefaria.sefaria.SearchElements.SearchFilterBox
+            android:visibility="gone"
             android:id="@+id/search_filter_box"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">

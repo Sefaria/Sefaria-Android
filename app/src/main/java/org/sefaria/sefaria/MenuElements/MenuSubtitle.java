@@ -2,6 +2,7 @@ package org.sefaria.sefaria.MenuElements;
 
 import android.content.Context;
 import android.os.Build;
+import android.util.Log;
 
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
@@ -15,7 +16,7 @@ public class MenuSubtitle extends MenuElement {
     private SefariaTextView tv;
     private MenuNode node;
 
-    public MenuSubtitle(Context context, MenuNode node, Util.Lang lang) {
+    public MenuSubtitle(Context context, MenuNode node, Util.Lang lang, boolean isFirst) {
         super(context);
         inflate(context, R.layout.menu_subtitle, this);
         this.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, 1f));
@@ -24,6 +25,16 @@ public class MenuSubtitle extends MenuElement {
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             tv.setLetterSpacing(0.1f);
         }
+
+        int pad = (int)Util.dpToPixels(context,25);
+        if (isFirst) {
+
+            tv.setPadding(0,0,0,pad);
+            Log.d("MenuGrid","HEREE " + tv.getPaddingTop() + node.getPrettyTitle(Util.Lang.EN));
+        } else {
+            tv.setPadding(0,pad,0,pad);
+        }
+
         setLang(lang);
     }
 
