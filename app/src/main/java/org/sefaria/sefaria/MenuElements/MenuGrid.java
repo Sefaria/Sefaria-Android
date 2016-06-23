@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -106,11 +107,19 @@ public class MenuGrid extends LinearLayout {
         return ll;
     }
 
-    public void addSubsection(MenuNode mainNode, List<BilingualNode> subNodes, boolean limitGridSize) {
+    /**
+     *
+     * @param mainNode
+     * @param subNodes
+     * @param limitGridSize
+     * @param isFirst - true if this is the first section
+     */
+    public void addSubsection(MenuNode mainNode, List<BilingualNode> subNodes, boolean limitGridSize, boolean isFirst) {
         if (subNodes.size() == 0) return;
 
         if (mainNode != null) {
-            MenuSubtitle ms = new MenuSubtitle(context,mainNode, menuState.getLang());
+            Log.d("MenuGrid",""+isFirst);
+            MenuSubtitle ms = new MenuSubtitle(context,mainNode, menuState.getLang(),isFirst);
             menuElementList.add(ms);
             gridRoot.addView(ms);
         }
@@ -220,17 +229,17 @@ public class MenuGrid extends LinearLayout {
 
         //thing that has subsections first (like Shulchan Arukh b/c the rest of Halacha
         for (int i = 0; i < sections.size(); i++) {
-            addSubsection((MenuNode)sections.get(i),subsections.get(i),false);
+            addSubsection((MenuNode)sections.get(i),subsections.get(i),false,i==0);
         }
 
         if(sections.size()>0){
-            MenuSubtitle ms = new MenuSubtitle(context,new MenuNode("","",null), Util.Lang.EN);
+            MenuSubtitle ms = new MenuSubtitle(context,new MenuNode("","",null), Util.Lang.EN,false);
             menuElementList.add(ms);
 
             gridRoot.addView(ms);
         }
 
-        addSubsection(null, nonSections, limitGridSize);
+        addSubsection(null, nonSections, limitGridSize,false);
 
         if (getLang() == Util.Lang.HE) {
             flippedForHe = true;
@@ -406,9 +415,9 @@ public class MenuGrid extends LinearLayout {
             menuState.getPageSections(sections, subsections, nonSections);
 
             for (int i = 0; i < sections.size(); i++) {
-                addSubsection((MenuNode)sections.get(i),subsections.get(i),false);
+                addSubsection((MenuNode)sections.get(i),subsections.get(i),false,i==0);
             }
-            addSubsection(null, nonSections, false);
+            addSubsection(null, nonSections, false,false);
 
             //don't flip tabs b/c they're already flipped
             if (flippedForHe) flipViews(false);
