@@ -9,7 +9,7 @@ android {
         minSdkVersion 14
         targetSdkVersion 23
         versionCode 301
-        versionName "3.01"
+        versionName "3.01d"
         // Enabling multidex support
         //multiDexEnabled true
     }
