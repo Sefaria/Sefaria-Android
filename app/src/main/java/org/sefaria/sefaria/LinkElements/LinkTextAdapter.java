@@ -127,7 +127,11 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextHolder> {
 
     @Override
     public int getItemCount() {
-        return this.itemList.size();
+        try {
+            return this.itemList.size();
+        } catch (NullPointerException e) {
+            return 0;
+        }
     }
 
     public void setItemList(List<Text> items) {
