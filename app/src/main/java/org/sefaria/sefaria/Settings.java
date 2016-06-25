@@ -40,7 +40,7 @@ public class Settings {
         SharedPreferences.Editor editor = generalSettings.edit();
         String langStr = lang2Str(lang);
         editor.putString("menuLang",langStr);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -114,7 +114,7 @@ public class Settings {
         SharedPreferences.Editor editor = generalSettings.edit();
         String langStr = lang2Str(lang);
         editor.putString("defaultTextLang",langStr);
-        editor.commit();
+        editor.apply();
 
         BookSettings.setAllBookSettingsTextLang(lang);
     }
@@ -126,7 +126,7 @@ public class Settings {
             set.add(string);
         SharedPreferences.Editor editor = getGeneralSettings().edit();
         editor.putStringSet("searchTerms", set);
-        editor.commit();
+        editor.apply();
     }
 
     public static Set<String> getSearchTerms(){
@@ -149,7 +149,7 @@ public class Settings {
         SharedPreferences generalSettings = getGeneralSettings();
         SharedPreferences.Editor editor = generalSettings.edit();
         editor.putBoolean("sideBySide", isSideBySide);
-        editor.commit();
+        editor.apply();
     }
 
     public static boolean getIsCts() {
@@ -171,7 +171,7 @@ public class Settings {
         SharedPreferences generalSettings = getGeneralSettings();
         SharedPreferences.Editor editor = generalSettings.edit();
         editor.putBoolean("cts", isCts);
-        editor.commit();
+        editor.apply();
     }
 
     public static boolean getIsFirstTimeOpened(){
@@ -183,7 +183,7 @@ public class Settings {
         SharedPreferences generalSettings = getGeneralSettings();
         SharedPreferences.Editor editor = generalSettings.edit();
         editor.putBoolean("isFirstTimeOpened", isFirstTimeOpened);
-        editor.commit();
+        editor.apply();
     }
 
     private static final int DEFAULT_THEME = R.style.SefariaTheme_White;
@@ -196,7 +196,7 @@ public class Settings {
         SharedPreferences generalSettings = getGeneralSettings();
         SharedPreferences.Editor editor = generalSettings.edit();
         editor.putInt("theme", theme);
-        editor.commit();
+        editor.apply();
     }
 
     public static class BookSettings {
@@ -247,7 +247,7 @@ public class Settings {
         static public void clearAllBookSettings(){
             SharedPreferences.Editor editor = getBookSavedSettings().edit();
             editor.clear();
-            editor.commit();
+            editor.apply();
             editor = getBookSavedTitleSettings().edit();
             editor.clear();
             editor.apply();
@@ -295,16 +295,18 @@ public class Settings {
                 textNum = node.getTexts(true).indexOf(text);
             } catch (API.APIException e) {
                 e.printStackTrace();
+            } catch (NullPointerException e) {
+                return false;
             }
             String settingStr = node.makePathDefiningNode() + SETTINGS_SPLITTER + textNum + SETTINGS_SPLITTER + lang2Str(lang);
             editor.putString(book.title, settingStr);
-            editor.commit();
+            editor.apply();
 
             //now for titles
             editor = getBookSavedTitleSettings().edit();
             editor.putString(EN_TITLE + book.title, node.getMenuBarTitle(book, Util.Lang.EN));
             editor.putString(HE_TITLE + book.title, node.getMenuBarTitle(book, Util.Lang.HE));
-            editor.commit();
+            editor.apply();
             return true;
         }
 
@@ -331,7 +333,7 @@ public class Settings {
     public static void setIsDebug(boolean isDebug){
         SharedPreferences.Editor editor = getGeneralSettings().edit();
         editor.putBoolean("isDebug", isDebug);
-        editor.commit();
+        editor.apply();
     }
 
     public static float getDefaultFontSize(){
@@ -347,7 +349,7 @@ public class Settings {
         }
         SharedPreferences.Editor editor = getGeneralSettings().edit();
         editor.putFloat("defaultFontSize", size);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -362,7 +364,7 @@ public class Settings {
     public static void setDownloadSuccess(long time){
         SharedPreferences.Editor editor = getGeneralSettings().edit();
         editor.putLong("DownloadSuccess", time);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -378,14 +380,14 @@ public class Settings {
     public static void setUseAPI(boolean useAPI){
         SharedPreferences.Editor editor = getGeneralSettings().edit();
         editor.putBoolean("useAPI",useAPI);
-        editor.commit();
+        editor.apply();
         Settings.useAPI = useAPI;
     }
 
     public static void setLastBook(String title){
         SharedPreferences.Editor editor = getGeneralSettings().edit();
         editor.putString("lastBook",title);
-        editor.commit();
+        editor.apply();
     }
 
     public static String getLastBook(){
@@ -405,7 +407,7 @@ public class Settings {
             }
             SharedPreferences.Editor editor = getLinkSettings().edit();
             editor.putStringSet(enBookTitle,set);
-            editor.commit();
+            editor.apply();
         }
 
 
@@ -479,7 +481,7 @@ public class Settings {
             for (int i = 0; i < books.size() && i < MAX_RECENT_TEXTS; i++) {
                 editor.putString("" + i, books.get(i));
             }
-            editor.commit();
+            editor.apply();
         }
 
         public static boolean addPinned(String bookTitle){
@@ -496,7 +498,7 @@ public class Settings {
 
             SharedPreferences.Editor editor = getRecentSettings().edit();
             editor.putStringSet(PINNED_RECENT_TEXTS, pinnedStringSet);
-            editor.commit();
+            editor.apply();
             return  added;
 
         }
