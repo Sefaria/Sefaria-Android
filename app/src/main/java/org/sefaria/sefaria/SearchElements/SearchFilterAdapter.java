@@ -39,9 +39,10 @@ public class SearchFilterAdapter extends ArrayAdapter<BilingualNode> {
     private boolean isMaster;
     private SearchFilterAdapter slaveAdapter;
     private int masterPosition; //pos of item in master list which is controlling slave list
+    private Util.Lang systemLang;
 
 
-    public SearchFilterAdapter(Context context, int resourceId, List<BilingualNode> objects, CompoundButton.OnCheckedChangeListener checkedChangeListener, View.OnClickListener onCheckBoxClick,SearchFilterAdapter slaveAdapter) {
+    public SearchFilterAdapter(Context context, int resourceId, List<BilingualNode> objects, CompoundButton.OnCheckedChangeListener checkedChangeListener, View.OnClickListener onCheckBoxClick, SearchFilterAdapter slaveAdapter) {
         super(context,resourceId,objects);
 
         this.context = context;
