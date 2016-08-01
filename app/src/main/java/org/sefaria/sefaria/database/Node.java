@@ -560,11 +560,14 @@ public class Node{// implements  Parcelable{
                 path = separator + node.getNiceGridNum(lang) + path;
 
 
+            if(path.equals(separator)) //fixes problems with texts with only 1 level (like Hadran where it ends up looking like "Hadran." otherwise)
+                path = "";
 
             addSpace = node.isDaf() && (lang == Util.Lang.HE) && !forURL;
 
             node = node.getParent();
         }
+
         if(includeBook) {
             try {
                 path = (new Book(this.bid)).getTitle(lang) + path;
