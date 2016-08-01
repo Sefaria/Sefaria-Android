@@ -32,8 +32,11 @@ public class BilingualNode implements Parcelable {
         }
         this.enTitle = enTitle;
         this.heTitle = heTitle;
+
         if (this.enTitle == null) this.enTitle = "";
         if (this.heTitle == null) this.heTitle = "";
+
+        if (this.heTitle.equals("") && !this.enTitle.equals("")) this.heTitle = this.enTitle;
     }
 
     //as long as they have equal titles, they're equal.

@@ -3,6 +3,7 @@ package org.sefaria.sefaria.SearchElements;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CompoundButton;
@@ -64,6 +65,7 @@ public class SearchFilterBox extends LinearLayout{
         init(context);
     }
 
+
     private void init(Context context) {
         //Yes, I know this line is terrible. But I can't think of any other way to have the checkboxes communicate with SearchActivity
         this.searchActivity = (SearchActivity) context;
@@ -92,7 +94,18 @@ public class SearchFilterBox extends LinearLayout{
         minSelectedFilterNodes = new ArrayList<>();
         allSelectedFilterNodes = new HashSet<>();
 
-
+        Util.Lang systemLang = Settings.getSystemLang();
+        if (systemLang == Util.Lang.HE) {
+            findViewById(R.id.arrow_right).setVisibility(GONE);
+            findViewById(R.id.arrow_left).setVisibility(VISIBLE);
+            LinearLayout yo = (LinearLayout) findViewById(R.id.filterTitle);
+            yo.setGravity(Gravity.RIGHT);
+        } else /* if (systemLang == Utile.Lang.EN) */ {
+            findViewById(R.id.arrow_right).setVisibility(VISIBLE);
+            findViewById(R.id.arrow_left).setVisibility(GONE);
+            LinearLayout yo = (LinearLayout) findViewById(R.id.filterTitle);
+            yo.setGravity(Gravity.LEFT);
+        }
     }
 
     public void initFilters(JSONArray jsonArray) {
@@ -152,6 +165,7 @@ public class SearchFilterBox extends LinearLayout{
                             parent = root;
                         else
                             parent = nodeMap.get(fullFilterStringList[j-1]);
+                        if (filterString.replaceAll("\\s+","").equals("") ) continue;
                         searchFilterNode = new SearchFilterNode(filterString,filterStringHe,parent);
 
                         int minIndex = minSelectedFilterNodes.indexOf(searchFilterNode);
