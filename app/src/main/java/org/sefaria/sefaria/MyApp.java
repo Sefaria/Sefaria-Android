@@ -201,6 +201,7 @@ public class MyApp extends Application {
     public static String getRString(int R_string){
         return getContext().getString(R_string);
     }
+    public static float getRDimen(int R_dimen) { return getContext().getResources().getDimension(R_dimen); }
 
     public static Context getContext() { return context; }
     public static void setContext(Context newContext) { context = newContext; }

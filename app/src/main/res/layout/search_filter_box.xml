@@ -57,17 +57,25 @@
     <LinearLayout
         android:id="@+id/filterLists"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
+        android:layout_height="150dp"
+        android:orientation="horizontal"
+        android:background="?text_verse_selected_bg">
         <ListView
+            android:clickable="true"
+            android:id="@+id/filterListLeft"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp">
         </ListView>
         <ListView
+            android:id="@+id/filterListRight"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp">
         </ListView>
     </LinearLayout>
 

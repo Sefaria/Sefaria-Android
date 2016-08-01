@@ -59,7 +59,9 @@ get_query_object: function (query, get_filters, applied_filters) {
       }
 
 //EXPECT A RESULT OF FILTERS LIKE THIS
-
+//aggs are in aggregations.category.buckets[i]
+//buckets[i].key
+//buckets[i].doc_count
 {  
    "aggregations":{  
       "category":{  

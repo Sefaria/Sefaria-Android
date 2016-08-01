@@ -1,5 +1,7 @@
 package org.sefaria.sefaria.MenuElements;
 
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
@@ -9,8 +11,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.sefaria.sefaria.BilingualNode;
+import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
+import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Database;
 import org.sefaria.sefaria.database.UpdateService;
 
@@ -117,6 +121,52 @@ public class MenuState implements Parcelable {
             MenuNode tosefta = (MenuNode) rootNode.getChildren().remove(rootNode.getChildIndex("Tosefta",Util.Lang.EN));
             rootNode.getChildren().add(rootNode.getChildIndex("Philosophy",Util.Lang.EN)+1,tosefta);
         }
+    }
+
+    public static String[] translatePath(String[] enPath) {
+        String[] hePath = new String[enPath.length];
+        BilingualNode currNode = getRootNode();
+        if (enPath[0].equals("Commentary") || enPath[0].equals("Commentary2")) {
+            //if it's a commentary, hard code the first element, search for the second and query for the last. those are the only elements you actually need
+
+            hePath[0] = "מפרשים";
+            List<BilingualNode> children = currNode.getChildren();
+            for (BilingualNode child : children) {
+                if (child.getTitle(Util.Lang.EN).equals(enPath[1])) {
+                    hePath[1] = child.getTitle(Util.Lang.HE);
+                    break;
+                }
+            }
+            try{
+                SQLiteDatabase db = Database.getDB();
+                Cursor cursor = db.query(Book.TABLE_BOOKS,new String[]{"heTitle"},"title=?",new String[]{enPath[enPath.length-1]},null,null,null);
+                if (cursor != null) {
+
+                    cursor.moveToFirst();
+                    hePath[hePath.length-1] = cursor.getString(0);
+
+                    hePath[hePath.length-1] = enPath[enPath.length-1];
+
+                }
+            }catch(Exception e){
+
+            }
+        } else {
+
+
+            for (int i = 0; i < enPath.length; i++) {
+                List<BilingualNode> children = currNode.getChildren();
+                for (BilingualNode child : children) {
+                    if (child.getTitle(Util.Lang.EN).equals(enPath[i])) {
+                        hePath[i] = child.getTitle(Util.Lang.HE);
+                        currNode = child;
+                        break;
+                    }
+                }
+            }
+        }
+
+        return hePath;
     }
 
     /***************

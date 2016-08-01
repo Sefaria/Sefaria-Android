@@ -38,7 +38,7 @@
             android:layout_height="wrap_content"></LinearLayout>
 
 
-        <org.sefaria.sefaria.layouts.ListViewExt
+        <org.sefaria.sefaria.TextElements.TextListView
             android:id="@+id/listview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
