@@ -28,14 +28,14 @@ import org.sefaria.sefaria.TextElements.SepTextAdapter;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.database.Text;
-import org.sefaria.sefaria.layouts.ListViewExt;
+import org.sefaria.sefaria.TextElements.TextListView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SepTextActivity extends SuperTextActivity implements AbsListView.OnScrollListener, LinkFragment.OnLinkFragInteractionListener {
 
-    private ListViewExt listView;
+    private TextListView listView;
     private SepTextAdapter sepTextAdapter;
 
     private int preLast;
@@ -61,7 +61,7 @@ public class SepTextActivity extends SuperTextActivity implements AbsListView.On
 
     protected void init() {
         super.init();
-        listView = (ListViewExt) findViewById(R.id.listview);
+        listView = (TextListView) findViewById(R.id.listview);
         sepTextAdapter = new SepTextAdapter(this,R.layout.adapter_text_mono,new ArrayList<Text>());
 
 
@@ -71,7 +71,7 @@ public class SepTextActivity extends SuperTextActivity implements AbsListView.On
 
         listView.setOnItemClickListener(onItemClickListener);
         //listView.setOnItemLongClickListener(onItemLongClickListener);
-        listView.setOnScrollStoppedListener(new ListViewExt.OnScrollStoppedListener() {
+        listView.setOnScrollStoppedListener(new TextListView.OnScrollStoppedListener() {
 
             public void onScrollStopped() {
                 updateFocusedSegment();
@@ -85,7 +85,6 @@ public class SepTextActivity extends SuperTextActivity implements AbsListView.On
 
 
         registerForContextMenu(listView);
-
         initTime = System.currentTimeMillis();
     }
 
@@ -237,8 +236,8 @@ public class SepTextActivity extends SuperTextActivity implements AbsListView.On
         sepTextAdapter.notifyDataSetChanged();
     }
 
-    protected void incrementTextSize(boolean isIncrement) {
-        super.incrementTextSize(isIncrement);
+    public void setTextSize(float textSize) {
+        super.setTextSize(textSize);
         sepTextAdapter.notifyDataSetChanged();
         linkFragment.notifyDataSetChanged();
     }

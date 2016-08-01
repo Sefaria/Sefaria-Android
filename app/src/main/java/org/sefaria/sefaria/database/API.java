@@ -217,7 +217,7 @@ public class API {
             String[] spots = place.split("[\\.:]|(,\\s)");
 
             if (placeRef.book == null)
-                throw (new Book()).new BookNotFoundException();
+                throw new Book.BookNotFoundException();
 
 
             if (spots.length == 0) {

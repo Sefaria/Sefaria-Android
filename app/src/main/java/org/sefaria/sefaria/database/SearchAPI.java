@@ -7,6 +7,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.sefaria.sefaria.BilingualNode;
 import org.sefaria.sefaria.SearchElements.SearchFilterNode;
+import org.sefaria.sefaria.SearchElements.SearchResultContainer;
+import org.sefaria.sefaria.Util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,23 +16,18 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * Created by nss on 4/1/16.
  */
 public class SearchAPI {
-    private final static String SEARCH_URL = "http://search.sefaria.org:788/merged/_search/";
+    private final static String SEARCH_URL = "http://search.sefaria.org/merged/_search/";
 
-    private static int numResults;
     private static Set<String> refSet;
-    private static JSONArray allFilters;
 
-    public static List<Text> search(String query,boolean getFilters,ArrayList<String> appliedFilters, int pageNum,int pageSize) throws API.APIException {
+    public static SearchResultContainer search(String query, boolean getFilters, List<String> appliedFilters, int pageNum, int pageSize) throws API.APIException {
         if (pageNum == 0) refSet = new HashSet<>();
-
-        List<Text> resultList = new ArrayList<>();
-
-        getFilters = getFilters || allFilters == null; //if you lost your filters, get them back
 
         String coreQuery = "\"query_string\": {" +
                 "\"query\": \"" + query + "\"," +
@@ -57,38 +54,59 @@ public class SearchAPI {
             jsonString += ",\"query\":{" +
                     coreQuery + "}" +
             ",\"aggs\":{ \"category\":{\"terms\": { \"field\":\"path\",\"size\":0}}}";
-        } else if (appliedFilters == null || true) {
+        } else if (appliedFilters == null || appliedFilters.size() == 0) {
             jsonString += ",\"query\":{" + coreQuery +"}";
         } else {
-            //TODO apply filters
+            String clauses = "[";
+            for (int i = 0; i < appliedFilters.size(); i++) {
+                String filterString = Util.regexpEscape(appliedFilters.get(i));
+
+                //to account for Commentary and Commentary2...
+                filterString = filterString.replace("Commentary","Commentary.*");
+
+                clauses += "{\"regexp\":{" +
+                        "\"path\":\"" + filterString + ".*\"}}";
+                if (i != appliedFilters.size()-1) clauses += ",";
+            }
+            clauses += "]";
+            jsonString += ",\"query\":{" +
+                    "\"filtered\":{"+
+                    "\"query\":{" + coreQuery + "}," +
+                    "\"filter\":{" +
+                    "\"or\":" + clauses + "}}}";
         }
 
         jsonString += "}";
 
+        Log.d("YOYO",jsonString);
+        Log.d("YOYO","GF = " + getFilters);
         String result = API.getDataFromURL(SEARCH_URL, jsonString,true,false);
-        resultList = getParsedResults(result,getFilters);
 
-        return resultList;
+        return getParsedResults(result,getFilters);
     }
 
-    private static List<Text> getParsedResults(String resultString, boolean getFilters) {
-        List<Text> resultList = new ArrayList<>();
+    private static SearchResultContainer getParsedResults(String resultString, boolean getFilters) {
+        SearchResultContainer searchResultContainer = null;
+        JSONArray allFilters = new JSONArray();
+        List<Text> results = new ArrayList<>();
 
+        int numResults = 0;
         JSONObject resultJson;
         try {
             resultJson = new JSONObject(resultString);
         } catch (JSONException e) {
             e.printStackTrace();
-            return resultList;
+            return searchResultContainer;
         }
 
 
         if (getFilters) {
             try {
                 allFilters = resultJson.getJSONObject("aggregations").getJSONObject("category").getJSONArray("buckets");
+                Log.d("YOYO","ALLFILETER LEN " + allFilters.length());
             } catch (JSONException e) {
                 e.printStackTrace();
-                return resultList;
+                return searchResultContainer;
             }
         }
 
@@ -118,16 +136,21 @@ public class SearchAPI {
                 } else /* if (id.contains("[en]") || "french" || whatever) */ {
                     enText = content;
                 }
-
-                Text text = new Text(enText, heText, Book.getBid(title), ref);
+                int tempBid;
+                try {
+                    tempBid = Book.getBid(title);
+                } catch (Book.BookNotFoundException e) {
+                    tempBid = -1;
+                }
+                Text text = new Text(enText, heText, tempBid, ref);
                 //TODO deal with levels stuff
-                resultList.add(text);
+                results.add(text);
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        return resultList;
+        return new SearchResultContainer(results,numResults,allFilters);
 
     }
 
@@ -155,7 +178,9 @@ public class SearchAPI {
             BilingualNode parent = node.getParent();
             if (parent == null) continue;
 
-            boolean hasAllChildren = parent.getNumChildren() == parentMap.get(parent);
+            //2nd to last condition will keep filters more specific, in case you change your search
+            //last condition will rule out root.
+            boolean hasAllChildren = parent.getNumChildren() == parentMap.get(parent) && parent.getParent() != null;
             if (hasAllChildren && !minNodesSet.contains(parent))
                 minNodesSet.add(parent);
             else if (!hasAllChildren)
@@ -171,6 +196,4 @@ public class SearchAPI {
             return getMinFilterNodes(minNodeList);
     }
 
-    public static int getNumResults() { return numResults; }
-    public static JSONArray getAllFilters() { return allFilters;}
 }

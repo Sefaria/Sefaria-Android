@@ -1,11 +1,14 @@
 package org.sefaria.sefaria.database;
+import org.json.JSONArray;
 import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.Util;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -121,7 +124,7 @@ public class Book implements Parcelable {
         Log.d("sql_dis",toString());
     }
 
-    private static final String TABLE_BOOKS = "Books";
+    public static final String TABLE_BOOKS = "Books";
     private static final String KcommentsOn = "commentsOn";
     private static final String KsectionNames = "sectionNames";
     private static final String Kcategories = "categories";
@@ -232,7 +235,7 @@ public class Book implements Parcelable {
     }
 
 
-    public class BookNotFoundException extends Exception{
+    public static class BookNotFoundException extends Exception{
         public BookNotFoundException(){ super(); }
         private static final long serialVersionUID = 1L;
     }
@@ -277,22 +280,23 @@ public class Book implements Parcelable {
      * @param title
      * @return the bid or 0 if error
      */
-    public static int getBid(String title){
+    public static int getBid(String title) throws BookNotFoundException {
         SQLiteDatabase db = Database.getDB();
         Cursor cursor = db.query(TABLE_BOOKS, new String[]{"_id"}, Ktitle + "=?",
                 new String[]{title}, null, null, null, null);
-
-        if (cursor != null){
-            cursor.moveToFirst();
-            try{
-                return cursor.getInt(0);//the _id
-            }catch(Exception e){
-                GoogleTracker.sendException(e, title);
-                return 0; //I'm having a problem... I assume it means that this book isn't in the database.
+        try {
+            if (cursor != null && cursor.moveToFirst()) {
+                int bid = cursor.getInt(0);
+                cursor.close();
+                return bid;
+            } else {
+                if (cursor != null) cursor.close();
+                throw new BookNotFoundException();
             }
-
+        } catch (Exception e) {
+            if (cursor != null) cursor.close();
+            throw new BookNotFoundException();
         }
-        return 0;
     }
 
     public static String getTitle(int bid){
@@ -303,13 +307,18 @@ public class Book implements Parcelable {
         if (cursor != null){
             cursor.moveToFirst();
             try{
-                return cursor.getString(0);//the title
+                String title = cursor.getString(0);
+                cursor.close();
+                return title;
             }catch(Exception e){
+                if (cursor != null) cursor.close();
                 GoogleTracker.sendException(e, "" + bid);
                 return ""; //I'm having a problem... I assume it means that this book isn't in the database.
             }
 
         }
+        if (cursor != null) cursor.close();
+
         return "";
     }
 
@@ -333,6 +342,43 @@ public class Book implements Parcelable {
         return 0;
     }
 
+    public static String getJSONObjectString(JSONObject json) {
+        StringBuilder sb = new StringBuilder("{");
+        Iterator<?> keys = json.keys();
+        try {
+            while (keys.hasNext()) {
+                String key = (String) keys.next();
+                sb.append("\"");
+                sb.append(key);
+                sb.append("\"");
+                sb.append(": ");
+                if (json.get(key) instanceof String) {
+                    sb.append("\"");
+                    sb.append(json.getString(key));
+                    sb.append("\"");
+                }  else if (json.get(key) instanceof Integer) {
+                    sb.append(json.getInt(key));
+                } else if (json.get(key) instanceof Long) {
+                    sb.append(json.getLong(key));
+                } else if (json.get(key) instanceof Boolean) {
+                    sb.append(json.getBoolean(key));
+                }else {
+                    Object[] tempArray = (Object[])json.get(key);
+                    String arrayString = "[]";
+                    if (tempArray != null) {
+                        arrayString = "[" + tempArray.toString() + "]";
+                    }
+                    sb.append(arrayString);
+                }
+                if (keys.hasNext())
+                    sb.append(",");
+            }
+            sb.append("}");
+            return sb.toString();
+        } catch (JSONException e) {
+            return "";
+        }
+    }
 
     public List<Book> getAllCommentaries(){
         if(allCommentaries != null)
@@ -352,7 +398,7 @@ public class Book implements Parcelable {
 
 
         allCommentaries = bookList;
-        Log.d("Book", "getAllCommentary returning .size():" + allCommentaries.size());
+        //Log.d("Book", "getAllCommentary returning .size():" + allCommentaries.size());
         return bookList;
     }
 

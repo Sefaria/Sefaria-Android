@@ -121,6 +121,8 @@ public abstract class SuperTextActivity extends FragmentActivity {
     protected String searchingTerm;
     protected FindOnPage findOnPage;
 
+    //protected GestureDetectorCompat textGestureDetector;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -182,6 +184,9 @@ public abstract class SuperTextActivity extends FragmentActivity {
             customActionbar.setLang(menuLang);
 
         Settings.setLastBook(book.title);
+
+        //textGestureDetector = new GestureDetectorCompat(this,new TextGestureDetector());
+
         goodOnCreate = true;
     }
 
@@ -745,6 +750,15 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
     public void setTextSize(float textSize) {
         this.textSize = textSize;
+        Settings.setDefaultFontSize(textSize);
+    }
+
+    protected void incrementTextSize(boolean isIncrement){
+        float increment = getResources().getDimension(R.dimen.text_font_size_increment);
+        float tempTextSize = textSize;
+        if (isIncrement) tempTextSize  += increment;
+        else tempTextSize -= increment;
+        setTextSize(tempTextSize);
     }
 
     //return the currently selected text, as determined by the link fragment
@@ -805,14 +819,6 @@ public abstract class SuperTextActivity extends FragmentActivity {
         this.isSideBySide = isSideBySide;
         Settings.setIsSideBySide(isSideBySide);
     }
-
-    protected void incrementTextSize(boolean isIncrement){
-        float increment = getResources().getDimension(R.dimen.text_font_size_increment);
-        if (isIncrement) textSize  += increment;
-        else textSize -= increment;
-        Settings.setDefaultFontSize(textSize);
-    }
-
 
     protected abstract void jumpToText(Text text);
     protected abstract void updateFocusedSegment();
@@ -1110,6 +1116,26 @@ public abstract class SuperTextActivity extends FragmentActivity {
         Intent intent = new Intent(Intent.ACTION_VIEW,Uri.parse(url));
         startActivity(intent);
     }
+
+    /*@Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        float newTextSize = TextGestureDetector.zoomZoom(event,textSize);
+        if (newTextSize > -1f) {
+            setTextSize(newTextSize);
+        }
+
+        if (TextGestureDetector.getMode() == TextGestureDetector.Mode.ZOOM) {
+            Log.d("zoom","YUMMY");
+            return true;
+        } else {
+            Log.d("zoom","NOT YUMMY");
+            return super.dispatchTouchEvent(event);
+        }
+        //textGestureDetector.onTouchEvent(event);
+
+
+
+    }*/
 
 
     //FIND ON PAGE
