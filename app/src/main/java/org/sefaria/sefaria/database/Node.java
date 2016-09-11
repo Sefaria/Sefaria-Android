@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 public class Node{// implements  Parcelable{
 
@@ -69,8 +70,7 @@ public class Node{// implements  Parcelable{
 
     private Boolean gotTextListInAPI;
 
-
-    private static Map<Integer,Node> allSavedNodes = new HashMap<Integer, Node>();
+    private static Map<Integer,Node> allSavedNodes = new HashMap<>();
 
     public static Node getSavedNode(int hash){
         return allSavedNodes.get(hash);
@@ -128,7 +128,7 @@ public class Node{// implements  Parcelable{
             str += ", ";
         else
             str += " ";
-        str += this.getWholeTitle(menuLang,false);
+        str += this.getWholeTitle(menuLang, false, true);
         return str;
     }
 
@@ -139,11 +139,7 @@ public class Node{// implements  Parcelable{
      * @param lang
      * @return full description of current text. For example, Chelek 3 Siman 23
      */
-    public String getWholeTitle(Util.Lang lang){
-        return getWholeTitle(lang,true);
-    }
-
-    public String getWholeTitle(Util.Lang lang, boolean doSectionName){
+    public String getWholeTitle(Util.Lang lang, boolean doSectionName, boolean showTextVersion){
         String str = "";
         Node node = this;
         boolean usedSpaceAlready = true;
@@ -165,6 +161,8 @@ public class Node{// implements  Parcelable{
             }
             node = node.parent;
         }
+        if(showTextVersion && getTextVersion() != null)
+            str += " - " + getTextVersion();
         return str;
     }
 
@@ -430,24 +428,25 @@ public class Node{// implements  Parcelable{
             throw new LastNodeException();
         }
         int index = parent.getChildren().indexOf(this);
+        Node nextNode;
         if(index == -1){
             Log.e("Node.getNextTextNode","Couldn't find index in parent's children: " + this);
             //Log.d("Node", "getNextTextNode returning: " + getFirstDescendant());
-            return getFirstDescendant();
+            nextNode = getFirstDescendant();
         } else if(index < parent.getChildren().size()-1){
             Node node = parent.getChildren().get(index +1);
             if(node.isTextSection){
                 //Log.d("Node", "getNextTextNode returning: " + node);
-                return node;
+                nextNode = node;
             }else {
                 //Log.d("Node", "getNextTextNode returning: " + node.getFirstDescendant());
-                return node.getFirstDescendant();
+                nextNode = node.getFirstDescendant();
             }
         }else {// if(index >=parent.getChildren().size()){
-            Node node = parent.getNextTextNode();
-            //Log.d("Node", "getNextTextNode returning: " + node);
-            return node;
+            nextNode = parent.getNextTextNode();
         }
+        nextNode.setTextVersion(this.getTextVersion());
+        return nextNode;
     }
     /**
      * this is only meant to be called on a node that node.isTextSection()
@@ -458,19 +457,22 @@ public class Node{// implements  Parcelable{
             throw new LastNodeException();
         }
         int index = parent.getChildren().indexOf(this);
+        Node prevNode;
         if(index == -1){
             Log.e("Node.getNextTextNode", "Couldn't find index in parent's children: " + this);
-            return getLastDescendant();
+            prevNode = getLastDescendant();
         }else if(index > 0){
             Node node = parent.getChildren().get(index - 1);
             if(node.isTextSection){
-                return node;
+                prevNode = node;
             }else {
-                return node.getLastDescendant();
+                prevNode = node.getLastDescendant();
             }
         }else {// if(index == 0){
-            return parent.getPrevTextNode();
+            prevNode = parent.getPrevTextNode();
         }
+        prevNode.setTextVersion(this.getTextVersion());
+        return prevNode;
     }
 
     /**
@@ -742,6 +744,27 @@ public class Node{// implements  Parcelable{
     }
 
 
+    public static final String DEFAULT_TEXT_VERSION = "Default Version";
+    private String textVersion;
+    public void setTextVersion(String textVersion){
+        if(textVersion != null && textVersion.equals(DEFAULT_TEXT_VERSION)) //default as version
+            textVersion = null;
+
+        if((textVersion != null && !textVersion.equals(textVersion)) || (textVersion == null && this.textVersion != null))  //it's changed in some way
+            textList = null; //so that it will get this specific version next time
+
+        this.textVersion = textVersion;
+        try {
+            Settings.BookSettings.setTextVersion(getBook(),textVersion);
+        } catch (Book.BookNotFoundException e) {
+            //e.printStackTrace();
+        }
+    }
+
+    public String getTextVersion(){
+        return textVersion;
+    }
+
     private static void setChaps_API(Node node, JSONObject jsonData) {
         //Log.d("Node", "setChaps_API" + node);
         for(Node child:node.getChildren()){
@@ -860,12 +883,22 @@ public class Node{// implements  Parcelable{
         return;
     }
 
+    public String getTextFromAPIData() throws API.APIException{
+        return getTextFromAPIData(API.TimeoutType.REG);
+    }
 
+    public String getTextFromAPIData(API.TimeoutType timeoutType) throws API.APIException{
+        String completeUrl = API.TEXT_URL + getPath(Util.Lang.EN, true, true, true);
+        String textVersion = getTextVersion();
+        if(textVersion != null)
+            completeUrl += "/" + textVersion.replace(" ","_");
+        completeUrl += "?" + API.ZERO_CONTEXT + API.ZERO_COMMENTARY;
+        Log.d("Node",completeUrl);
+        return API.getDataFromURL(completeUrl,timeoutType);
+    }
 
     private List<Text> getTextsFromAPI() throws API.APIException{ //(String booktitle, int []levels)
-        String completeUrl = API.TEXT_URL + getPath(Util.Lang.EN, true, true, true) + "?" + API.ZERO_CONTEXT + API.ZERO_COMMENTARY;
-
-        String data = API.getDataFromURL(completeUrl);
+        String data = getTextFromAPIData();
         List<Text> textList = new ArrayList<>();
         if(data.length()==0)
             return textList;
@@ -960,11 +993,16 @@ public class Node{// implements  Parcelable{
             return textList;
         }
         Log.d("Node","found no textList");
+        if(Downloader.getNetworkStatus() == Downloader.ConnectionType.NONE) {
+            setTextVersion(null); //don't use alt text version if there's no internet
+            //TODO set the SuperTextAct.lastLoadedNode = null if possible
+        }
+
         if(!isTextSection){
             Log.e("Node", "getTexts() was called when it's not a textSection!" + this);
             //Integer.valueOf("aadfa");
             textList = new ArrayList<>();
-        }else if(Settings.getUseAPI()) {
+        }else if(Settings.getUseAPI() || (getTextVersion() != null)) {
             textList = getTextsFromAPI();
         }else if(!isComplex && !isGridItem){
             Log.e("Node", "It thinks (!isComplex() && !isGridItem())... I don't know how.");
@@ -1133,6 +1171,8 @@ public class Node{// implements  Parcelable{
         if(allRoots != null){
             return allRoots;
         }
+
+        String textVersion = Settings.BookSettings.getTextVersion(book);
 
         allRoots = new ArrayList<>();
         SQLiteDatabase db = Database.getDB();

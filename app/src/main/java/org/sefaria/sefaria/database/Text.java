@@ -109,8 +109,8 @@ public class Text implements Parcelable {
                 e.printStackTrace();
             }
 
-            this.enText = node.getWholeTitle(Util.Lang.EN,doSectionName);
-            this.heText = node.getWholeTitle(Util.Lang.HE,doSectionName);
+            this.enText = node.getWholeTitle(Util.Lang.EN, doSectionName, false);
+            this.heText = node.getWholeTitle(Util.Lang.HE, doSectionName, false);
         }
     }
 

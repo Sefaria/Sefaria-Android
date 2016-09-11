@@ -9,6 +9,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -23,6 +24,7 @@ import org.json.JSONObject;
 import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
+import org.sefaria.sefaria.TextElements.TextMenuBar;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.activities.SuperTextActivity;
 
@@ -70,8 +72,12 @@ public class API {
 
     final static int READ_TIMEOUT_LONG = 10000;
     final static int CONNECT_TIMEOUT_LONG = 10000;
-    final static int SPIN_TIMEOUT_LONG = 8000;
-    private boolean usingLongerTimeouts = false;
+    final static int READ_TIMEOUT_SHORT = 1500;
+    final static int CONNECT_TIMEOUT_SHORT = 1500;
+    private TimeoutType timeoutType;
+    public enum TimeoutType {
+        REG,LONG,SHORT
+    }
     //TODO determine good times
 
     public static void makeAPIErrorToast(Context context) {
@@ -105,9 +111,12 @@ public class API {
         }
         int readTimeout = READ_TIMEOUT;
         int connectionTimeout = CONNECT_TIMEOUT;
-        if(usingLongerTimeouts){
+        if(timeoutType == TimeoutType.LONG){
             readTimeout = READ_TIMEOUT_LONG;
             connectionTimeout = CONNECT_TIMEOUT_LONG;
+        }else if(timeoutType == TimeoutType.SHORT){
+            readTimeout = READ_TIMEOUT_SHORT;
+            connectionTimeout = CONNECT_TIMEOUT_SHORT;
         }
 
         try {
@@ -343,11 +352,16 @@ public class API {
     //static methods
 
     public static String getDataFromURL(String url) throws APIException{
-        return getDataFromURL(url,null,Cache.USE_CACHE_DEFAULT,false);
+        return getDataFromURL(url,null,Cache.USE_CACHE_DEFAULT,TimeoutType.REG);
     }
 
-    public static String getDataFromURL(String url,boolean useCache) throws APIException{
-        return getDataFromURL(url,null,useCache,false);
+    public static String getDataFromURL(String url, TimeoutType timeoutType) throws APIException{
+        return getDataFromURL(url,null,Cache.USE_CACHE_DEFAULT,timeoutType);
+    }
+
+
+    public static String getDataFromURL(String url, boolean useCache) throws APIException{
+        return getDataFromURL(url,null,useCache,TimeoutType.REG);
     }
 
 
@@ -369,11 +383,11 @@ public class API {
      * @param url the URL to get the data from
      * @param jsonString the jsonString to send or null if you don't need to send JSON
      * @param useCache if the cache is available
-     * @param usingLongerTimeouts if you really want to wait a while if it's a bad connection
+     * @param timeoutType if you really want to wait a while if it's a bad connection, or short if you barley want to try
      * @return string data
      * @throws APIException
      */
-    public static String getDataFromURL(String url, String jsonString,boolean useCache, boolean usingLongerTimeouts) throws APIException{
+    public static String getDataFromURL(String url, String jsonString, boolean useCache, TimeoutType timeoutType) throws APIException{
         String data;
         if(useCache){
             data = Cache.getCache(url,jsonString);
@@ -383,7 +397,7 @@ public class API {
 
         API api = new API();
         try{//try to get the data with the current thread.  This will only work if it's on a background thread.
-            api.usingLongerTimeouts = usingLongerTimeouts;
+            api.timeoutType = timeoutType;
             api.jsonString = jsonString;
             api.useCache = useCache;
             data = api.fetchData(url);
