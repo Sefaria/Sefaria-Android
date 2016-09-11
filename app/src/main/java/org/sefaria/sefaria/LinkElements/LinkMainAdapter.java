@@ -90,12 +90,13 @@ public class LinkMainAdapter extends RecyclerView.Adapter<LinkMainAdapter.LinkHo
         String bookTitle = linkCount.getSlimmedTitle(book, lang);
         holder.tv.setFont(lang,true);
 
+        String fadedTextHexColor = String.format("#%06X", (0xFFFFFF & Util.getColor(context,R.attr.text_color_faded)));
         if (linkCount.getDepthType() == LinkFilter.DEPTH_TYPE.BOOK)  {
             if (linkCount.getCount() == 0) {
                 holder.tv.setText(bookTitle);
                 holder.tv.setTextColor(Util.getColor(context,R.attr.text_color_faded));
             } else {
-                holder.tv.setText(bookTitle + " (" + linkCount.getCount() + ")");
+                holder.tv.setText(Html.fromHtml(bookTitle + " <font color="+fadedTextHexColor+">(" + linkCount.getCount() + ")</font>"));
                 holder.tv.setTextColor(Util.getColor(context, R.attr.text_color_main));
             }
 
@@ -107,12 +108,12 @@ public class LinkMainAdapter extends RecyclerView.Adapter<LinkMainAdapter.LinkHo
 
 
         } else { //ALL and CAT
-            String text =  bookTitle + " " + Util.LINK_CAT_VERICAL_LINE + " " + linkCount.getCount();
-            holder.tv.setText(text);
+            String text =  bookTitle.toUpperCase() + " " + Util.LINK_CAT_VERICAL_LINE + " <font color="+fadedTextHexColor+">" + linkCount.getCount() + "</font>";
+            holder.tv.setText(Html.fromHtml(text));
             holder.tv.setTextColor(Util.getColor(context, R.attr.text_color_main));
-            if (android.os.Build.VERSION.SDK_INT >= 14) {//for older things it just will by non-capped (even though we can make a function to fix it, it's not worth it).
+            /*if (android.os.Build.VERSION.SDK_INT >= 14) {//for older things it just will by non-capped (even though we can make a function to fix it, it's not worth it).
                 holder.tv.setAllCaps(true);
-            }
+            }*/
             holder.colorBar.setVisibility(View.VISIBLE);
             holder.catPadding.setVisibility(View.INVISIBLE); //just so it takes up space
             int color = MyApp.getCatColor(linkCount.getRealTitle(Util.Lang.EN));

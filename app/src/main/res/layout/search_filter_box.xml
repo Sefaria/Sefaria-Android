@@ -7,23 +7,27 @@
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:orientation="horizontal"
+        android:layout_marginLeft="@dimen/main_margin_lr"
+        android:layout_marginRight="@dimen/main_margin_lr"
+        android:layout_marginBottom="10dp"
         android:id="@+id/filterTitle"
         >
         <FrameLayout
+            android:id="@+id/arrow_left"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingRight="6dp"
             android:layout_gravity="center_vertical"
+            android:visibility="gone"
             >
             <ImageView
-                android:id="@+id/arrow_left"
                 android:layout_width="10dp"
                 android:layout_height="10dp"
                 android:src="@drawable/down_arrow"
                 android:tint="?text_color_faded"
                 android:scaleType="fitCenter"
                 android:layout_gravity="center"
-                android:visibility="invisible"
+
                 />
         </FrameLayout>
         <org.sefaria.sefaria.layouts.SefariaTextView xmlns:android="http://schemas.android.com/apk/res/android"
@@ -32,42 +36,48 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="1dp"
-            android:textSize="18sp">
+            >
         </org.sefaria.sefaria.layouts.SefariaTextView>
         <FrameLayout
-
+            android:id="@+id/arrow_right"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="6dp"
             android:layout_gravity="center_vertical"
+            android:visibility="visible"
             >
             <ImageView
-                android:id="@+id/arrow_right"
                 android:layout_width="10dp"
                 android:layout_height="10dp"
                 android:src="@drawable/down_arrow"
                 android:scaleType="fitCenter"
                 android:layout_gravity="center"
                 android:tint="?text_color_faded"
-                android:visibility="visible"
-
                 />
         </FrameLayout>
     </LinearLayout>
     <LinearLayout
         android:id="@+id/filterLists"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
+        android:layout_height="150dp"
+        android:orientation="horizontal"
+        android:background="?text_verse_selected_bg">
         <ListView
+            android:clickable="true"
+            android:id="@+id/filterListLeft"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp">
         </ListView>
         <ListView
+            android:id="@+id/filterListRight"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp">
         </ListView>
     </LinearLayout>
 

@@ -6,7 +6,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Layout;
 import android.text.SpannableString;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +22,7 @@ import org.sefaria.sefaria.TextElements.SegmentSpannable;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.Section;
 import org.sefaria.sefaria.database.Text;
-import org.sefaria.sefaria.layouts.ListViewExt;
+import org.sefaria.sefaria.TextElements.TextListView;
 import org.sefaria.sefaria.layouts.SefariaTextView;
 
 import java.util.ArrayList;
@@ -31,7 +30,7 @@ import java.util.List;
 
 public class CtsTextActivity extends SuperTextActivity implements AbsListView.OnScrollListener, LinkFragment.OnLinkFragInteractionListener {
 
-    private ListViewExt listView;
+    private TextListView listView;
     private CtsTextAdapter ctsTextAdapter;
 
     private int preLast;
@@ -57,7 +56,7 @@ public class CtsTextActivity extends SuperTextActivity implements AbsListView.On
 
     protected void init() {
         super.init();
-        listView = (ListViewExt) findViewById(R.id.listview);
+        listView = (TextListView) findViewById(R.id.listview);
         listView.setSensitivity(250);
         ctsTextAdapter = new CtsTextAdapter(this,R.layout.adapter_text_mono,new ArrayList<Section>(),onSegmentSpanClickListener);
 
@@ -96,7 +95,7 @@ public class CtsTextActivity extends SuperTextActivity implements AbsListView.On
             }
         });
         //listView.setOnItemLongClickListener(onItemLongClickListener);
-        listView.setOnScrollStoppedListener(new ListViewExt.OnScrollStoppedListener() {
+        listView.setOnScrollStoppedListener(new TextListView.OnScrollStoppedListener() {
 
             public void onScrollStopped() {
                 /*if (linkFragment.getView() != null) {
