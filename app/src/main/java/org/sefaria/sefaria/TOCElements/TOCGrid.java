@@ -11,13 +11,21 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
+import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.activities.CtsTextActivity;
+import org.sefaria.sefaria.activities.SuperTextActivity;
 import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Node;
@@ -43,6 +51,7 @@ public class TOCGrid extends LinearLayout {
     //which is useful for destroying the page and switching to a new tab
     private SefariaTextView bookTitleView;
     private AutoResizeTextView currSectionTitleView;
+    private Spinner versionsDropdown;
     private LinearLayout tabRoot;
     private LinearLayout gridRoot;
     private Book book;
@@ -66,8 +75,6 @@ public class TOCGrid extends LinearLayout {
         this.book = book;
         this.pathDefiningNode = pathDefiningNode;
 
-        if(pathDefiningNode == null)
-            pathDefiningNode = "";
         init();
     }
 
@@ -112,9 +119,18 @@ public class TOCGrid extends LinearLayout {
         currSectionTitleView = new AutoResizeTextView(context);
         currSectionTitleView.setTextColor(getResources().getColor(R.color.toc_curr_chap));
         currSectionTitleView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        int defaultTab = setCurrSectionText();
         currSectionTitleView.setGravity(Gravity.CENTER);
         this.addView(currSectionTitleView, 2);
+
+
+        //Alt versions dropdown menu
+        versionsDropdown = new Spinner(context,Spinner.MODE_DROPDOWN);
+        //versionsDropdown.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        //versionsDropdown.setGravity(Gravity.CENTER);
+        this.addView(versionsDropdown,3);
+
+
+        int defaultTab = setCurrSectionText();
 
         //ADD GREY DIVIDER
         View divider = new View(context);
@@ -122,16 +138,16 @@ public class TOCGrid extends LinearLayout {
         lp.setMargins(0,Math.round(Util.dpToPixels(context, 20)), 0,Math.round(Util.dpToPixels(context, 20)));
         divider.setLayoutParams(lp);
         divider.setBackgroundColor(Color.parseColor("#CCCCCC"));
-        this.addView(divider,3);
+        this.addView(divider,4);
 
         tabRoot = makeTabSections(tocNodesRoots);
-        this.addView(tabRoot,4);//It's the 3nd view starting with bookTitle and CurrSectionName
+        this.addView(tabRoot,5);//It's the 3nd view starting with bookTitle and CurrSectionName
 
         this.gridRoot = new LinearLayout(context);
         gridRoot.setOrientation(LinearLayout.VERTICAL);
         gridRoot.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 
-        this.addView(gridRoot, 5);
+        this.addView(gridRoot, 6);
 
         TocTabList.get(defaultTab).setActive(true);//set it true, such that the setLang function will start the right tab
 
@@ -427,11 +443,60 @@ public class TOCGrid extends LinearLayout {
         try {
             Node node = book.getNodeFromPathStr(pathDefiningNode);
             defaultTab = node.getTocRootNum();
-            String sectionTitle = node.getWholeTitle(lang); //TODO move lang to setLang
+            String sectionTitle = node.getWholeTitle(lang, true, false); //TODO move lang to setLang
             currSectionTitleView.setText(sectionTitle);
             currSectionTitleView.setFont(lang,false,20);
 
             currSectionTitleView.setPadding(0, 4*padding, 0, padding);
+
+            try {
+                // Alternate versions
+                JSONObject textData = new JSONObject(node.getTextFromAPIData(API.TimeoutType.SHORT));
+                JSONArray versions = textData.getJSONArray("versions");
+                final List<String> versionList = new ArrayList<>();
+                if(node.getTextVersion() != null)
+                    versionList.add(node.getTextVersion());
+                versionList.add(Node.DEFAULT_TEXT_VERSION);
+                for(int i=0;i<versions.length();i++){
+                    JSONObject version = versions.getJSONObject(i);
+                    versionList.add(version.getString("language") + "/" + version.getString("versionTitle"));
+                }
+                //final String [] items = new String[] {"test","bob","sam"};
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, versionList);
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                versionsDropdown.setAdapter(adapter);
+                versionsDropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    private boolean veryFirstTime = true;
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        if(position == 0){
+                            return;
+                        }
+                        Toast.makeText(context,"Version: " + versionList.get(position),Toast.LENGTH_SHORT).show();
+                        try {
+                            Node newVersionNode = book.getNodeFromPathStr(pathDefiningNode);
+                            String textVersion = versionList.get(position);
+                            newVersionNode.setTextVersion(textVersion);
+                            SuperTextActivity.startNewTextActivityIntent(context,book,null,newVersionNode,false,null,-1);
+                        } catch (Node.InvalidPathException e) {
+                            e.printStackTrace();
+                        } catch (API.APIException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+
+                    }
+                });
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+
         } catch (Node.InvalidPathException e) {
             currSectionTitleView.setHeight(0);
         } catch (API.APIException e) {

@@ -264,6 +264,8 @@ public abstract class SuperTextActivity extends FragmentActivity {
                 GoogleTracker.sendEvent(GoogleTracker.CATEGORY_OPEN_NEW_BOOK_ACTION, "Opened New Book");
                 openedNewBookTime = System.currentTimeMillis();
             }
+            if(firstLoadedNode != null) //put in saved textVersion
+                firstLoadedNode.setTextVersion(bookSettings.textVersion);
 
             if (openToText == null && textNum > -1) {
                 try {

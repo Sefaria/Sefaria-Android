@@ -19,6 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 
 public class Settings {
@@ -203,11 +204,14 @@ public class Settings {
         public Node node;
         public int textNum;
         public Util.Lang lang;
+        public String textVersion;
 
-        BookSettings(Node node, Util.Lang lang, int textNum){
+        BookSettings(Node node, Util.Lang lang, int textNum, String textVersion){
             this.node = node;
             this.textNum = textNum;
             this.lang = lang;
+            this.textVersion = textVersion;
+
 
             if(lang == null)
                 this.lang = getDefaultTextLang();
@@ -219,6 +223,21 @@ public class Settings {
 
         static private SharedPreferences getBookSavedTitleSettings() {
             return MyApp.getContext().getSharedPreferences("org.sefaria.sefaria.book_save_title_settings", Context.MODE_PRIVATE);
+        }
+
+        static private SharedPreferences getBookSavedTextVersion() {
+            return MyApp.getContext().getSharedPreferences("org.sefaria.sefaria.book_save_text_version_settings", Context.MODE_PRIVATE);
+        }
+
+        static public void setTextVersion(Book book, String textVersion){
+            SharedPreferences.Editor editor = getBookSavedTextVersion().edit();
+            editor.putString(book.getTitle(Util.Lang.EN),textVersion);
+            editor.apply();
+        }
+
+        static public String getTextVersion(Book book){
+            SharedPreferences sharedPreferences = getBookSavedTextVersion();
+            return sharedPreferences.getString(book.getTitle(Util.Lang.EN),null);
         }
 
         static private void setAllBookSettingsTextLang(Util.Lang lang){
@@ -271,21 +290,23 @@ public class Settings {
             }catch (Exception e){
                 e.printStackTrace();
             }
+            String textVersion = getTextVersion(book);
             Node node = null;
             try {
                 node = book.getNodeFromPathStr(nodePathStr);
                 node = node.getFirstDescendant();//true);//should be unneeded line, but in case there was a previous bug this should return a isTextSection() node to avoid bugs
+                node.setTextVersion(textVersion);
             } catch (Exception e) {
                 ;
             }
 
-            BookSettings bookSettings = new BookSettings(node,lang,textNum);
+            BookSettings bookSettings = new BookSettings(node,lang,textNum,textVersion);
             return bookSettings;
         }
 
         final static private String SETTINGS_SPLITTER = "@";
 
-        static public boolean setSavedBook(Book book,Node node, Text text, Util.Lang lang){
+        static public boolean setSavedBook(Book book, Node node, Text text, Util.Lang lang){
             if(book == null) return false;
             SharedPreferences bookSavedSettings = getBookSavedSettings();
             SharedPreferences.Editor editor = bookSavedSettings.edit();
@@ -307,6 +328,9 @@ public class Settings {
             editor.putString(EN_TITLE + book.title, node.getMenuBarTitle(book, Util.Lang.EN));
             editor.putString(HE_TITLE + book.title, node.getMenuBarTitle(book, Util.Lang.HE));
             editor.apply();
+
+
+            setTextVersion(book,node.getTextVersion());
             return true;
         }
 

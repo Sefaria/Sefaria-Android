@@ -52,13 +52,11 @@ public class Book implements Parcelable {
     }
 
     public Book(String title) throws BookNotFoundException {
-        //Node root = Node.getTOC(116);
         wherePage = DEFAULT_WHERE_PAGE;
         get(title, false);
     }
 
     public Book(String title,boolean searchHeAndEnTitles) throws BookNotFoundException {
-        //Node root = Node.getTOC(116);
         wherePage = DEFAULT_WHERE_PAGE;
         get(title,searchHeAndEnTitles);
     }
