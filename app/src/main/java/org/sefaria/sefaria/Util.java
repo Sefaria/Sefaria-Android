@@ -568,4 +568,13 @@ public class Util {
         //Log.d("SearchActivity", bidiTest);
     }
 
+    //there's currently an error when you search for "עורכי" and select midrash. parentheses seem to be an issue
+    public static String regexpEscape(String str) {
+        //Pattern escaper = Pattern.compile("([^a-zA-z0-9\\ \\'])");
+        //return escaper.matcher(str).replaceAll("\\\\$1");
+
+        Pattern escaper = Pattern.compile("[{}()\\[\\].+*?^$\\\\|\\/]");
+        return escaper.matcher(str).replaceAll("\\\\$0");
+    }
+
 }

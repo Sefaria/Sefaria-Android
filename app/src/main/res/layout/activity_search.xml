@@ -32,7 +32,7 @@
             android:textColor="?text_color_main"
             android:text=""/>
         <org.sefaria.sefaria.SearchElements.SearchFilterBox
-            android:visibility="gone"
+            android:visibility="visible"
             android:id="@+id/search_filter_box"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -46,10 +46,10 @@
         </View>
     </LinearLayout>
 
-    <org.sefaria.sefaria.layouts.ListViewExt
+    <ListView
         android:id="@+id/listview"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    </org.sefaria.sefaria.layouts.ListViewExt>
+    </ListView>
 
 </LinearLayout>

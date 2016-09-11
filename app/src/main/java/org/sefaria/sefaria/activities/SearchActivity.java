@@ -28,6 +28,7 @@ import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.SearchElements.SearchAdapter;
 import org.sefaria.sefaria.SearchElements.SearchFilterBox;
+import org.sefaria.sefaria.SearchElements.SearchResultContainer;
 import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.API;
@@ -50,7 +51,6 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
     private ListView listView;
     private SefariaTextView numResultsTV;
     private boolean isLoadingSearch;
-    private ArrayList<String> appliedFilters;
     private int currPageLoaded; //based on ElasticSearch page loaded
     private int preLast;
     private boolean APIError = false;
@@ -188,8 +188,24 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
 
     //run a new search
     private void runNewSearch(){
+        findViewById(R.id.results_box).setVisibility(View.VISIBLE);
         autoCompleteTextView.clearFocus();
-        AsyncSearch asyncSearch = new AsyncSearch(true,null,0);
+        AsyncSearch asyncSearch = new AsyncSearch(true,new ArrayList<String>(),0);
+        //AsyncSearch asyncSearch = new AsyncSearch(true,searchFilterBox.getSelectedFilterStrings(),0);
+        asyncSearch.execute();
+        // Check if no view has focus:
+        View view = SearchActivity.this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+
+    }
+
+    public void runFilteredSearch() {
+        findViewById(R.id.results_box).setVisibility(View.VISIBLE);
+        autoCompleteTextView.clearFocus();
+        AsyncSearch asyncSearch = new AsyncSearch(false,searchFilterBox.getSelectedFilterStrings(),0);
         asyncSearch.execute();
         // Check if no view has focus:
         View view = SearchActivity.this.getCurrentFocus();
@@ -232,25 +248,24 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
                     if (lastItem == totalItemCount && preLast != lastItem) {
                         preLast = lastItem;
                         currPageLoaded++;
-                        AsyncSearch asyncSearch = new AsyncSearch(false,appliedFilters,currPageLoaded);
+                        AsyncSearch asyncSearch = new AsyncSearch(false,searchFilterBox.getSelectedFilterStrings(),currPageLoaded);
                         asyncSearch.execute();
                     }
                 }
         }
     }
 
-    public class AsyncSearch extends AsyncTask<Void,Void,List<Text>> {
+    public class AsyncSearch extends AsyncTask<Void,Void,SearchResultContainer> {
 
         private String query;
         private boolean getFilters;
-        private ArrayList<String> appliedFilters;
+        private List<String> appliedFilters;
         private int pageNum;
 
-        public AsyncSearch(boolean getFilters, ArrayList<String> appliedFilters, int pageNum) {
+        public AsyncSearch(boolean getFilters, List<String> appliedFilters, int pageNum) {
             this.getFilters = getFilters;
             this.appliedFilters = appliedFilters;
             this.pageNum = pageNum;
-            Log.d("Search","LOADING PAGE " + pageNum);
         }
 
         @Override
@@ -262,30 +277,39 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
         }
 
         @Override
-        protected List<Text> doInBackground(Void... params) {
+        protected SearchResultContainer doInBackground(Void... params) {
             APIError = false;
             try {
-                return SearchAPI.search(query, getFilters, appliedFilters,pageNum, PAGE_SIZE);
+                if (getFilters && (appliedFilters != null && appliedFilters.size() > 0)) {
+                    SearchResultContainer getFilterResults = SearchAPI.search(query, getFilters, null,pageNum, PAGE_SIZE);
+                    SearchResultContainer filteredResults = SearchAPI.search(query, false, appliedFilters,pageNum, PAGE_SIZE);
+                    filteredResults.setAllFilters(getFilterResults.getAllFilters());
+                    return  filteredResults;
+                } else {
+                    return SearchAPI.search(query, getFilters, appliedFilters,pageNum, PAGE_SIZE);
+                }
+
             } catch (API.APIException e) {
                 APIError = true;
-                return new ArrayList<>();
+                return null;
             }
         }
 
         @Override
-        protected void onPostExecute(List<Text> results) {
-            super.onPostExecute(results);
+        protected void onPostExecute(SearchResultContainer resultContainer) {
+            super.onPostExecute(resultContainer);
             isLoadingSearch = false;
             //page 0 means you're starting a new search. reset everything
             if (pageNum == 0) {
-                adapter.setResults(results,true);
+                adapter.setResults(resultContainer.getResults(),true);
                 listView.setSelection(0);
             } else {
-                adapter.setResults(results,false);
+                adapter.setResults(resultContainer.getResults(),false);
             }
-            numberOfResults = SearchAPI.getNumResults() + " " + MyApp.getRString(R.string.results);
-            findViewById(R.id.results_box).setVisibility(View.VISIBLE);
-            searchFilterBox.initFilters(SearchAPI.getAllFilters());
+            numberOfResults = resultContainer.getNumResults() + " " + MyApp.getRString(R.string.results);
+            if (getFilters) {
+                searchFilterBox.initFilters(resultContainer.getAllFilters());
+            }
             numResultsTV.setText(numberOfResults);
             if(APIError) {
                 GoogleTracker.sendEvent(GoogleTracker.CATEGORY_RANDOM_ERROR,MyApp.getRString(R.string.searching_requires_internet));
