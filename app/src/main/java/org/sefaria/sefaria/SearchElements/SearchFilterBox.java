@@ -1,6 +1,7 @@
 package org.sefaria.sefaria.SearchElements;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
@@ -19,7 +20,9 @@ import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.activities.SearchActivity;
+import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.SearchAPI;
+import org.sefaria.sefaria.layouts.IndeterminateCheckBox;
 import org.sefaria.sefaria.layouts.ListViewCheckBox;
 
 import java.util.ArrayList;
@@ -45,6 +48,9 @@ public class SearchFilterBox extends LinearLayout{
 
     private List<BilingualNode> minSelectedFilterNodes;
     private HashSet<BilingualNode> allSelectedFilterNodes;
+
+    private Boolean[] isCheckedArrayMain;
+    private Boolean[][] isCheckedArraySlave;
 
     public SearchFilterBox(Context context) {
         super(context);
@@ -148,9 +154,14 @@ public class SearchFilterBox extends LinearLayout{
                         /*if (filterStringListHe[1] == null) {
                             Log.d("Search",Arrays.toString(filterStringList));
                         }*/
+                        if (filterStringListHe[1] != null) {
+                            filterStringHe = "מפרשי " + filterStringListHe[1];
+                            filterStringListHe[1] = filterStringHe;
+                        } else {
+                            filterStringHe = filterString;
+                            filterStringListHe[1] = filterStringHe;
+                        }
 
-                        filterStringHe = "מפרשי " + filterStringListHe[1];
-                        filterStringListHe[1] = filterStringHe;
                         foundCommentary = true;
 
                         fullFilterString = filterString;
@@ -186,11 +197,25 @@ public class SearchFilterBox extends LinearLayout{
             this.setIsOpen(false);
             allSelectedFilterNodes = new HashSet<>();
             SearchFilterNode.mergeTrees(root,minSelectedFilterNodes);
-            Log.d("YOYO","OLD FILTERS " + minSelectedFilterNodes.toString());
+            //Log.d("YOYO","OLD FILTERS " + minSelectedFilterNodes.toString());
             filterAdapterMain.clearAndAdd(root.getChildren(),minSelectedFilterNodes);
             filterListMain.setSelection(0);
 
             filterAdapterSlave.clear();
+            filterAdapterSlave.setMasterPosition(-1);
+
+            isCheckedArrayMain = new Boolean[root.getNumChildren()];
+            for (int i = 0; i < isCheckedArrayMain.length; i++) {
+                isCheckedArrayMain[i] = false;
+            }
+            isCheckedArraySlave = new Boolean[root.getNumChildren()][];
+            for (int i = 0; i < isCheckedArraySlave.length; i++) {
+                Boolean[] innerArray = new Boolean[((SearchFilterNode)root.getChild(i)).getLeaves().size()];
+                for (int j = 0; j < innerArray.length; j++) {
+                    innerArray[j] = false;
+                }
+                isCheckedArraySlave[i] = innerArray;
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -231,28 +256,33 @@ public class SearchFilterBox extends LinearLayout{
         return filterStrings;
     }
 
-    private void updateSelectedFilterNodes(BilingualNode node, boolean isChecked) {
+    private void updateSelectedFilterNodes(BilingualNode node, @Nullable Boolean isChecked) {
         if (node == null) return;
-
-        if (isChecked) {
-            allSelectedFilterNodes.add(node);
-        } else {
-            allSelectedFilterNodes.remove(node);
+        if (isChecked != null) {
+            if (isChecked) {
+                allSelectedFilterNodes.add(node);
+            } else {
+                allSelectedFilterNodes.remove(node);
+            }
         }
+
 
         minSelectedFilterNodes = SearchAPI.getMinFilterNodes(new ArrayList<>(allSelectedFilterNodes));
 
         Log.d("YOYO","Min Nodes from Master = " + minSelectedFilterNodes.toString());
     }
 
-    private void updateSelectedFilterNodes(List<BilingualNode> nodes, boolean isChecked) {
+    private void updateSelectedFilterNodes(List<BilingualNode> nodes, @Nullable Boolean isChecked) {
         if (nodes == null) return;
 
-        if (isChecked) {
-            allSelectedFilterNodes.addAll(nodes);
-        } else {
-            allSelectedFilterNodes.removeAll(nodes);
+        if (isChecked != null) {
+            if (isChecked) {
+                allSelectedFilterNodes.addAll(nodes);
+            } else {
+                allSelectedFilterNodes.removeAll(nodes);
+            }
         }
+
 
         minSelectedFilterNodes = SearchAPI.getMinFilterNodes(new ArrayList<>(allSelectedFilterNodes));
 
@@ -273,32 +303,59 @@ public class SearchFilterBox extends LinearLayout{
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             SearchFilterNode node = (SearchFilterNode) filterAdapterMain.getItem(position);
-            filterAdapterSlave.clearAndAdd(node.getLeaves(),filterAdapterMain.getIsCheckedAtPos(position));
+            filterAdapterSlave.clearAndAdd(node.getLeaves(),isCheckedArraySlave[position]);
             filterListSlave.setSelection(0);
             filterAdapterSlave.setMasterPosition(position);
             filterAdapterMain.notifyDataSetChanged(); //update so that it shows nice little arrow
         }
     };
 
-    CompoundButton.OnCheckedChangeListener checkedChangeListener = new CompoundButton.OnCheckedChangeListener() {
+    /*indetermCheckBox.setOnStateChangedListener(new IndeterminateCheckBox.OnStateChangedListener() {
         @Override
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        public void onStateChanged(IndeterminateCheckBox check, @Nullable Boolean state) {
+            String stateText = (state != null) ? (state ? "Checked" : "Unchecked") : "Indeterminate";
+            Toast.makeText(MainActivity.this, "IndeterminateCheckBox: " + stateText, Toast.LENGTH_SHORT).show();
+        }
+    });*/
+
+    IndeterminateCheckBox.OnStateChangedListener checkedChangeListener = new IndeterminateCheckBox.OnStateChangedListener() {
+        @Override
+        public void onStateChanged(IndeterminateCheckBox buttonView, @Nullable Boolean state) {
             ListViewCheckBox listViewCheckBox = (ListViewCheckBox) buttonView;
             int position = listViewCheckBox.getPosition();
             SearchFilterAdapter searchFilterAdapter = (SearchFilterAdapter) listViewCheckBox.getAdapter();
-            searchFilterAdapter.setIsCheckedAtPos(isChecked,position);
+            searchFilterAdapter.setIsCheckedAtPos(state,position);
+
 
             //if this is the master listview and this checkbox is the one that is controlling the slave listview
-            if (searchFilterAdapter.getIsMaster() && searchFilterAdapter.getIsMasterPosition(position)) {
-                searchFilterAdapter.setSlaveCheckBoxes(isChecked);
+            if (searchFilterAdapter.getIsMaster() && state != null) {
+                for (int i = 0; i < isCheckedArraySlave[position].length; i++) {
+                    isCheckedArraySlave[position][i] = state;
+                }
+                if (searchFilterAdapter.getIsMasterPosition(position)) {
+                    searchFilterAdapter.setSlaveCheckBoxes(state);
+                }
             }
 
             SearchFilterNode tempNode = (SearchFilterNode) searchFilterAdapter.getItem(position);
-            Log.d("YOYO","CheckedChange. TempNode = " + tempNode.toString() + " HASH " + tempNode.hashCode());
             if (searchFilterAdapter.getIsMaster()) {
-                updateSelectedFilterNodes(tempNode.getLeaves(),isChecked);
+                updateSelectedFilterNodes(tempNode.getLeaves(),state);
+                isCheckedArrayMain[position] = state;
             } else {
-                updateSelectedFilterNodes(tempNode,isChecked);
+                updateSelectedFilterNodes(tempNode,state);
+
+                int masterPos = filterAdapterSlave.getMasterPosition();
+                isCheckedArraySlave[masterPos][position] = state;
+                if (state != null) {
+
+                    if (state && filterAdapterSlave.isUniformValue(true)) {
+                        filterAdapterMain.setIsCheckedAtPos(true,masterPos);
+                    } else {
+                        if (filterAdapterSlave.isUniformValue(false)) filterAdapterMain.setIsCheckedAtPos(false,masterPos);
+                        else filterAdapterMain.setIsCheckedAtPos(null,masterPos);
+                    }
+                }
+
             }
         }
     };

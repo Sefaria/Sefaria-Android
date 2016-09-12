@@ -2,6 +2,7 @@ package org.sefaria.sefaria.SearchElements;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import org.sefaria.sefaria.BilingualNode;
@@ -119,8 +120,8 @@ public class SearchFilterNode extends BilingualNode implements Comparable<Search
 
 
     @Override
-    public int compareTo(SearchFilterNode another) {
-
+    public int compareTo(@Nullable SearchFilterNode another) {
+        if (another == null) return -1;
         int order = this.bid - another.bid;
         if (this.bid == 0 && another.bid != 0) {
             order = 1;
@@ -132,8 +133,13 @@ public class SearchFilterNode extends BilingualNode implements Comparable<Search
                 order = 1;
             else if (another.enTitle.contains(this.enTitle) && another.enTitle.contains("Commentary"))
                 order = -1;
-            else
+            else if (this.menuIndex == -1 && another.menuIndex != -1) { //for those weird cases that aren't books and aren't in the menu
+                order = 1;
+            } else if (this.menuIndex != -1 && another.menuIndex == -1) {
+                order = -1;
+            } else {
                 order = this.menuIndex - another.menuIndex;
+            }
         }
 
         return order;
