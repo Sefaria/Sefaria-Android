@@ -1,14 +1,17 @@
 package org.sefaria.sefaria.layouts;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.util.AttributeSet;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 
+import org.sefaria.sefaria.R;
+
 /**
  * Created by nss on 6/29/16.
  */
-public class ListViewCheckBox extends CheckBox {
+public class ListViewCheckBox extends IndeterminateCheckBox {
 
     private Context context;
     private int position; //current position of the checkBox in the listview
