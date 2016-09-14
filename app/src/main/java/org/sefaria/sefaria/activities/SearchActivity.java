@@ -190,7 +190,8 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
     private void runNewSearch(){
         findViewById(R.id.results_box).setVisibility(View.VISIBLE);
         autoCompleteTextView.clearFocus();
-        AsyncSearch asyncSearch = new AsyncSearch(true,new ArrayList<String>(),0);
+        currPageLoaded = 0;
+        AsyncSearch asyncSearch = new AsyncSearch(true,new ArrayList<String>(),currPageLoaded);
         //AsyncSearch asyncSearch = new AsyncSearch(true,searchFilterBox.getSelectedFilterStrings(),0);
         asyncSearch.execute();
         // Check if no view has focus:
@@ -205,7 +206,8 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
     public void runFilteredSearch() {
         findViewById(R.id.results_box).setVisibility(View.VISIBLE);
         autoCompleteTextView.clearFocus();
-        AsyncSearch asyncSearch = new AsyncSearch(false,searchFilterBox.getSelectedFilterStrings(),0);
+        currPageLoaded = 0;
+        AsyncSearch asyncSearch = new AsyncSearch(false,searchFilterBox.getSelectedFilterStrings(),currPageLoaded);
         asyncSearch.execute();
         // Check if no view has focus:
         View view = SearchActivity.this.getCurrentFocus();
