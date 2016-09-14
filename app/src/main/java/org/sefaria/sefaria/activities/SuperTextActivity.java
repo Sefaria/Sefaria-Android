@@ -62,6 +62,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
     protected static CharSequence CONTEXT_MENU_SEND_CORRECTION = "Report Mistake";
     protected static CharSequence CONTEXT_MENU_SHARE = "Share";
     protected static CharSequence CONTEXT_MENU_VISIT = "View on Site";
+    protected static CharSequence CONTEXT_MENU_PIN = "Pin Text";
     public static final int PREV_CHAP_DRAWN = 234234;
     public static final int TOC_CHAPTER_CLICKED_CODE = 3456;
     protected static final int LOAD_PIXEL_THRESHOLD = 500; //num pixels before the bottom (or top) of a segment after (before) which the next (previous) segment will be loaded
