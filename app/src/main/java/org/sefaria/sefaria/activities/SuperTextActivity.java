@@ -355,7 +355,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
     }
 
     /**
-     * used for coming in from DirectRefMenu
+     * used for coming in from DirectRefMenu and TOC version change
      * @param context
      * @param book
      * @param node

@@ -453,17 +453,16 @@ public class TOCGrid extends LinearLayout {
                 // Alternate versions
                 JSONObject textData = new JSONObject(node.getTextFromAPIData(API.TimeoutType.SHORT));
                 JSONArray versions = textData.getJSONArray("versions");
-                final List<String> versionList = new ArrayList<>();
+                final List<TOCVersionsAdapterItem> versionList = new ArrayList<>();
                 if(node.getTextVersion() != null)
                     versionList.add(node.getTextVersion());
-                versionList.add(Node.DEFAULT_TEXT_VERSION);
+                versionList.add(new TOCVersionsAdapterItem(Node.DEFAULT_TEXT_VERSION,null));
                 for(int i=0;i<versions.length();i++){
                     JSONObject version = versions.getJSONObject(i);
-                    versionList.add(version.getString("language") + "/" + version.getString("versionTitle"));
+                    versionList.add(new TOCVersionsAdapterItem(version.getString("versionTitle"),version.getString("language")));
                 }
                 //final String [] items = new String[] {"test","bob","sam"};
-                ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, versionList);
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                TOCVersionsAdapter adapter = new TOCVersionsAdapter(context, R.layout.toc_versions_adapter_item, versionList);
                 versionsDropdown.setAdapter(adapter);
                 versionsDropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     private boolean veryFirstTime = true;
@@ -472,11 +471,10 @@ public class TOCGrid extends LinearLayout {
                         if(position == 0){
                             return;
                         }
-                        Toast.makeText(context,"Version: " + versionList.get(position),Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context,"Version: " + versionList.get(position).getPrettyString(),Toast.LENGTH_SHORT).show();
                         try {
                             Node newVersionNode = book.getNodeFromPathStr(pathDefiningNode);
-                            String textVersion = versionList.get(position);
-                            newVersionNode.setTextVersion(textVersion);
+                            newVersionNode.setTextVersion(versionList.get(position));
                             SuperTextActivity.startNewTextActivityIntent(context,book,null,newVersionNode,false,null,-1);
                         } catch (Node.InvalidPathException e) {
                             e.printStackTrace();
