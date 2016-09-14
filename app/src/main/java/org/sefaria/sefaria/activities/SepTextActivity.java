@@ -149,10 +149,16 @@ public class SepTextActivity extends SuperTextActivity implements AbsListView.On
             share(segment);
         } else  if (title == CONTEXT_MENU_VISIT){
             visit(segment);
+        } else if(title == CONTEXT_MENU_PIN){
+            pin(segment);
         }
 
         //stop processing menu event
         return true;
+    }
+
+    private void pin(Text text){
+        Settings.RecentTexts.addBookmark(text);
     }
 
     private void visit(Text text){
