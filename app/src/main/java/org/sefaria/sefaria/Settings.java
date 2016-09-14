@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.concurrent.Exchanger;
 
 
 public class Settings {
@@ -306,21 +307,26 @@ public class Settings {
 
         final static private String SETTINGS_SPLITTER = "@";
 
+
+        static private int getTextNum(Node node, Text text) throws API.APIException {
+            int textNum = -1;
+            textNum = node.getTexts(true).indexOf(text);
+            return textNum;
+        }
+
         static public boolean setSavedBook(Book book, Node node, Text text, Util.Lang lang){
             if(book == null) return false;
             SharedPreferences bookSavedSettings = getBookSavedSettings();
             SharedPreferences.Editor editor = bookSavedSettings.edit();
             //"<en|he|bi>.<cts|sep>.<white|grey|black>.10px:"+ <rootNum>.<Childnum>.<until>.<leaf>.<verseNum>"
-            int textNum = -1;
             try {
-                textNum = node.getTexts(true).indexOf(text);
-            } catch (API.APIException e) {
-                e.printStackTrace();
-            } catch (NullPointerException e) {
+                int textNum = getTextNum(node, text);
+                String settingStr = node.makePathDefiningNode() + SETTINGS_SPLITTER + textNum + SETTINGS_SPLITTER + lang2Str(lang);
+                editor.putString(book.title, settingStr);
+            }catch (Exception e){
                 return false;
             }
-            String settingStr = node.makePathDefiningNode() + SETTINGS_SPLITTER + textNum + SETTINGS_SPLITTER + lang2Str(lang);
-            editor.putString(book.title, settingStr);
+
             editor.apply();
 
             //now for titles
@@ -342,8 +348,8 @@ public class Settings {
         static public Pair<String, String> getSavedBookTitle(String title) {
             SharedPreferences bookSavedTitleSettings = getBookSavedTitleSettings();
             Pair<String, String> pair = new Pair<>(
-                    bookSavedTitleSettings.getString(EN_TITLE + title, ""),
-                    bookSavedTitleSettings.getString(HE_TITLE + title, "")
+                bookSavedTitleSettings.getString(EN_TITLE + title, ""),
+                bookSavedTitleSettings.getString(HE_TITLE + title, "")
             );
             return pair;
         }
@@ -471,19 +477,19 @@ public class Settings {
         public static List<String> getRecentTexts() {
             List<String> books = new ArrayList<>();
             SharedPreferences recentSettings = getRecentSettings();
-            Set<String> pinnedTexts = getPinned();
+            Set<String> pinnedBooks = getPinnedBook();
             int recentTextCount = 3;
-            while(pinnedTexts.size()/(recentTextCount*1.0) > .6){
+            while(pinnedBooks.size()/(recentTextCount*1.0) > .6){
                 recentTextCount += 1;
             }
-            for(String bookTitle:pinnedTexts){
+            for(String bookTitle:pinnedBooks){
                 books.add(bookTitle);
             }
-            for (int i = 0; i < recentTextCount-pinnedTexts.size() && i<MAX_RECENT_TEXTS; i++) {
+            for (int i = 0; i < recentTextCount-pinnedBooks.size() && i<MAX_RECENT_TEXTS; i++) {
                 String bookTitle = recentSettings.getString("" + i, "");
                 if (bookTitle == "")
                     return books;
-                if(pinnedTexts.contains(bookTitle)) {
+                if(pinnedBooks.contains(bookTitle)) {
                     recentTextCount++;
                     continue;
                 }
@@ -507,9 +513,52 @@ public class Settings {
             }
             editor.apply();
         }
+        private static String PINNED_RECENT_TEXTS = "pinned_recent_texts";
+        private static String PINNED_RECENT_BOOKS = "pinned_recent_books";
+        private static final String SPLITTER = "@@@";
+        public static boolean addBookmark(Text text){
+            Set<String> pinnedTextStringSet = getBookmarks();
+            try {
 
-        public static boolean addPinned(String bookTitle){
-            Set<String> pinnedStringSet = getPinned();
+                Book book = new Book(text.bid);
+                Node node = text.getNodeFromText(book);
+                int textNum = BookSettings.getTextNum(node, text);
+                String settingStr = node.getMenuBarTitle(book, Util.Lang.EN) + SPLITTER
+                                    + node.getMenuBarTitle(book, Util.Lang.HE) + SPLITTER
+                                    + node.getBid() + SPLITTER
+                                    + node.makePathDefiningNode() + SPLITTER
+                                    + textNum + SPLITTER;
+
+                boolean added;
+
+                if(pinnedTextStringSet.contains(settingStr)){
+                    pinnedTextStringSet.remove(settingStr);
+                    added = false;
+                } else {
+                    pinnedTextStringSet.add(settingStr);
+                    added = true;
+                }
+
+                SharedPreferences.Editor editor = getRecentSettings().edit();
+                editor.putStringSet(PINNED_RECENT_TEXTS, pinnedTextStringSet);
+                editor.apply();
+
+                return added;
+            } catch (Exception e) {
+                return false;
+            }
+        }
+        public static Set<String> getBookmarks(){
+            SharedPreferences pinned = getRecentSettings();
+            Set<String> pinnedStringSet = pinned.getStringSet(PINNED_RECENT_TEXTS, null);
+            if(pinnedStringSet == null){
+                pinnedStringSet = new HashSet<>();
+            }
+            return pinnedStringSet;
+        }
+
+        public static boolean addPinnedBook(String bookTitle){
+            Set<String> pinnedStringSet = getPinnedBook();
 
             boolean added;
             if(pinnedStringSet.contains(bookTitle)){
@@ -521,16 +570,14 @@ public class Settings {
             }
 
             SharedPreferences.Editor editor = getRecentSettings().edit();
-            editor.putStringSet(PINNED_RECENT_TEXTS, pinnedStringSet);
+            editor.putStringSet(PINNED_RECENT_BOOKS, pinnedStringSet);
             editor.apply();
             return  added;
 
         }
-
-        private static String PINNED_RECENT_TEXTS = "pinned_recent_texts";
-        public static Set<String> getPinned(){
+        public static Set<String> getPinnedBook(){
             SharedPreferences pinned = getRecentSettings();
-            Set<String> pinnedStringSet = pinned.getStringSet(PINNED_RECENT_TEXTS, null);
+            Set<String> pinnedStringSet = pinned.getStringSet(PINNED_RECENT_BOOKS, null);
             if(pinnedStringSet == null){
                 pinnedStringSet = new HashSet<>();
             }
