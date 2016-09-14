@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 import android.util.Pair;
 
+import org.sefaria.sefaria.TOCElements.TOCVersionsAdapterItem;
 import org.sefaria.sefaria.activities.SuperTextActivity;
 import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.database.Book;
@@ -204,9 +205,9 @@ public class Settings {
         public Node node;
         public int textNum;
         public Util.Lang lang;
-        public String textVersion;
+        public TOCVersionsAdapterItem textVersion;
 
-        BookSettings(Node node, Util.Lang lang, int textNum, String textVersion){
+        BookSettings(Node node, Util.Lang lang, int textNum, TOCVersionsAdapterItem textVersion){
             this.node = node;
             this.textNum = textNum;
             this.lang = lang;
@@ -290,7 +291,9 @@ public class Settings {
             }catch (Exception e){
                 e.printStackTrace();
             }
-            String textVersion = getTextVersion(book);
+            String textVersionString = getTextVersion(book);
+            TOCVersionsAdapterItem textVersion = new TOCVersionsAdapterItem(textVersionString);
+
             Node node = null;
             try {
                 node = book.getNodeFromPathStr(nodePathStr);
@@ -330,7 +333,7 @@ public class Settings {
             editor.apply();
 
 
-            setTextVersion(book,node.getTextVersion());
+            setTextVersion(book,node.getTextVersion().getDBString());
             return true;
         }
 

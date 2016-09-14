@@ -13,6 +13,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.Settings;
+import org.sefaria.sefaria.TOCElements.TOCVersionsAdapterItem;
 import org.sefaria.sefaria.Util;
 
 import java.util.ArrayList;
@@ -161,8 +162,8 @@ public class Node{// implements  Parcelable{
             }
             node = node.parent;
         }
-        if(showTextVersion && getTextVersion() != null)
-            str += " - " + getTextVersion();
+        if(showTextVersion && getTextVersion().getPrettyString() != null)
+            str += " - " + getTextVersion().getPrettyString();
         return str;
     }
 
@@ -745,23 +746,23 @@ public class Node{// implements  Parcelable{
 
 
     public static final String DEFAULT_TEXT_VERSION = "Default Version";
-    private String textVersion;
-    public void setTextVersion(String textVersion){
-        if(textVersion != null && textVersion.equals(DEFAULT_TEXT_VERSION)) //default as version
+    private TOCVersionsAdapterItem textVersion;
+    public void setTextVersion(TOCVersionsAdapterItem textVersion){
+        if(textVersion.getDBString() != null && textVersion.getDBString().equals(DEFAULT_TEXT_VERSION)) //default as version
             textVersion = null;
 
-        if((textVersion != null && !textVersion.equals(textVersion)) || (textVersion == null && this.textVersion != null))  //it's changed in some way
+        if((textVersion != null && !textVersion.equals(this.textVersion)) || (textVersion == null && this.textVersion != null))  //it's changed in some way
             textList = null; //so that it will get this specific version next time
 
         this.textVersion = textVersion;
         try {
-            Settings.BookSettings.setTextVersion(getBook(),textVersion);
+            Settings.BookSettings.setTextVersion(getBook(),textVersion == null ? null : textVersion.getDBString());
         } catch (Book.BookNotFoundException e) {
             //e.printStackTrace();
         }
     }
 
-    public String getTextVersion(){
+    public TOCVersionsAdapterItem getTextVersion(){
         return textVersion;
     }
 
@@ -889,7 +890,7 @@ public class Node{// implements  Parcelable{
 
     public String getTextFromAPIData(API.TimeoutType timeoutType) throws API.APIException{
         String completeUrl = API.TEXT_URL + getPath(Util.Lang.EN, true, true, true);
-        String textVersion = getTextVersion();
+        String textVersion = getTextVersion().getDBString();
         if(textVersion != null)
             completeUrl += "/" + textVersion.replace(" ","_");
         completeUrl += "?" + API.ZERO_CONTEXT + API.ZERO_COMMENTARY;
