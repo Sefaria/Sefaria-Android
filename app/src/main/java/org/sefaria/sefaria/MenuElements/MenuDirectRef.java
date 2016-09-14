@@ -111,7 +111,7 @@ public class MenuDirectRef extends LinearLayout{
     OnLongClickListener longClickListener = new OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
-            if(Settings.RecentTexts.addPinned(book.title))
+            if(Settings.RecentTexts.addPinnedBook(book.title))
                 Toast.makeText(context, R.string.pinned_item,Toast.LENGTH_SHORT).show();
             else
                 Toast.makeText(context, R.string.remove_pinned_item,Toast.LENGTH_SHORT).show();
