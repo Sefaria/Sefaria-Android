@@ -2,6 +2,8 @@ package org.sefaria.sefaria.database;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import android.database.Cursor;
@@ -9,6 +11,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.sefaria.sefaria.Settings;
 
 public class Link {//implements Parcelable {
@@ -101,8 +105,8 @@ public class Link {//implements Parcelable {
      */
     public static List<Text> getLinkedTexts(Text text, LinkFilter linkFilter) throws API.APIException {
         List<Text> linkList;
-        if(Settings.getUseAPI()){
-            linkList = API.getLinks(text,linkFilter);
+        if(text.tid == 0 || Settings.getUseAPI()){ //tid might be 0 if it was gotten using API (So for example with alternate text versions)
+            linkList = getLinkedTextsFromAPI(text,linkFilter);
         }else{
             linkList = getLinkedTextsFromDB(text, linkFilter);
         }
@@ -110,9 +114,78 @@ public class Link {//implements Parcelable {
     }
 
 
+    public static List<Text> getLinkedTextsFromAPI(Text orgText, LinkFilter linkFilter) throws API.APIException {
+        Log.d("API.Link","got starting LinksAPI");
+        List<Text> texts = new ArrayList<>();
+        String place = orgText.getURL(false, false);
+        String url = API.LINK_URL + place;
+        String data = API.getDataFromURL(url);
+        Log.d("API.Link","got data");
+        Book book;
+        try {
+            book = new Book(orgText.bid);
+        } catch (Book.BookNotFoundException e) {
+            return texts;
+        }
+        if(data.length()==0)
+            return texts;
+        List<Text> commentaries = new ArrayList<>();
+
+        String commentOn = " on " + book.title;
+        try {
+            JSONArray linksArray = new JSONArray(data);
+            //Log.d("api", "jsonData:" + jsonData.toString());
+            for(int i=0;i<linksArray.length();i++){
+                try {
+                    JSONObject jsonLink = linksArray.getJSONObject(i);
+                    String enTitle = jsonLink.getString("index_title");
+                    String category = jsonLink.getString("category");
+                    String ref = jsonLink.getString("ref");
+                    if (linkFilter.depth_type == LinkFilter.DEPTH_TYPE.ALL ||
+                            (linkFilter.depth_type == LinkFilter.DEPTH_TYPE.CAT && category.equals(linkFilter.enTitle)) ||
+                            (linkFilter.depth_type == LinkFilter.DEPTH_TYPE.BOOK && enTitle.equals(linkFilter.enTitle))
+                            ) {
+                        Text tempText = new Text(removeEmpty(jsonLink.getString("text")), removeEmpty(jsonLink.getString("he")), Book.getBid(enTitle), ref);
+                        if (category.equals("Commentary"))
+                            commentaries.add(tempText);
+                        else
+                            texts.add(tempText);
+                    }
+                }catch (Exception e1){
+                    e1.printStackTrace();
+                }
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        Collections.sort(commentaries,compareTexts);
+        Collections.sort(texts, compareTexts);
+        texts.addAll(0,commentaries);
+
+        Log.d("API.Link","finished LinksAPI");
+        return texts;
+    }
+
+    static Comparator<Text> compareTexts = new Comparator<Text>() {
+        @Override
+        public int compare(Text a, Text b) {
+            //only sorting on bid. Within same book using stable sort to keep order
+            return a.bid - b.bid;
+        }
+    };
+
+    private static String removeEmpty(String str){
+        if(str.equals("[]"))
+            return "";
+        else
+            return str;
+    }
+
     private static List<Text> getLinkedTextsFromDB(Text text, LinkFilter linkFilter) {
         SQLiteDatabase db = Database.getDB();
-        List<Text> linkList = new ArrayList<Text>();
+        List<Text> linkList = new ArrayList<>();
 
         //Log.d("getLinksTextsFromDB", "Started ... linkFiler:" + linkFilter);
 
