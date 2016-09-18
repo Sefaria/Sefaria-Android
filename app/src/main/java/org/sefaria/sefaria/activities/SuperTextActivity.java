@@ -780,14 +780,16 @@ public abstract class SuperTextActivity extends FragmentActivity {
     public static boolean canBeCts(Book book) {
         boolean isCtsText = false;
         if (book != null) {
-
-
-            final String[] CTS_TEXT_CATS = {"Talmud"};
-            for (String ctsText : CTS_TEXT_CATS) {
-                isCtsText = book.categories[0].equals(ctsText);
-                if (isCtsText) {
-                    break;
+            try {
+                final String[] CTS_TEXT_CATS = {"Talmud"};
+                for (String ctsText : CTS_TEXT_CATS) {
+                    isCtsText = ctsText.equals(book.categories[0]);
+                    if (isCtsText) {
+                        break;
+                    }
                 }
+            }catch (Exception e){ //could throw if categories doesn't have the right stuff
+                e.printStackTrace();
             }
         }
         return isCtsText;

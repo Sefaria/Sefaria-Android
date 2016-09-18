@@ -93,6 +93,7 @@ public class API {
             Toast.makeText(context,message, Toast.LENGTH_LONG).show();
         }catch (Exception e){
             GoogleTracker.sendException(e,"API toast");
+            e.printStackTrace();
         }
     }
 

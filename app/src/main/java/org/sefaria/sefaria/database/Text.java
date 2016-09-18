@@ -196,9 +196,9 @@ public class Text implements Parcelable {
      *
      * @param prependDomain if you want to go to the GUI site
      * @param useHTTPS if you want to bypass the Intent calling the app again
-     * @return
+     * @return "" if there's an error
      */
-    public String getURL(boolean prependDomain, boolean useHTTPS){
+    public String getURL(boolean prependDomain, boolean useHTTPS) throws Book.BookNotFoundException {
 
         StringBuilder str = new StringBuilder();
         if(prependDomain) {
@@ -213,23 +213,22 @@ public class Text implements Parcelable {
             return str + path;
         }
 
-        Book book = null;
+        Book book = new Book(bid);
         try {
-            book = new Book(bid);
-        } catch (Book.BookNotFoundException e) {
-            return "";
-        }
-        str.append(book.getTitle(Util.Lang.EN));
-        int sectionNum = book.sectionNamesL2B.length-1;
-        for(int i=levels.length-1;i>=0;i--){
-            int num = levels[i];
-            if(num == 0) continue;
-            boolean isDaf = false;
-            if(book.sectionNamesL2B.length > sectionNum && sectionNum >0) {
-                isDaf = (book.sectionNamesL2B[sectionNum].equals("Daf"));
+            str.append(book.getTitle(Util.Lang.EN));
+            int sectionNum = book.sectionNamesL2B.length - 1;
+            for (int i = levels.length - 1; i >= 0; i--) {
+                int num = levels[i];
+                if (num == 0) continue;
+                boolean isDaf = false;
+                if (book.sectionNamesL2B.length > sectionNum && sectionNum > 0) {
+                    isDaf = (book.sectionNamesL2B[sectionNum].equals("Daf"));
+                }
+                str.append("." + Header.getNiceGridNum(Util.Lang.EN, num, isDaf));
+                sectionNum--;
             }
-            str.append("." +  Header.getNiceGridNum(Util.Lang.EN,num,isDaf));
-            sectionNum--;
+        }catch (Exception e){
+            throw new Book.BookNotFoundException();
         }
         return str.toString().replace(" ","_");
     }

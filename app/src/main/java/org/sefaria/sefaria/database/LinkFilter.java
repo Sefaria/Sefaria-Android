@@ -6,8 +6,11 @@ import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MenuElements.MenuNode;
 import org.sefaria.sefaria.MenuElements.MenuState;
+import org.sefaria.sefaria.MyApp;
+import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
 
@@ -27,7 +30,7 @@ public class LinkFilter {
     protected LinkFilter parent = null;
 
     public enum DEPTH_TYPE {
-        ALL,CAT,BOOK
+        ALL,CAT,BOOK,ERR
     }
 
     //category is passed in only if DEPTH_TYPE == DEPTH_TYPE.BOOK
@@ -211,7 +214,7 @@ public class LinkFilter {
         }
     }
 
-    private static LinkFilter getFromLinks_API(Text text) throws API.APIException {
+    private static LinkFilter getFromLinks_API(Text text) throws API.APIException, Book.BookNotFoundException {
         LinkFilter allLinkCounts = makeAllLinkCounts();
 
 
@@ -279,11 +282,28 @@ public class LinkFilter {
         return new LinkFilter(ALL_CONNECTIONS, 0, "הכל",DEPTH_TYPE.ALL);
     }
 
-    public static LinkFilter getLinkFilters(Text text) throws API.APIException {
-        if(text.tid == 0 || Settings.getUseAPI()){ //text.tid == 0 when
-            return getFromLinks_API(text);
-        }else{
-            return getFromLinks_small(text);
+    public static LinkFilter makeAllLinkCountsError(String shortMessage){
+        return new LinkFilter(shortMessage, 0, shortMessage,DEPTH_TYPE.ERR);
+    }
+
+    public static LinkFilter getLinkFilters(Text text){
+        try {
+            if (text.tid == 0 || Settings.getUseAPI()) { //text.tid == 0 when
+                return getFromLinks_API(text);
+            } else {
+                return getFromLinks_small(text);
+            }
+        }catch (API.APIException e){
+            e.printStackTrace();
+            return LinkFilter.makeAllLinkCountsError(MyApp.getRString(R.string.error_getting_links) + ": " + "Internet Connection");
+        }catch (Book.BookNotFoundException e){
+            e.printStackTrace();
+            GoogleTracker.sendException(e,"linkFilter,book error");
+            return LinkFilter.makeAllLinkCountsError(MyApp.getRString(R.string.error_getting_links) + ": " + "Book");
+        }catch (Exception e){
+            e.printStackTrace();
+            GoogleTracker.sendException(e,"linkFilter,unknown error");
+            return LinkFilter.makeAllLinkCountsError(MyApp.getRString(R.string.error_getting_links) + ": " + "Unknown");
         }
     }
 

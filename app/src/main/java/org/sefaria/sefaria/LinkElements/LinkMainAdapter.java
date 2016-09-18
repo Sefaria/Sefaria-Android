@@ -55,7 +55,9 @@ public class LinkMainAdapter extends RecyclerView.Adapter<LinkMainAdapter.LinkHo
             LinkFragment.State tempState;
             if (linkFilter.getDepthType() == LinkFilter.DEPTH_TYPE.BOOK) {
                 tempState = LinkFragment.State.BOOK;
-            } else {
+            } else if(linkFilter.getDepthType() == LinkFilter.DEPTH_TYPE.ERR){
+                return;
+            }else {
                 tempState = LinkFragment.State.CAT;
             }
 
@@ -74,7 +76,6 @@ public class LinkMainAdapter extends RecyclerView.Adapter<LinkMainAdapter.LinkHo
 
     @Override
     public LinkHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
         View layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.link_category, null);
         LinkHolder linkHolder = new LinkHolder(layoutView,context);
         return linkHolder;
@@ -83,8 +84,6 @@ public class LinkMainAdapter extends RecyclerView.Adapter<LinkMainAdapter.LinkHo
     @Override
     public void onBindViewHolder(LinkHolder holder, int position) {
         LinkFilter linkCount = itemList.get(position);
-
-
 
         Util.Lang lang = Settings.getMenuLang();
         String bookTitle = linkCount.getSlimmedTitle(book, lang);
@@ -107,7 +106,7 @@ public class LinkMainAdapter extends RecyclerView.Adapter<LinkMainAdapter.LinkHo
             holder.catPadding.setVisibility(View.GONE);
 
 
-        } else { //ALL and CAT
+        } else if(linkCount.getDepthType() == LinkFilter.DEPTH_TYPE.CAT || linkCount.getDepthType() == LinkFilter.DEPTH_TYPE.ALL ){ //ALL and CAT
             String text =  bookTitle.toUpperCase() + " " + Util.LINK_CAT_VERICAL_LINE + " <font color="+fadedTextHexColor+">" + linkCount.getCount() + "</font>";
             holder.tv.setText(Html.fromHtml(text));
             holder.tv.setTextColor(Util.getColor(context, R.attr.text_color_main));
@@ -117,6 +116,20 @@ public class LinkMainAdapter extends RecyclerView.Adapter<LinkMainAdapter.LinkHo
             holder.colorBar.setVisibility(View.VISIBLE);
             holder.catPadding.setVisibility(View.INVISIBLE); //just so it takes up space
             int color = MyApp.getCatColor(linkCount.getRealTitle(Util.Lang.EN));
+            if (color != -1) {
+                holder.colorBar.setBackgroundColor(context.getResources().getColor(color));
+            }
+        }
+        else if(linkCount.getDepthType() == LinkFilter.DEPTH_TYPE.ERR ){ //ERR
+            String text =  bookTitle;
+            holder.tv.setText(Html.fromHtml(text));
+            holder.tv.setTextColor(Util.getColor(context, R.attr.text_color_main));
+            /*if (android.os.Build.VERSION.SDK_INT >= 14) {//for older things it just will by non-capped (even though we can make a function to fix it, it's not worth it).
+                holder.tv.setAllCaps(true);
+            }*/
+            holder.colorBar.setVisibility(View.VISIBLE);
+            holder.catPadding.setVisibility(View.INVISIBLE); //just so it takes up space
+            int color = MyApp.getCatColor("ERROR");
             if (color != -1) {
                 holder.colorBar.setBackgroundColor(context.getResources().getColor(color));
             }
