@@ -93,5 +93,8 @@
     <string name="cant_download_without_storage_perms">Can\'t download Library without storage permissions</string>
     <string name="sorry_book_not_found">Sorry, book not found</string>
     <string name="filter_by_text">Filter By Text</string>
+    <string name="error_getting_links">Error getting links</string>
+
+
 
 </resources>

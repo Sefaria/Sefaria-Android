@@ -20,6 +20,7 @@
     <color name="modern_works">#7c406f</color>
     <color name="commentary">#4871bf</color>
     <color name="system">#142b51</color> <!--212e50-->
+    <color name="error">#802f3e</color> <!--212e50-->
 
     <color name="menu_background">#F9F9F7</color>
     <color name="menu_foreground">#dddddd</color>

@@ -27,6 +27,7 @@ import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.TextElements.SepTextAdapter;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.API;
+import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Text;
 import org.sefaria.sefaria.TextElements.TextListView;
 
@@ -162,25 +163,34 @@ public class SepTextActivity extends SuperTextActivity implements AbsListView.On
     }
 
     private void visit(Text text){
-        String url = text.getURL(true,true);
-        if(url.length() <1){
-            Toast.makeText(SepTextActivity.this,"Unable to go to site",Toast.LENGTH_SHORT).show();
-            return;
-        }
         try{
+            String url = text.getURL(true,true);
+            if(url.length() <1){
+                Toast.makeText(SepTextActivity.this,"Unable to go to site",Toast.LENGTH_SHORT).show();
+                return;
+            }
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
             startActivity(intent);
         }catch (Exception e){
             Log.e("SepTextActivity", e.getMessage());
             Toast.makeText(SepTextActivity.this,"Unable to go to site",Toast.LENGTH_SHORT).show();
-            GoogleTracker.sendException(e,"URL:" + url);
+            GoogleTracker.sendException(e);
         }
     }
 
     private void share(Text text){
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
-        String str = text.getURL(true,false) + "\n\n" + Html.fromHtml(text.getText(textLang));
+        String str = null;
+        try {
+            str = text.getURL(true,false) + "\n\n";
+        } catch (Book.BookNotFoundException e) {
+            e.printStackTrace();
+        }
+        if(str == null)
+            str = "";
+
+        str += Html.fromHtml(text.getText(textLang));
 
         sendIntent.putExtra(Intent.EXTRA_TEXT,str);
         sendIntent.setType("text/plain");
@@ -205,8 +215,13 @@ public class SepTextActivity extends SuperTextActivity implements AbsListView.On
                 StringBuilder wholeChap = new StringBuilder();
                 String url = null;
                 for(Text subText:list){
-                    if(url == null)
-                        url =  subText.getURL(true,false);
+                    if(url == null) {
+                        try{
+                            url = subText.getURL(true, false);
+                        }catch (Exception e){
+                            url = "";
+                        }
+                    }
                     wholeChap.append("(" + subText.levels[0] + ") " + Html.fromHtml(subText.getText(textLang)) + "\n\n\n");
                 }
                 copiedText = url + "\n\n\n" + wholeChap.toString();

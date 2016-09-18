@@ -19,6 +19,7 @@ import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.activities.SettingsActivity;
+import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Database;
 import org.sefaria.sefaria.database.Downloader;
 import org.sefaria.sefaria.database.Text;
@@ -213,10 +214,17 @@ public class DialogManager2 {
                         Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
                                 "mailto", email, null));
                         emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Sefaria Text Correction from Android");
+                        String url = null;
+                        try {
+                            url = text.getURL(true, false) + "\n\n";
+                        } catch (Book.BookNotFoundException e) {
+                            url = "";
+                            e.printStackTrace();
+                        }
                         emailIntent.putExtra(Intent.EXTRA_TEXT,
 
                                 MyApp.getEmailHeader()
-                                        + text.getURL(true, false) + "\n\n"
+                                        + url
                                         + Html.fromHtml(text.getText(Util.Lang.BI))
                                         + "\n\nDescribe the error: \n\n"
                         );

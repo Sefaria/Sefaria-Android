@@ -335,6 +335,7 @@ public class Settings {
                 String settingStr = node.makePathDefiningNode() + SETTINGS_SPLITTER + textNum + SETTINGS_SPLITTER + lang2Str(lang);
                 editor.putString(book.title, settingStr);
             }catch (Exception e){
+                editor.remove(book.title);
                 return false;
             }
 

@@ -103,7 +103,7 @@ public class Link {//implements Parcelable {
      * @param linkFilter null if no filter or linkCount containing anything you want included in the filter (including LinkFilter linkfiler's children)
      * @return List<Text> for texts links to the input text
      */
-    public static List<Text> getLinkedTexts(Text text, LinkFilter linkFilter) throws API.APIException {
+    public static List<Text> getLinkedTexts(Text text, LinkFilter linkFilter) throws API.APIException, Book.BookNotFoundException  {
         List<Text> linkList;
         if(text.tid == 0 || Settings.getUseAPI()){ //tid might be 0 if it was gotten using API (So for example with alternate text versions)
             linkList = getLinkedTextsFromAPI(text,linkFilter);
@@ -114,7 +114,7 @@ public class Link {//implements Parcelable {
     }
 
 
-    public static List<Text> getLinkedTextsFromAPI(Text orgText, LinkFilter linkFilter) throws API.APIException {
+    public static List<Text> getLinkedTextsFromAPI(Text orgText, LinkFilter linkFilter) throws API.APIException, Book.BookNotFoundException {
         Log.d("API.Link","got starting LinksAPI");
         List<Text> texts = new ArrayList<>();
         String place = orgText.getURL(false, false);

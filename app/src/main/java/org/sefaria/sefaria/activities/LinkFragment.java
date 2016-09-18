@@ -24,6 +24,7 @@ import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.API;
+import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Link;
 import org.sefaria.sefaria.database.LinkFilter;
 import org.sefaria.sefaria.database.Text;
@@ -211,6 +212,8 @@ public class LinkFragment extends android.support.v4.app.Fragment {
                 linkList = Link.getLinkedTexts(segment, linkCount);
             } catch (API.APIException e) {
                 API.makeAPIErrorToast(activity);
+            } catch (Exception e){
+                e.printStackTrace();
             }
 
             linkTextAdapter = new LinkTextAdapter(activity,linkList,noLinksTV);
@@ -338,15 +341,8 @@ public class LinkFragment extends android.support.v4.app.Fragment {
 
         @Override
         protected LinkFilter doInBackground(Void... params) {
-            LinkFilter linkFilterAll = null;
-            try {
-                linkFilterAll = LinkFilter.getLinkFilters(segment);
-            } catch (API.APIException e) {
-                API.makeAPIErrorToast(activity);
-                linkFilterAll = LinkFilter.makeAllLinkCounts();
-            }
-
-            return linkFilterAll;
+            LinkFilter linkFilter = LinkFilter.getLinkFilters(segment);
+            return linkFilter;
         }
 
         @Override
@@ -375,7 +371,8 @@ public class LinkFragment extends android.support.v4.app.Fragment {
                 linkList = Link.getLinkedTexts(segment, linkTextAdapter.getCurrLinkCount());
             } catch (API.APIException e) {
                 API.makeAPIErrorToast(activity);
-
+            }catch (Exception e){
+                e.printStackTrace();
             }
             return linkList;
         }

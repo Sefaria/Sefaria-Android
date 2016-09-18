@@ -6,9 +6,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Settings;
+import org.sefaria.sefaria.TOCElements.TOCVersion;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.activities.SuperTextActivity;
 import org.sefaria.sefaria.database.API;
@@ -159,6 +162,13 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextHolder> {
                 } catch (API.APIException e) {
                     setItemList(new ArrayList<Text>());
                     API.makeAPIErrorToast(activity);
+                } catch (Exception e){
+                    setItemList(new ArrayList<Text>());
+                    try{
+                        Toast.makeText(activity,MyApp.getRString(R.string.error_getting_links),Toast.LENGTH_SHORT).show();
+                    }catch (Exception e1){
+                        e1.printStackTrace();
+                    }
                 }
         }
     }

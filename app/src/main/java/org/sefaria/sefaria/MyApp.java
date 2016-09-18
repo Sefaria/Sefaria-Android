@@ -49,7 +49,7 @@ public class MyApp extends Application {
             "Kabbalah","Responsa","Parshanut",
             "Apocrypha","More", LinkFilter.QUOTING_COMMENTARY,
             "Modern Works", LinkFilter.COMMENTARY, LinkFilter.ALL_CONNECTIONS,
-            "Targum","Tanach"
+            "Targum","Tanach","ERROR"
             };
     public static final int[] CAT_COLORS = {R.color.tanach, R.color.mishnah,R.color.talmud,
             R.color.tosefta,R.color.liturgy,R.color.liturgy,
@@ -58,7 +58,7 @@ public class MyApp extends Application {
             R.color.kabbalah,R.color.responsa,R.color.parshanut,
             R.color.apocrypha,R.color.system_color,R.color.quoting_commentary,
             R.color.modern_works,R.color.commentary, R.color.system_color,
-            R.color.commentary,R.color.tanach
+            R.color.commentary,R.color.tanach,R.color.error
             };
 
     public enum Font {
