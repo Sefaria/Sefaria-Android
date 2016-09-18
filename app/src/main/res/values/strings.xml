@@ -9,7 +9,7 @@
     <string name="none">None</string>
     <string name="action_settings">Settings</string>
     <string name="no_links">No connections available. Use the ● next to each verse to check if that verse has connections. </string>
-    <string name="no_links_filtered">No connections available </string>
+    <string name="no_links_filtered">No connections available</string>
     <string name="no_text">&lt;i&gt;(No text for this language)&lt;/i&gt;</string>
     <string name="pinned_item">Pinned Item</string>
     <string name="remove_pinned_item">Removed Pinned Item</string>
