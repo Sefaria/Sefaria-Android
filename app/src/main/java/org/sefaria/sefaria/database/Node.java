@@ -1013,7 +1013,6 @@ public class Node{// implements  Parcelable{
 
         if(!isTextSection){
             Log.e("Node", "getTexts() was called when it's not a textSection!" + this);
-            //Integer.valueOf("aadfa");
             textList = new ArrayList<>();
         }else if(Settings.getUseAPI() || (getTextVersion() != null && !getTextVersion().isDefaultVersion())) {
             textList = getTextsFromAPI();
