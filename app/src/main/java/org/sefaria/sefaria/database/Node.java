@@ -700,7 +700,15 @@ public class Node{// implements  Parcelable{
     private static void addSubChaps(Node upperNode, int currDepth, JSONObject jsonObject) throws JSONException {
         JSONArray counts;
         try {
-            counts = jsonObject.getJSONObject("_all").getJSONArray("availableTexts");
+            JSONObject all;
+            try {
+                all = jsonObject.getJSONObject("_all");
+            }catch (JSONException e1){
+                all = jsonObject.getJSONObject("default").getJSONObject("_all");//TODO this doesn't actually fix anything
+                // https://trello.com/c/1trTrZ1S/108-zohar-text-toc-in-parasha-view-doesn-t-show-dappim
+                // Sefer HaChinkh bug
+            }
+            counts = all.getJSONArray("availableTexts");
         } catch (JSONException e) {
             counts = null;
         }
@@ -1178,7 +1186,7 @@ public class Node{// implements  Parcelable{
         private static final long serialVersionUID = 1L;
     }
 
-    public static List<Node> getRoots(Book book) throws API.APIException{
+    public static List<Node> getRoots(Book book) throws API.APIException {
         List<Node> allRoots = allSavedBookTOCroots.get(book.title);
         if(allRoots != null){
             return allRoots;
@@ -1186,7 +1194,7 @@ public class Node{// implements  Parcelable{
 
         allRoots = new ArrayList<>();
         SQLiteDatabase db = Database.getDB();
-        Cursor cursor = db.query(NODE_TABLE, null, "bid" + "=?",
+        Cursor cursor = db.query(NODE_TABLE, null, "bid=?",
                 new String[]{String.valueOf(book.bid)}, null, null, "structNum,_id", null); //structNum, parentNode, siblingNum
         Node root;
 
