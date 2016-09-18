@@ -5,11 +5,10 @@ import android.content.SharedPreferences;
 import android.util.Log;
 import android.util.Pair;
 
-import org.sefaria.sefaria.TOCElements.TOCVersionsAdapterItem;
+import org.sefaria.sefaria.TOCElements.TOCVersion;
 import org.sefaria.sefaria.activities.SuperTextActivity;
 import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.database.Book;
-import org.sefaria.sefaria.database.Database;
 import org.sefaria.sefaria.database.LinkFilter;
 import org.sefaria.sefaria.database.Node;
 import org.sefaria.sefaria.database.Text;
@@ -20,8 +19,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.concurrent.Exchanger;
 
 
 public class Settings {
@@ -206,9 +203,9 @@ public class Settings {
         public Node node;
         public int textNum;
         public Util.Lang lang;
-        public TOCVersionsAdapterItem textVersion;
+        public TOCVersion textVersion;
 
-        BookSettings(Node node, Util.Lang lang, int textNum, TOCVersionsAdapterItem textVersion){
+        BookSettings(Node node, Util.Lang lang, int textNum, TOCVersion textVersion){
             this.node = node;
             this.textNum = textNum;
             this.lang = lang;
@@ -231,9 +228,9 @@ public class Settings {
             return MyApp.getContext().getSharedPreferences("org.sefaria.sefaria.book_save_text_version_settings", Context.MODE_PRIVATE);
         }
 
-        static public void setTextVersion(Book book, String textVersion){
+        static public void setTextVersion(Book book, TOCVersion textVersion){
             SharedPreferences.Editor editor = getBookSavedTextVersion().edit();
-            editor.putString(book.getTitle(Util.Lang.EN),textVersion);
+            editor.putString(book.getTitle(Util.Lang.EN),textVersion == null ? TOCVersion.DEFAULT_TEXT_VERSION : textVersion.getDBString());
             editor.apply();
         }
 
@@ -293,7 +290,7 @@ public class Settings {
                 e.printStackTrace();
             }
             String textVersionString = getTextVersion(book);
-            TOCVersionsAdapterItem textVersion = new TOCVersionsAdapterItem(textVersionString);
+            TOCVersion textVersion = new TOCVersion(textVersionString);
 
             Node node = null;
             try {
@@ -339,7 +336,7 @@ public class Settings {
             editor.apply();
 
 
-            setTextVersion(book,node.getTextVersion().getDBString());
+            setTextVersion(book,node.getTextVersion());
             return true;
         }
 
