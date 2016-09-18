@@ -744,7 +744,7 @@ public class Node{// implements  Parcelable{
 
     private TOCVersion textVersion;
     public void setTextVersion(TOCVersion textVersion){
-        if(textVersion.isDefaultVersion()) //default version
+        if(textVersion != null && textVersion.isDefaultVersion()) //default version
             textVersion = null;
 
         if((textVersion != null && !textVersion.equals(this.textVersion)) || (textVersion == null && this.textVersion != null))  //it's changed in some way
