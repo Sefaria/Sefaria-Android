@@ -12,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -22,7 +21,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
-import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.activities.CtsTextActivity;
 import org.sefaria.sefaria.activities.SuperTextActivity;
@@ -453,13 +451,13 @@ public class TOCGrid extends LinearLayout {
                 // Alternate versions
                 JSONObject textData = new JSONObject(node.getTextFromAPIData(API.TimeoutType.SHORT));
                 JSONArray versions = textData.getJSONArray("versions");
-                final List<TOCVersionsAdapterItem> versionList = new ArrayList<>();
+                final List<TOCVersion> versionList = new ArrayList<>();
                 if(node.getTextVersion() != null)
                     versionList.add(node.getTextVersion());
-                versionList.add(new TOCVersionsAdapterItem(Node.DEFAULT_TEXT_VERSION,null));
+                versionList.add(new TOCVersion());
                 for(int i=0;i<versions.length();i++){
                     JSONObject version = versions.getJSONObject(i);
-                    versionList.add(new TOCVersionsAdapterItem(version.getString("versionTitle"),version.getString("language")));
+                    versionList.add(new TOCVersion(version.getString("versionTitle"),version.getString("language")));
                 }
                 //final String [] items = new String[] {"test","bob","sam"};
                 TOCVersionsAdapter adapter = new TOCVersionsAdapter(context, R.layout.toc_versions_adapter_item, versionList);

@@ -15,13 +15,13 @@ import java.util.List;
 /**
  * Created by nss on 9/12/16.
  */
-public class TOCVersionsAdapter extends ArrayAdapter<TOCVersionsAdapterItem> {
+public class TOCVersionsAdapter extends ArrayAdapter<TOCVersion> {
 
     private Context context;
     private int resId;
-    private List<TOCVersionsAdapterItem> items;
+    private List<TOCVersion> items;
 
-    public TOCVersionsAdapter(Context context,int resId, List<TOCVersionsAdapterItem> items) {
+    public TOCVersionsAdapter(Context context,int resId, List<TOCVersion> items) {
         super(context,resId,items);
         this.context = context;
         this.resId = resId;
@@ -38,7 +38,7 @@ public class TOCVersionsAdapter extends ArrayAdapter<TOCVersionsAdapterItem> {
     }
 
     private View stupidGetView(int position, View view, ViewGroup parent) {
-        TOCVersionsAdapterItem item = items.get(position);
+        TOCVersion item = items.get(position);
 
         if (view == null) {
             LayoutInflater inflater = (LayoutInflater)
@@ -48,7 +48,7 @@ public class TOCVersionsAdapter extends ArrayAdapter<TOCVersionsAdapterItem> {
 
         SefariaTextView stv = (SefariaTextView) view.findViewById(R.id.tv);
 
-        String text = item.getPrettyString() == null ? "Default Version" : item.getPrettyString();
+        String text = item.getPrettyString();
         stv.setText(text);
 
         return view;

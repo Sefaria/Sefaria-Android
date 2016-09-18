@@ -1,11 +1,8 @@
 package org.sefaria.sefaria.database;
 
 
-import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -13,7 +10,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.Settings;
-import org.sefaria.sefaria.TOCElements.TOCVersionsAdapterItem;
+import org.sefaria.sefaria.TOCElements.TOCVersion;
 import org.sefaria.sefaria.Util;
 
 import java.util.ArrayList;
@@ -21,7 +18,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 public class Node{// implements  Parcelable{
 
@@ -162,7 +158,7 @@ public class Node{// implements  Parcelable{
             }
             node = node.parent;
         }
-        if(showTextVersion && getTextVersion().getPrettyString() != null)
+        if(showTextVersion && getTextVersion() != null && !getTextVersion().isDefaultVersion())
             str += " - " + getTextVersion().getPrettyString();
         return str;
     }
@@ -745,10 +741,10 @@ public class Node{// implements  Parcelable{
     }
 
 
-    public static final String DEFAULT_TEXT_VERSION = "Default Version";
-    private TOCVersionsAdapterItem textVersion;
-    public void setTextVersion(TOCVersionsAdapterItem textVersion){
-        if(textVersion.getDBString() != null && textVersion.getDBString().equals(DEFAULT_TEXT_VERSION)) //default as version
+
+    private TOCVersion textVersion;
+    public void setTextVersion(TOCVersion textVersion){
+        if(textVersion.isDefaultVersion()) //default version
             textVersion = null;
 
         if((textVersion != null && !textVersion.equals(this.textVersion)) || (textVersion == null && this.textVersion != null))  //it's changed in some way
@@ -756,13 +752,13 @@ public class Node{// implements  Parcelable{
 
         this.textVersion = textVersion;
         try {
-            Settings.BookSettings.setTextVersion(getBook(),textVersion == null ? null : textVersion.getDBString());
+            Settings.BookSettings.setTextVersion(getBook(),textVersion);
         } catch (Book.BookNotFoundException e) {
             //e.printStackTrace();
         }
     }
 
-    public TOCVersionsAdapterItem getTextVersion(){
+    public TOCVersion getTextVersion(){
         return textVersion;
     }
 
@@ -890,9 +886,11 @@ public class Node{// implements  Parcelable{
 
     public String getTextFromAPIData(API.TimeoutType timeoutType) throws API.APIException{
         String completeUrl = API.TEXT_URL + getPath(Util.Lang.EN, true, true, true);
-        String textVersion = getTextVersion().getDBString();
-        if(textVersion != null)
-            completeUrl += "/" + textVersion.replace(" ","_");
+
+        if(getTextVersion() != null) {
+            String textVersion = getTextVersion().getDBString();
+            completeUrl += "/" + textVersion.replace(" ", "_");
+        }
         completeUrl += "?" + API.ZERO_CONTEXT + API.ZERO_COMMENTARY;
         Log.d("Node",completeUrl);
         return API.getDataFromURL(completeUrl,timeoutType);
