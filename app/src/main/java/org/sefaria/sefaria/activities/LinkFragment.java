@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -205,6 +206,7 @@ public class LinkFragment extends android.support.v4.app.Fragment {
             colorBar.setBackgroundColor(activity.getResources().getColor(color));
             //linkSelectorBar.setVisibility(View.VISIBLE);
             noLinksTV.setVisibility(View.VISIBLE);
+            noLinksTV.setText(Html.fromHtml("<i>" + MyApp.getRString(R.string.no_links_filtered) + "</i>"));
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(activity,LinearLayoutManager.VERTICAL,false);
 
             List<Text> linkList = null;
