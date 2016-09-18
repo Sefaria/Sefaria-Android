@@ -230,13 +230,25 @@ public class Settings {
 
         static public void setTextVersion(Book book, TOCVersion textVersion){
             SharedPreferences.Editor editor = getBookSavedTextVersion().edit();
-            editor.putString(book.getTitle(Util.Lang.EN),textVersion == null ? TOCVersion.DEFAULT_TEXT_VERSION : textVersion.getDBString());
+            String textVersionString = null;
+            if(textVersion != null){
+                textVersionString = textVersion.getAPIString();
+                if(textVersionString.equals(""))
+                    textVersionString = null;
+            }
+            editor.putString(book.getTitle(Util.Lang.EN),textVersionString);
             editor.apply();
         }
 
-        static public String getTextVersion(Book book){
+        static public TOCVersion getTextVersion(Book book){
             SharedPreferences sharedPreferences = getBookSavedTextVersion();
-            return sharedPreferences.getString(book.getTitle(Util.Lang.EN),null);
+            String versionString = sharedPreferences.getString(book.getTitle(Util.Lang.EN),null);
+            if(versionString == null)
+                return null;
+            else if(versionString.equals(TOCVersion.DEFAULT_TEXT_VERSION))
+                return null;
+            else
+                return new TOCVersion(versionString);
         }
 
         static private void setAllBookSettingsTextLang(Util.Lang lang){
@@ -289,8 +301,7 @@ public class Settings {
             }catch (Exception e){
                 e.printStackTrace();
             }
-            String textVersionString = getTextVersion(book);
-            TOCVersion textVersion = new TOCVersion(textVersionString);
+            TOCVersion textVersion = getTextVersion(book);
 
             Node node = null;
             try {

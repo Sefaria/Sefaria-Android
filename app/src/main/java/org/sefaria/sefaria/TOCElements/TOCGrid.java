@@ -26,6 +26,7 @@ import org.sefaria.sefaria.activities.CtsTextActivity;
 import org.sefaria.sefaria.activities.SuperTextActivity;
 import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.database.Book;
+import org.sefaria.sefaria.database.Downloader;
 import org.sefaria.sefaria.database.Node;
 import org.sefaria.sefaria.activities.MenuActivity;
 import org.sefaria.sefaria.layouts.AutoResizeTextView;
@@ -435,6 +436,60 @@ public class TOCGrid extends LinearLayout {
         }
     }
 
+    private void addAlternateTextVersions(Node node){
+        if (Downloader.getNetworkStatus() == Downloader.ConnectionType.NONE) { //if there's no internet don't even try to display the versions// otherwise it might use cache and get confusing
+            versionsDropdown.setVisibility(View.GONE);
+            return;
+        }
+        try {
+            // Alternate versions
+            JSONObject textData = new JSONObject(node.getTextFromAPIData(API.TimeoutType.SHORT));
+            JSONArray versions = textData.getJSONArray("versions");
+            final List<TOCVersion> versionList = new ArrayList<>();
+            TOCVersion tocVersion = node.getTextVersion();
+            if (tocVersion != null)
+                versionList.add(tocVersion);
+            versionList.add(new TOCVersion());
+            for (int i = 0; i < versions.length(); i++) {
+                JSONObject version = versions.getJSONObject(i);
+                versionList.add(new TOCVersion(version.getString("versionTitle"), version.getString("language")));
+            }
+            //final String [] items = new String[] {"test","bob","sam"};
+            TOCVersionsAdapter adapter = new TOCVersionsAdapter(context, R.layout.toc_versions_adapter_item, versionList);
+            versionsDropdown.setAdapter(adapter);
+            versionsDropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                private boolean veryFirstTime = true;
+
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    if (position == 0) {
+                        return;
+                    }
+                    Toast.makeText(context, "Version: " + versionList.get(position).getPrettyString(), Toast.LENGTH_SHORT).show();
+                    try {
+                        Node newVersionNode = book.getNodeFromPathStr(pathDefiningNode);
+                        newVersionNode.setTextVersion(versionList.get(position));
+                        SuperTextActivity.startNewTextActivityIntent(context, book, null, newVersionNode, false, null, -1);
+                    } catch (Node.InvalidPathException e) {
+                        e.printStackTrace();
+                    } catch (API.APIException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (API.APIException e) {
+            e.printStackTrace();
+        }
+    }
+
     private int setCurrSectionText() {
         int padding = 6;
         int defaultTab = 0;
@@ -443,60 +498,15 @@ public class TOCGrid extends LinearLayout {
             defaultTab = node.getTocRootNum();
             String sectionTitle = node.getWholeTitle(lang, true, false); //TODO move lang to setLang
             currSectionTitleView.setText(sectionTitle);
-            currSectionTitleView.setFont(lang,false,20);
+            currSectionTitleView.setFont(lang, false, 20);
+            currSectionTitleView.setPadding(0, 4 * padding, 0, padding);
 
-            currSectionTitleView.setPadding(0, 4*padding, 0, padding);
+            addAlternateTextVersions(node);
 
-            try {
-                // Alternate versions
-                JSONObject textData = new JSONObject(node.getTextFromAPIData(API.TimeoutType.SHORT));
-                JSONArray versions = textData.getJSONArray("versions");
-                final List<TOCVersion> versionList = new ArrayList<>();
-                if(node.getTextVersion() != null)
-                    versionList.add(node.getTextVersion());
-                versionList.add(new TOCVersion());
-                for(int i=0;i<versions.length();i++){
-                    JSONObject version = versions.getJSONObject(i);
-                    versionList.add(new TOCVersion(version.getString("versionTitle"),version.getString("language")));
-                }
-                //final String [] items = new String[] {"test","bob","sam"};
-                TOCVersionsAdapter adapter = new TOCVersionsAdapter(context, R.layout.toc_versions_adapter_item, versionList);
-                versionsDropdown.setAdapter(adapter);
-                versionsDropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    private boolean veryFirstTime = true;
-                    @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        if(position == 0){
-                            return;
-                        }
-                        Toast.makeText(context,"Version: " + versionList.get(position).getPrettyString(),Toast.LENGTH_SHORT).show();
-                        try {
-                            Node newVersionNode = book.getNodeFromPathStr(pathDefiningNode);
-                            newVersionNode.setTextVersion(versionList.get(position));
-                            SuperTextActivity.startNewTextActivityIntent(context,book,null,newVersionNode,false,null,-1);
-                        } catch (Node.InvalidPathException e) {
-                            e.printStackTrace();
-                        } catch (API.APIException e) {
-                            e.printStackTrace();
-                        }
-
-                    }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parent) {
-
-                    }
-                });
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-
-
-        } catch (Node.InvalidPathException e) {
+        }catch(Node.InvalidPathException e){
             currSectionTitleView.setHeight(0);
-        } catch (API.APIException e) {
-            Toast.makeText(context,MyApp.getRString(R.string.problem_internet), Toast.LENGTH_SHORT).show();
+        }catch(API.APIException e){
+            Toast.makeText(context, MyApp.getRString(R.string.problem_internet), Toast.LENGTH_SHORT).show();
         }
 
         return defaultTab;

@@ -340,7 +340,7 @@ public class LinkFragment extends android.support.v4.app.Fragment {
         protected LinkFilter doInBackground(Void... params) {
             LinkFilter linkFilterAll = null;
             try {
-                linkFilterAll = LinkFilter.getFromLinks_small(segment);
+                linkFilterAll = LinkFilter.getLinkFilters(segment);
             } catch (API.APIException e) {
                 API.makeAPIErrorToast(activity);
                 linkFilterAll = LinkFilter.makeAllLinkCounts();

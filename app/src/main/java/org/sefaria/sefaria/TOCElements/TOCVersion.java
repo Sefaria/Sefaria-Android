@@ -16,11 +16,17 @@ public class TOCVersion {
      * @param dbString - string of the form (lang)/(versionTitle)
      */
     public TOCVersion(String dbString) {
-        if (dbString != null && !dbString.equals(DEFAULT_TEXT_VERSION)) {
-            this.versionTitle = dbString.split("/")[1];
-            this.versionLang = dbString.split("/")[0];
-            this.isDefaultVersion = false;
-        } else {
+        try {
+            if (dbString != null && !dbString.equals(DEFAULT_TEXT_VERSION)) {
+                this.versionTitle = dbString.split("/")[1];
+                this.versionLang = dbString.split("/")[0];
+                this.isDefaultVersion = false;
+            } else {
+                this.versionTitle = null;
+                this.versionLang = null;
+                this.isDefaultVersion = true;
+            }
+        }catch (Exception e){
             this.versionTitle = null;
             this.versionLang = null;
             this.isDefaultVersion = true;
@@ -58,14 +64,11 @@ public class TOCVersion {
         else
             return getVersionTitle();
     }
-    public String getDBString() {
-        if (isDefaultVersion)
-            return DEFAULT_TEXT_VERSION;
-
-        if (getVersionLang() != null)
-            return getVersionLang() + "/" + getVersionTitle();
+    public String getAPIString() {
+        if (isDefaultVersion || getVersionLang() == null)
+            return "";
         else
-            return getVersionTitle();
+            return getVersionLang() + "/" + getVersionTitle();
     }
 
     @Override
@@ -74,8 +77,8 @@ public class TOCVersion {
             return false;
 
         TOCVersion tvai = (TOCVersion) o;
-        if (this.getDBString() == null || tvai.getDBString() == null)
-            return this.getDBString() == null && tvai.getDBString() == null;
-        return this.getDBString().equals(tvai.getDBString());
+        if (this.getAPIString() == null || tvai.getAPIString() == null)
+            return this.getAPIString() == null && tvai.getAPIString() == null;
+        return this.getAPIString().equals(tvai.getAPIString());
     }
 }

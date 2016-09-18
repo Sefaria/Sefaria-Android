@@ -1,9 +1,11 @@
 package org.sefaria.sefaria.database;
 
 
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -158,8 +160,9 @@ public class Node{// implements  Parcelable{
             }
             node = node.parent;
         }
-        if(showTextVersion && getTextVersion() != null && !getTextVersion().isDefaultVersion())
-            str += " - " + getTextVersion().getPrettyString();
+        TOCVersion tocVersion = getTextVersion();
+        if(showTextVersion && tocVersion != null && !tocVersion.isDefaultVersion())
+            str += " - " + tocVersion.getPrettyString();
         return str;
     }
 
@@ -759,6 +762,15 @@ public class Node{// implements  Parcelable{
     }
 
     public TOCVersion getTextVersion(){
+        /*
+        // not using this way, b/c then as you scroll and it changes (if you lose wifi for ex.),
+        // it will change the name but for whatever reason the content is still old version (which is even more confusing).
+        try {
+            textVersion = Settings.BookSettings.getTextVersion(getBook());
+        } catch (Book.BookNotFoundException e) {
+            textVersion = null;
+        }
+        */
         return textVersion;
     }
 
@@ -887,8 +899,9 @@ public class Node{// implements  Parcelable{
     public String getTextFromAPIData(API.TimeoutType timeoutType) throws API.APIException{
         String completeUrl = API.TEXT_URL + getPath(Util.Lang.EN, true, true, true);
 
-        if(getTextVersion() != null) {
-            String textVersion = getTextVersion().getDBString();
+        TOCVersion tocVersion = getTextVersion();
+        if(tocVersion != null) {
+            String textVersion = tocVersion.getAPIString();
             completeUrl += "/" + textVersion.replace(" ", "_");
         }
         completeUrl += "?" + API.ZERO_CONTEXT + API.ZERO_COMMENTARY;
@@ -980,9 +993,9 @@ public class Node{// implements  Parcelable{
     }
 
     /**
-     *  Get texts
      *
-     * @return textList
+     * @param ignoreUsingAPI used for example when getting list number but wants to force to not use API
+     * @return
      * @throws API.APIException
      */
     public List<Text> getTexts(boolean ignoreUsingAPI) throws API.APIException{
@@ -992,7 +1005,8 @@ public class Node{// implements  Parcelable{
             return textList;
         }
         Log.d("Node","found no textList");
-        if(Downloader.getNetworkStatus() == Downloader.ConnectionType.NONE) {
+        if(Downloader.getNetworkStatus() == Downloader.ConnectionType.NONE){
+            //if( getTextVersion() != null) Toast.makeText(context,"No internet. Using Default Text Version",Toast.LENGTH_SHORT).show();
             setTextVersion(null); //don't use alt text version if there's no internet
             //TODO set the SuperTextAct.lastLoadedNode = null if possible
         }
@@ -1001,7 +1015,7 @@ public class Node{// implements  Parcelable{
             Log.e("Node", "getTexts() was called when it's not a textSection!" + this);
             //Integer.valueOf("aadfa");
             textList = new ArrayList<>();
-        }else if(Settings.getUseAPI() || (getTextVersion() != null)) {
+        }else if(Settings.getUseAPI() || (getTextVersion() != null && !getTextVersion().isDefaultVersion())) {
             textList = getTextsFromAPI();
         }else if(!isComplex && !isGridItem){
             Log.e("Node", "It thinks (!isComplex() && !isGridItem())... I don't know how.");
@@ -1170,8 +1184,6 @@ public class Node{// implements  Parcelable{
         if(allRoots != null){
             return allRoots;
         }
-
-        String textVersion = Settings.BookSettings.getTextVersion(book);
 
         allRoots = new ArrayList<>();
         SQLiteDatabase db = Database.getDB();

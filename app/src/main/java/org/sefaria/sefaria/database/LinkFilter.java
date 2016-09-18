@@ -211,7 +211,7 @@ public class LinkFilter {
         }
     }
 
-    public static LinkFilter getFromLinks_API(Text text) throws API.APIException {
+    private static LinkFilter getFromLinks_API(Text text) throws API.APIException {
         LinkFilter allLinkCounts = makeAllLinkCounts();
 
 
@@ -279,12 +279,17 @@ public class LinkFilter {
         return new LinkFilter(ALL_CONNECTIONS, 0, "הכל",DEPTH_TYPE.ALL);
     }
 
-
-    public static LinkFilter getFromLinks_small(Text text) throws API.APIException {
-        //Log.d("LinkFilter", text.levels[0] + " starting...")
-        if(Settings.getUseAPI()){
+    public static LinkFilter getLinkFilters(Text text) throws API.APIException {
+        if(text.tid == 0 || Settings.getUseAPI()){ //text.tid == 0 when
             return getFromLinks_API(text);
+        }else{
+            return getFromLinks_small(text);
         }
+    }
+
+    private static LinkFilter getFromLinks_small(Text text) throws API.APIException {
+        //Log.d("LinkFilter", text.levels[0] + " starting...")
+        Log.d("LinkFilter","Text:" + text);
         LinkFilter allLinkCounts = makeAllLinkCounts();
 
         int commentaryAddonAmount = 11;
