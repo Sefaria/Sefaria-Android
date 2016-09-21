@@ -110,7 +110,7 @@ public class DialogManager2 {
                         MyApp.getRString(R.string.OK), DialogCallable.DialogType.ALERT) {
                     @Override
                     public void neutralClick() {
-                        UpdateService.unlockOrientation(Downloader.activity);
+                        UpdateService.unlockOrientation(Downloader.getActivity());
                         UpdateService.endService();
                     }
                 });
@@ -130,7 +130,7 @@ public class DialogManager2 {
 
                     @Override
                     public void negativeClick() {
-                        UpdateService.unlockOrientation(Downloader.activity);
+                        UpdateService.unlockOrientation(Downloader.getActivity());
                         UpdateService.endService();
                     }
                 });
@@ -154,7 +154,7 @@ public class DialogManager2 {
                             //you probably need to delete the db which was partially copied
                         }
                         UpdateService.endService();
-                        UpdateService.unlockOrientation(Downloader.activity);
+                        UpdateService.unlockOrientation(Downloader.getActivity());
                     }
                 });
                 break;
@@ -169,21 +169,21 @@ public class DialogManager2 {
                 break;
             case NO_INTERNET:
                 dismissCurrentDialog();
-                showDialog(Downloader.activity,
+                showDialog(activity,
                         new DialogCallable(MyApp.getRString(R.string.NO_INTERNET_TITLE), MyApp.getRString(R.string.NO_INTERNET_MESSAGE),
                                 null, MyApp.getRString(R.string.CANCEL), null, DialogCallable.DialogType.ALERT) {
                             @Override
                             public void negativeClick() {
                                 dismissCurrentDialog();
-                                UpdateService.unlockOrientation(Downloader.activity);
+                                UpdateService.unlockOrientation(Downloader.getActivity());
                                 UpdateService.endService();
                             }
                         });
                 break;
             case DATA_CONNECTED:
                 dismissCurrentDialog();
-                showDialog(Downloader.activity,
-                        new DialogCallable(Downloader.activity.getString(R.string.USING_DATA_TITLE), Downloader.activity.getString(R.string.USING_DATA_MESSAGE),
+                showDialog(activity,
+                        new DialogCallable(MyApp.getRString(R.string.USING_DATA_TITLE), MyApp.getRString(R.string.USING_DATA_MESSAGE),
                                 MyApp.getRString(R.string.CONTINUE), MyApp.getRString(R.string.CANCEL), null, DialogCallable.DialogType.ALERT) {
 
                             @Override
@@ -198,7 +198,7 @@ public class DialogManager2 {
                             @Override
                             public void negativeClick() {
                                 dismissCurrentDialog();
-                                UpdateService.unlockOrientation(Downloader.activity);
+                                UpdateService.unlockOrientation(Downloader.getActivity());
                                 UpdateService.endService();
                             }
                         });

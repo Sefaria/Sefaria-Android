@@ -234,11 +234,16 @@ public class Book implements Parcelable {
 
 
     public static class BookNotFoundException extends Exception{
-        public BookNotFoundException(){ super(); }
+        public BookNotFoundException(){
+            super("Book not found error");
+        }
+        public BookNotFoundException(String message){
+            super(message);
+        }
         private static final long serialVersionUID = 1L;
     }
 
-    public void get(String title,boolean searchHeAndEnTitles)throws BookNotFoundException{
+    public void get(String title, boolean searchHeAndEnTitles) throws BookNotFoundException{
         SQLiteDatabase db = Database.getDB();
         Cursor cursor = db.query(TABLE_BOOKS, null, Ktitle + "=?",
                 new String[] { title }, null, null, null, null);

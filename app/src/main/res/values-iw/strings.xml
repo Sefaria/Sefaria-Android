@@ -90,4 +90,6 @@
     <string name="sorry_book_not_found">ספר לא נמצא</string>
     <string name="filter_by_text">סנן לפי כותר</string>
     <string name="error_getting_links">Error getting links</string>
+    <string name="Error">Error</string>
+
 </resources>
