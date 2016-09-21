@@ -300,11 +300,13 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
         @Override
         protected void onPostExecute(SearchResultContainer resultContainer) {
             super.onPostExecute(resultContainer);
-            if(APIError || resultContainer == null) { //these 2 things should really be the same
-                GoogleTracker.sendEvent(GoogleTracker.CATEGORY_RANDOM_ERROR,MyApp.getRString(R.string.searching_requires_internet));
-                API.makeAPIErrorToast(SearchActivity.this, MyApp.getRString(R.string.searching_requires_internet));
-            }
             isLoadingSearch = false;
+            if(APIError || resultContainer == null) { //these 2 things should really be the same
+                API.makeAPIErrorToast(SearchActivity.this, MyApp.getRString(R.string.searching_requires_internet));
+                numResultsTV.setText(MyApp.getRString(R.string.Error) + ": " + MyApp.getRString(R.string.NO_INTERNET_TITLE));
+                return;
+            }
+
             //page 0 means you're starting a new search. reset everything
             if (pageNum == 0) {
                 adapter.setResults(resultContainer.getResults(),true);
@@ -317,7 +319,6 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
                 searchFilterBox.initFilters(resultContainer.getAllFilters());
             }
             numResultsTV.setText(numberOfResults);
-
         }
     }
 

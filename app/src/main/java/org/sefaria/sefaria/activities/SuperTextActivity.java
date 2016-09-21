@@ -227,8 +227,8 @@ public abstract class SuperTextActivity extends FragmentActivity {
             }
 
             if (book == null) {
-                Log.d("superTextAct","book was null");
                 try {
+                    if(true) throw new Book.BookNotFoundException();
                     if (firstLoadedNode != null) {
                         book = new Book(firstLoadedNode.getBid());
                     } else if (openToText != null) {
@@ -237,7 +237,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
                         book = new Book(Settings.getLastBook());
                     }
                 } catch (Book.BookNotFoundException e) {
-                    Log.e("SuperTextAct", e.getMessage());
+                    e.printStackTrace();
                     return false;
                 }
             }

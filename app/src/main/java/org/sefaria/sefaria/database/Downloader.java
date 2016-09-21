@@ -63,7 +63,11 @@ public class Downloader {
     private static boolean receiverRegistered = false;
     private static Context registeredContext;
 
-    public static Activity activity;
+    private static Activity activity;
+
+    public static Activity getActivity(){
+        return activity;
+    }
 
     public static int downloadErrorNum;
 

@@ -47,7 +47,6 @@ public class UpdateService extends Service {
 
     private static final String LAST_ASK_TO_UPGRADE_TIME = "LAST_ASK_TIME_UPGADE_TIME";
 
-
     //these two vars are stupid, but work. they are persistent vars which I need for checking version num. before and after this, they serve no purpose
     public static int updatedVersionNum;
     public static int currentVersionNum;
@@ -65,12 +64,7 @@ public class UpdateService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
-
         Downloader.init(this);
-
-
-
 
         WifiManager wm = (WifiManager) getSystemService(Context.WIFI_SERVICE);
         wifiLock= wm.createWifiLock(WifiManager.WIFI_MODE_FULL, "wifiTag");
@@ -86,10 +80,8 @@ public class UpdateService extends Service {
         boolean isPre = intent.getBooleanExtra("isPre", false);
         boolean userInit = intent.getBooleanExtra("userInit", false);
 
-
-
         if (isPre) {
-            preupdateLibrary(userInit);
+            preUpdateLibrary(userInit);
         } else {
             updateLibrary(userInit);
         }
@@ -99,31 +91,23 @@ public class UpdateService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-
         return null;
-
-
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-
-
-
         Downloader.unregisterDownloader(this);
         endService();
     }
 
     //check internet status before update, and if necessary, inform user of problems
-    public static void preupdateLibrary(boolean userInit) {
-
-
+    public static void preUpdateLibrary(boolean userInit) {
         Downloader.ConnectionType netStat = Downloader.getNetworkStatus();
         if (netStat == Downloader.ConnectionType.NONE) {
-            DialogManager2.showDialog(Downloader.activity, DialogManager2.DialogPreset.NO_INTERNET);
+            DialogManager2.showDialog(Downloader.getActivity(), DialogManager2.DialogPreset.NO_INTERNET);
         } else if (netStat == Downloader.ConnectionType.DATA) {
-            DialogManager2.showDialog(Downloader.activity, DialogManager2.DialogPreset.DATA_CONNECTED);
+            DialogManager2.showDialog(Downloader.getActivity(), DialogManager2.DialogPreset.DATA_CONNECTED);
         } else if (netStat == Downloader.ConnectionType.WIFI) {
             updateLibrary(userInit);
         }
@@ -210,7 +194,7 @@ public class UpdateService extends Service {
                     Intent intent = new Intent(MyApp.getContext(),UpdateReceiver.class);
                     intent.putExtra("isPre",true);
                     intent.putExtra("userInit",true);
-                    Downloader.activity.sendBroadcast(intent);
+                    Downloader.getActivity().sendBroadcast(intent);
                     DialogManager2.showDialog((Activity)MyApp.getContext(), DialogManager2.DialogPreset.CHECKING_FOR_UPDATE);
                 } else {
                     DialogManager2.showDialog((Activity)MyApp.getContext(), DialogManager2.DialogPreset.NEW_UPDATE);

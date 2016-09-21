@@ -273,8 +273,11 @@ public class API {
 
 
     public class APIException extends Exception{
-        public APIException(){
-            super();
+        public APIException() {
+            super("API exception");
+        }
+        public APIException(String message){
+            super(message);
         }
         private static final long serialVersionUID = 1L;
     }

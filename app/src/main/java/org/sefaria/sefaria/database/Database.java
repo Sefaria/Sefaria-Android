@@ -124,7 +124,7 @@ public class Database extends SQLiteOpenHelper{
             SQLiteDatabase db = dbHandler.getReadableDatabase();
             Cursor cursor = db.query(Text.TABLE_TEXTS, null, "_id" + "=?",
                     new String[]{String.valueOf(1)}, null, null, null, null);
-            Log.d("api", "got here without problems" + cursor);
+            //Log.d("api", "got here without problems" + cursor);
             hasOfflineDB = true;
         }catch(Exception e){
             hasOfflineDB = false;
