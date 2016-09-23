@@ -69,6 +69,20 @@ public class Book implements Parcelable {
         get(bid);
     }
 
+    private Book(boolean dummy){
+        if(dummy){
+            wherePage = DEFAULT_WHERE_PAGE;
+            title = "Book Error";
+            bid = 0;
+            heTitle = "Book Error";
+            sectionNames = new String[]{};
+            sectionNamesL2B  = new String[]{};
+            heSectionNamesL2B = new String[]{};
+            categories = new String[]{};
+        }
+    }
+    public static Book dummyBook = new Book();
+
     /**
      *  returns a list of roots to trees that respresent the Table of Contents for a book.
      * @return roots
