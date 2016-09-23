@@ -150,7 +150,9 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
         int nodeHash = getValuesFromIntent(savedInstanceState);
         if(!getAllNeededLocationVariables(nodeHash)){
-            ;//return;
+            Log.e("superTextAct","getAllVar prob");
+            Toast.makeText(this,"Error occured trying to load Text",Toast.LENGTH_SHORT).show();
+            return;
         }
 
         if(linkFragment == null){//LINK FRAGMENT
@@ -228,7 +230,6 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
             if (book == null) {
                 try {
-                    if(true) throw new Book.BookNotFoundException();
                     if (firstLoadedNode != null) {
                         book = new Book(firstLoadedNode.getBid());
                     } else if (openToText != null) {
