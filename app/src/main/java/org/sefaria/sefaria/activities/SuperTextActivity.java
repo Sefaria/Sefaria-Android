@@ -149,11 +149,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
         }
 
         int nodeHash = getValuesFromIntent(savedInstanceState);
-        if(!getAllNeededLocationVariables(nodeHash)){
-            Log.e("superTextAct","getAllVar prob");
-            Toast.makeText(this,"Error occured trying to load Text",Toast.LENGTH_SHORT).show();
-            return;
-        }
+        getAllNeededLocationVariables(nodeHash);
 
         if(linkFragment == null){//LINK FRAGMENT
             linkFragment = new LinkFragment();
@@ -216,7 +212,6 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
 
     private boolean getAllNeededLocationVariables(int nodeHash){
-        try {
             if (nodeHash != NO_HASH_NODE) {
                 firstLoadedNode = Node.getSavedNode(nodeHash);
             }
@@ -238,7 +233,10 @@ public abstract class SuperTextActivity extends FragmentActivity {
                         book = new Book(Settings.getLastBook());
                     }
                 } catch (Book.BookNotFoundException e) {
+                    Toast.makeText(this,MyApp.getRString(R.string.error_getting_book),Toast.LENGTH_SHORT).show();
+                    GoogleTracker.sendException(e,"SuperText Book Prob");
                     e.printStackTrace();
+                    book = book.dummyBook;
                     return false;
                 }
             }
@@ -248,7 +246,15 @@ public abstract class SuperTextActivity extends FragmentActivity {
                 try {
                     firstLoadedNode = openToText.getNodeFromText(book);
                 } catch (Book.BookNotFoundException e) {
-                    Log.e("SuperTextAct", e.getMessage());
+                    e.printStackTrace();
+                    Toast.makeText(this,MyApp.getRString(R.string.error_getting_book),Toast.LENGTH_SHORT).show();
+                    GoogleTracker.sendException(e,"SuperText Book Prob");
+                    firstLoadedNode = Node.dummyNode;
+                    return false;
+                } catch (API.APIException e) {
+                    e.printStackTrace();
+                    API.makeAPIErrorToast(this);
+                    firstLoadedNode = Node.dummyNode;
                     return false;
                 }
             }
@@ -261,7 +267,14 @@ public abstract class SuperTextActivity extends FragmentActivity {
             }
 
             if (firstLoadedNode == null) {
-                List<Node> TOCroots = book.getTOCroots();
+                List<Node> TOCroots = null;
+                try {
+                    TOCroots = book.getTOCroots();
+                } catch (API.APIException e) {
+                    API.makeAPIErrorToast(this);
+                    firstLoadedNode = Node.dummyNode;
+                    return false;
+                }
                 if (TOCroots.size() == 0) {
                     Toast.makeText(this, MyApp.getRString(R.string.unable_to_load_toc_for_book), Toast.LENGTH_SHORT).show();
                     return false;
@@ -279,13 +292,10 @@ public abstract class SuperTextActivity extends FragmentActivity {
                     openToText = firstLoadedNode.getTexts().get(textNum);
                 }catch (IndexOutOfBoundsException e1) {
                     Log.e("SuperTextAct", e1.getMessage());
+                } catch (API.APIException e) {
+                    e.printStackTrace();
                 }
             }
-        }catch (API.APIException apiE){
-            API.makeAPIErrorToast(this);
-            firstLoadedNode = Node.dummyNode;
-            return false;
-        }
         return true;
     }
 
