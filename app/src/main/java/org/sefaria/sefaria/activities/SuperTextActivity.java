@@ -182,7 +182,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
         if(customActionbar != null)//it's already been set
             customActionbar.setLang(menuLang);
 
-        if (book != null)
+        if (book != null || book.equals(Book.dummyBook))
             Settings.setLastBook(book.title);
 
         //textGestureDetector = new GestureDetectorCompat(this,new TextGestureDetector());
