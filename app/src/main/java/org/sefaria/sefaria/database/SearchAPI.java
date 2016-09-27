@@ -10,6 +10,7 @@ import org.sefaria.sefaria.SearchElements.SearchFilterNode;
 import org.sefaria.sefaria.SearchElements.SearchResultContainer;
 import org.sefaria.sefaria.Util;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -29,6 +30,7 @@ public class SearchAPI {
     public static SearchResultContainer search(String query, boolean getFilters, List<String> appliedFilters, int pageNum, int pageSize) throws API.APIException {
         if (pageNum == 0) refSet = new HashSet<>();
 
+        query = prepareQuery(query);
         String coreQuery = "\"query_string\": {" +
                 "\"query\": \"" + query + "\"," +
                 "\"default_operator\": \"AND\"," +
@@ -194,6 +196,14 @@ public class SearchAPI {
             return minNodeList;
         else
             return getMinFilterNodes(minNodeList);
+    }
+
+    private static String prepareQuery(String query) {
+        //Replace internal quotes with gershaim.
+        final Pattern r = Pattern.compile("(\\S)\"(\\S)"); //matches all [ , ] & "
+        String yo = r.matcher(query).replaceAll("$1\u05f4$2");
+        Log.d("QUERY",yo + " -> " + query);
+        return yo;
     }
 
 }
