@@ -1,10 +1,13 @@
 package org.sefaria.sefaria.layouts;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.os.Build;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.LinearLayout;
 
 import org.sefaria.sefaria.Dialog.DialogNoahSnackbar;
@@ -66,7 +69,15 @@ public class CustomActionbar extends MenuElement {
         setLang(lang);
 
         if (catColor == -1) colorBar.setVisibility(View.GONE);
-        else colorBar.setBackgroundColor(getResources().getColor(catColor));
+        else {
+            int color = getResources().getColor(catColor);
+            int tintColor = Util.tintColor(color,0.4f);
+            Log.d("COLOR",color + " " + tintColor);
+            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                activity.getWindow().setStatusBarColor(tintColor);
+            }
+            colorBar.setBackgroundColor(color);
+        }
 
         if (homeClick != null) homeBtn.setOnClickListener(homeClick);
         else{

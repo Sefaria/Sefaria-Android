@@ -651,4 +651,20 @@ public class Util {
         }
     }
 
+    /**
+     *
+     * @param color 24-bit decimal color
+     * @param tint 0 - 1
+     * @return
+     */
+    public static int tintColor(int color, float tint) {
+        int r = Color.red(color);
+        int g = Color.green(color);
+        int b = Color.blue(color);
+        r -= r*tint;
+        g -= g*tint;
+        b -= b*tint;
+        return Color.rgb(r,g,b);
+    }
+
 }
