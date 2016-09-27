@@ -200,7 +200,7 @@ public class SearchAPI {
 
     private static String prepareQuery(String query) {
         //Replace internal quotes with gershaim.
-        final Pattern r = Pattern.compile("(\\S)\"(\\S)"); //matches all [ , ] & "
+        final Pattern r = Pattern.compile("(\\S)\"(\\S)");
         String yo = r.matcher(query).replaceAll("$1\u05f4$2");
         Log.d("QUERY",yo + " -> " + query);
         return yo;

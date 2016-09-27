@@ -2,6 +2,8 @@
 <resources>
     <style name="SefariaTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowAnimationStyle">@null</item>
+        <!-- colorPrimaryDark is used for the status bar -->
+       <!-- <item name="colorPrimaryDark">@color/mishnah</item> -->
     </style>
     <style name="SefariaTheme.White">
         <item name="button_bg">#ffffff</item>
