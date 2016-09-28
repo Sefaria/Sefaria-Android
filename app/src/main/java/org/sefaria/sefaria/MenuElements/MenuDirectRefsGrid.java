@@ -48,7 +48,6 @@ public class MenuDirectRefsGrid extends LinearLayout{
         this.numColumns = numColumns;
 
         init();
-        setLang(Settings.getMenuLang());
     }
 
     private void init() {
@@ -60,6 +59,7 @@ public class MenuDirectRefsGrid extends LinearLayout{
         gridRoot.setOrientation(LinearLayout.VERTICAL);
         gridRoot.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         gridRoot.setGravity(Gravity.CENTER);
+        this.removeAllViews();
         this.addView(gridRoot);
 
         this.flippedForHe = false;
@@ -86,6 +86,11 @@ public class MenuDirectRefsGrid extends LinearLayout{
         }
     }
 
+    public void setNewList(List<MenuDirectRef> menuDirectRefs){
+        allMenuDirectRefs = menuDirectRefs;
+        init();
+    }
+
 
     private LinearLayout addRow(LinearLayout parentView) {
         LinearLayout ll = new LinearLayout(context);
@@ -103,11 +108,13 @@ public class MenuDirectRefsGrid extends LinearLayout{
     }
 
 
+
+
     public void setLang(Util.Lang lang) {
         if ((lang == Util.Lang.HE && !flippedForHe) ||
                 (lang == Util.Lang.EN && flippedForHe)) {
 
-            flippedForHe = lang == Util.Lang.HE;
+            flippedForHe = (lang == Util.Lang.HE);
             flipViews(true);
         }
 

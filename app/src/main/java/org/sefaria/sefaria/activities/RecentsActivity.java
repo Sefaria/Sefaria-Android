@@ -20,6 +20,7 @@ import org.sefaria.sefaria.database.Recents;
 import org.sefaria.sefaria.layouts.CustomActionbar;
 
 import java.util.List;
+import java.util.Set;
 
 public class RecentsActivity extends AppCompatActivity {
 
@@ -36,7 +37,7 @@ public class RecentsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_recents);
 
         Util.Lang menuLang = Settings.getMenuLang();
-        setTitle("Recents");
+        setTitle("Recently Viewed");
         //this specifically comes before menugrid, b/c in tabs it menugrid does funny stuff to currnode
         customActionbar = new CustomActionbar(this,new MenuNode(MyApp.getRString(R.string.recently_viewed),MyApp.getRString(R.string.recently_viewed),null),Settings.getSystemLang(),null,null,null,null,null,null,backClick,menuClick,R.color.system,true,true);
         customActionbar.setMenuBtnLang(menuLang);
@@ -47,7 +48,6 @@ public class RecentsActivity extends AppCompatActivity {
         menuDirectRefsGrid = new MenuDirectRefsGrid(this, NUM_COLUMNS, recents);
         LinearLayout root = (LinearLayout) findViewById(R.id.gridRoot);
         root.addView(menuDirectRefsGrid);
-        setLang(menuLang);
     }
 
     private void setLang(Util.Lang lang){
@@ -70,7 +70,9 @@ public class RecentsActivity extends AppCompatActivity {
 
         GoogleTracker.sendScreen("RecentsActivity");
         if(!veryFirstTime) {
-            setLang(Settings.getMenuLang());
+            //in case the list has changed.
+            // say, for example, you went to a text so now that should be on top (and maybe it will have a different perek in it's name)
+            menuDirectRefsGrid.setNewList(Recents.getRecentDirectMenu(this,true,true));
         }else
             veryFirstTime = false;
 
