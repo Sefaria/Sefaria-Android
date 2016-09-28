@@ -2,6 +2,7 @@ package org.sefaria.sefaria.MenuElements;
 
 import android.content.Context;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -64,6 +65,10 @@ public class MenuDirectRef extends LinearLayout{
             this.colorBar.setBackgroundColor(getResources().getColor(colorInt));
         }
         setOnClickListener(clickListener);
+    }
+
+    public void setTVGravity(int gravity){
+        tv.setGravity(gravity);
     }
 
     public void setLongClickPinning(){

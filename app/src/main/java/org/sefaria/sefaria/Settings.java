@@ -486,34 +486,42 @@ public class Settings {
             return MyApp.getContext().getSharedPreferences("org.sefaria.sefaria.recent_texts_settings", Context.MODE_PRIVATE);
         }
 
-        public static List<String> getRecentTexts() {
+        /**
+         *
+         * @param recentTextCount 0 means unlimited
+         * @return
+         */
+        public static List<String> getRecentTexts(int recentTextCount) {
             List<String> books = new ArrayList<>();
             SharedPreferences recentSettings = getRecentSettings();
             Set<String> pinnedBooks = getPinnedBook();
-            int recentTextCount = 3;
-            while(pinnedBooks.size()/(recentTextCount*1.0) > .6){
-                recentTextCount += 1;
-            }
-            for(String bookTitle:pinnedBooks){
+            for(String bookTitle: pinnedBooks){
                 books.add(bookTitle);
             }
-            for (int i = 0; i < recentTextCount-pinnedBooks.size() && i<MAX_RECENT_TEXTS; i++) {
+
+            if(recentTextCount == 0) {//0 means unlimited
+                recentTextCount = MAX_RECENT_TEXTS;
+            }
+            while (pinnedBooks.size() / (recentTextCount * 1.0) > .6) {
+                recentTextCount += 1;
+            }
+            for (int i = 0; i < recentTextCount - pinnedBooks.size() && i<MAX_RECENT_TEXTS; i++) {
                 String bookTitle = recentSettings.getString("" + i, "");
-                if (bookTitle == "")
+                if (bookTitle.length() == 0)
                     return books;
                 if(pinnedBooks.contains(bookTitle)) {
                     recentTextCount++;
-                    continue;
+                }else {
+                    books.add(bookTitle);
                 }
-                books.add(bookTitle);
             }
             return books;
         }
 
-        private final static int MAX_RECENT_TEXTS = 9;
+        private final static int MAX_RECENT_TEXTS = 900;
 
         public static void addRecentText(String bookTitle) {
-            List<String> books = getRecentTexts();
+            List<String> books = getRecentTexts(0);
             for (int i = 0; i <books.size() && i<MAX_RECENT_TEXTS ; i++) {
                 if(books.get(i).equals(bookTitle))
                     books.remove(i);
@@ -525,6 +533,7 @@ public class Settings {
             }
             editor.apply();
         }
+
         private static String PINNED_RECENT_TEXTS = "pinned_recent_texts";
         private static String PINNED_RECENT_BOOKS = "pinned_recent_books";
         private static final String SPLITTER = "@@@";

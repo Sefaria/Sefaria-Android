@@ -1134,6 +1134,14 @@ public abstract class SuperTextActivity extends FragmentActivity {
         startActivity(intent);
     }
 
+    public void recentMoreClick(View v){
+        Toast.makeText(this, "MORE... or ess",Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, RecentsActivity.class);
+        startActivity(intent);
+    }
+
+
+
     /*@Override
     public boolean dispatchTouchEvent(MotionEvent event) {
         float newTextSize = TextGestureDetector.zoomZoom(event,textSize);

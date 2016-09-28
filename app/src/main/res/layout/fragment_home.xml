@@ -34,19 +34,39 @@
                 android:paddingRight="@dimen/main_margin_lr"
                 android:paddingLeft="@dimen/main_margin_lr"
                 android:clipToPadding="false">
-                <org.sefaria.sefaria.layouts.SefariaTextView
-                    android:id="@+id/recentTextsTV"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+                <org.sefaria.sefaria.layouts.SefariaTextView
+                    android:id="@+id/recentTextsTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="left|center_vertical"
                     android:paddingTop="@dimen/home_btw_section_padding"
                     android:paddingBottom="10dp"
                     android:textSize="15sp"
                     android:text="@string/recent"
                     app:isSerif="false"
-                    app:lang="english"
+                    app:lang="system"
                     android:textColor="?text_color_english"
                     android:textAllCaps="true"/>
+                    <org.sefaria.sefaria.layouts.SefariaTextView
+                        android:id="@+id/recentTextsMore"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="right|center_vertical"
+                        android:paddingTop="@dimen/home_btw_section_padding"
+                        android:paddingBottom="10dp"
+                        android:textSize="13sp"
+                        android:text="@string/More"
+                        app:isSerif="false"
+                        app:lang="system"
+                        android:textColor="?text_color_faded"
+                        android:textAllCaps="false"
+                        android:clickable="true"
+                        android:onClick="recentMoreClick"/>
+                </LinearLayout>
                 <LinearLayout
                     android:id="@+id/recentRoot"
                     android:layout_width="match_parent"

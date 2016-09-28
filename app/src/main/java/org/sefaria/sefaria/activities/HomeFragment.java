@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import org.sefaria.sefaria.database.Recents;
 import org.sefaria.sefaria.layouts.HomeActionbar;
 import org.sefaria.sefaria.MenuElements.MenuDirectRef;
 import org.sefaria.sefaria.MenuElements.MenuGrid;
@@ -168,31 +169,20 @@ public class HomeFragment extends android.support.v4.app.Fragment {
             recentRoot.removeAllViews();
         }
         final int columNum = 1;
-        List<String> recentBooks = Settings.RecentTexts.getRecentTexts();
+        List<MenuDirectRef> recents = Recents.getRecentDirectMenu(getContext(),true, false);
         recentTexts = new ArrayList<>();
-        if(recentBooks.size()>0) {
+        if(recents.size()>0) {
             LinearLayout recentRow = null;
-            for (int i=0;i<recentBooks.size();i++){
+            for (int i=0;i<recents.size();i++){
                 if(i%columNum  == 0){
                     recentRow = new LinearLayout(getContext());
                     recentRow.setOrientation(LinearLayout.HORIZONTAL);
                     recentRow.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
                     recentRoot.addView(recentRow);
                 }
-
-                String bookTitle = recentBooks.get(i);
-                Book book = null;
-                try {
-                    book = new Book(bookTitle);
-                    Pair<String,String> pair = Settings.BookSettings.getSavedBookTitle(bookTitle);
-                    MenuDirectRef menuDirectRef = new MenuDirectRef(getContext(), pair.first, pair.second, null, book, null);
-                    menuDirectRef.setLongClickPinning();
-                    recentTexts.add(menuDirectRef);
-                    recentRow.addView(menuDirectRef);
-                } catch (Exception e) {
-                    Log.e("HomeActivity", "Problem getting Recent Texts:" + e.getMessage());
-                }
-
+                MenuDirectRef menuDirectRef = recents.get(i);
+                recentTexts.add(menuDirectRef);
+                recentRow.addView(menuDirectRef);
             }
         } else {
             view.findViewById(R.id.recentTextsTV).setVisibility(View.GONE);

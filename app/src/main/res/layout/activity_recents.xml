@@ -1,0 +1,38 @@
+<LinearLayout
+xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:tools="http://schemas.android.com/tools"
+android:orientation="vertical"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+tools:context="org.sefaria.sefaria.activities.RecentsActivity"
+android:background="?link_bg">
+
+<LinearLayout
+    android:id="@+id/actionbarRoot"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+</LinearLayout>
+
+<ScrollView
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="30dp"
+    android:clipToPadding="false"
+    >
+    <LinearLayout
+        android:orientation="vertical"
+        android:id="@+id/gridRoot"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingLeft="@dimen/main_margin_lr"
+        android:paddingRight="@dimen/main_margin_lr">
+
+    </LinearLayout>
+
+</ScrollView>
+
+
+</LinearLayout>
