@@ -155,7 +155,6 @@ public class SettingsActivity extends Activity {
 
     public void updateLibrary(View v){
         Downloader.updateLibrary(this, false);
-        DialogNoahSnackbar.showDialog(this, (ViewGroup) findViewById(R.id.dialogNoahSnackbarRoot));
     }
 
     public void done(){

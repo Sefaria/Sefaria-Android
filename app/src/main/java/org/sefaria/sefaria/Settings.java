@@ -19,6 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.SynchronousQueue;
 
 
 public class Settings {
@@ -367,6 +368,22 @@ public class Settings {
         }
     }
 
+
+    final private static long TIME_TO_RECHECK = 604800000;//7*24*60*60*1000
+    public static boolean getIfShouldDoUpdateCheck(){
+        SharedPreferences settings = getGeneralSettings();
+        long now = System.currentTimeMillis();
+        Log.d("Settings","now:" + now);
+        return (now - settings.getLong("lastUpdateCheck", 0) > TIME_TO_RECHECK);
+    }
+
+    public static void setLastUpdateCheckToNow(){
+        SharedPreferences.Editor editor = getGeneralSettings().edit();
+        long time = System.currentTimeMillis();
+        editor.putLong("lastUpdateCheck", time);
+        editor.apply();
+    }
+
     public static boolean getIsDebug(){
         SharedPreferences settings = getGeneralSettings();
         return settings.getBoolean("isDebug", false);
@@ -397,7 +414,7 @@ public class Settings {
 
     public static long getDownloadSuccess(boolean clearValue){
         SharedPreferences settings = getGeneralSettings();
-        long time =  settings.getLong("DownloadSuccess", 0);
+        long time = settings.getLong("DownloadSuccess", 0);
         if(clearValue)
             setDownloadSuccess(0);
         return time;
@@ -608,5 +625,7 @@ public class Settings {
         }
 
     }
+
+
 
 }

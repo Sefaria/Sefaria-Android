@@ -25,8 +25,10 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import android.view.ViewGroup;
 import android.widget.Toast;
 
+import org.sefaria.sefaria.Dialog.DialogNoahSnackbar;
 import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
@@ -111,6 +113,8 @@ public class Downloader {
         activity.sendBroadcast(intent);
         //DialogManager2.showDialog(activity, DialogManager2.DialogPreset.CHECKING_FOR_UPDATE);
         Database.isDownloadingDatabase = true;
+
+        DialogNoahSnackbar.showDialog(activity, (ViewGroup) activity.findViewById(R.id.dialogNoahSnackbarRoot));
 
     }
 

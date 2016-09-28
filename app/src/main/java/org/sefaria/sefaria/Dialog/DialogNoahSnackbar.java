@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.database.Database;
 

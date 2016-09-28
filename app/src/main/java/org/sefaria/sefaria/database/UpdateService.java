@@ -2,7 +2,9 @@ package org.sefaria.sefaria.database;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import android.annotation.SuppressLint;
@@ -19,11 +21,13 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.PowerManager;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import org.sefaria.sefaria.Dialog.DialogCallable;
@@ -102,7 +106,7 @@ public class UpdateService extends Service {
     }
 
     //check internet status before update, and if necessary, inform user of problems
-    public static void preUpdateLibrary(boolean userInit) {
+    private static void preUpdateLibrary(boolean userInit) {
         Downloader.ConnectionType netStat = Downloader.getNetworkStatus();
         if (netStat == Downloader.ConnectionType.NONE) {
             DialogManager2.showDialog(Downloader.getActivity(), DialogManager2.DialogPreset.NO_INTERNET);
@@ -115,7 +119,7 @@ public class UpdateService extends Service {
 
     //suppressing because I handle sdk check myself
     @SuppressLint("NewApi")
-    public static void updateLibrary(boolean userInit) {
+    private static void updateLibrary(boolean userInit) {
 
         //Toast.makeText(context, "Start background update", Toast.LENGTH_SHORT).show();
         //Toast.makeText(context, "background update only headers.", Toast.LENGTH_SHORT).show();
@@ -152,22 +156,61 @@ public class UpdateService extends Service {
 
     }
 
-
-    public static void postUpdateStage1() {
-        try {
-            String csvData = API.getDataFromURL(Downloader.getCSVurl(),null,false, API.TimeoutType.REG);
+    private static class UpdateCSVData{
+        int dbVersion;
+        String zipUrl;
+        String indexURL;
+        int newestAppVersionNum;
+        public UpdateCSVData() throws Exception{
+            String csvData = null;
+            csvData = API.getDataFromURL(Downloader.getCSVurl(),null,false, API.TimeoutType.LONG);
             Log.d("Downloader", "postUpdateStage1 CSV: " + csvData);
             String[] firstLine = csvData.split(",");
-            int dbVersion = Integer.parseInt(firstLine[0]);
-            String zipUrl = firstLine[1];
-            String indexURL = firstLine[2];
+            dbVersion = Integer.parseInt(firstLine[0]);
+            zipUrl = firstLine[1];
+            indexURL = firstLine[2];
             String newestAppVersion = firstLine[3];
             Log.d("Downloader","postUpdateStage1: +" + newestAppVersion + "+");
-            int newestAppVersionNum  = Integer.parseInt(newestAppVersion.replace("[^0-9]","").replace("\n",""));
+            newestAppVersionNum  = Integer.parseInt(newestAppVersion.replace("[^0-9]","").replace("\n",""));
+        }
+    }
 
-            updatedVersionNum = dbVersion; //save this for later
 
-            if((newestAppVersionNum > MyApp.getContext().getPackageManager().getPackageInfo(MyApp.getAppPackageName(), 0).versionCode)
+    static public class silentlyCheckForUpdates extends AsyncTask<Activity, Void, UpdateCSVData> {
+        Activity activity;
+        @Override
+        protected void onPreExecute() {
+        }
+
+        @Override
+        protected UpdateCSVData doInBackground(Activity... params) {
+            activity = params[0];
+            try {
+                UpdateCSVData updateCSVData = new UpdateCSVData();
+                return updateCSVData;
+            }catch (Exception e){
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(UpdateCSVData updateCSVData) {
+            if(updateCSVData != null){
+                Settings.setLastUpdateCheckToNow();
+                if(updateCSVData.dbVersion > Database.getVersionInDB(false)){
+                    DialogManager2.showDialog(activity, DialogManager2.DialogPreset.NEW_UPDATE_FROM_SILENT_CHECK);
+                }
+            }
+        }
+    }
+
+    private static void postUpdateStage1() {
+        try {
+            UpdateCSVData updateCSVData = new UpdateCSVData();
+            updatedVersionNum = updateCSVData.dbVersion; //save this for later
+
+            if((updateCSVData.newestAppVersionNum > MyApp.getContext().getPackageManager().getPackageInfo(MyApp.getAppPackageName(), 0).versionCode)
                     && !MyApp.askedForUpgradeThisTime){
                 Toast.makeText(MyApp.getContext(), MyApp.getContext().getString(R.string.upgrade_to_newest) + " " + MyApp.APP_NAME, Toast.LENGTH_SHORT).show();
                 try {
@@ -187,7 +230,7 @@ public class UpdateService extends Service {
             if ((updatedVersionNum > currentVersionNum && userInitiated) || evenOverWriteOldDatabase ) {
                 //DialogManager2.dismissCurrentDialog();
                 //DialogManager2.showDialog((Activity)MyApp.getContext(), DialogManager2.DialogPreset.UPDATE_STARTED);
-                updateStage2(zipUrl, indexURL);
+                updateStage2(updateCSVData.zipUrl, updateCSVData.indexURL);
             } else if (updatedVersionNum > currentVersionNum && !userInitiated) {
                 if (currentVersionNum == -1) {
                     //click yes very quickly...
@@ -220,7 +263,7 @@ public class UpdateService extends Service {
     }
 
     //...which uses it download the zip. Once done, it goes to updateStage3()
-    public static void updateStage2(String zipUrl, String indexURL) {
+    private static void updateStage2(String zipUrl, String indexURL) {
         GoogleTracker.sendEvent("Download", "updateStage2 - Starting DB download");
 
         //delete any file with the same name to avoid confusion
@@ -236,7 +279,7 @@ public class UpdateService extends Service {
     }
 
     //...which unzips update into the database location.
-    public static void updateStage3() {
+    private static void updateStage3() {
         Log.d("up", "stage 3 started");
         //if (!inUpdateStage3) {
         new Thread(new Runnable() {
@@ -298,7 +341,7 @@ public class UpdateService extends Service {
     private static Map<Integer,String> messageMap = new HashMap<>();
 
 
-    public static void sendMessage(String string){
+    private static void sendMessage(String string){
         messageMap.put(string.hashCode(),string);
         handler.sendEmptyMessage(string.hashCode());
     }
@@ -347,7 +390,7 @@ public class UpdateService extends Service {
         ac.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
     }
 
-    public static void restart() {
+    private static void restart() {
         inUpdateStage3 = false;
 
         DialogManager2.dismissCurrentDialog();
@@ -359,14 +402,16 @@ public class UpdateService extends Service {
 
     public static void endService() {
         Database.isDownloadingDatabase = false;
-        DialogNoahSnackbar.dismissCurrentDialog();
+
         try {
+            DialogNoahSnackbar.dismissCurrentDialog();
             serviceYo.stopForeground(true);
             UpdateReceiver.completeWakefulIntent(intentYo);
             wifiLock.release();
             powerLock.release();
         } catch( Exception e) {
-
+            GoogleTracker.sendException(e);
+            e.printStackTrace();
         }
 
         String ns = Context.NOTIFICATION_SERVICE;

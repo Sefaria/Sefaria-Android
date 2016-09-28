@@ -37,7 +37,7 @@ public class DialogManager2 {
         NO_NEW_UPDATE,UPDATE_STARTED,
         ARE_YOU_SURE_CANCEL,CHECKING_FOR_UPDATE,
         SWITCHING_TO_API,NO_INTERNET,DATA_CONNECTED,
-        HOW_TO_REPORT_CORRECTIONS
+        HOW_TO_REPORT_CORRECTIONS, NEW_UPDATE_FROM_SILENT_CHECK
     }
 
     private static Dialog currDialog;
@@ -135,7 +135,20 @@ public class DialogManager2 {
                     }
                 });
                 break;
+            case NEW_UPDATE_FROM_SILENT_CHECK:
+                showDialog(activity, new DialogCallable(MyApp.getRString(R.string.NEW_UPDATE_TITLE),
+                        MyApp.getRString(R.string.NEW_UPDATE_MESSAGE),MyApp.getRString(R.string.YES),
+                        MyApp.getRString(R.string.LATER),null, DialogCallable.DialogType.ALERT) {
+                    @Override
+                    public void positiveClick() {
+                        Downloader.updateLibrary(activity, false);
+                    }
 
+                    @Override
+                    public void negativeClick() {
+                    }
+                });
+                break;
             case ARE_YOU_SURE_CANCEL:
                 showDialog(activity, new DialogCallable(MyApp.getRString(R.string.ARE_YOU_SURE_TITLE),
                         MyApp.getRString(R.string.ARE_YOU_SURE_MESSAGE), MyApp.getRString(R.string.YES), MyApp.getRString(R.string.no), null, DialogCallable.DialogType.ALERT) {
