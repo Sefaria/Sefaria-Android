@@ -92,5 +92,6 @@
     <string name="error_getting_links">Error getting links</string>
     <string name="Error">Error</string>
     <string name="More">&lt; עוד </string>
+    <string name="recently_viewed">Recently Viewed (HE)</string>
 
 </resources>

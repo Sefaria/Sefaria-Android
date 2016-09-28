@@ -32,7 +32,7 @@ public class Recents {
                     menuDirectRef.setLongClickPinning();
                 recents.add(menuDirectRef);
             }catch (Exception e){
-                ;
+                e.printStackTrace();
             }
         }
         return recents;

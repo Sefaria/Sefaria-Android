@@ -521,6 +521,7 @@ public class Settings {
         private final static int MAX_RECENT_TEXTS = 900;
 
         public static void addRecentText(String bookTitle) {
+            Log.d("Recents","starting addRecentText");
             List<String> books = getRecentTexts(0);
             for (int i = 0; i <books.size() && i<MAX_RECENT_TEXTS ; i++) {
                 if(books.get(i).equals(bookTitle))
@@ -532,6 +533,7 @@ public class Settings {
                 editor.putString("" + i, books.get(i));
             }
             editor.apply();
+            Log.d("Recents","finishing addRecentText");
         }
 
         private static String PINNED_RECENT_TEXTS = "pinned_recent_texts";
