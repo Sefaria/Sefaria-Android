@@ -67,7 +67,6 @@ public class MenuGrid extends LinearLayout {
         this.limitGridSize = limitGridSize;
 
         init();
-        setLang(lang);
     }
 
     private void init() {
