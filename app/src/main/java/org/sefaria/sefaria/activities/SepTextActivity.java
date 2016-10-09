@@ -264,9 +264,7 @@ public class SepTextActivity extends SuperTextActivity implements AbsListView.On
     }
 
     protected void updateFocusedSegment() {
-        float mid = ((float)listView.getHeight())/2;
         int numChildren = listView.getChildCount();
-
 
         for (int i = 0; i < numChildren; i++) {
             View v = listView.getChildAt(i);
