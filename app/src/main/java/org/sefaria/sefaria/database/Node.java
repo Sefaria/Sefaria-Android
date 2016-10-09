@@ -923,7 +923,19 @@ public class Node{// implements  Parcelable{
         if(data.length()==0)
             return textList;
 
-        int [] levels = getLevels();
+        int [] levels = new int[0];
+        try {
+            levels = getLevels();
+        } catch (LevelsException e) {
+            e.printStackTrace();
+            try {
+                GoogleTracker.sendException(e,"675:Node.getlevels" + getMenuBarTitle(getBook(), Util.Lang.EN));
+            } catch (Book.BookNotFoundException e1) {
+                e1.printStackTrace();
+                GoogleTracker.sendException(e,"676:Node.getlevels" + "bid:" + bid);
+            }
+            return textList;
+        }
         int bid = getBid();
         try {
             JSONObject jsonData = new JSONObject(data);
@@ -1000,6 +1012,22 @@ public class Node{// implements  Parcelable{
         return getTexts(false);
     }
 
+
+    private List<Text> getTextsFromDB(int parentNID){
+        int [] levels;
+        try {
+             levels = getLevels();
+        } catch (LevelsException e) {
+            e.printStackTrace();
+            try {
+                levels = new int[getBook().textDepth];
+            } catch (Book.BookNotFoundException e1) {
+                //e1.printStackTrace();
+                levels = new int[2];
+            }
+        }
+        return Text.getFromDB(bid,levels,parentNID);
+    }
     /**
      *
      * @param ignoreUsingAPI used for example when getting list number but wants to force to not use API
@@ -1028,7 +1056,7 @@ public class Node{// implements  Parcelable{
             Log.e("Node", "It thinks (!isComplex() && !isGridItem())... I don't know how.");
             textList = new ArrayList<>();
         }else if(!isComplex && isGridItem && !isRef){
-            textList =  Text.getFromDB(bid,getLevels(),0);
+            textList =  getTextsFromDB(0);
         }else if(isRef()){
             if(!isComplex){
                 Log.e("Node", "It thinks (!isComplex && isRef)... I don't know how.");
@@ -1044,9 +1072,9 @@ public class Node{// implements  Parcelable{
         }else if(isComplex){
             //levels will be diff based on if it's a gridItem
             if(isGridItem)
-                textList = Text.getFromDB(bid, getLevels(), getNodeInDBParentNID());
+                textList = getTextsFromDB(getNodeInDBParentNID());
             else
-                textList = Text.getFromDB(bid, getLevels(), nid);
+                textList = getTextsFromDB(nid);
         }
         else{
             textList = new ArrayList<>();
@@ -1079,12 +1107,24 @@ public class Node{// implements  Parcelable{
         }
         return parent.nid;
     }
+
+
+    public class LevelsException extends Exception{
+        public LevelsException() {
+            super("API exception");
+        }
+        public LevelsException(String message){
+            super(message);
+        }
+        private static final long serialVersionUID = 1L;
+    }
+
     /**
      * create an array describing the levels:
      * ex. chap 4 and verse 7 would be {7,3}
      * return levels
      */
-    public int [] getLevels(){
+    public int [] getLevels() throws LevelsException {
         //TODO make work for more than 2 levels
 
         List<Integer> levels = new ArrayList<>();
@@ -1093,7 +1133,12 @@ public class Node{// implements  Parcelable{
             String [] strArray = Util.str2strArray(startLevels.replace(" ",""));
             for(String level: strArray){
                 Log.d("Node", "start.level: " + level);
-                levels.add(Integer.valueOf(level));
+                try {
+                    levels.add(Integer.valueOf(level));
+                }catch (Exception e){
+                    e.printStackTrace();
+                    throw new LevelsException();
+                }
             }
         }else {
             levels.add(0);
