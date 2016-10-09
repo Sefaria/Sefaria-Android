@@ -71,8 +71,7 @@ public class CustomActionbar extends MenuElement {
         if (catColor == -1) colorBar.setVisibility(View.GONE);
         else {
             int color = getResources().getColor(catColor);
-            int tintColor = Util.tintColor(color,0.4f);
-            Log.d("COLOR",color + " " + tintColor);
+            int tintColor = Util.tintColor(color,0.3f);
             if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 activity.getWindow().setStatusBarColor(tintColor);
             }
