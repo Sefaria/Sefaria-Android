@@ -448,6 +448,8 @@ public class SepTextActivity extends SuperTextActivity implements AbsListView.On
                 isLoadingSection = false;
                 isLoadingInit = false;
                 sepTextAdapter.remove(loaderText);
+                sepTextAdapter.setLoadedLastText();
+
                 return;
             }
             //if (textsList.size() == 0) return;//removed this line so that when it doesn't find text it continues to look for the next item for text

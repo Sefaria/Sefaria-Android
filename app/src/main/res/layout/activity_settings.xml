@@ -203,6 +203,7 @@
                     android:textSize="@dimen/settings_subsection_font_size"
                     app:lang="system"
                     android:onClick="switchAPIClick"
+                    android:clickable="true"
                     />
 
                 <org.sefaria.sefaria.layouts.SefariaTextView
