@@ -31,6 +31,7 @@ public class SepTextAdapter extends ArrayAdapter<Text> {
     private List<Text> texts;
 
     private Text highlightIncomingText;
+    private boolean loadedLastText = false;
 
     private int resourceId;
     private int preLast;
@@ -55,6 +56,8 @@ public class SepTextAdapter extends ArrayAdapter<Text> {
             view.setClickable(false);
             return view;
         }
+
+
 
         String enText = segment.getText(Util.Lang.EN);
         String heText = segment.getText(Util.Lang.HE);
@@ -110,6 +113,13 @@ public class SepTextAdapter extends ArrayAdapter<Text> {
         TextChapterHeader tch = (TextChapterHeader) view.findViewById(R.id.chapHeader);
         SefariaTextView enNum = (SefariaTextView) view.findViewById(R.id.enVerseNum);
         SefariaTextView heNum = (SefariaTextView) view.findViewById(R.id.heVerseNum);
+
+        //add padding to the last text so that you're able to get to the links for the last text
+        if(loadedLastText && position == texts.size() -1 && sepTextActivity.getFragmentIsOpen()){
+            view.setPadding(view.getPaddingLeft(),view.getPaddingTop(),view.getPaddingRight(),MyApp.getScreenSizePixels().y/4);
+        }else{
+            view.setPadding(view.getPaddingLeft(),view.getPaddingTop(),view.getPaddingRight(),0);
+        }
 
         if (lang == Util.Lang.BI) {
 
@@ -225,6 +235,11 @@ public class SepTextAdapter extends ArrayAdapter<Text> {
 
     public void updateFocusedSegment() {
 
+    }
+
+    public void setLoadedLastText(){
+        loadedLastText = true;
+        notifyDataSetChanged();
     }
 
     public void highlightIncomingText(Text text){
