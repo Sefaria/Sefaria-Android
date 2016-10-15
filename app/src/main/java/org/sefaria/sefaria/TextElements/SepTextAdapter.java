@@ -147,12 +147,12 @@ public class SepTextAdapter extends ArrayAdapter<Text> {
                 //heTv.setTextColor(Color.parseColor("#000000"));
                 heTv.setFont(Util.Lang.HE,true, sepTextActivity.getTextSize());
                 if(segment.displayNum)
-                    heNum.setText("" + Util.int2heb(segment.levels[0]));
+                    heNum.setText("" + segment.levels[0]);
                 else
                     heNum.setText("");
 
                 heNum.setAlpha(1);
-                heNum.setFont(Util.Lang.HE,false);
+                heNum.setFont(Util.Lang.EN,false);
                 enNum.setText(Util.VERSE_BULLET);
                 enNum.setAlpha(linkAlpha);
                 enNum.setFont(Util.Lang.HE, false);
