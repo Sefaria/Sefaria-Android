@@ -61,6 +61,7 @@ public class DailyLearning {
     public static MenuDirectRef [] getParsha(Context context){
         String todaysDate = getLongDate(1);
         JSONArray weeks = null;
+        //Log.d("DailyLearning", "srtaing");
         try {
             //Log.d("DailyLearning", "getParsha..today: "+ todaysDate);
             weeks = Util.openJSONArrayFromAssets("calendar/parshiot.json");

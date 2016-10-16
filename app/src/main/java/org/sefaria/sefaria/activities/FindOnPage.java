@@ -279,7 +279,7 @@ public class FindOnPage {
                         node = node.getNextTextNode();
                     else
                         node = node.getPrevTextNode();
-                    //Log.d("findOnPage","Searching next (" + directionForward + ") node:" + node);
+                    //Log.d("findOnPage","SearchingDB next (" + directionForward + ") node:" + node);
                 } catch (Node.LastNodeException e) {
                     //Log.d("findOnPage","Got lastNodeException");
                     if (directionForward) {

@@ -20,7 +20,7 @@ import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
 
-public class Searching {
+public class SearchingDB {
 
 
     final static int CHUNK_SIZE = 500;
@@ -55,7 +55,7 @@ public class Searching {
      * @param alsoSearchCommentary used for when linkFilter.depth_type == CAT and you want to search for the commentary in addition to the category (like Tanach and the Commentaries on Tanach).
      * @throws SQLException
      */
-    public Searching(String query, LinkFilter linkFilter,boolean alsoSearchCommentary) throws SQLException {
+    public SearchingDB(String query, LinkFilter linkFilter, boolean alsoSearchCommentary) throws SQLException {
         this.linkFilter = linkFilter;
         this.query = query;
         searchableTids = getSearchableTids(linkFilter,alsoSearchCommentary);
@@ -166,7 +166,7 @@ public class Searching {
             }
             else
                 testWords = new String[] {words[i] };
-            Cursor cursor = db.query("Searching", new String[] {"chunks"},likeStatement,
+            Cursor cursor = db.query("SearchingDB", new String[] {"chunks"},likeStatement,
                     testWords, null, null, null, null);
             byte [] bytes = null;
             if(cursor.moveToFirst()){
@@ -437,7 +437,7 @@ public class Searching {
         String likeStatement;
         String [] filterArray;
         if (linkFilter == null || linkFilter.depth_type == LinkFilter.DEPTH_TYPE.ALL) {
-            Log.e("Searching", "This function shouldn't have been called if your looking for everything");
+            Log.e("SearchingDB", "This function shouldn't have been called if your looking for everything");
             likeStatement = " 1=1 ";
             filterArray = new String[0];
         }else{
@@ -632,7 +632,7 @@ public class Searching {
      */
     public ArrayList<Text> getResults(){
         while(true) {
-            Log.d("Searching", "currResultNumber:" + currResultNumber + "... resultsLists.size():"+ resultsLists.size());
+            Log.d("SearchingDB", "currResultNumber:" + currResultNumber + "... resultsLists.size():"+ resultsLists.size());
             if (currResultNumber < resultsLists.size()) {
                 if(!isBufferFilled())
                     fillSearchBuffer();
@@ -651,10 +651,10 @@ public class Searching {
     private class FillSearchBufferAsync extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-            Log.d("Searching", "Async task seeing if it should start.");
+            Log.d("SearchingDB", "Async task seeing if it should start.");
             if(middleOfSearching) return null;
             if(isDoneSearching) return null;
-            Log.d("Searching", "Async task started!");
+            Log.d("SearchingDB", "Async task started!");
             middleOfSearching = true;
             while(true){
                 ArrayList results;
@@ -665,7 +665,7 @@ public class Searching {
                         ;//results = searchEnTexts(query,filterArray);
                     }
                     resultsLists.add(results);
-                    Log.d("Searching", "ASYNC: currResultNumber:" + currResultNumber + "... resultsLists.size():" + resultsLists.size());
+                    Log.d("SearchingDB", "ASYNC: currResultNumber:" + currResultNumber + "... resultsLists.size():" + resultsLists.size());
                     if(results.size()==0){
                         isDoneSearching = true;
                         break;

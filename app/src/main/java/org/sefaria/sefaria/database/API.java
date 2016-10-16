@@ -427,7 +427,7 @@ public class API {
 
 /*
     public static ArrayList<Text> getSearchResults(String query,String[] filterArray, int from, int offset) throws APIException {
-        Log.d("Searching", "starting api");
+        Log.d("SearchingDB", "starting api");
         ArrayList<Text> texts = new ArrayList<>();
         String url = SEARCH_URL ;//+ "?" + "&from=" +from + "&offset=" + offset + "q=" + Uri.encode(query) ;
         String data = getDataFromURL(url);
@@ -460,7 +460,7 @@ public class API {
             e.printStackTrace();
         }
 
-        Log.d("Searching", "finishing api");
+        Log.d("SearchingDB", "finishing api");
         return texts;
 
     }

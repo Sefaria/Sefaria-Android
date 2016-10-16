@@ -1,11 +1,9 @@
 package org.sefaria.sefaria.database;
 
 
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -525,7 +523,7 @@ public class Node{// implements  Parcelable{
     public List<Text> findWords(String searchingTerm) throws API.APIException {
         Log.d("Node","findwords1:" + searchingTerm + " lastWord:" + lastSearchedTerm + "  ---" + this);
         if(lastSearchedTerm != null && !lastSearchedTerm.equals(searchingTerm)){
-            Searching.removeRed(textList);
+            SearchingDB.removeRed(textList);
         }
 
         if(searchingTerm == null)
@@ -536,7 +534,7 @@ public class Node{// implements  Parcelable{
         lastSearchedTerm = searchingTerm;
 
         Log.d("Node","Findwords:" + searchingTerm + "... " + getTexts().size());
-        foundFindOnPageList = Searching.findWordsInList(getTexts(),searchingTerm,false,false);
+        foundFindOnPageList = SearchingDB.findWordsInList(getTexts(),searchingTerm,false,false);
         return foundFindOnPageList;
     }
 
