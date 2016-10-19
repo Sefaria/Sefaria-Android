@@ -166,7 +166,7 @@ public class SearchingDB {
             }
             else
                 testWords = new String[] {words[i] };
-            Cursor cursor = db.query("SearchingDB", new String[] {"chunks"},likeStatement,
+            Cursor cursor = db.query("Searching", new String[] {"chunks"},likeStatement,
                     testWords, null, null, null, null);
             byte [] bytes = null;
             if(cursor.moveToFirst()){
@@ -310,7 +310,7 @@ public class SearchingDB {
             //Test english words
             Matcher m = enPattern.matcher(text.getText(Util.Lang.EN));
             if(m.find()){
-                text.setText(addRedToFoundWord(m, text.getText(Util.Lang.EN), removeLongText), Util.Lang.EN);
+                text.setText(addRedToFoundWord(m, text.getText(Util.Lang.EN), removeLongText, false), Util.Lang.EN);
                 foundEn = true;
                 foundItems.add(text);
             }
@@ -319,7 +319,7 @@ public class SearchingDB {
             Util.Lang lang = Util.Lang.HE;
             m = hePattern.matcher(text.getText(lang));
             if(m.find()){
-                text.setText(addRedToFoundWord(m, text.getText(lang), removeLongText), lang);
+                text.setText(addRedToFoundWord(m, text.getText(lang), removeLongText, false), lang);
                 if(!foundEn){//didn't already add this to the list for found English
                     foundItems.add(text);
                 }
@@ -338,7 +338,18 @@ public class SearchingDB {
 
     private static final String FONT_RED_START = "<font color='#ff5566'>";
     private static final String FONT_RED_END = "</font>";
-    private static String addRedToFoundWord(Matcher m, String orgText, boolean removeLongText){
+    private static final String BIG_BOLD_START = "<big><b>";
+    private static final String BIG_BOLD_END = "</b></big>";
+    private static String addRedToFoundWord(Matcher m, String orgText, boolean removeLongText, boolean useBold){
+        final String addStart;
+        final String addEnd;
+        if(useBold){
+            addStart = BIG_BOLD_START;
+            addEnd = BIG_BOLD_END;
+        }else{
+            addStart = FONT_RED_START;
+            addEnd = FONT_RED_END;
+        }
         final int MAX_CHAR_NUM = 100;
         if(orgText.length() < 300)//you could get the text in there, so let it be.
             removeLongText = false;
@@ -363,8 +374,8 @@ public class SearchingDB {
 
                 }
             }
-            newText += orgText.substring(lastSpot, m.start()) + FONT_RED_START
-                    + orgText.substring(m.start(),m.end()) + FONT_RED_END;
+            newText += orgText.substring(lastSpot, m.start()) + addStart
+                    + orgText.substring(m.start(),m.end()) + addEnd;
             lastSpot = m.end();
         }
         while(m.find());
@@ -487,25 +498,11 @@ public class SearchingDB {
         return tidMinMax;
     }
 
-/*
-    private ArrayList<Text> APISearch(String query, String[] filterArray) throws API.APIException{
-        int offset = 10;
-        ArrayList<Text> resultsList = API.getSearchResults(query, filterArray, APIStart, offset);
-        APIStart += offset;
-        if(resultsList.size() == 0)
-            isDoneSearching = true;
-        return resultsList;
-    }
-*/
-    private static final int SEARCH_BUFFER_SIZE = 4;
+    private static final int SEARCH_BUFFER_SIZE = 1;
 
 
 
-    private ArrayList<Text> searchDBheTexts() throws API.APIException {
-        if(Settings.getUseAPI()){
-            return new ArrayList<>();//APISearch(query, filterArray);
-        }
-
+    private ArrayList<Text> searchDBheTexts() {
         int startingChunk = currSearchIndex;
         ArrayList<Text> results = new ArrayList<>();
         long startTime = System.currentTimeMillis();
@@ -519,14 +516,14 @@ public class SearchingDB {
             }
 
             Cursor cursor = null;
-            for(int i=startingChunk+1; i<searchableTids.size();i++){
+            for(int i=startingChunk+1; i < searchableTids.size();i++){
                 if(results.size() >= 6 || (results.size() >= 3  && System.currentTimeMillis() > startTime + WAITING_TIME)){
                     return results;
                 }
 
                 String sql = "SELECT * " +
-                        "FROM Texts WHERE heTextCompress not null AND ";
-                sql += "  _id >= " + searchableTids.get(i).first + " AND _id < "  + searchableTids.get(i).second; //used to <=
+                        "FROM Texts WHERE  ";
+                sql += "  _id >= " + searchableTids.get(i).first + " AND _id < "  + searchableTids.get(i).second + " AND heTextCompress NOT NULL"; //used to <=
                 cursor = db.rawQuery(sql, null);//filterArray
                 if (cursor.moveToFirst()) {
                     do {
@@ -545,7 +542,7 @@ public class SearchingDB {
                             }
                             //if(clearedVerse.contains(words[j])){ //if(verse.replaceFirst(wordsRegEx[j], "ABC").hashCode() != verse.hashCode()){ //more detailed //	if(clearedVerse.replaceAll("\\b\\u05d5","").replaceFirst("\\b" + words[j] + "\\b", "ABC").hashCode() == clearedVerse.hashCode()) break;
 
-                            text.setText(addRedToFoundWord(m,verse, true), Util.Lang.HE);
+                            text.setText(addRedToFoundWord(m, verse, true, true), Util.Lang.HE);
                             if(j == words.length -1){
                                 results.add(text);
                                 //resultsList.add(new Text(cursor.getInt(0)));//maybe create a list of tids and do it as one big search
@@ -568,10 +565,7 @@ public class SearchingDB {
     }
 
     /*
-    private ArrayList<Text> searchEnTexts(String word, String [] filterArray) throws API.APIException {
-        if(API.useAPI()){
-            return APISearch(word, filterArray);
-        }
+    private ArrayList<Text> searchEnTexts(String word, String [] filterArray) {
 
         Database dbHandler = Database.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
@@ -618,13 +612,47 @@ public class SearchingDB {
         return list;
     }
 
+    private String fillSearchBufferTask(){
+        Log.d("SearchingDB", "Async task seeing if it should start... not async");
+        if(middleOfSearching) return null;
+        if(isDoneSearching) return null;
+        Log.d("SearchingDB", "Async task started!.. not async");
+        middleOfSearching = true;
+        while(true){
+            ArrayList<Text> results;
+            try {
+                if(true) {//TODO check if it's hebrew
+                    results = searchDBheTexts();
+                }else{
+                    ;//results = searchEnTexts(query,filterArray);
+                }
+                resultsLists.add(results);
+                Log.d("SearchingDB", "ASYNC: currResultNumber:" + currResultNumber + "... resultsLists.size():" + resultsLists.size());
+                if(results.size()==0){
+                    isDoneSearching = true;
+                    break;
+                }
+                if(isBufferFilled())
+                    break;
+            } catch (Exception e) {
+                isDoneSearching = true;
+                e.printStackTrace();
+                GoogleTracker.sendException(e,"in fillSearchBuffer");
+            }
+        }
+        middleOfSearching = false;
+        return null;
+    }
     private void fillSearchBuffer(){
-        this.new FillSearchBufferAsync().execute();
+        fillSearchBufferTask();
+        //this.new FillSearchBufferAsync().execute();
     }
 
     private boolean isBufferFilled(){
-        return (resultsLists.size()>currResultNumber + SEARCH_BUFFER_SIZE);
+        return (resultsLists.size() > currResultNumber + SEARCH_BUFFER_SIZE);
     }
+
+
 
     /**
      *  waits (in spin loop) until there is data to send. It will also tell a Async task to refill the search buffer if it's within it's limits
@@ -651,38 +679,16 @@ public class SearchingDB {
     private class FillSearchBufferAsync extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-            Log.d("SearchingDB", "Async task seeing if it should start.");
-            if(middleOfSearching) return null;
-            if(isDoneSearching) return null;
-            Log.d("SearchingDB", "Async task started!");
-            middleOfSearching = true;
-            while(true){
-                ArrayList results;
-                try {
-                    if(true) {//TODO check if it's hebrew
-                        results = searchDBheTexts();
-                    }else{
-                        ;//results = searchEnTexts(query,filterArray);
-                    }
-                    resultsLists.add(results);
-                    Log.d("SearchingDB", "ASYNC: currResultNumber:" + currResultNumber + "... resultsLists.size():" + resultsLists.size());
-                    if(results.size()==0){
-                        isDoneSearching = true;
-                        break;
-                    }
-                    if(isBufferFilled())
-                        break;
-                } catch (Exception e) {
-                    isDoneSearching = true;
-                    e.printStackTrace();
-                    GoogleTracker.sendException(e,"in fillSearchBuffer");
-                }
-            }
-            middleOfSearching = false;
-            return null;
+            return fillSearchBufferTask();
         }
 
         @Override
         protected void onPostExecute(String result) {}
     }
+
+
+    public static boolean hasSearchTable(){
+        return (Database.hasOfflineDB() && Database.getVersionInDB(false) >= 215);
+    }
+
 }
