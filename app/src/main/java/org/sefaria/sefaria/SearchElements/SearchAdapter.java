@@ -37,6 +37,7 @@ public class SearchAdapter extends ArrayAdapter<Text> {
 
     private List<Text> results;
     private Context context;
+    private Util.Lang langSearchedIn = Util.Lang.HE;
 
     public SearchAdapter(Context context, int resourceId, List<Text> results) {
         super(context, resourceId);
@@ -49,8 +50,13 @@ public class SearchAdapter extends ArrayAdapter<Text> {
         Text text = results.get(position);
         //Language is exclusively either Hebrew or Enlgihs, depending on which exists in the text
         Util.Lang lang;
-        if (text.getText(Util.Lang.EN).equals("")) lang = Util.Lang.HE;
-        else /*if (text.getText(Util.Lang.HE) == "")*/ lang = Util.Lang.EN;
+        if (text.getText(langSearchedIn).length() > 0 ){
+            lang = langSearchedIn;
+        } else if(text.getText(Util.Lang.HE).length() > 0 ){
+            lang = Util.Lang.HE;
+        } else /*if (text.getText(Util.Lang.EN)...)*/{
+            lang = Util.Lang.EN;
+        }
 
 
         if (view == null) {
@@ -85,5 +91,8 @@ public class SearchAdapter extends ArrayAdapter<Text> {
         notifyDataSetChanged();
     }
 
+    public void setLangSearchedIn(Util.Lang lang){
+        langSearchedIn = lang;
+    }
 
 }

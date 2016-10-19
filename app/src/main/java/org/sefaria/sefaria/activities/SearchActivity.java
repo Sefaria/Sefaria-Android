@@ -34,10 +34,13 @@ import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.SearchElements.SearchActionbar;
 import org.sefaria.sefaria.database.Book;
+import org.sefaria.sefaria.database.Downloader;
 import org.sefaria.sefaria.database.SearchAPI;
+import org.sefaria.sefaria.database.SearchingDB;
 import org.sefaria.sefaria.database.Text;
 import org.sefaria.sefaria.layouts.SefariaTextView;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,6 +60,8 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
     private AutoCompleteTextView autoCompleteTextView;
     private SearchFilterBox searchFilterBox;
     private int oldTheme = Settings.getTheme();
+
+    private SearchingDB searchingDB;
 
     private String numberOfResults = "";
     @Override
@@ -263,6 +268,8 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
         private boolean getFilters;
         private List<String> appliedFilters;
         private int pageNum;
+        private boolean usingOfflineSearch = false;
+
 
         public AsyncSearch(boolean getFilters, List<String> appliedFilters, int pageNum) {
             this.getFilters = getFilters;
@@ -273,22 +280,53 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            if(Downloader.getNetworkStatus() == Downloader.ConnectionType.NONE && SearchingDB.hasSearchTable()) {
+                if (pageNum != 0 && searchingDB == null) {
+                    Toast.makeText(SearchActivity.this, "Restarting search in offline mode", Toast.LENGTH_SHORT).show();
+                }
+                usingOfflineSearch = true;
+            }
+
             isLoadingSearch = true;
-            numResultsTV.setText(numberOfResults + " " + MyApp.getRString(R.string.loading));
+            if(usingOfflineSearch){
+                numResultsTV.setText("Using offline search." + " " + MyApp.getRString(R.string.loading));
+                getFilters = false;
+                Log.d("Searching","offline");
+            }else{
+                numResultsTV.setText(numberOfResults + " " + MyApp.getRString(R.string.loading));
+                Log.d("Searching","online");
+            }
+
             query = autoCompleteTextView.getText().toString();
+            adapter.setLangSearchedIn(Util.hasHebrew(query) ? Util.Lang.HE : Util.Lang.EN);
         }
 
         @Override
         protected SearchResultContainer doInBackground(Void... params) {
             APIError = false;
             try {
-                if (getFilters && (appliedFilters != null && appliedFilters.size() > 0)) {
+                if(usingOfflineSearch){
+                    try {
+                        if(searchingDB == null || pageNum == 0) {
+                            searchingDB = new SearchingDB(query, null, true);
+                        }
+                        List<Text> results = searchingDB.getResults();
+                        Log.d("search","results size:" + results.size());
+                        SearchResultContainer searchResultContainer = new SearchResultContainer(results,-1,null);
+                        return searchResultContainer;
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                        APIError = true;
+                        return null;
+                    }
+                }
+                else if (getFilters && (appliedFilters != null && appliedFilters.size() > 0)) {
                     SearchResultContainer getFilterResults = SearchAPI.search(query, getFilters, null,pageNum, PAGE_SIZE);
                     SearchResultContainer filteredResults = SearchAPI.search(query, false, appliedFilters,pageNum, PAGE_SIZE);
                     filteredResults.setAllFilters(getFilterResults.getAllFilters());
                     return  filteredResults;
                 } else {
-                    return SearchAPI.search(query, getFilters, appliedFilters,pageNum, PAGE_SIZE);
+                    return SearchAPI.search(query, getFilters, appliedFilters, pageNum, PAGE_SIZE);
                 }
 
             } catch (API.APIException e) {
@@ -318,7 +356,11 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
             if (getFilters) {
                 searchFilterBox.initFilters(resultContainer.getAllFilters());
             }
-            numResultsTV.setText(numberOfResults);
+            if(usingOfflineSearch){
+                numResultsTV.setText("Using offline search");
+            }else {
+                numResultsTV.setText(numberOfResults);
+            }
         }
     }
 
