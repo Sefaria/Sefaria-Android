@@ -30,6 +30,8 @@ public class SearchingDB {
     final private static int BITS_PER_PACKET = 24;
     final private static int PACKET_SIZE = 32;
     final private static int MAX_PACKET_COUNT = (int) Math.ceil(CHUNK_SIZE/BITS_PER_PACKET);
+    final private static int RETURN_RESULTS_SIZE = 6;
+    final private static int RETURN_RESULTS_LONG_TIME_SIZE = 3;
     private static final long WAITING_TIME = 2000; //2 seconds
 
 
@@ -154,7 +156,7 @@ public class SearchingDB {
 
     private static ArrayList<Integer> getSearchingChunks(String query) throws SQLException{
         SQLiteDatabase db = Database.getDB();
-        String [] words =  getWords(query);
+        String [] words =  getWords(query, Util.Lang.HE);
         ArrayList<Integer> list = new ArrayList<Integer>();
         String likeStatement = "_id LIKE ? ";
         String[] testWords;
@@ -216,10 +218,13 @@ public class SearchingDB {
         return tempArray.toArray(new String[tempArray.size()]);
     }
 
-    private static String [] getWords(String text){
+    private static String [] getWords(String text, Util.Lang lang){
         //String orgTetx = ""+ text;
         text = text.replaceAll("[\u0591-\u05C7\u05f3\u05f4\'\"]", ""); //all nikkudot and ", ' marks are removed
-        text = text.replaceAll("([^\\u05d0-\\u05ea_%])", " "); //anything not part of the hebrew set (or _ and % for special searching), will be removed
+        if(lang == Util.Lang.HE){
+            text = text.replaceAll("([^\\u05d0-\\u05ea_%])", " "); //anything not part of the hebrew set (or _ and % for special searching), will be removed
+        }
+
 
         String [] words = text.split(" ");
         ArrayList<Integer> badWords = null;
@@ -509,7 +514,7 @@ public class SearchingDB {
         try {
             SQLiteDatabase db = Database.getDB();
 
-            String [] words = getWords(query);
+            String [] words = getWords(query, Util.Lang.HE);
             Pattern [] patterns = new Pattern [words.length];
             for(int i = 0; i< patterns.length; i++){
                 patterns[i] = nikkudlessRegEx(words[i],true);
@@ -517,7 +522,7 @@ public class SearchingDB {
 
             Cursor cursor = null;
             for(int i=startingChunk+1; i < searchableTids.size();i++){
-                if(results.size() >= 6 || (results.size() >= 3  && System.currentTimeMillis() > startTime + WAITING_TIME)){
+                if(results.size() >= RETURN_RESULTS_SIZE || (results.size() >= RETURN_RESULTS_LONG_TIME_SIZE  && System.currentTimeMillis() > startTime + WAITING_TIME)){
                     return results;
                 }
 
@@ -564,43 +569,71 @@ public class SearchingDB {
         return results;
     }
 
-    /*
-    private ArrayList<Text> searchEnTexts(String word, String [] filterArray) {
+    private ArrayList<Text> searchPureText(Util.Lang lang){
+        Log.d("searching","pure_search");
+        ArrayList<Text> results = new ArrayList<>();
+        long startTime = System.currentTimeMillis();
+        try {
+            SQLiteDatabase db = Database.getDB();
 
-        Database dbHandler = Database.getInstance();
-        SQLiteDatabase db = dbHandler.getReadableDatabase();
-        int lastTID = currChunkIndex;
+            String [] words = getWords(query, lang);
+            Log.d("searching","words lentgth:" + words.length + "___" + query);
+            Pattern [] patterns = new Pattern [words.length];
+            for(int i = 0; i< patterns.length; i++){
+                patterns[i] = nikkudlessRegEx(words[i],true);
+                //patterns[i] = Pattern.compile(words[i]);
+                Log.d("searching","parttern:" + words[i] + "____" + patterns[i]);
+            }
 
-        ArrayList<Text> textList = new ArrayList<Text>();
+            String textType;
+            if(lang == Util.Lang.EN){
+                textType = "enTextCompress";
+            }else{
+                textType = "heTextCompress";
+            }
+            Cursor cursor = null;
+            if(currSearchIndex < 0){
+                currSearchIndex = 0;
+            }
+            while (true){
+                if(results.size() >= RETURN_RESULTS_SIZE || (results.size() >= RETURN_RESULTS_LONG_TIME_SIZE  && System.currentTimeMillis() > startTime + WAITING_TIME)){
+                    return results;
+                }
 
-        String [] bindValues =  new String[] {String.valueOf(lastTID), "%" + word  + "%"};
-        int limit = 20;
-        Cursor cursor = null;
-        if(filterArray.length != 0){
-            String sql = "SELECT * FROM Texts WHERE  _id > ? AND  enText LIKE ? AND bid in (SELECT B._id FROM Books B WHERE " +  makeFilterStatement(filterArray, "B.") +  " )";
-            sql += " LIMIT " + limit;
-            filterArray = convertfilterArray(filterArray);
-            cursor= db.rawQuery(sql, concat(bindValues,filterArray ));
+                String sql = "SELECT * " + " FROM Texts WHERE  ";
+                sql += "  _id >= " + CHUNK_SIZE*(currSearchIndex) + " AND _id < "  + CHUNK_SIZE*(++currSearchIndex) + " AND " + textType + " NOT NULL"; //used to <=
+                //Log.d("searching", "sql:" + sql);
+                cursor = db.rawQuery(sql, null);//filterArray
+                if (cursor.moveToFirst()) {
+                    do {
+                        Text text = new Text(cursor);
+                        String verse = text.getText(lang);
+                        for(int j=0; j<words.length;j++){
+                            Matcher m = patterns[j].matcher(verse);
+                            if(!m.find()) {
+                                break;
+                            }
+
+                            text.setText(addRedToFoundWord(m, verse, true, true), lang);
+                            if(j == words.length -1){
+                                results.add(text);
+                            }
+                        }
+                    }
+                    while (cursor.moveToNext());
+                }else{
+                    break;
+                }
+                cursor.close();
+            }
+        } catch (Exception e) {
+            GoogleTracker.sendException(e, "DB_search_pure");
         }
-        else{
-            cursor= db.query("Texts", null, " _id > ? AND  enText LIKE ? ",	bindValues, null, null, null, String.valueOf(limit));
-        }
 
-        //
-        // looping through all rows and adding to list
-        if (cursor != null && cursor.moveToFirst()) {
-            do {
-                textList.add(new Text(cursor));
-            } while (cursor.moveToNext());
-        }
-        if(textList.size() > 0)
-            currChunkIndex = textList.get(textList.size() -1).tid;
+        if (results.size() == 0) isDoneSearching = true;
 
-        findWordsInList(textList, word, true, true);
-
-        return textList;
+        return results;
     }
-    */
 
     public static List<Text> findOnPage(Node node, String term){
         List<Text> list;
@@ -621,10 +654,10 @@ public class SearchingDB {
         while(true){
             ArrayList<Text> results;
             try {
-                if(true) {//TODO check if it's hebrew
+                if(Util.hasHebrew(query)){
                     results = searchDBheTexts();
                 }else{
-                    ;//results = searchEnTexts(query,filterArray);
+                    results = searchPureText(Util.Lang.EN);
                 }
                 resultsLists.add(results);
                 Log.d("SearchingDB", "ASYNC: currResultNumber:" + currResultNumber + "... resultsLists.size():" + resultsLists.size());
