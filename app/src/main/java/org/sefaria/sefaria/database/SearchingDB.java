@@ -23,13 +23,13 @@ import org.sefaria.sefaria.Util;
 public class SearchingDB {
 
 
-    final static int CHUNK_SIZE = 500;
-    final static int VERSE_COUNT = 1000000;
-    final static int CHUNK_COUNT = VERSE_COUNT/CHUNK_SIZE;
-    final static int WORD_COUNT = 25000000;
-    final static int BITS_PER_PACKET = 24;
-    final static int PACKET_SIZE = 32;
-    final static int MAX_PACKET_COUNT = (int) Math.ceil(CHUNK_SIZE/BITS_PER_PACKET);
+    final private static int CHUNK_SIZE = 500;
+    final private static int VERSE_COUNT = 1000000;
+    final private static int CHUNK_COUNT = VERSE_COUNT/CHUNK_SIZE;
+    final private static int WORD_COUNT = 25000000;
+    final private static int BITS_PER_PACKET = 24;
+    final private static int PACKET_SIZE = 32;
+    final private static int MAX_PACKET_COUNT = (int) Math.ceil(CHUNK_SIZE/BITS_PER_PACKET);
     private static final long WAITING_TIME = 2000; //2 seconds
 
 
