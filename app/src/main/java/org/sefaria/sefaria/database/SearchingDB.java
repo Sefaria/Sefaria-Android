@@ -338,8 +338,8 @@ public class SearchingDB {
 
     private static final String FONT_RED_START = "<font color='#ff5566'>";
     private static final String FONT_RED_END = "</font>";
-    private static final String BIG_BOLD_START = "<big><b>";
-    private static final String BIG_BOLD_END = "</b></big>";
+    protected static final String BIG_BOLD_START = "<big><b>";
+    protected static final String BIG_BOLD_END = "</b></big>";
     private static String addRedToFoundWord(Matcher m, String orgText, boolean removeLongText, boolean useBold){
         final String addStart;
         final String addEnd;

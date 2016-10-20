@@ -45,8 +45,8 @@ public class SearchAPI {
                             "\"order\": {}" +
                             "}]," +
                         "\"highlight\": {" +
-                        "\"pre_tags\": [\"<big><b>\"]," +
-                        "\"post_tags\": [\"</b></big>\"]," +
+                        "\"pre_tags\": [\"" + SearchingDB.BIG_BOLD_START + "\"]," +
+                        "\"post_tags\": [\"" + SearchingDB.BIG_BOLD_END + "\"]," +
                         "\"fields\": {" +
                         "\"content\": {\"fragment_size\": 200}" +
                         "}" +
