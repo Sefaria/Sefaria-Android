@@ -256,11 +256,19 @@ public class SearchingDB {
 
 
     }
-    private static Pattern nikkudlessRegEx(String word, boolean wholeWord){
-        final String nikkuds = "[\u0591-\u05bd\u05bf-\u05C7\u05f3\u05f4\'\"]*";//all nukkids but - mark
+    private static Pattern nikkudlessRegEx(String word, boolean wholeWord, Util.Lang lang){
+        String nikkuds = "[\u0591-\u05bd\u05bf-\u05C7\u05f3\u05f4\'\"]*";//all nukkids but - mark
+        if(lang == Util.Lang.EN){
+            nikkuds = "";
+        }
         String regEx = "";
-        if(wholeWord)
-            regEx += "\\b\u05d5*" + nikkuds; //leading vavs is added
+        if(wholeWord) {
+            if(lang == Util.Lang.EN){
+                regEx += "\\b"; //leading vavs is added
+            }else {
+                regEx += "\\b\u05d5*" + nikkuds; //leading vavs is added
+            }
+        }
         String letter;
         for(int i = 0; i <word.length();i++){
             if(word.charAt(i) == '_')
@@ -297,7 +305,7 @@ public class SearchingDB {
         List<Text> foundItems = new ArrayList<>();
         Text text = null;
 
-        Pattern hePattern = nikkudlessRegEx(word,false);
+        Pattern hePattern = nikkudlessRegEx(word,false, Util.Lang.HE);
         Pattern enPattern;
         try{
             if(enDBOverride)
@@ -517,7 +525,7 @@ public class SearchingDB {
             String [] words = getWords(query, Util.Lang.HE);
             Pattern [] patterns = new Pattern [words.length];
             for(int i = 0; i< patterns.length; i++){
-                patterns[i] = nikkudlessRegEx(words[i],true);
+                patterns[i] = nikkudlessRegEx(words[i],true, Util.Lang.HE);
             }
 
             Cursor cursor = null;
@@ -580,7 +588,7 @@ public class SearchingDB {
             Log.d("searching","words lentgth:" + words.length + "___" + query);
             Pattern [] patterns = new Pattern [words.length];
             for(int i = 0; i< patterns.length; i++){
-                patterns[i] = nikkudlessRegEx(words[i],true);
+                patterns[i] = nikkudlessRegEx(words[i], true, lang);
                 //patterns[i] = Pattern.compile(words[i]);
                 Log.d("searching","parttern:" + words[i] + "____" + patterns[i]);
             }
