@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
+import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.activities.SepTextActivity;
 import org.sefaria.sefaria.database.Text;
@@ -156,13 +157,18 @@ public class SepTextAdapter extends ArrayAdapter<Text> {
 
                 //heTv.setTextColor(Color.parseColor("#000000"));
                 heTv.setFont(Util.Lang.HE,true, sepTextActivity.getTextSize());
-                if(segment.displayNum)
-                    heNum.setText("" + segment.levels[0]);
-                else
+                Util.Lang menuLang = Settings.getMenuLang();
+                if(segment.displayNum) {
+                    if(menuLang == Util.Lang.HE) {
+                        heNum.setText(Util.int2heb(segment.levels[0]));
+                    }else { // if == EN
+                        heNum.setText("" + segment.levels[0]);
+                    }
+                } else
                     heNum.setText("");
 
                 heNum.setAlpha(1);
-                heNum.setFont(Util.Lang.EN,false);
+                heNum.setFont(menuLang,false);
                 enNum.setText(Util.VERSE_BULLET);
                 enNum.setAlpha(linkAlpha);
                 enNum.setFont(Util.Lang.HE, false);
@@ -201,7 +207,7 @@ public class SepTextAdapter extends ArrayAdapter<Text> {
                     enNum.setText(Util.VERSE_BULLET);
                     enNum.setAlpha(linkAlpha);
                     enNum.setFont(Util.Lang.HE, false);
-                    if(segment.displayNum)
+                    if(segment.displayNum) //todo maybe this should be based on menuLang like in bilang mode
                         heNum.setText(Util.int2heb(segment.levels[0]));
                     else
                         heNum.setText("");
@@ -211,7 +217,7 @@ public class SepTextAdapter extends ArrayAdapter<Text> {
 
                 } else /*if (lang == Util.Lang.EN)*/ {
                     tv.setText(Html.fromHtml(Util.getBidiString(monoText,lang)));
-                    if(segment.displayNum)
+                    if(segment.displayNum) //todo maybe this should be based on menuLang like in bilang mode
                         enNum.setText(""+segment.levels[0]);
                     else
                         enNum.setText("");
