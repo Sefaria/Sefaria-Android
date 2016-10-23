@@ -3,10 +3,13 @@ package org.sefaria.sefaria.TOCElements;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.os.Build;
 import android.support.v7.widget.GridLayout;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -441,6 +445,10 @@ public class TOCGrid extends LinearLayout {
             versionsDropdown.setVisibility(View.GONE);
             return;
         }
+
+        if(Build.VERSION.SDK_INT >= 21) {
+            versionsDropdown.setBackground(MyApp.getContext().getDrawable(R.drawable.alternate_version_dropdown_spinner));
+        }
         try {
             // Alternate versions
             JSONObject textData = new JSONObject(node.getTextFromAPIData(API.TimeoutType.SHORT));
@@ -463,7 +471,14 @@ public class TOCGrid extends LinearLayout {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     if (position == 0) {
+                        if(Build.VERSION.SDK_INT >= 23) {
+                            TypedValue typedValue = new TypedValue();
+                            Resources.Theme theme = context.getTheme();
+                            theme.resolveAttribute(R.attr.text_color_english, typedValue, true);
+                            ((TextView) parent.getChildAt(0)).setTextColor(typedValue.data);//set color of button item
+                        }
                         return;
+
                     }
                     Toast.makeText(context, "Version: " + versionList.get(position).getPrettyString(), Toast.LENGTH_SHORT).show();
                     try {
