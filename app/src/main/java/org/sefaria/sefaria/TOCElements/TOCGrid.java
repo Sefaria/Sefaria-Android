@@ -69,7 +69,7 @@ public class TOCGrid extends LinearLayout {
 
 
 
-    public TOCGrid(Context context,Book book, List<Node> tocRoots, boolean limitGridSize, Util.Lang lang, String pathDefiningNode) {
+    public TOCGrid(Context context, Book book, List<Node> tocRoots, boolean limitGridSize, Util.Lang lang, String pathDefiningNode) {
         super(context);
         this.tocNodesRoots = tocRoots;
         this.context = context;
@@ -94,7 +94,7 @@ public class TOCGrid extends LinearLayout {
         this.overflowButtonList = new ArrayList<>();
         this.TocTabList = new ArrayList<>();
         this.hasTabs = true;//lets assume for now... either with enough roots or with commentary
-
+        int positionNum = 0;
 
         bookTitleView = new SefariaTextView(context);
         bookTitleView.setFont(lang, true, 25);
@@ -104,7 +104,7 @@ public class TOCGrid extends LinearLayout {
         bookTitleView.setGravity(Gravity.CENTER);
         final int bookTitlepaddding =10;
         bookTitleView.setPadding(0, 2*bookTitlepaddding, 0, bookTitlepaddding/2);
-        this.addView(bookTitleView, 0);
+        this.addView(bookTitleView, positionNum++);
 
         AutoResizeTextView bookCategoryView = new AutoResizeTextView(context);
         bookCategoryView.setTextColor(getResources().getColor(R.color.toc_curr_section_title));
@@ -114,7 +114,7 @@ public class TOCGrid extends LinearLayout {
         final int padding = 6;
         bookCategoryView.setPadding(0, 0, 0, padding);
         bookCategoryView.setGravity(Gravity.CENTER);
-        this.addView(bookCategoryView, 1);
+        this.addView(bookCategoryView, positionNum++);
 
 
 
@@ -123,14 +123,17 @@ public class TOCGrid extends LinearLayout {
         currSectionTitleView.setTextColor(getResources().getColor(R.color.toc_curr_chap));
         currSectionTitleView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         currSectionTitleView.setGravity(Gravity.CENTER);
-        this.addView(currSectionTitleView, 2);
+        this.addView(currSectionTitleView, positionNum++);
 
+        View dummySpace = new View(context);
+        dummySpace.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,40));
+        this.addView(dummySpace, positionNum++);
 
         //Alt versions dropdown menu
         versionsDropdown = new Spinner(context,Spinner.MODE_DROPDOWN);
-        //versionsDropdown.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        //versionsDropdown.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         //versionsDropdown.setGravity(Gravity.CENTER);
-        this.addView(versionsDropdown,3);
+        this.addView(versionsDropdown, positionNum++);
 
 
         int defaultTab = setCurrSectionText();
@@ -141,16 +144,16 @@ public class TOCGrid extends LinearLayout {
         lp.setMargins(0,Math.round(Util.dpToPixels(context, 20)), 0,Math.round(Util.dpToPixels(context, 20)));
         divider.setLayoutParams(lp);
         divider.setBackgroundColor(Color.parseColor("#CCCCCC"));
-        this.addView(divider,4);
+        this.addView(divider, positionNum++);
 
         tabRoot = makeTabSections(tocNodesRoots);
-        this.addView(tabRoot,5);//It's the 3nd view starting with bookTitle and CurrSectionName
+        this.addView(tabRoot, positionNum++);//It's the 3nd view starting with bookTitle and CurrSectionName
 
         this.gridRoot = new LinearLayout(context);
         gridRoot.setOrientation(LinearLayout.VERTICAL);
         gridRoot.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 
-        this.addView(gridRoot, 6);
+        this.addView(gridRoot, positionNum++);
 
         TocTabList.get(defaultTab).setActive(true);//set it true, such that the setLang function will start the right tab
 
