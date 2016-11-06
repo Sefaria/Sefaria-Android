@@ -121,10 +121,14 @@ public class LinkFilter {
     public static List<LinkFilter> getList(LinkFilter lc) {
         List<LinkFilter> linkList = new ArrayList<>();
 
-        linkList.add(lc);
+        if(lc.getDepthType() != DEPTH_TYPE.ALL)
+            linkList.add(lc);
         for (int i = 0; i < lc.getChildren().size(); i++) {
             linkList.addAll(getList(lc.children.get(i)));
         }
+        if(lc.getDepthType() == DEPTH_TYPE.ALL)
+            linkList.add(lc);
+
         return linkList;
     }
 
