@@ -84,7 +84,7 @@ public class TOCGrid extends LinearLayout {
     private void init() {
         this.setOrientation(LinearLayout.VERTICAL);
 
-        int sidePadding = Math.round(Util.dpToPixels(context, context.getResources().getDimension(R.dimen.main_margin_lr)));
+        int sidePadding = Math.round(Util.dpToPixels(context.getResources().getDimension(R.dimen.main_margin_lr)));
         this.setPadding(sidePadding/2, 10, sidePadding/2, 100);
         this.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
         this.flippedForHe = false;
@@ -126,7 +126,7 @@ public class TOCGrid extends LinearLayout {
         this.addView(currSectionTitleView, positionNum++);
 
         View dummySpace = new View(context);
-        dummySpace.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,40));
+        dummySpace.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,Math.round(Util.dpToPixels(20))));
         this.addView(dummySpace, positionNum++);
 
         //Alt versions dropdown menu
@@ -141,7 +141,7 @@ public class TOCGrid extends LinearLayout {
         //ADD GREY DIVIDER
         View divider = new View(context);
         LinearLayout.LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, 1);
-        lp.setMargins(0,Math.round(Util.dpToPixels(context, 20)), 0,Math.round(Util.dpToPixels(context, 20)));
+        lp.setMargins(0,Math.round(Util.dpToPixels(30)), 0,Math.round(Util.dpToPixels(20)));
         divider.setLayoutParams(lp);
         divider.setBackgroundColor(Color.parseColor("#CCCCCC"));
         this.addView(divider, positionNum++);
