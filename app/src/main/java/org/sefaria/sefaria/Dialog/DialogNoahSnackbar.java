@@ -32,7 +32,9 @@ public class DialogNoahSnackbar extends LinearLayout {
     }
 
     public static void dismissCurrentDialog(ViewGroup rootView) {
-        rootView.removeAllViews();
+        if (rootView != null) {
+            rootView.removeAllViews();
+        }
     }
 
     public static void dismissCurrentDialog() {
