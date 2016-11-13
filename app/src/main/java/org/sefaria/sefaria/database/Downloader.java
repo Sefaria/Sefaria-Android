@@ -303,6 +303,11 @@ public class Downloader {
         }
     }
 
+    public static boolean getHasInternet()
+    {
+        return (getNetworkStatus() != ConnectionType.NONE);
+    }
+
     protected static void unregisterDownloader(Context context) {
         if (receiverRegistered && registeredContext.equals(context) && downloadIdList.size() == 0) {
             context.unregisterReceiver(downloadCompleteReceiver);

@@ -1,5 +1,7 @@
 package org.sefaria.sefaria.database;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.BitSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -7,8 +9,12 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.util.Pair;
@@ -17,23 +23,14 @@ import android.widget.Toast;
 import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
-import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
 
 public class SearchingDB {
 
 
-    final private static int CHUNK_SIZE = 500;
-    final private static int VERSE_COUNT = 1000000;
-    final private static int CHUNK_COUNT = VERSE_COUNT/CHUNK_SIZE;
-    final private static int WORD_COUNT = 25000000;
+    private static int CHUNK_SIZE = Database.getDBSetting("blockSize",false);
     final private static int BITS_PER_PACKET = 24;
-    final private static int PACKET_SIZE = 32;
-    final private static int MAX_PACKET_COUNT = (int) Math.ceil(CHUNK_SIZE/BITS_PER_PACKET);
-    final private static int RETURN_RESULTS_SIZE = 6;
-    final private static int RETURN_RESULTS_LONG_TIME_SIZE = 3;
     private static final long WAITING_TIME = 2000; //2 seconds
-
 
 
     private int currSearchIndex = -1;
@@ -42,27 +39,37 @@ public class SearchingDB {
     private boolean middleOfSearching = false;
     private int currResultNumber = 0;
 
-    private static int APIStart = 0;
-
-    private LinkFilter linkFilter;
     private String query;
     private ArrayList<ArrayList<Text>> resultsLists;
+
+    //changed for testing
+    private boolean usePureSearchEvenHe = false;
+    private int returnResultsSize = 6;
+    private int returnResultsLongTimeSize = 3;
+
 
     /**
      * This is used for searching everything, a particular category, or book.
      * (Book will be implemented differently in the future).
      *
      * @param query the word to search in Hebrew or English (currently only supporting Hebrew).
-     * @param linkFilter the enTitle of the category or book name that you're searching
-     * @param alsoSearchCommentary used for when linkFilter.depth_type == CAT and you want to search for the commentary in addition to the category (like Tanach and the Commentaries on Tanach).
      * @throws SQLException
      */
-    public SearchingDB(String query, LinkFilter linkFilter, boolean alsoSearchCommentary) throws SQLException {
-        this.linkFilter = linkFilter;
+    public SearchingDB(String query,List<String> filterList, boolean usePureSearchEvenHe, int returnResultsSize, int returnResultsLongTimeSize) throws SQLException {
+        init(query, filterList, usePureSearchEvenHe, returnResultsSize, returnResultsLongTimeSize);
+    }
+
+    public SearchingDB(String query,List<String> filterList) throws SQLException {
+        init(query, filterList, false, returnResultsSize, returnResultsLongTimeSize);
+    }
+
+    private void init(String query, List<String> filterList, boolean usePureSearchEvenHe, int returnResultsSize, int returnResultsLongTimeSize) throws SQLException {
         this.query = query;
-        searchableTids = getSearchableTids(linkFilter,alsoSearchCommentary);
+        searchableTids = getSearchableTids(filterList, query);
         resultsLists = new ArrayList<>();
-        fillSearchBuffer();
+        this.usePureSearchEvenHe = usePureSearchEvenHe;
+        this.returnResultsSize = returnResultsSize;
+        this.returnResultsLongTimeSize = returnResultsLongTimeSize;
     }
 
     public boolean isDoneSearching(){ return isDoneSearching; }
@@ -79,12 +86,28 @@ public class SearchingDB {
         return bytes;
     }
 
-
+    private static ArrayList<Integer> bytesToNums(byte [] bytes) {
+        ArrayList<Integer> chunkList = new ArrayList<>();
+        int total = 0;
+        for(int i = 0; i< bytes.length;i++){
+            int rem = i % 4;
+            if(rem == 0 && i > 0){
+                chunkList.add(total);
+                total = 0;
+            }
+            int num = bytes[i] & 0xff;
+            total +=  num << (8*(3-rem));
+        }
+        return chunkList;
+    }
 
     private static ArrayList<Integer> JHpacketToNums (byte [] bytes) {
-        ArrayList<Integer> chunkList = new ArrayList<Integer>();
+        ArrayList<Integer> chunkList = new ArrayList<>();
         for(int i = 0;i< bytes.length/4;i++){
-            int a = Integer.valueOf(bytes[i*4])*BITS_PER_PACKET;
+            int a = (Integer.valueOf(bytes[i*4]) & 0xff)*BITS_PER_PACKET; //0xff should remove the negative from byte
+            if(a < 0){
+                Log.e("searching", "bad byte ocnvertion..");
+            }
             int bitNum = 0;
             for(int j = 3; j >=1;j--){
                 byte b = bytes[i*4 +j];
@@ -157,7 +180,7 @@ public class SearchingDB {
     private static ArrayList<Integer> getSearchingChunks(String query) throws SQLException{
         SQLiteDatabase db = Database.getDB();
         String [] words =  getWords(query, Util.Lang.HE);
-        ArrayList<Integer> list = new ArrayList<Integer>();
+        ArrayList<Integer> list = new ArrayList<>();
         String likeStatement = "_id LIKE ? ";
         String[] testWords;
         for(int i =0; i< words.length;i++){
@@ -168,17 +191,29 @@ public class SearchingDB {
             }
             else
                 testWords = new String[] {words[i] };
-            Cursor cursor = db.query("Searching", new String[] {"chunks"},likeStatement,
+            final boolean USE_FULL_INDEX = true;
+            String tableName = "Searching";
+            if(USE_FULL_INDEX){
+                CHUNK_SIZE = 1;
+                tableName = "SearchingFull";
+            }
+            Cursor cursor = db.query(tableName, new String[] {"chunks"}, likeStatement,
                     testWords, null, null, null, null);
             byte [] bytes = null;
             if(cursor.moveToFirst()){
                 do{
                     bytes = cursor.getBlob(0);
+                    ArrayList<Integer> list1;
+                    if(USE_FULL_INDEX){
+                        list1 = bytesToNums(bytes);
+                    }else{
+                        list1 = JHpacketToNums(bytes);
+                    }
                     if(unionlist == null){
-                        unionlist = JHpacketToNums(bytes);
+                        unionlist = list1;
                     }
                     else{
-                        unionlist = findUnion(unionlist,JHpacketToNums(bytes));
+                        unionlist = findUnion(unionlist, list1);
                     }
 
                 }while (cursor.moveToNext());
@@ -203,7 +238,7 @@ public class SearchingDB {
     private static String [] removeElements(String [] array, ArrayList<Integer> badWords){
         if(badWords == null) // no need to do anything
             return array;
-        ArrayList<String> tempArray = new ArrayList<String>();
+        ArrayList<String> tempArray = new ArrayList<>();
         boolean copyEl = true;
         for(int i = 0; i < array.length; i++){
             for(int j = 0; j< badWords.size(); j++){
@@ -414,6 +449,7 @@ public class SearchingDB {
     }
 
 
+    /*
     private ArrayList<Pair<Integer,Integer>> getSearchableTids(LinkFilter linkFilter, boolean alsoSearchCommentary) throws SQLException {
         //chunklist is [) (inclusive, exclusive), and tid is (now) also [) (inclusive,exclusive)
         ArrayList<Pair<Integer,Integer>> searchableTids = new ArrayList<>();
@@ -451,37 +487,67 @@ public class SearchingDB {
         }
         Log.d("bid", "finished searchableTids");
         return searchableTids;
+    }*/
+
+
+    private ArrayList<Pair<Integer,Integer>> getSearchableTids(List<String> filterList, String query) throws SQLException {
+        //chunklist is [) (inclusive, exclusive), and tid is (now) also [) (inclusive,exclusive)
+        Log.d("searching","getsearchableTids started");
+        ArrayList<Pair<Integer,Integer>> searchableTids = new ArrayList<>();
+        ArrayList<Integer> searchableChunks = getSearchingChunks(query);
+        if(searchableChunks.size() == 0) return searchableTids;
+
+        if(filterList == null || filterList.size() == 0 ){
+            for(int i=0;i<searchableChunks.size();i++) {
+                searchableTids.add(
+                        new Pair<>(CHUNK_SIZE*searchableChunks.get(i),CHUNK_SIZE *(searchableChunks.get(i)+1))
+                );
+            }
+            Log.d("searching","getsearchableTid finished");
+            return searchableTids;
+        }else {
+            ArrayList<Pair<Integer, Integer>> tidMinMax = createFilteredTidMinMaxList(filterList);
+            int tidIndex = 0;
+            for (int i = 0; i < searchableChunks.size(); i++) {
+                int chunkStart = CHUNK_SIZE * (searchableChunks.get(i));
+                int chunkEnd = chunkStart + CHUNK_SIZE - 1;//now both lists are inclusive
+                while (chunkStart > tidMinMax.get(tidIndex).second) {
+                    tidIndex++;
+                    if (tidIndex >= tidMinMax.size()) {
+                        Log.d("bid", "finished searchableTidLoc");
+                        return searchableTids;
+                    }
+                }
+                //chunkStart <= tidMinMax.get(tidIndex).second must be true
+                if (chunkEnd >= tidMinMax.get(tidIndex).first) {
+                    searchableTids.add(
+                            new Pair<>(Math.max(chunkStart, tidMinMax.get(tidIndex).first), Math.min(chunkEnd, tidMinMax.get(tidIndex).second) + 1)
+                    );
+                } else
+                    continue;
+            }
+            Log.d("searching","getsearchableTids finished");
+            return searchableTids;
+        }
     }
 
 
-    private static ArrayList<Pair<Integer,Integer>> createFilteredTidMinMaxList(LinkFilter linkFilter, boolean alsoSearchCommentary){
+    private static ArrayList<Pair<Integer,Integer>> createFilteredTidMinMaxList(List<String> filterList){
+        StringBuilder likeStatement = new StringBuilder();
+        String [] filterArray = new String [filterList.size()];
+
+        for(int i = 0; i < filterList.size(); ++i){
+            likeStatement.append( " path LIKE ? OR ");
+            filterArray[i] = filterList.get(i) + "%";
+        }
+        likeStatement.append(" 0=1");
+        return createFilteredTidMinMaxList(likeStatement.toString(), filterArray);
+    }
+
+    private static ArrayList<Pair<Integer,Integer>> createFilteredTidMinMaxList(String likeStatement, String [] filterArray){
         SQLiteDatabase db = Database.getDB();
         ArrayList<Pair<Integer,Integer>> tidMinMax = new ArrayList<>();
 
-        String likeStatement;
-        String [] filterArray;
-        if (linkFilter == null || linkFilter.depth_type == LinkFilter.DEPTH_TYPE.ALL) {
-            Log.e("SearchingDB", "This function shouldn't have been called if your looking for everything");
-            likeStatement = " 1=1 ";
-            filterArray = new String[0];
-        }else{
-            if(linkFilter.depth_type == LinkFilter.DEPTH_TYPE.CAT) {
-                //TODO make Mishneh Torah (which is a subcategory) work
-                if(alsoSearchCommentary){
-                    likeStatement = " categories LIKE ? OR ? ";
-                    filterArray = new String[]{
-                            "[\"" + linkFilter.enTitle + "\"%",
-                            "[\"Commentary\",\"" + linkFilter.enTitle + "\"%"
-                    };
-                }else{
-                    likeStatement = " categories LIKE ? ";
-                    filterArray = new String[]{"[\"" + linkFilter.enTitle + "\"%"};
-                }
-            }else{ // if(linkFilter.depth_type == LinkFilter.DEPTH_TYPE.BOOK) {
-                likeStatement = " title LIKE ? ";
-                filterArray = new String[]{linkFilter.enTitle};
-            }
-        }
         String bookSQL = "Select minTid, maxTid FROM Books WHERE " +
                 likeStatement + " ORDER BY _id";
         Cursor cursorB = db.rawQuery(bookSQL, filterArray);
@@ -511,11 +577,81 @@ public class SearchingDB {
         return tidMinMax;
     }
 
-    private static final int SEARCH_BUFFER_SIZE = 1;
+    private static ArrayList<Pair<Integer,Integer>> createFilteredTidMinMaxList(LinkFilter linkFilter, boolean alsoSearchCommentary){
+        String likeStatement;
+        String [] filterArray;
+        if (linkFilter == null || linkFilter.depth_type == LinkFilter.DEPTH_TYPE.ALL) {
+            Log.e("SearchingDB", "This function shouldn't have been called if your looking for everything");
+            likeStatement = " 1=1 ";
+            filterArray = new String[0];
+        }else{
+            if(linkFilter.depth_type == LinkFilter.DEPTH_TYPE.CAT) {
+                //TODO make Mishneh Torah (which is a subcategory) work
+                if(alsoSearchCommentary){
+                    likeStatement = " categories LIKE ? OR ? ";
+                    filterArray = new String[]{
+                            "[\"" + linkFilter.enTitle + "\"%",
+                            "[\"Commentary\",\"" + linkFilter.enTitle + "\"%"
+                    };
+                }else{
+                    likeStatement = " categories LIKE ? ";
+                    filterArray = new String[]{"[\"" + linkFilter.enTitle + "\"%"};
+                }
+            }else{ // if(linkFilter.depth_type == LinkFilter.DEPTH_TYPE.BOOK) {
+                likeStatement = " title LIKE ? ";
+                filterArray = new String[]{linkFilter.enTitle};
+            }
+        }
+        return createFilteredTidMinMaxList(likeStatement, filterArray);
+    }
 
+    boolean didFullIndex = false;
+    private ArrayList<Text> searchDBheTextsFullIndex() {
+        Log.d("Searching", "searchDBheTextsFullIndex started");
+        ArrayList<Text> results = new ArrayList<>();
+        if(didFullIndex){
+            isDoneSearching = true;
+            return results;
+        }
+        try {
+            SQLiteDatabase db = Database.getDB();
 
+            String[] words = getWords(query, Util.Lang.HE);
+            Pattern[] patterns = new Pattern[words.length];
+            for (int i = 0; i < patterns.length; i++) {
+                patterns[i] = nikkudlessRegEx(words[i], true, Util.Lang.HE);
+            }
+
+            Cursor cursor = null;
+            String sql = "SELECT * " +
+                    "FROM Texts WHERE  ";
+            sql += "  _id in (";
+            StringBuilder tids = new StringBuilder();
+            tids.append(searchableTids.get(0));
+            for(int i = 1; i< searchableTids.size(); i++) {
+                tids.append("," + searchableTids.get(i).first);
+            }
+            sql += tids.toString() + ")";
+            cursor = db.rawQuery(sql, null);//filterArray
+            if (cursor.moveToFirst()) {
+                do {
+                    Text text = new Text(cursor);
+                    results.add(text);
+                }while (cursor.moveToNext());
+            }
+        }catch (Exception e){
+
+        }
+        didFullIndex = true;
+        Log.d("Searching", "searchDBheTextsFullIndex finished");
+        return results;
+    }
 
     private ArrayList<Text> searchDBheTexts() {
+        if(CHUNK_SIZE == 1){
+            return  searchDBheTextsFullIndex();
+        }
+        Log.d("Searching", "searchDBheTextsFullIndex NOT run");
         int startingChunk = currSearchIndex;
         ArrayList<Text> results = new ArrayList<>();
         long startTime = System.currentTimeMillis();
@@ -530,7 +666,7 @@ public class SearchingDB {
 
             Cursor cursor = null;
             for(int i=startingChunk+1; i < searchableTids.size();i++){
-                if(results.size() >= RETURN_RESULTS_SIZE || (results.size() >= RETURN_RESULTS_LONG_TIME_SIZE  && System.currentTimeMillis() > startTime + WAITING_TIME)){
+                if(shouldReturnResults(results.size(),startTime)){
                     return results;
                 }
 
@@ -577,20 +713,23 @@ public class SearchingDB {
         return results;
     }
 
+    private boolean shouldReturnResults(int resultsSize, long startTime){
+        return (resultsSize >= returnResultsLongTimeSize || (resultsSize >= returnResultsLongTimeSize  && System.currentTimeMillis() > startTime + WAITING_TIME));
+    }
+
     private ArrayList<Text> searchPureText(Util.Lang lang){
         Log.d("searching","pure_search");
         ArrayList<Text> results = new ArrayList<>();
         long startTime = System.currentTimeMillis();
+        int maxTid = -1;
         try {
             SQLiteDatabase db = Database.getDB();
 
             String [] words = getWords(query, lang);
-            Log.d("searching","words lentgth:" + words.length + "___" + query);
+            Log.d("searching","words length:" + words.length + "___" + query);
             Pattern [] patterns = new Pattern [words.length];
             for(int i = 0; i< patterns.length; i++){
                 patterns[i] = nikkudlessRegEx(words[i], true, lang);
-                //patterns[i] = Pattern.compile(words[i]);
-                Log.d("searching","parttern:" + words[i] + "____" + patterns[i]);
             }
 
             String textType;
@@ -603,11 +742,7 @@ public class SearchingDB {
             if(currSearchIndex < 0){
                 currSearchIndex = 0;
             }
-            while (true){
-                if(results.size() >= RETURN_RESULTS_SIZE || (results.size() >= RETURN_RESULTS_LONG_TIME_SIZE  && System.currentTimeMillis() > startTime + WAITING_TIME)){
-                    return results;
-                }
-
+            while (!shouldReturnResults(results.size(),startTime)){
                 String sql = "SELECT * " + " FROM Texts WHERE  ";
                 sql += "  _id >= " + CHUNK_SIZE*(currSearchIndex) + " AND _id < "  + CHUNK_SIZE*(++currSearchIndex) + " AND " + textType + " NOT NULL"; //used to <=
                 //Log.d("searching", "sql:" + sql);
@@ -630,7 +765,18 @@ public class SearchingDB {
                     }
                     while (cursor.moveToNext());
                 }else{
-                    break;
+                    if(maxTid == -1){
+                        sql = "SELECT MAX(_id) " + " FROM Texts";
+                        Cursor cursor2 = db.rawQuery(sql, null);//filterArray
+                        if (cursor2.moveToFirst()) {
+                            maxTid = cursor2.getInt(0);
+                        }
+                        cursor2.close();
+                    }
+                    if(maxTid < CHUNK_SIZE*(currSearchIndex)){
+                        cursor.close();
+                        break;
+                    }
                 }
                 cursor.close();
             }
@@ -653,22 +799,56 @@ public class SearchingDB {
         return list;
     }
 
+
+
+
+
+    /**
+     *  waits (in spin loop) until there is data to send. It will also tell a Async task to refill the search buffer if it's within it's limits
+     * @return the next batch of search results
+     */
+    public ArrayList<Text> getResults(){
+        while(true){
+            Log.d("SearchingDB", "getResults: currResultNumber:" + currResultNumber + "... resultsLists.size():"+ resultsLists.size());
+            if (isDoneSearching && currResultNumber >= resultsLists.size()) {
+                Log.d("SearchingDB", "getResults: done searching");
+                return new ArrayList<>(); // this means we got nothing else
+            }
+            else if(isBufferFilled()) {
+                return resultsLists.get(currResultNumber++);
+            }else if(middleOfSearching) { //this will happen with background task trying to fill it up
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                continue; //this is why there's a while loop
+            }else{
+                Log.d("SearchingDB", "filing buffer");
+                fillSearchBuffer(false);
+                return resultsLists.get(currResultNumber++);
+            }
+        }
+    }
+
     private String fillSearchBufferTask(){
-        Log.d("SearchingDB", "Async task seeing if it should start... not async");
         if(middleOfSearching) return null;
         if(isDoneSearching) return null;
-        Log.d("SearchingDB", "Async task started!.. not async");
         middleOfSearching = true;
         while(true){
             ArrayList<Text> results;
             try {
                 if(Util.hasHebrew(query)){
-                    results = searchDBheTexts();
+                    if(!usePureSearchEvenHe) {
+                        results = searchDBheTexts();
+                    }else{
+                        results = searchPureText(Util.Lang.HE);
+                    }
                 }else{
                     results = searchPureText(Util.Lang.EN);
                 }
                 resultsLists.add(results);
-                Log.d("SearchingDB", "ASYNC: currResultNumber:" + currResultNumber + "... resultsLists.size():" + resultsLists.size());
+                Log.d("SearchingDB", "fillSearchBufferTask: currResultNumber:" + currResultNumber + "... resultsLists.size():" + resultsLists.size());
                 if(results.size()==0){
                     isDoneSearching = true;
                     break;
@@ -684,37 +864,15 @@ public class SearchingDB {
         middleOfSearching = false;
         return null;
     }
-    private void fillSearchBuffer(){
-        fillSearchBufferTask();
-        //this.new FillSearchBufferAsync().execute();
+    private void fillSearchBuffer(boolean async){
+        if(!async)
+            fillSearchBufferTask();
+        else
+            this.new FillSearchBufferAsync().execute();
     }
 
     private boolean isBufferFilled(){
-        return (resultsLists.size() > currResultNumber + SEARCH_BUFFER_SIZE);
-    }
-
-
-
-    /**
-     *  waits (in spin loop) until there is data to send. It will also tell a Async task to refill the search buffer if it's within it's limits
-     * @return the next batch of search results
-     */
-    public ArrayList<Text> getResults(){
-        while(true) {
-            Log.d("SearchingDB", "currResultNumber:" + currResultNumber + "... resultsLists.size():"+ resultsLists.size());
-            if (currResultNumber < resultsLists.size()) {
-                if(!isBufferFilled())
-                    fillSearchBuffer();
-                return resultsLists.get(currResultNumber++);
-            } else if (isDoneSearching && currResultNumber >= resultsLists.size()) {
-                return new ArrayList<>();
-            }
-            try {
-                Thread.sleep(50);
-            } catch (InterruptedException e) {
-                return new ArrayList<>();
-            }
-        }
+        return (resultsLists.size() > currResultNumber);
     }
 
     private class FillSearchBufferAsync extends AsyncTask<String, Void, String> {
@@ -722,14 +880,74 @@ public class SearchingDB {
         protected String doInBackground(String... params) {
             return fillSearchBufferTask();
         }
-
         @Override
         protected void onPostExecute(String result) {}
     }
-
-
     public static boolean hasSearchTable(){
-        return (Database.hasOfflineDB() && Database.getVersionInDB(false) >= 215);
+        return (Database.hasOfflineDB() && CHUNK_SIZE != Database.BAD_SETTING_GET);
     }
+
+
+
+    public static class AsyncRunTests extends AsyncTask<Void,Void,String> {
+
+        private Context context;
+        public AsyncRunTests(Context context){
+            this.context = context;
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+                String [] queries = new String[] {"שאחיך"};//{"הספרא"}; //{ "ברא"}; // {"ברא", "את", "גדחכשג"};
+            StringBuilder testingResults = new StringBuilder();
+            final int RETURN_RESULTS_REG = 6;
+            final int LARGE_INT = 1000000000;
+            int [] returnResultTimes = {LARGE_INT};//, RETURN_RESULTS_REG};
+            boolean [] usePureNoIndexSearches = {false};//, true};
+            for(String query: queries){
+                for(boolean usePureNoIndexSearch : usePureNoIndexSearches) {
+                    for(int returnResultTime : returnResultTimes) {
+                        long startTime = System.currentTimeMillis();
+                        SearchingDB searchingDB = null;
+                        try {
+                            searchingDB = new SearchingDB(query, null, usePureNoIndexSearch, returnResultTime, returnResultTime);
+                            List<Text> results = searchingDB.getResults();
+                            long totalTime = System.currentTimeMillis() - startTime;
+                            String timing = " (Q: " + query + ") " +
+                                    "[" + (searchingDB.usePureSearchEvenHe ? "NoIndex" : "compressedIndex")
+                                    + (returnResultTime == LARGE_INT ? ", ReturnAll" : ", First" + returnResultTime)
+                                    + "]"
+                                    + " {results: " + results.size() + ". took: "
+                                    + totalTime + "ms."
+                                    + " blockIndex:" + (searchingDB.currSearchIndex + (searchingDB.usePureSearchEvenHe ? 0 : 1))
+                                    //+ (searchingDB.usePureSearchEvenHe ? "" : ". blockNum:" +  searchingDB.searchableTids.get(searchingDB.currSearchIndex).second/CHUNK_SIZE)
+                                    + "}";
+                            testingResults.append("\n" + timing + "\n");
+                            Log.d("searching", timing);
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                testingResults.append("\n-----------------------------\n");
+            }
+
+            return testingResults.toString();
+        }
+
+        @Override
+        protected void onPostExecute(String timings) {
+            super.onPostExecute(timings);
+            String email = "jherzberg@sefaria.org";
+            Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+                    "mailto", email, null));
+            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Test Search results");
+            emailIntent.putExtra(Intent.EXTRA_TEXT, timings);
+            emailIntent.putExtra(Intent.EXTRA_EMAIL, new String [] {email});
+            context.startActivity(Intent.createChooser(emailIntent, "Send email"));
+        }
+    };
+
+
 
 }

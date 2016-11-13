@@ -138,6 +138,7 @@ public class Settings {
         return set;
     }
 
+
     private static final boolean defaultSideBySide = MyApp.getScreenSize().x > 400;
 
     public static boolean getIsSideBySide(){

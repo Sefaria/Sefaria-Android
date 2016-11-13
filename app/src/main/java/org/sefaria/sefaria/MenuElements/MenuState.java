@@ -64,21 +64,24 @@ public class MenuState implements Parcelable {
 
     private static boolean isMenuInited() {return rootNode != null;}
 
-    private static void initMenu() {
-        try {
-            JSONArray jsonRoot;
-            if(!Settings.getUseAPI()){
-                try {
-                    jsonRoot = new JSONArray(Util.readFile(Database.getInternalFolder() + MenuState.jsonIndexFileName));
-                }catch (Exception e1){
-                    e1.printStackTrace();
-                    jsonRoot = Util.openJSONArrayFromAssets(jsonIndexFileName);
-                }
-            }else{
+    private static JSONArray getMenuJSON() throws IOException, JSONException {
+        JSONArray jsonRoot;
+        if(!Settings.getUseAPI()){
+            try {
+                jsonRoot = new JSONArray(Util.readFile(Database.getInternalFolder() + MenuState.jsonIndexFileName));
+            }catch (Exception e1){
+                e1.printStackTrace();
                 jsonRoot = Util.openJSONArrayFromAssets(jsonIndexFileName);
             }
+        }else{
+            jsonRoot = Util.openJSONArrayFromAssets(jsonIndexFileName);
+        }
+        return jsonRoot;
+    }
 
-
+    private static void initMenu() {
+        try {
+            JSONArray jsonRoot = getMenuJSON();
             createChildrenNodes(jsonRoot, null, true);
         } catch (IOException e) {
             e.printStackTrace();

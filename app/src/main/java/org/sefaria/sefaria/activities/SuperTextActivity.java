@@ -646,7 +646,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
         public void onClick(View v) {
             //Log.d("TextAct", "here");
             if(searchActionbar == null) {
-                searchActionbar = new SearchActionbar(SuperTextActivity.this, findOnPageCloseClick, null,findOnPageUpClick,findOnPageDownClick,book.getCatColor(), getRString(R.string.search) + " " + book.getTitle(menuLang));
+                searchActionbar = new SearchActionbar(SuperTextActivity.this, findOnPageCloseClick, null,findOnPageUpClick,findOnPageDownClick,book.getCatColor(), getRString(R.string.search) + " " + book.getTitle(menuLang), null);
             }
             if(searchActionBarRoot == null)
                 searchActionBarRoot = (LinearLayout) findViewById(R.id.searchBarRoot);

@@ -26,7 +26,7 @@ public class MenuSubtitle extends MenuElement {
             tv.setLetterSpacing(0.1f);
         }
 
-        int pad = (int)Util.dpToPixels(context,25);
+        int pad = (int)Util.dpToPixels(25);
         if (isFirst) {
 
             tv.setPadding(0,0,0,pad);

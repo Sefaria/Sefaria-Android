@@ -19,7 +19,7 @@ import org.sefaria.sefaria.Util;
  */
 public class SearchActionbar extends LinearLayout {
 
-    public SearchActionbar(Activity activity, OnClickListener closeClick, OnClickListener searchClick, OnClickListener upClick, OnClickListener downClick, int catColor, String hintText) {
+    public SearchActionbar(Activity activity, OnClickListener closeClick, OnClickListener searchClick, OnClickListener upClick, OnClickListener downClick, int catColor, String hintText, OnLongClickListener searchLongClick) {
         super(activity);
         inflate(activity, R.layout.search_actionbar, this);
 
@@ -27,6 +27,9 @@ public class SearchActionbar extends LinearLayout {
 
         if(searchClick != null) findViewById(R.id.search_btn).setOnClickListener(searchClick);
         else findViewById(R.id.search_btn).setVisibility(GONE);
+
+        if(searchLongClick != null)
+            findViewById(R.id.search_btn).setOnLongClickListener(searchLongClick);
 
         if(upClick != null) findViewById(R.id.up_button).setOnClickListener(upClick);
         else findViewById(R.id.up_button).setVisibility(GONE);

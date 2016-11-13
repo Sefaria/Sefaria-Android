@@ -333,7 +333,7 @@ public class Database extends SQLiteOpenHelper{
 
     }
 
-    final static int BAD_SETTING_GET = -12349;
+    public final static int BAD_SETTING_GET = -999999991;
     public static int getDBSetting(String key, Boolean forAPI){
         int value = BAD_SETTING_GET;
         try {

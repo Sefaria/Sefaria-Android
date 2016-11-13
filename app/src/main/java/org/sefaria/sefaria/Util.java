@@ -369,13 +369,13 @@ public class Util {
         return String.valueOf(DBnum/100) + "." + passDot;
     }
 
-    public static float pixelsToSp(Context context, float px) {
-        float scaledDensity = context.getResources().getDisplayMetrics().scaledDensity;
+    public static float pixelsToSp(float px) {
+        float scaledDensity = MyApp.getContext().getResources().getDisplayMetrics().scaledDensity;
         return px/scaledDensity;
     }
 
-    public static float dpToPixels(Context context, float px) {
-        float scale = context.getResources().getDisplayMetrics().density;
+    public static float dpToPixels(float px) {
+        float scale = MyApp.getContext().getResources().getDisplayMetrics().density;
         return (px * scale + 0.5f);
     }
 

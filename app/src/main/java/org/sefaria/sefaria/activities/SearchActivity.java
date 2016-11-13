@@ -22,8 +22,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.sefaria.sefaria.Dialog.DialogNoahSnackbar;
 import org.sefaria.sefaria.GoogleTracker;
+import org.sefaria.sefaria.MenuElements.MenuGrid;
+import org.sefaria.sefaria.MenuElements.MenuState;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.SearchElements.SearchAdapter;
@@ -40,9 +45,11 @@ import org.sefaria.sefaria.database.SearchingDB;
 import org.sefaria.sefaria.database.Text;
 import org.sefaria.sefaria.layouts.SefariaTextView;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class SearchActivity extends Activity implements AbsListView.OnScrollListener {
 
@@ -73,7 +80,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
 
 
         LinearLayout actionbarRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
-        actionbarRoot.addView(new SearchActionbar(this, closeClick, searchClick, null, null, -1, "<i>" + MyApp.getRString(R.string.search) + "</i>"));
+        actionbarRoot.addView(new SearchActionbar(this, closeClick, searchClick, null, null, -1, "<i>" + MyApp.getRString(R.string.search) + "</i>", searchLongClick));
 
 
 
@@ -237,6 +244,19 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
         }
     };
 
+    View.OnLongClickListener searchLongClick = new View.OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+            if(Settings.getIsDebug()){
+                (new SearchingDB.AsyncRunTests(SearchActivity.this)).execute();
+                return true;
+            }else{
+                return false;
+            }
+
+        }
+    };
+
     //YOU actually need this function implemented because you're implementing AbsListView, but it's stupid...
     @Override
     public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -255,11 +275,40 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
                     if (lastItem == totalItemCount && preLast != lastItem) {
                         preLast = lastItem;
                         currPageLoaded++;
-                        AsyncSearch asyncSearch = new AsyncSearch(false,searchFilterBox.getSelectedFilterStrings(),currPageLoaded);
-                        asyncSearch.execute();
+                        if(currPageLoaded != 0 && SearchingDB.hasSearchTable() && (!Downloader.getHasInternet()
+                            && searchingDB == null)) {
+                                Toast.makeText(SearchActivity.this, "Lost Connection: Restarting search in offline mode", Toast.LENGTH_LONG).show();
+                                runNewSearch();
+                        }else {
+                            AsyncSearch asyncSearch = new AsyncSearch(false, searchFilterBox.getSelectedFilterStrings(), currPageLoaded);
+                            asyncSearch.execute();
+                        }
                     }
                 }
         }
+    }
+
+    private JSONArray getAllFilterJSON(){
+        JSONArray json = new JSONArray();
+        List<Book> books = Book.getAll();
+        int index = 0;
+        for(Book book: books){
+            StringBuilder key = new StringBuilder();
+            for(String cat: book.categories) {
+                key.append(cat + "/");
+            }
+            key.append(book.title);
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put("key",key);
+                jsonObject.put("doc_count",-1);
+                json.put(index++, jsonObject);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }
+        return json;
     }
 
     public class AsyncSearch extends AsyncTask<Void,Void,SearchResultContainer> {
@@ -283,6 +332,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
             if(Downloader.getNetworkStatus() == Downloader.ConnectionType.NONE && SearchingDB.hasSearchTable()) {
                 if (pageNum != 0 && searchingDB == null) {
                     Toast.makeText(SearchActivity.this, "Restarting search in offline mode", Toast.LENGTH_SHORT).show();
+                    pageNum = 0;
                 }
                 usingOfflineSearch = true;
             }
@@ -290,7 +340,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
             isLoadingSearch = true;
             if(usingOfflineSearch){
                 numResultsTV.setText("Using offline search." + " " + MyApp.getRString(R.string.loading));
-                getFilters = false;
+                //getFilters = false;
                 Log.d("Searching","offline");
             }else{
                 numResultsTV.setText(numberOfResults + " " + MyApp.getRString(R.string.loading));
@@ -308,11 +358,15 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
                 if(usingOfflineSearch){
                     try {
                         if(searchingDB == null || pageNum == 0) {
-                            searchingDB = new SearchingDB(query, null, true);
+                            searchingDB = new SearchingDB(query,appliedFilters);
                         }
                         List<Text> results = searchingDB.getResults();
                         Log.d("search","results size:" + results.size());
-                        SearchResultContainer searchResultContainer = new SearchResultContainer(results,-1,null);
+                        JSONArray jsonRoot = null;
+                        if(getFilters) {
+                            jsonRoot = getAllFilterJSON();
+                        }
+                        SearchResultContainer searchResultContainer = new SearchResultContainer(results,-1, jsonRoot);
                         return searchResultContainer;
                     } catch (SQLException e) {
                         e.printStackTrace();
