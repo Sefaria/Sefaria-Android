@@ -329,6 +329,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+
             if(Downloader.getNetworkStatus() == Downloader.ConnectionType.NONE && SearchingDB.hasSearchTable()) {
                 if (pageNum != 0 && searchingDB == null) {
                     Toast.makeText(SearchActivity.this, "Restarting search in offline mode", Toast.LENGTH_SHORT).show();
@@ -346,7 +347,6 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
                 numResultsTV.setText(numberOfResults + " " + MyApp.getRString(R.string.loading));
                 Log.d("Searching","online");
             }
-
             query = autoCompleteTextView.getText().toString();
             adapter.setLangSearchedIn(Util.hasHebrew(query) ? Util.Lang.HE : Util.Lang.EN);
         }

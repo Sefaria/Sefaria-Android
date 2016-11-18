@@ -237,6 +237,8 @@ public class Book implements Parcelable {
             heSectionNamesL2B = new String [heSectionNamesTemp.length];
             for(int i = 0; i<heSectionNamesTemp.length;i++)
                 heSectionNamesL2B[i] = heSectionNamesTemp[heSectionNamesTemp.length - i -1];
+            //try: //path // try is needed in case it's an old DB.
+
         }
         catch(Exception e){
             GoogleTracker.sendException(e);

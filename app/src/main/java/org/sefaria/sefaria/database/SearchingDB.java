@@ -184,8 +184,10 @@ public class SearchingDB {
 
     private ArrayList<Integer> getSearchingChunks(String query) throws SQLException{
         SQLiteDatabase db = Database.getDB();
-        String [] words =  getWords(query, Util.Lang.HE);
         ArrayList<Integer> list = new ArrayList<>();
+        if(query.length() == 0)
+            return list;
+        String [] words =  getWords(query, Util.Lang.HE);
         String likeStatement = "_id LIKE ? ";
         String[] testWords;
         for(int i =0; i< words.length;i++){
@@ -681,26 +683,26 @@ public class SearchingDB {
                 if (cursor.moveToFirst()) {
                     do {
                         Text text = new Text(cursor);
-                        String verse = text.getText(Util.Lang.HE);
 
-                        //if(verse == null) continue;//might not be needed if doing at DB level
-                        //Log.d("searching", "verse Length: " + verse.length());
-                        //String cleacursorredVerse = verse.replaceAll("[\u0591-\u05C7]", "");
                         //if(verse.length() > 4000) continue;//TODO this is a major hackk!!, but we aren't searching huge things
 
-                        for(int j=0; j<words.length;j++){
+                        String verse = text.getText(Util.Lang.HE);
+                        boolean foundAllWords = true;
+                        for(int j=0; j<words.length;j++) {
                             Matcher m = patterns[j].matcher(verse);
-                            if(!m.find()) {
+                            if (!m.find()) {
+                                foundAllWords = false;
                                 break;
                             }
-                            //if(clearedVerse.contains(words[j])){ //if(verse.replaceFirst(wordsRegEx[j], "ABC").hashCode() != verse.hashCode()){ //more detailed //	if(clearedVerse.replaceAll("\\b\\u05d5","").replaceFirst("\\b" + words[j] + "\\b", "ABC").hashCode() == clearedVerse.hashCode()) break;
-
-                            text.setText(addRedToFoundWord(m, verse, true, true), Util.Lang.HE);
-                            if(j == words.length -1){
-                                results.add(text);
-                                //resultsList.add(new Text(cursor.getInt(0)));//maybe create a list of tids and do it as one big search
-                                //resultsList.get(resultsList.size()-1).setText(verse, Util.Lang.HE);
+                        }
+                        if(foundAllWords) { //divided into different parts so the addingHighlighting doesn't need to run each time
+                            for (int j = 0; j < words.length; j++) {
+                                verse = text.getText(Util.Lang.HE);
+                                Matcher m = patterns[j].matcher(verse);
+                                m.find();
+                                text.setText(addRedToFoundWord(m, verse, true, true), Util.Lang.HE);
                             }
+                            results.add(text);
                         }
                     }
                     while (cursor.moveToNext());
@@ -842,15 +844,18 @@ public class SearchingDB {
         while(true){
             ArrayList<Text> results;
             try {
-                if(Util.hasHebrew(query)){
-                    if(!usePureSearchEvenHe) {
+                if (query.length() == 0) {
+                    results = new ArrayList<>();
+                } else if (Util.hasHebrew(query)) {
+                    if (!usePureSearchEvenHe) {
                         results = searchDBheTexts();
-                    }else{
+                    } else {
                         results = searchPureText(Util.Lang.HE);
                     }
-                }else{
+                } else {
                     results = searchPureText(Util.Lang.EN);
                 }
+
                 resultsLists.add(results);
                 Log.d("SearchingDB", "fillSearchBufferTask: currResultNumber:" + currResultNumber + "... resultsLists.size():" + resultsLists.size());
                 if(results.size()==0){

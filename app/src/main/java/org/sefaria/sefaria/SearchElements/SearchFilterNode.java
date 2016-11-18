@@ -46,7 +46,7 @@ public class SearchFilterNode extends BilingualNode implements Comparable<Search
             else
                 menuIndex = MenuState.getRootNode().indexOfTitle(enTitle, Util.Lang.EN);
         }
-        Log.d("yosup","Title " + enTitle + " Bid " + bid);
+        //Log.d("yosup","Title " + enTitle + " Bid " + bid);
 
     }
 
@@ -158,7 +158,8 @@ public class SearchFilterNode extends BilingualNode implements Comparable<Search
     private void printTree(SearchFilterNode node, int indent, StringBuilder sb) {
         sb.append(getIndentString(indent));
         sb.append("+--");
-        sb.append(node.getTitle(Util.Lang.EN) + "(" + node.getCount() + ")");
+        int count = node.getCount();
+        sb.append(node.getTitle(Util.Lang.EN) + "(" + count + ")");
         sb.append("/");
         sb.append("\n");
         for (BilingualNode childNode : node.getChildren()) {
