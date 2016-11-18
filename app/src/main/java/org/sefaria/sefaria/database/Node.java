@@ -47,6 +47,7 @@ public class Node{// implements  Parcelable{
     private int endTid;
     private String extraTidsRef;
     private String startLevels;
+    private String titleKey; // this is only being used
     private List<Node> children;
     private List<Text> textList;
 
@@ -367,7 +368,11 @@ public class Node{// implements  Parcelable{
             extraTidsRef = cursor.getString(13);
             try{ //this is to make it work with databases older than version 150
                 startLevels = cursor.getString(14);//This might crash on old DBs
+                titleKey = cursor.getString(15); // This will only work on DBs newer than 223
             }catch (Exception e2){}
+            if(titleKey == null || titleKey.length() == 0){
+                titleKey = enTitle;
+            }
 
             setFlagsFromNodeType(nodeType, siblingNum);
 
@@ -784,10 +789,10 @@ public class Node{// implements  Parcelable{
         //Log.d("Node", "setChaps_API" + node);
         for(Node child:node.getChildren()){
             try{
-                JSONObject subObject = jsonData.getJSONObject(child.enTitle);
+                JSONObject subObject = jsonData.getJSONObject(child.titleKey);
                 setChaps_API(child,subObject);
             }catch (JSONException e){
-                Log.e("Node", child.enTitle + " __didn't get subJSON_" + child);
+                Log.e("Node", child.titleKey + " __didn't get subJSON_" + child);
             }
         }
         try {
@@ -1332,7 +1337,7 @@ public class Node{// implements  Parcelable{
     public String toString() {
         String str;
         try {
-            str = "{" + nid + ",bid:" + bid + ",titles:" + enTitle + " " + heTitle + ",sections:" + Util.array2str(sectionNames) + "," + Util.array2str(heSectionNames) + ",structN:" + structNum + ",textD:" + textDepth + ",tids:" + startTid + "-" + endTid + ",ref:" + extraTidsRef;
+            str = "{" + nid + ",bid:" + bid + ",titles:" + enTitle + " " + heTitle + ",sections:" + Util.array2str(sectionNames) + "," + Util.array2str(heSectionNames) + ",structN:" + structNum + ",textD:" + textDepth + ",tids:" + startTid + "-" + endTid + ",ref:" + extraTidsRef + ", titleKey:"  + titleKey;
             str += ", child.len:" + getChildren().size();
             str += ",gridN:" + getNiceGridNum(Util.Lang.EN);
             //str +=  ",siblingN:" + siblingNum;

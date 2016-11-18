@@ -17,12 +17,16 @@
         android:icon="@drawable/sefaria_icon"
         android:label="@string/app_name"
         android:theme="@style/SefariaTheme.White"
-        tools:replace="android:name">
+        tools:replace="android:name"
+
+        >
         <activity
             android:name=".activities.MenuActivity"
-            android:label="@string/app_name" />
+            android:label="@string/app_name"
+            />
         <activity
             android:name=".activities.CtsTextActivity"
+
             android:label="@string/app_name" />
 
         <receiver

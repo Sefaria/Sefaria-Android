@@ -247,7 +247,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
     View.OnLongClickListener searchLongClick = new View.OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
-            if(Settings.getIsDebug()){
+            if(Settings.getIsDebug() && SearchingDB.hasSearchTable()){
                 (new SearchingDB.AsyncRunTests(SearchActivity.this)).execute();
                 return true;
             }else{

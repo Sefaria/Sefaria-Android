@@ -2,6 +2,12 @@ package org.sefaria.sefaria.database;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.CharBuffer;
+import java.nio.DoubleBuffer;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import java.nio.LongBuffer;
+import java.nio.ShortBuffer;
 import java.util.BitSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -16,6 +22,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.util.Pair;
 import android.widget.Toast;
@@ -28,7 +35,7 @@ import org.sefaria.sefaria.Util;
 public class SearchingDB {
 
 
-    private static int CHUNK_SIZE = Database.getDBSetting("blockSize",false);
+    final private static int CHUNK_SIZE = Database.getDBSetting("blockSize",false);
     final private static int BITS_PER_PACKET = 24;
     private static final long WAITING_TIME = 2000; //2 seconds
 
@@ -44,9 +51,14 @@ public class SearchingDB {
 
     //changed for testing
     private boolean usePureSearchEvenHe = false;
-    private int returnResultsSize = 6;
-    private int returnResultsLongTimeSize = 3;
+    private int returnResultsSize; //see constructor for default
+    private int returnResultsLongTimeSize;
 
+
+
+    public SearchingDB(String query,List<String> filterList) throws SQLException {
+        this(query, filterList, false, 6, 3);
+    }
 
     /**
      * This is used for searching everything, a particular category, or book.
@@ -55,21 +67,14 @@ public class SearchingDB {
      * @param query the word to search in Hebrew or English (currently only supporting Hebrew).
      * @throws SQLException
      */
-    public SearchingDB(String query,List<String> filterList, boolean usePureSearchEvenHe, int returnResultsSize, int returnResultsLongTimeSize) throws SQLException {
-        init(query, filterList, usePureSearchEvenHe, returnResultsSize, returnResultsLongTimeSize);
-    }
-
-    public SearchingDB(String query,List<String> filterList) throws SQLException {
-        init(query, filterList, false, returnResultsSize, returnResultsLongTimeSize);
-    }
-
-    private void init(String query, List<String> filterList, boolean usePureSearchEvenHe, int returnResultsSize, int returnResultsLongTimeSize) throws SQLException {
+    private SearchingDB(String query, List<String> filterList, boolean usePureSearchEvenHe, int returnResultsSize, int returnResultsLongTimeSize) throws SQLException {
         this.query = query;
-        searchableTids = getSearchableTids(filterList, query);
         resultsLists = new ArrayList<>();
         this.usePureSearchEvenHe = usePureSearchEvenHe;
         this.returnResultsSize = returnResultsSize;
         this.returnResultsLongTimeSize = returnResultsLongTimeSize;
+        //this should run only after the other variables are set
+        searchableTids = getSearchableTids(filterList, query);
     }
 
     public boolean isDoneSearching(){ return isDoneSearching; }
@@ -86,17 +91,17 @@ public class SearchingDB {
         return bytes;
     }
 
-    private static ArrayList<Integer> bytesToNums(byte [] bytes) {
+    private ArrayList<Integer> bytesToNums(byte [] bytes) {
         ArrayList<Integer> chunkList = new ArrayList<>();
-        int total = 0;
-        for(int i = 0; i< bytes.length;i++){
-            int rem = i % 4;
-            if(rem == 0 && i > 0){
-                chunkList.add(total);
-                total = 0;
+        int maxBytes = Math.min(returnResultsSize*4,bytes.length);
+        Log.d("searching", "maxBytes:" + maxBytes);
+        byte [] bArray = new byte[4];
+        for(int i = 0; i< maxBytes; i+=4){
+            for(int j = 0; j < 4; j++){
+                bArray[j] = bytes[i + j];
             }
-            int num = bytes[i] & 0xff;
-            total +=  num << (8*(3-rem));
+            ByteBuffer bb = ByteBuffer.wrap(bArray);
+            chunkList.add(bb.getInt());
         }
         return chunkList;
     }
@@ -177,7 +182,7 @@ public class SearchingDB {
         return list;
     }
 
-    private static ArrayList<Integer> getSearchingChunks(String query) throws SQLException{
+    private ArrayList<Integer> getSearchingChunks(String query) throws SQLException{
         SQLiteDatabase db = Database.getDB();
         String [] words =  getWords(query, Util.Lang.HE);
         ArrayList<Integer> list = new ArrayList<>();
@@ -193,8 +198,7 @@ public class SearchingDB {
                 testWords = new String[] {words[i] };
             final boolean USE_FULL_INDEX = true;
             String tableName = "Searching";
-            if(USE_FULL_INDEX){
-                CHUNK_SIZE = 1;
+            if(CHUNK_SIZE == 1){
                 tableName = "SearchingFull";
             }
             Cursor cursor = db.query(tableName, new String[] {"chunks"}, likeStatement,
@@ -204,10 +208,10 @@ public class SearchingDB {
                 do{
                     bytes = cursor.getBlob(0);
                     ArrayList<Integer> list1;
-                    if(USE_FULL_INDEX){
-                        list1 = bytesToNums(bytes);
-                    }else{
+                    if(CHUNK_SIZE != 1){
                         list1 = JHpacketToNums(bytes);
+                    }else{
+                        list1 = bytesToNums(bytes);
                     }
                     if(unionlist == null){
                         unionlist = list1;
@@ -627,7 +631,7 @@ public class SearchingDB {
                     "FROM Texts WHERE  ";
             sql += "  _id in (";
             StringBuilder tids = new StringBuilder();
-            tids.append(searchableTids.get(0));
+            tids.append(searchableTids.get(0).first.toString());
             for(int i = 1; i< searchableTids.size(); i++) {
                 tids.append("," + searchableTids.get(i).first);
             }
@@ -898,38 +902,56 @@ public class SearchingDB {
 
         @Override
         protected String doInBackground(Void... params) {
-                String [] queries = new String[] {"שאחיך"};//{"הספרא"}; //{ "ברא"}; // {"ברא", "את", "גדחכשג"};
+            String [] queries350k = new String[] {"לו", "את", "כי"};
+            String [] queries6k = new String[] {"ישב", "נפשו", "ברית"};
+            String [] queries55 = new String[] {"מפספס", "אורבי", "מפנהו"};
+            String [] queries10 = new String[] {"איפוק", "בשאיני", "קיללו"};
+            String [] querySizes = new String[] {"350k", "6k", "55", "10"}; // {"350k", "6k", "55", "10"};
+            List<String []> queryTypes = new ArrayList<>();
+            queryTypes.add(queries350k); queryTypes.add(queries6k);
+            queryTypes.add(queries55); queryTypes.add(queries10);
             StringBuilder testingResults = new StringBuilder();
+
             final int RETURN_RESULTS_REG = 6;
-            final int LARGE_INT = 1000000000;
-            int [] returnResultTimes = {LARGE_INT};//, RETURN_RESULTS_REG};
-            boolean [] usePureNoIndexSearches = {false};//, true};
-            for(String query: queries){
-                for(boolean usePureNoIndexSearch : usePureNoIndexSearches) {
-                    for(int returnResultTime : returnResultTimes) {
-                        long startTime = System.currentTimeMillis();
-                        SearchingDB searchingDB = null;
-                        try {
-                            searchingDB = new SearchingDB(query, null, usePureNoIndexSearch, returnResultTime, returnResultTime);
-                            List<Text> results = searchingDB.getResults();
-                            long totalTime = System.currentTimeMillis() - startTime;
-                            String timing = " (Q: " + query + ") " +
-                                    "[" + (searchingDB.usePureSearchEvenHe ? "NoIndex" : "compressedIndex")
-                                    + (returnResultTime == LARGE_INT ? ", ReturnAll" : ", First" + returnResultTime)
-                                    + "]"
-                                    + " {results: " + results.size() + ". took: "
-                                    + totalTime + "ms."
-                                    + " blockIndex:" + (searchingDB.currSearchIndex + (searchingDB.usePureSearchEvenHe ? 0 : 1))
-                                    //+ (searchingDB.usePureSearchEvenHe ? "" : ". blockNum:" +  searchingDB.searchableTids.get(searchingDB.currSearchIndex).second/CHUNK_SIZE)
-                                    + "}";
-                            testingResults.append("\n" + timing + "\n");
-                            Log.d("searching", timing);
-                        } catch (SQLException e) {
-                            e.printStackTrace();
+            final int LARGE_INT = 100000000;
+            int[] returnResultAmounts = {RETURN_RESULTS_REG};
+            boolean[] usePureNoIndexSearches = {false};
+            for (boolean usePureNoIndexSearch : usePureNoIndexSearches) {
+                for (int returnResultAmount : returnResultAmounts) {
+                    String searchMethod = "[" + (usePureNoIndexSearch ? "NoIndex" : "compressedIndex")
+                            + (returnResultAmount == LARGE_INT ? ", ReturnAll" : ", First" + returnResultAmount)
+                            + "]\n";
+                    Log.d("searching", searchMethod);
+                    testingResults.append("\n------------------------------------------\n" + searchMethod);
+                    int querySizeIndex = 0;
+                    for(String [] queries: queryTypes) {
+                        testingResults.append("\n-----------------\nqueries" + querySizes[querySizeIndex++] + ":\n");
+                        long sumTime = 0;
+                        long sumResults = 0;
+                        for (String query : queries) {
+                            long startTime = System.currentTimeMillis();
+                            SearchingDB searchingDB = null;
+                            try {
+                                searchingDB = new SearchingDB(query, null, usePureNoIndexSearch, returnResultAmount, returnResultAmount);
+                                List<Text> results = searchingDB.getResults();
+                                long totalTime = System.currentTimeMillis() - startTime;
+                                sumTime += totalTime;
+                                sumResults += results.size();
+                                String timing = " (Q: " + query + ") " +
+                                        " {results: " + results.size() + ". took: "
+                                        + totalTime + "ms."
+                                        + " blockIndex:" + (searchingDB.currSearchIndex + (searchingDB.usePureSearchEvenHe ? 0 : 1))
+                                        //+ (searchingDB.usePureSearchEvenHe ? "" : ". blockNum:" +  searchingDB.searchableTids.get(searchingDB.currSearchIndex).second/CHUNK_SIZE)
+                                        + "}";
+                                testingResults.append("\n" + timing + "\n");
+                                Log.d("searching", timing);
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            }
                         }
+                        testingResults.append("\nAVG TIME: " + sumTime/queries.length + ". AVG RESULTS: " + sumResults/queries.length);
                     }
                 }
-                testingResults.append("\n-----------------------------\n");
             }
 
             return testingResults.toString();
