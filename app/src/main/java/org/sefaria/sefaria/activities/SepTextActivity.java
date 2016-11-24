@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,7 @@ import org.sefaria.sefaria.TextElements.SepTextAdapter;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.database.Book;
+import org.sefaria.sefaria.database.Node;
 import org.sefaria.sefaria.database.Text;
 import org.sefaria.sefaria.TextElements.TextListView;
 
@@ -368,7 +370,7 @@ public class SepTextActivity extends SuperTextActivity implements AbsListView.On
             }
 
             View linkRoot = findViewById(R.id.linkRoot);
-            if (linkFragment.getIsOpen()) { //&& false
+            if (linkFragment.getIsOpen()) {
 
                 //linkRoot.setVisibility(View.GONE);
                 AnimateLinkFragClose(linkRoot);
@@ -399,6 +401,7 @@ public class SepTextActivity extends SuperTextActivity implements AbsListView.On
         private TextEnums dir;
         private Text loaderText;
         private Text catalystText;
+        private LoadSectionResult loadSectionResult;
 
         /**
          *
@@ -431,9 +434,19 @@ public class SepTextActivity extends SuperTextActivity implements AbsListView.On
             }
         }
 
-        @Override
+
         protected List<Text> doInBackground(Void... params) {
-            return loadSection(dir);
+            List<Text> textList = null;
+            try {
+                textList = loadSection(dir);
+            } catch (API.APIException e) {
+                loadSectionResult = LoadSectionResult.API_EXCEPTION;
+                textList = new ArrayList<>();
+            } catch (Node.LastNodeException e) {
+                loadSectionResult = LoadSectionResult.LAST_NODE;
+                textList = new ArrayList<>();
+            }
+            return textList;
         }
 
 
@@ -441,7 +454,7 @@ public class SepTextActivity extends SuperTextActivity implements AbsListView.On
         protected void onPostExecute(final List<Text> textsList) {
 
 
-            if (textsList == null) {
+            if (loadSectionResult == LoadSectionResult.LAST_NODE) {
                 problemLoadedText = catalystText;
                 isLoadingSection = false;
                 isLoadingInit = false;
@@ -452,7 +465,10 @@ public class SepTextActivity extends SuperTextActivity implements AbsListView.On
             }
             //if (textsList.size() == 0) return;//removed this line so that when it doesn't find text it continues to look for the next item for text
 
-            final Text sectionHeader = getSectionHeaderText(dir);
+            Text sectionHeader = getSectionHeaderText(dir);
+            if(loadSectionResult == LoadSectionResult.API_EXCEPTION) {
+                sectionHeader.setChapterHasTexts(false);
+            }
             if (dir == TextEnums.NEXT_SECTION) {
                 //Log.d("SepTextActivity","ENDING NEXT");
                 sepTextAdapter.remove(loaderText);

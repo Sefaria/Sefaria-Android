@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Layout;
 import android.text.SpannableString;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,8 @@ import org.sefaria.sefaria.TextElements.CtsTextAdapter;
 import org.sefaria.sefaria.TextElements.OnSegmentSpanClickListener;
 import org.sefaria.sefaria.TextElements.SegmentSpannable;
 import org.sefaria.sefaria.Util;
+import org.sefaria.sefaria.database.API;
+import org.sefaria.sefaria.database.Node;
 import org.sefaria.sefaria.database.Section;
 import org.sefaria.sefaria.database.Text;
 import org.sefaria.sefaria.TextElements.TextListView;
@@ -133,6 +136,7 @@ public class CtsTextActivity extends SuperTextActivity implements AbsListView.On
         private TextEnums dir;
         private Section loaderSection;
         private Section catalystSection;
+        private LoadSectionResult loadSectionResult;
 
         /**
          * @param dir          - direction in which you want to load a section (either prev or next)
@@ -166,7 +170,17 @@ public class CtsTextActivity extends SuperTextActivity implements AbsListView.On
 
         @Override
         protected List<Text> doInBackground(Void... params) {
-            return loadSection(dir);
+            List<Text> textList = null;
+            try {
+                 textList = loadSection(dir);
+            } catch (API.APIException e) {
+                loadSectionResult = LoadSectionResult.API_EXCEPTION;
+                textList = new ArrayList<>();
+            } catch (Node.LastNodeException e) {
+                loadSectionResult = LoadSectionResult.LAST_NODE;
+                textList = new ArrayList<>();
+            }
+            return textList;
         }
 
 
@@ -177,13 +191,19 @@ public class CtsTextActivity extends SuperTextActivity implements AbsListView.On
 
 
 
-            if (textsList == null) {
+            if (loadSectionResult == LoadSectionResult.LAST_NODE){ //textsList == null) {
                 problemLoadedSection = catalystSection;
+                ctsTextAdapter.remove(loaderSection);
+                //ctsTextAdapter.set
+
                 return;
             }
             //if (textsList.size() == 0) return;//removed this line so that when it doesn't find text it continues to look for the next item for text
 
             Text sectionHeader = getSectionHeaderText(dir);
+            if (loadSectionResult == LoadSectionResult.API_EXCEPTION){
+                sectionHeader.setChapterHasTexts(false);
+            }
             Section newSection = new Section(textsList, sectionHeader);
             if (dir == TextEnums.NEXT_SECTION) {
 

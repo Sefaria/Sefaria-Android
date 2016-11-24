@@ -35,6 +35,7 @@ import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Database;
+import org.sefaria.sefaria.database.Downloader;
 import org.sefaria.sefaria.database.Node;
 import org.sefaria.sefaria.database.Section;
 import org.sefaria.sefaria.database.Text;
@@ -52,6 +53,10 @@ import static org.sefaria.sefaria.MyApp.getRString;
 public abstract class SuperTextActivity extends FragmentActivity {
     public enum TextEnums {
         NEXT_SECTION, PREV_SECTION
+    }
+
+    public enum LoadSectionResult {
+        LAST_NODE, API_EXCEPTION
     }
 
     public static int SEGMENT_SELECTOR_LINE_FROM_TOP = 150; //pixels from top of layout
@@ -874,46 +879,36 @@ public abstract class SuperTextActivity extends FragmentActivity {
     }
 
 
-    protected List<Text> loadSection(TextEnums dir) {
+    protected List<Text> loadSection(TextEnums dir) throws API.APIException, Node.LastNodeException {
         Node newNode = null;
-        try {
-            if (dir == TextEnums.NEXT_SECTION) {
-                if (lastLoadedNode == null) { //this is the initial load
-                    newNode = firstLoadedNode;
-                } else {
-                    newNode = lastLoadedNode.getNextTextNode();
-                }
-                lastLoadedNode = newNode;
-            } else if (dir == TextEnums.PREV_SECTION) {
-                if (firstLoadedNode == null) {
-                    newNode = lastLoadedNode;
-                } else {
-                    newNode = firstLoadedNode.getPrevTextNode();
-                }
-                firstLoadedNode = newNode;
+        if (dir == TextEnums.NEXT_SECTION) {
+            if (lastLoadedNode == null) { //this is the initial load
+                newNode = firstLoadedNode;
+            } else {
+                newNode = lastLoadedNode.getNextTextNode();
             }
-        } catch (Node.LastNodeException e) {
-            return null;
+            lastLoadedNode = newNode;
+        } else if (dir == TextEnums.PREV_SECTION) {
+            if (firstLoadedNode == null) {
+                newNode = lastLoadedNode;
+            } else {
+                newNode = firstLoadedNode.getPrevTextNode();
+            }
+            firstLoadedNode = newNode;
         }
+        //if at last node throws LastNodeException
 
 
         List<Text> textsList;
-        try {
-            //Log.d("SuperTextAct", "trying to getTexts");
-            if(newNode == null){//This error occurs when using API and the book no longer exists in Sefaria (it could also happen other times we don't know about)
-                //TODO add error text into the list.
-                //Node.dummyNode;
-                return new ArrayList<>();
-            }
-            textsList = newNode.getTexts();
-            newNode.findWords(searchingTerm);
-            return textsList;
-        } catch (API.APIException e) {
-            //API.makeAPIErrorToast(SuperTextActivity.this);//can't do this b/c it's in the background
+        if(newNode == null){//This error occurs when using API and the book no longer exists in Sefaria (it could also happen other times we don't know about)
+            //TODO add error text into the list.
+            //Node.dummyNode;
             return new ArrayList<>();
         }
-
-
+        textsList = newNode.getTexts();
+        newNode.findWords(searchingTerm);
+        return textsList;
+        //} catch (API.APIException e) {
     }
 
 
@@ -1139,6 +1134,15 @@ public abstract class SuperTextActivity extends FragmentActivity {
         startActivity(intent);
     }
 
+    public void reloadClick(View v){
+
+        if(Downloader.getHasInternet()) {
+            //Toast.makeText(SuperTextActivity.this, "Reloading texts", Toast.LENGTH_SHORT).show();
+            restartActivity();
+        }else{
+            Toast.makeText(SuperTextActivity.this, MyApp.getRString(R.string.problem_internet), Toast.LENGTH_SHORT).show();
+        }
+    }
 
 
     /*@Override

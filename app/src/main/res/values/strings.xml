@@ -97,5 +97,6 @@
     <string name="Error">Error</string>
     <string name="More">More &gt;</string>
     <string name="recently_viewed">Recently Viewed</string>
+    <string name="error_loading_section_reload">Error connecting. Click to retry.</string>
 
 </resources>

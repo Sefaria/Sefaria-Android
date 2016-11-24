@@ -74,7 +74,7 @@ public class SepTextAdapter extends ArrayAdapter<Text> {
         }
 
 
-        float linkAlpha = ((float)segment.getNumLinks()-MIN_ALPHA_NUM_LINKS) / (MAX_ALPHA_NUM_LINKS-MIN_ALPHA_NUM_LINKS);
+        float linkAlpha = ((float)segment.getNumLinks() - MIN_ALPHA_NUM_LINKS) / (MAX_ALPHA_NUM_LINKS-MIN_ALPHA_NUM_LINKS);
         if (linkAlpha < MIN_ALPHA) linkAlpha = MIN_ALPHA;
         else if (linkAlpha > MAX_ALPHA) linkAlpha = MAX_ALPHA;
 
@@ -139,6 +139,12 @@ public class SepTextAdapter extends ArrayAdapter<Text> {
 
                 tch.setSectionTitle(segment);
                 tch.setTextSize(sepTextActivity.getTextSize());
+                SefariaTextView reloadTv = (SefariaTextView) view.findViewById(R.id.reload_tv);
+                if(segment.getChapterHasTexts()){
+                    reloadTv.setVisibility(View.GONE);
+                }else{
+                    reloadTv.setVisibility(View.VISIBLE);
+                }
             } else {
                 view.setClickable(false);
 

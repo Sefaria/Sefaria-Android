@@ -35,6 +35,7 @@ public class Text implements Parcelable {
     private byte [] heTextCompress;
     private boolean isChapter = false;
     private boolean isLoader = false; //true when this is a filler text which indicates that the next/prev section is loading
+    private boolean chapterHasTexts = true;
     //protected int parentNID;
     private String ref = null;
 
@@ -68,6 +69,13 @@ public class Text implements Parcelable {
             enText = text;
     }
 
+    public void setChapterHasTexts(boolean chapterHasTexts){
+        this.chapterHasTexts = chapterHasTexts;
+    }
+
+    public boolean getChapterHasTexts(){
+        return chapterHasTexts;
+    }
 
     private int numLinks = 0;
 
