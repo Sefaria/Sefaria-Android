@@ -28,11 +28,11 @@ public class Book implements Parcelable {
     public int commentsOn;
     private String  [] sectionNames;
     /**
-     * Little sections (like verse) to Big (like chap) just like Text.levels works
+     * Little sections (like verse) to Big (like chap) just like Segment.levels works
      */
     public String  [] sectionNamesL2B;
     /**
-     * Little sections (like verse) to Big (like chap) just like Text.levels works
+     * Little sections (like verse) to Big (like chap) just like Segment.levels works
      */
     public String  [] heSectionNamesL2B;
     public String [] categories;

@@ -1,6 +1,5 @@
 package org.sefaria.sefaria.activities;
 
-import android.content.Context;
 import android.os.AsyncTask;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
@@ -11,7 +10,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,11 +17,9 @@ import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Settings;
-import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.API;
-import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Node;
-import org.sefaria.sefaria.database.Text;
+import org.sefaria.sefaria.database.Segment;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,7 +28,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static android.content.Context.INPUT_METHOD_SERVICE;
 import static org.sefaria.sefaria.MyApp.getRString;
 
 /**
@@ -45,7 +40,7 @@ public class FindOnPage {
     private boolean isWorking;
     private boolean directionForward;
     protected AutoCompleteTextView autoCompleteTextView;
-    private List<Text> foundSearchList;
+    private List<Segment> foundSearchList;
     private Set<Node> searchedNodes;
     private String lastSearchingTerm;
     private boolean finishedEverything = false;
@@ -142,20 +137,20 @@ public class FindOnPage {
         setAutoCompleteAdapter();
     }
 
-    final Comparator<Text> textComparator = new Comparator<Text>() {
-        public int compare(Text a, Text b) {
+    final Comparator<Segment> textComparator = new Comparator<Segment>() {
+        public int compare(Segment a, Segment b) {
             return b.tid - a.tid;
         }
     };
 
-    private void sort(List<Text> list) {
+    private void sort(List<Segment> list) {
         int lastTid = 0;
-        for (Text text : list) {
-            if (text.tid < lastTid) {
+        for (Segment segment : list) {
+            if (segment.tid < lastTid) {
                 Collections.sort(list, textComparator);
                 return;
             }
-            lastTid = text.tid;
+            lastTid = segment.tid;
         }
         //if it's here that means that it's already sorted.. hey guess what? We just "sorted" in O(n)
     }
@@ -164,36 +159,36 @@ public class FindOnPage {
     private class FindOnPageBackground extends AsyncTask<String, Void, Boolean> {
 
         private Node goingToNode = null;
-        private Text goingToText = null;
+        private Segment goingToSegment = null;
         private Integer myTID = null;
         private boolean APIError = false;
 
 
-        private boolean lookForAlreadyFoundWord(List<Text> list, boolean presort) {
+        private boolean lookForAlreadyFoundWord(List<Segment> list, boolean presort) {
             Log.d("findOnPage","looking for already Found word list.size:" + list.size() + "... myTID:" + myTID);
             if (presort) {
                 sort(list);
             }
-            Text found = null;
+            Segment found = null;
             if (directionForward) {
-                for (Text text : list) {
-                    if (myTID <= text.tid) {
-                        found = text;
+                for (Segment segment : list) {
+                    if (myTID <= segment.tid) {
+                        found = segment;
                         break;
                     }
                 }
             } else {
                 for (int i = list.size() - 1; i >= 0; i--) {
-                    Text text = list.get(i);
-                    if (myTID >= text.tid) {
-                        found = text;
+                    Segment segment = list.get(i);
+                    if (myTID >= segment.tid) {
+                        found = segment;
                         break;
                     }
                 }
             }
             if(found != null) {
                 goingToNode = found.parentNode;
-                goingToText = found;
+                goingToSegment = found;
                 lastFoundTID = found.tid;
                 return true;
             }
@@ -217,18 +212,18 @@ public class FindOnPage {
                 return false;
             }
             String term = params[0];
-            if (superTextActivity.currText == null)
+            if (superTextActivity.currSegment == null)
                 return false;
 
-            //Log.d("findonpage", "4currText: " + superTextActivity.currText);
-            if (superTextActivity.currText.isChapter()) {
+            //Log.d("findonpage", "4currText: " + superTextActivity.currSegment);
+            if (superTextActivity.currSegment.isChapter()) {
                 try {
-                    myTID = superTextActivity.currText.parentNode.getTexts().get(0).tid;
+                    myTID = superTextActivity.currSegment.parentNode.getTexts().get(0).tid;
                 } catch (API.APIException e) {
                     return false;
                 }
             } else {
-                myTID = superTextActivity.currText.tid;
+                myTID = superTextActivity.currSegment.tid;
                 if (directionForward && lastFoundTID >= myTID && lastFoundTID - myTID < 4)
                     myTID = lastFoundTID + 1;
                 else if (!directionForward && lastFoundTID <= myTID && myTID - lastFoundTID < 4)
@@ -252,7 +247,7 @@ public class FindOnPage {
                 return true;
             }
 
-            List<Text> list = null;
+            List<Segment> list = null;
             Node startingNode = superTextActivity.currNode;
             Node node = startingNode;
             while (true) {
@@ -316,12 +311,12 @@ public class FindOnPage {
                 Log.d("findOnPage", "node:" + goingToNode);
                 superTextActivity.lastLoadedNode = null;
                 superTextActivity.firstLoadedNode = goingToNode;
-                superTextActivity.openToText = goingToText;
-                if (superTextActivity.openToText != null) {
+                superTextActivity.openToSegment = goingToSegment;
+                if (superTextActivity.openToSegment != null) {
                     if(snackbar == null || !snackbar.isShown())
-                        snackbar = Snackbar.make(superTextActivity.searchActionBarRoot, superTextActivity.openToText.getLocationString(superTextActivity.menuLang), Snackbar.LENGTH_SHORT);
+                        snackbar = Snackbar.make(superTextActivity.searchActionBarRoot, superTextActivity.openToSegment.getLocationString(superTextActivity.menuLang), Snackbar.LENGTH_SHORT);
                     else {
-                        snackbar.setText(superTextActivity.openToText.getLocationString(superTextActivity.menuLang));
+                        snackbar.setText(superTextActivity.openToSegment.getLocationString(superTextActivity.menuLang));
                     }
                     snackbar.show();
                 }

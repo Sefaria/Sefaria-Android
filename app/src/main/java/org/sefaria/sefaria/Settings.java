@@ -11,7 +11,7 @@ import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.LinkFilter;
 import org.sefaria.sefaria.database.Node;
-import org.sefaria.sefaria.database.Text;
+import org.sefaria.sefaria.database.Segment;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -19,7 +19,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.SynchronousQueue;
 
 
 public class Settings {
@@ -159,7 +158,7 @@ public class Settings {
     }
 
     /**
-     * default value is dependent on whether or not the text can be cts
+     * default value is dependent on whether or not the segment can be cts
      * @param book
      * @return
      */
@@ -321,19 +320,19 @@ public class Settings {
         final static private String SETTINGS_SPLITTER = "@";
 
 
-        static private int getTextNum(Node node, Text text) throws API.APIException {
+        static private int getTextNum(Node node, Segment segment) throws API.APIException {
             int textNum = -1;
-            textNum = node.getTexts(true).indexOf(text);
+            textNum = node.getTexts(true).indexOf(segment);
             return textNum;
         }
 
-        static public boolean setSavedBook(Book book, Node node, Text text, Util.Lang lang){
+        static public boolean setSavedBook(Book book, Node node, Segment segment, Util.Lang lang){
             if(book == null) return false;
             SharedPreferences bookSavedSettings = getBookSavedSettings();
             SharedPreferences.Editor editor = bookSavedSettings.edit();
             //"<en|he|bi>.<cts|sep>.<white|grey|black>.10px:"+ <rootNum>.<Childnum>.<until>.<leaf>.<verseNum>"
             try {
-                int textNum = getTextNum(node, text);
+                int textNum = getTextNum(node, segment);
                 String settingStr = node.makePathDefiningNode() + SETTINGS_SPLITTER + textNum + SETTINGS_SPLITTER + lang2Str(lang);
                 editor.putString(book.title, settingStr);
             }catch (Exception e){
@@ -557,13 +556,13 @@ public class Settings {
         private static String PINNED_RECENT_TEXTS = "pinned_recent_texts";
         private static String PINNED_RECENT_BOOKS = "pinned_recent_books";
         private static final String SPLITTER = "@@@";
-        public static boolean addBookmark(Text text){
+        public static boolean addBookmark(Segment segment){
             Set<String> pinnedTextStringSet = getBookmarks();
             try {
 
-                Book book = new Book(text.bid);
-                Node node = text.getNodeFromText(book);
-                int textNum = BookSettings.getTextNum(node, text);
+                Book book = new Book(segment.bid);
+                Node node = segment.getNodeFromText(book);
+                int textNum = BookSettings.getTextNum(node, segment);
                 String settingStr = node.getMenuBarTitle(book, Util.Lang.EN) + SPLITTER
                                     + node.getMenuBarTitle(book, Util.Lang.HE) + SPLITTER
                                     + node.getBid() + SPLITTER

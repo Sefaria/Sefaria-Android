@@ -1,13 +1,6 @@
 package org.sefaria.sefaria.database;
 
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.CharBuffer;
-import java.nio.DoubleBuffer;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
-import java.nio.LongBuffer;
-import java.nio.ShortBuffer;
 import java.util.BitSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -17,12 +10,10 @@ import java.util.regex.Pattern;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
 import android.util.Log;
 import android.util.Pair;
 import android.widget.Toast;
@@ -47,7 +38,7 @@ public class SearchingDB {
     private int currResultNumber = 0;
 
     private String query;
-    private ArrayList<ArrayList<Text>> resultsLists;
+    private ArrayList<ArrayList<Segment>> resultsLists;
 
     //changed for testing
     private boolean usePureSearchEvenHe = false;
@@ -260,7 +251,7 @@ public class SearchingDB {
     }
 
     private static String [] getWords(String text, Util.Lang lang){
-        //String orgTetx = ""+ text;
+        //String orgTetx = ""+ segment;
         text = text.replaceAll("[\u0591-\u05C7\u05f3\u05f4\'\"]", ""); //all nikkudot and ", ' marks are removed
         if(lang == Util.Lang.HE){
             text = text.replaceAll("([^\\u05d0-\\u05ea_%])", " "); //anything not part of the hebrew set (or _ and % for special searching), will be removed
@@ -342,9 +333,9 @@ public class SearchingDB {
     }
 
 
-    public static List<Text> findWordsInList(List<Text> list, String word, boolean enDBOverride, boolean removeLongText){
-        List<Text> foundItems = new ArrayList<>();
-        Text text = null;
+    public static List<Segment> findWordsInList(List<Segment> list, String word, boolean enDBOverride, boolean removeLongText){
+        List<Segment> foundItems = new ArrayList<>();
+        Segment segment = null;
 
         Pattern hePattern = nikkudlessRegEx(word,false, Util.Lang.HE);
         Pattern enPattern;
@@ -360,22 +351,22 @@ public class SearchingDB {
         //String wordLower = Util.getRemovedNikudString(word.toLowerCase(Locale.US));
         for (int i = 0; i< list.size(); i++){
             boolean foundEn = false;
-            text = list.get(i);
+            segment = list.get(i);
             //Test english words
-            Matcher m = enPattern.matcher(text.getText(Util.Lang.EN));
+            Matcher m = enPattern.matcher(segment.getText(Util.Lang.EN));
             if(m.find()){
-                text.setText(addRedToFoundWord(m, text.getText(Util.Lang.EN), removeLongText, false), Util.Lang.EN);
+                segment.setText(addRedToFoundWord(m, segment.getText(Util.Lang.EN), removeLongText, false), Util.Lang.EN);
                 foundEn = true;
-                foundItems.add(text);
+                foundItems.add(segment);
             }
 
             ///TEST Hebrew words
             Util.Lang lang = Util.Lang.HE;
-            m = hePattern.matcher(text.getText(lang));
+            m = hePattern.matcher(segment.getText(lang));
             if(m.find()){
-                text.setText(addRedToFoundWord(m, text.getText(lang), removeLongText, false), lang);
+                segment.setText(addRedToFoundWord(m, segment.getText(lang), removeLongText, false), lang);
                 if(!foundEn){//didn't already add this to the list for found English
-                    foundItems.add(text);
+                    foundItems.add(segment);
                 }
             }
         }
@@ -383,10 +374,10 @@ public class SearchingDB {
         return foundItems;
     }
 
-    public static void removeRed(List<Text> textList){
-        for(Text text:textList){
-            text.setText(text.getText(Util.Lang.EN).replace(FONT_RED_END,"").replace(FONT_RED_START,""), Util.Lang.EN);
-            text.setText(text.getText(Util.Lang.HE).replace(FONT_RED_END, "").replace(FONT_RED_START,""), Util.Lang.HE);
+    public static void removeRed(List<Segment> segmentList){
+        for(Segment segment : segmentList){
+            segment.setText(segment.getText(Util.Lang.EN).replace(FONT_RED_END,"").replace(FONT_RED_START,""), Util.Lang.EN);
+            segment.setText(segment.getText(Util.Lang.HE).replace(FONT_RED_END, "").replace(FONT_RED_START,""), Util.Lang.HE);
         }
     }
 
@@ -405,7 +396,7 @@ public class SearchingDB {
             addEnd = FONT_RED_END;
         }
         final int MAX_CHAR_NUM = 100;
-        if(orgText.length() < 300)//you could get the text in there, so let it be.
+        if(orgText.length() < 300)//you could get the segment in there, so let it be.
             removeLongText = false;
         int lastSpot = 0;
 
@@ -612,9 +603,9 @@ public class SearchingDB {
     }
 
     boolean didFullIndex = false;
-    private ArrayList<Text> searchDBheTextsFullIndex() {
+    private ArrayList<Segment> searchDBheTextsFullIndex() {
         Log.d("Searching", "searchDBheTextsFullIndex started");
-        ArrayList<Text> results = new ArrayList<>();
+        ArrayList<Segment> results = new ArrayList<>();
         if(didFullIndex){
             isDoneSearching = true;
             return results;
@@ -641,8 +632,8 @@ public class SearchingDB {
             cursor = db.rawQuery(sql, null);//filterArray
             if (cursor.moveToFirst()) {
                 do {
-                    Text text = new Text(cursor);
-                    results.add(text);
+                    Segment segment = new Segment(cursor);
+                    results.add(segment);
                 }while (cursor.moveToNext());
             }
         }catch (Exception e){
@@ -653,13 +644,13 @@ public class SearchingDB {
         return results;
     }
 
-    private ArrayList<Text> searchDBheTexts() {
+    private ArrayList<Segment> searchDBheTexts() {
         if(CHUNK_SIZE == 1){
             return  searchDBheTextsFullIndex();
         }
         Log.d("Searching", "searchDBheTextsFullIndex NOT run");
         int startingChunk = currSearchIndex;
-        ArrayList<Text> results = new ArrayList<>();
+        ArrayList<Segment> results = new ArrayList<>();
         long startTime = System.currentTimeMillis();
         try {
             SQLiteDatabase db = Database.getDB();
@@ -682,11 +673,11 @@ public class SearchingDB {
                 cursor = db.rawQuery(sql, null);//filterArray
                 if (cursor.moveToFirst()) {
                     do {
-                        Text text = new Text(cursor);
+                        Segment segment = new Segment(cursor);
 
                         //if(verse.length() > 4000) continue;//TODO this is a major hackk!!, but we aren't searching huge things
 
-                        String verse = text.getText(Util.Lang.HE);
+                        String verse = segment.getText(Util.Lang.HE);
                         boolean foundAllWords = true;
                         for(int j=0; j<words.length;j++) {
                             Matcher m = patterns[j].matcher(verse);
@@ -697,12 +688,12 @@ public class SearchingDB {
                         }
                         if(foundAllWords) { //divided into different parts so the addingHighlighting doesn't need to run each time
                             for (int j = 0; j < words.length; j++) {
-                                verse = text.getText(Util.Lang.HE);
+                                verse = segment.getText(Util.Lang.HE);
                                 Matcher m = patterns[j].matcher(verse);
                                 m.find();
-                                text.setText(addRedToFoundWord(m, verse, true, true), Util.Lang.HE);
+                                segment.setText(addRedToFoundWord(m, verse, true, true), Util.Lang.HE);
                             }
-                            results.add(text);
+                            results.add(segment);
                         }
                     }
                     while (cursor.moveToNext());
@@ -723,9 +714,9 @@ public class SearchingDB {
         return (resultsSize >= returnResultsLongTimeSize || (resultsSize >= returnResultsLongTimeSize  && System.currentTimeMillis() > startTime + WAITING_TIME));
     }
 
-    private ArrayList<Text> searchPureText(Util.Lang lang){
+    private ArrayList<Segment> searchPureText(Util.Lang lang){
         Log.d("searching","pure_search");
-        ArrayList<Text> results = new ArrayList<>();
+        ArrayList<Segment> results = new ArrayList<>();
         long startTime = System.currentTimeMillis();
         int maxTid = -1;
         try {
@@ -755,17 +746,17 @@ public class SearchingDB {
                 cursor = db.rawQuery(sql, null);//filterArray
                 if (cursor.moveToFirst()) {
                     do {
-                        Text text = new Text(cursor);
-                        String verse = text.getText(lang);
+                        Segment segment = new Segment(cursor);
+                        String verse = segment.getText(lang);
                         for(int j=0; j<words.length;j++){
                             Matcher m = patterns[j].matcher(verse);
                             if(!m.find()) {
                                 break;
                             }
 
-                            text.setText(addRedToFoundWord(m, verse, true, true), lang);
+                            segment.setText(addRedToFoundWord(m, verse, true, true), lang);
                             if(j == words.length -1){
-                                results.add(text);
+                                results.add(segment);
                             }
                         }
                     }
@@ -795,8 +786,8 @@ public class SearchingDB {
         return results;
     }
 
-    public static List<Text> findOnPage(Node node, String term){
-        List<Text> list;
+    public static List<Segment> findOnPage(Node node, String term){
+        List<Segment> list;
         try {
             list = findWordsInList(node.getTexts(), term, false, false);
         }catch(Exception e){
@@ -813,7 +804,7 @@ public class SearchingDB {
      *  waits (in spin loop) until there is data to send. It will also tell a Async task to refill the search buffer if it's within it's limits
      * @return the next batch of search results
      */
-    public ArrayList<Text> getResults(){
+    public ArrayList<Segment> getResults(){
         while(true){
             Log.d("SearchingDB", "getResults: currResultNumber:" + currResultNumber + "... resultsLists.size():"+ resultsLists.size());
             if (isDoneSearching && currResultNumber >= resultsLists.size()) {
@@ -842,7 +833,7 @@ public class SearchingDB {
         if(isDoneSearching) return null;
         middleOfSearching = true;
         while(true){
-            ArrayList<Text> results;
+            ArrayList<Segment> results;
             try {
                 if (query.length() == 0) {
                     results = new ArrayList<>();
@@ -938,7 +929,7 @@ public class SearchingDB {
                             SearchingDB searchingDB = null;
                             try {
                                 searchingDB = new SearchingDB(query, null, usePureNoIndexSearch, returnResultAmount, returnResultAmount);
-                                List<Text> results = searchingDB.getResults();
+                                List<Segment> results = searchingDB.getResults();
                                 long totalTime = System.currentTimeMillis() - startTime;
                                 sumTime += totalTime;
                                 sumResults += results.size();

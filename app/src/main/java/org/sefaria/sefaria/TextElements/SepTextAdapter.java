@@ -12,7 +12,7 @@ import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.activities.SepTextActivity;
-import org.sefaria.sefaria.database.Text;
+import org.sefaria.sefaria.database.Segment;
 import org.sefaria.sefaria.layouts.SefariaTextView;
 
 import java.util.Collection;
@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * Created by nss on 11/29/15.
  */
-public class SepTextAdapter extends ArrayAdapter<Text> {
+public class SepTextAdapter extends ArrayAdapter<Segment> {
 
     private static int MAX_ALPHA_NUM_LINKS = 70;
     private static int MIN_ALPHA_NUM_LINKS = 20;
@@ -29,18 +29,18 @@ public class SepTextAdapter extends ArrayAdapter<Text> {
     private static float MAX_ALPHA = 0.8f;
 
     private SepTextActivity sepTextActivity;
-    private List<Text> texts;
+    private List<Segment> segments;
 
-    private Text highlightIncomingText;
+    private Segment highlightIncomingSegment;
     private boolean loadedLastText = false;
 
     private int resourceId;
     private int preLast;
 
-    public SepTextAdapter(SepTextActivity sepTextActivity, int resourceId, List<Text> objects) {
+    public SepTextAdapter(SepTextActivity sepTextActivity, int resourceId, List<Segment> objects) {
         super(sepTextActivity,resourceId,objects);
         this.sepTextActivity = sepTextActivity;
-        this.texts = objects;
+        this.segments = objects;
         this.resourceId = resourceId;
 
 
@@ -48,7 +48,7 @@ public class SepTextAdapter extends ArrayAdapter<Text> {
 
     @Override
     public View getView(int position, View view, ViewGroup parent) {
-        Text segment = texts.get(position);
+        Segment segment = segments.get(position);
 
         if (segment.isLoader()) {
             LayoutInflater inflater = (LayoutInflater)
@@ -105,7 +105,7 @@ public class SepTextAdapter extends ArrayAdapter<Text> {
 
         if (isCurrLinkSegment && sepTextActivity.getFragmentIsOpen()) {
             view.setBackgroundColor(Util.getColor(sepTextActivity,R.attr.text_verse_selected_bg));
-        } else if(segment.equals(highlightIncomingText)){
+        } else if(segment.equals(highlightIncomingSegment)){
             view.setBackgroundColor(Util.getColor(sepTextActivity,R.attr.text_verse_selected_bg));
         } else {
             view.setBackgroundColor(sepTextActivity.getResources().getColor(android.R.color.transparent));
@@ -115,8 +115,8 @@ public class SepTextAdapter extends ArrayAdapter<Text> {
         SefariaTextView enNum = (SefariaTextView) view.findViewById(R.id.enVerseNum);
         SefariaTextView heNum = (SefariaTextView) view.findViewById(R.id.heVerseNum);
 
-        //add padding to the last text so that you're able to get to the links for the last text
-        if(loadedLastText && position == texts.size() -1 && sepTextActivity.getFragmentIsOpen()){
+        //add padding to the last segment so that you're able to get to the links for the last segment
+        if(loadedLastText && position == segments.size() -1 && sepTextActivity.getFragmentIsOpen()){
             view.setPadding(view.getPaddingLeft(),view.getPaddingTop(),view.getPaddingRight(),MyApp.getScreenSizePixels().y/4);
         }else{
             view.setPadding(view.getPaddingLeft(),view.getPaddingTop(),view.getPaddingRight(),0);
@@ -247,35 +247,35 @@ public class SepTextAdapter extends ArrayAdapter<Text> {
         notifyDataSetChanged();
     }
 
-    public void highlightIncomingText(Text text){
-        highlightIncomingText = text;
+    public void highlightIncomingText(Segment segment){
+        highlightIncomingSegment = segment;
         notifyDataSetChanged();
     }
 
     @Override
-    public void add(Text object) {
-        add(texts.size(), object);
+    public void add(Segment object) {
+        add(segments.size(), object);
 
     }
 
     @Override
-    public void addAll(Collection<? extends Text> collection) {
-       addAll(texts.size(), collection);
+    public void addAll(Collection<? extends Segment> collection) {
+       addAll(segments.size(), collection);
 
     }
 
-    public void add(int location, Text object) {
-        texts.add(location, object);
+    public void add(int location, Segment object) {
+        segments.add(location, object);
         notifyDataSetChanged();
     }
 
-    public void addAll(int location, Collection<? extends Text> collection) {
-        texts.addAll(location, collection);
+    public void addAll(int location, Collection<? extends Segment> collection) {
+        segments.addAll(location, collection);
         notifyDataSetChanged();
     }
 
     @Override
-    public Text getItem(int position) {
+    public Segment getItem(int position) {
         try {
             return super.getItem(position);
         } catch (IndexOutOfBoundsException e) {
@@ -289,9 +289,9 @@ public class SepTextAdapter extends ArrayAdapter<Text> {
     }
 
     @Override
-    public int getPosition(Text item) {
-        for (int i = 0; i < texts.size(); i++) {
-            if (texts.get(i).equals(item))
+    public int getPosition(Segment item) {
+        for (int i = 0; i < segments.size(); i++) {
+            if (segments.get(i).equals(item))
                 return i;
         }
         return -1;

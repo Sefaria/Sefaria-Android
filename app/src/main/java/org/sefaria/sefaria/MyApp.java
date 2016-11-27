@@ -255,7 +255,7 @@ public class MyApp extends Application {
                     String place = url.replaceAll("(?i).*sefaria\\.org/?(s2/)?", "");
                     try {
                         API.PlaceRef placeRef = API.PlaceRef.getPlace(place,null);
-                        SuperTextActivity.startNewTextActivityIntent(activity, placeRef.book, placeRef.text, placeRef.node, true, null,-1);
+                        SuperTextActivity.startNewTextActivityIntent(activity, placeRef.book, placeRef.segment, placeRef.node, true, null,-1);
                     }catch (API.APIException e){
                         openURLInBrowser(activity,url);
                     }catch (Book.BookNotFoundException  e2){

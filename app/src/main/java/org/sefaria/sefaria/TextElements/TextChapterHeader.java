@@ -2,21 +2,14 @@ package org.sefaria.sefaria.TextElements;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
-import org.sefaria.sefaria.database.API;
-import org.sefaria.sefaria.database.Book;
-import org.sefaria.sefaria.database.Text;
+import org.sefaria.sefaria.database.Segment;
 import org.sefaria.sefaria.layouts.SefariaTextView;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.regex.Pattern;
 
 /**
  * Created by nss on 11/4/15.
@@ -29,7 +22,7 @@ public class TextChapterHeader extends LinearLayout {
     public String heText;
     //public Pattern digitPat;
 
-    public TextChapterHeader(Context context, Text segment, float textSize) {
+    public TextChapterHeader(Context context, Segment segment, float textSize) {
         super(context);
         enText = segment.getText(Util.Lang.EN);
         heText = segment.getText(Util.Lang.HE);
@@ -72,7 +65,7 @@ public class TextChapterHeader extends LinearLayout {
         }
     }
 
-    public void setSectionTitle(Text segment) {
+    public void setSectionTitle(Segment segment) {
         enText = segment.getText(Util.Lang.EN);
         heText = segment.getText(Util.Lang.HE);
         SefariaTextView reloadTv = (SefariaTextView) findViewById(R.id.reload_tv);

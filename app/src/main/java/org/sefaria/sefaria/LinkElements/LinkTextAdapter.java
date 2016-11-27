@@ -2,7 +2,6 @@ package org.sefaria.sefaria.LinkElements;
 
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,13 +10,12 @@ import android.widget.Toast;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Settings;
-import org.sefaria.sefaria.TOCElements.TOCVersion;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.activities.SuperTextActivity;
 import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.database.Link;
 import org.sefaria.sefaria.database.LinkFilter;
-import org.sefaria.sefaria.database.Text;
+import org.sefaria.sefaria.database.Segment;
 import org.sefaria.sefaria.layouts.SefariaTextView;
 
 import java.util.ArrayList;
@@ -32,7 +30,7 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextHolder> {
     private static final int BI_LINK_TEXT_VIEW_TYPE = 1;
     private static final int MONO_LINK_TEXT_VIEW_TYPE = 0;
 
-    private List<Text> itemList;
+    private List<Segment> itemList;
     private SuperTextActivity activity;
     private LinkFilter currLinkCount;
     private SefariaTextView noLinksTV;
@@ -40,7 +38,7 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextHolder> {
 
 
 
-    public LinkTextAdapter(SuperTextActivity context, List<Text> itemList, SefariaTextView noLinksTV) {
+    public LinkTextAdapter(SuperTextActivity context, List<Segment> itemList, SefariaTextView noLinksTV) {
         this.itemList = itemList;
         this.activity = context;
         this.noLinksTV = noLinksTV;
@@ -79,7 +77,7 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextHolder> {
     public void onBindViewHolder(LinkTextHolder holder, int position) {
         Util.Lang lang = activity.getTextLang();
 
-        Text link = itemList.get(position);
+        Segment link = itemList.get(position);
         if (link.getText(lang).length() == 0) lang = Util.Lang.BI; //TODO noah, make this better.
 
         holder.title.setVisibility(View.VISIBLE);
@@ -137,7 +135,7 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextHolder> {
         }
     }
 
-    public void setItemList(List<Text> items) {
+    public void setItemList(List<Segment> items) {
         itemList = items;
         if (itemList.size() == 0) {
             noLinksTV.setVisibility(View.VISIBLE);
@@ -147,12 +145,12 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextHolder> {
         notifyDataSetChanged();
     }
 
-    public Text getItem(int position) {
+    public Segment getItem(int position) {
         return itemList.get(position);
     }
 
-    //segment is used to update text list
-    public void setCurrLinkCount(LinkFilter linkCount, Text segment) {
+    //segment is used to update segment list
+    public void setCurrLinkCount(LinkFilter linkCount, Segment segment) {
         //try not to update too often
         if (!linkCount.equals(currLinkCount)) {
             currLinkCount = linkCount;
@@ -160,10 +158,10 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextHolder> {
                 try {
                     setItemList(Link.getLinkedTexts(segment, currLinkCount));
                 } catch (API.APIException e) {
-                    setItemList(new ArrayList<Text>());
+                    setItemList(new ArrayList<Segment>());
                     API.makeAPIErrorToast(activity);
                 } catch (Exception e){
-                    setItemList(new ArrayList<Text>());
+                    setItemList(new ArrayList<Segment>());
                     try{
                         Toast.makeText(activity,MyApp.getRString(R.string.error_getting_links),Toast.LENGTH_SHORT).show();
                     }catch (Exception e1){

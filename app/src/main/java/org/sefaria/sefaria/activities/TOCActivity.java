@@ -164,7 +164,7 @@ public class TOCActivity extends AppCompatActivity {
         intent.putExtra("lang", lang);
         if(((TOCActivity) context).pathDefiningNode != null && ((TOCActivity) context).pathDefiningNode.length() >0 && !((TOCActivity) context).cameInFromBackPress)//it will only do this if a SectionAct was already opened
             ;//intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);//This will make it return back to TextAct
-            // I turned this off to simplify the stack a reduce weird back bugs. Such as Text ->TOC ->TextPage on button press -> Backpress brings you to TOC -> button press tries to renew a textAct that already was killed (so it would just bring up a random one form the past and mess things up.
+            // I turned this off to simplify the stack a reduce weird back bugs. Such as Segment ->TOC ->TextPage on button press -> Backpress brings you to TOC -> button press tries to renew a textAct that already was killed (so it would just bring up a random one form the past and mess things up.
 
         //This don't need request b/c I'm no longer doing the REORDERING
         //((TOCActivity) context).startActivityForResult(intent, TOCActivity.COMING_BACK_TO_TOC_REQUEST_CODE); //using result so that we can know if someone presses back to come back fromo TextAct (instead of reopening the TOC).

@@ -61,7 +61,7 @@ public class SefariaTextView extends TextView {
 
     /**
      *
-     * @param lang choose font based on language of text
+     * @param lang choose font based on language of segment
      * @param isSerif
      * @param textSize -1 means keep the textSize the same. else, set to that value in SP
      */
@@ -75,7 +75,7 @@ public class SefariaTextView extends TextView {
      */
     /**
      *
-     * @param lang choose font based on language of text
+     * @param lang choose font based on language of segment
      * @param isSerif
      * @param textSize -1 means keep the textSize the same
      * @param typedValue can use TypedValue.COMPLEX_UNIT_PX if the number is in pixels. Useful when using getResources().getDimension() which converts to pixels
@@ -105,7 +105,7 @@ public class SefariaTextView extends TextView {
 
     }
 
-    //set text alignment correctly depending on language (only a problem when both languages appear in the text)
+    //set segment alignment correctly depending on language (only a problem when both languages appear in the segment)
     public void setLangGravity(Util.Lang lang) {
         if (lang == Util.Lang.HE) setGravity(Gravity.RIGHT);
         else if (lang == Util.Lang.EN) setGravity(Gravity.LEFT);

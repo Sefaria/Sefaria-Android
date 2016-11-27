@@ -173,7 +173,7 @@ public class CustomActionbar extends MenuElement {
 
     public void setLang(Util.Lang lang) {
         /**
-         * This is a hack so that the resizing textbox thinks that the text is bigger so it's more likely to fit everything in.
+         * This is a hack so that the resizing textbox thinks that the segment is bigger so it's more likely to fit everything in.
          * \u3000 is a type of space char
          */
         String title;

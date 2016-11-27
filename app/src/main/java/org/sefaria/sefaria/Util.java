@@ -108,7 +108,7 @@ public class Util {
         InputStream iS = resources.getAssets().open(path);
         //create a buffer that has the same size as the InputStream
         byte[] buffer = new byte[iS.available()];
-        //read the text file as a stream, into the buffer
+        //read the segment file as a stream, into the buffer
         iS.read(buffer);
         //create a output stream to write the buffer into
         ByteArrayOutputStream oS = new ByteArrayOutputStream();
@@ -306,7 +306,7 @@ public class Util {
         return sb.toString();
     }
 
-    //returns true if text has any hebrew character in it
+    //returns true if segment has any hebrew character in it
     public static boolean hasHebrew(String text) {
         Pattern patt = Pattern.compile("[\u05d0-\u05ea]");
         return patt.matcher(text).find();

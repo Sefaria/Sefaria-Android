@@ -218,13 +218,13 @@ public class LinkFilter {
         }
     }
 
-    private static LinkFilter getFromLinks_API(Text text) throws API.APIException, Book.BookNotFoundException {
+    private static LinkFilter getFromLinks_API(Segment segment) throws API.APIException, Book.BookNotFoundException {
         LinkFilter allLinkCounts = makeAllLinkCounts();
 
 
         Log.d("API.Link","got starting LinksAPI");
-        List<Text> texts = new ArrayList<>();
-        String place = text.getURL(false, false);
+        List<Segment> segments = new ArrayList<>();
+        String place = segment.getURL(false, false);
         String url = API.LINK_URL + place + API.LINK_ZERO_TEXT;
         String data = API.getDataFromURL(url);
         if(data.length()==0)
@@ -290,12 +290,12 @@ public class LinkFilter {
         return new LinkFilter(shortMessage, 0, shortMessage,DEPTH_TYPE.ERR);
     }
 
-    public static LinkFilter getLinkFilters(Text text){
+    public static LinkFilter getLinkFilters(Segment segment){
         try {
-            if (text.tid == 0 || Settings.getUseAPI()) { //text.tid == 0 when
-                return getFromLinks_API(text);
+            if (segment.tid == 0 || Settings.getUseAPI()) { //segment.tid == 0 when
+                return getFromLinks_API(segment);
             } else {
-                return getFromLinks_small(text);
+                return getFromLinks_small(segment);
             }
         }catch (API.APIException e){
             e.printStackTrace();
@@ -311,14 +311,14 @@ public class LinkFilter {
         }
     }
 
-    private static LinkFilter getFromLinks_small(Text text) throws API.APIException {
-        //Log.d("LinkFilter", text.levels[0] + " starting...")
-        Log.d("LinkFilter","Text:" + text);
+    private static LinkFilter getFromLinks_small(Segment segment) throws API.APIException {
+        //Log.d("LinkFilter", segment.levels[0] + " starting...")
+        Log.d("LinkFilter","Segment:" + segment);
         LinkFilter allLinkCounts = makeAllLinkCounts();
 
         int commentaryAddonAmount = 11;
         try {
-            Book book = new Book(text.bid);
+            Book book = new Book(segment.bid);
             if(book.categories[0].equals("Talmud")) {
                 commentaryAddonAmount = 100;
                 Log.d("FilterLink","commentaryAddonAmount" + commentaryAddonAmount);
@@ -326,10 +326,10 @@ public class LinkFilter {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        LinkFilter commentaryGroup = getCommentaryOnChap(text.tid - commentaryAddonAmount, text.tid + commentaryAddonAmount, text.bid);//getting all commentaries +-11 of the current text
+        LinkFilter commentaryGroup = getCommentaryOnChap(segment.tid - commentaryAddonAmount, segment.tid + commentaryAddonAmount, segment.bid);//getting all commentaries +-11 of the current segment
 
 
-        if(text.getNumLinks() == 0){
+        if(segment.getNumLinks() == 0){
             if(commentaryGroup.getChildren().size()>0)
                 allLinkCounts.addChild(commentaryGroup,true);
             return allLinkCounts;
@@ -341,15 +341,15 @@ public class LinkFilter {
         /*
         if(Build.VERSION.SDK_INT >= 21 && true) {//this works for newer androids
             sql = "SELECT B.title, Count(*) as booksCount, B.heTitle, B.commentsOn, B.categories FROM Books B, Links_small L, Texts T WHERE (" +
-                    "(L.tid1 = " + text.tid + " AND L.tid2=T._id AND T.bid= B._id)" +
-                    " OR (L.tid2 = " + text.tid + " AND L.tid1=T._id AND T.bid= B._id)" +
+                    "(L.tid1 = " + segment.tid + " AND L.tid2=T._id AND T.bid= B._id)" +
+                    " OR (L.tid2 = " + segment.tid + " AND L.tid1=T._id AND T.bid= B._id)" +
                     " ) GROUP BY B._id ORDER BY B.categories, B._id"
             ;
         }
         */
         sql = "select B2.title, Count(*) as booksCount, B2.heTitle, B2.commentsOn, B2.categories FROM" +
-                " (SELECT ALL B._id FROM Books B, Links_small L, Texts T WHERE ((L.tid1 = " + text.tid + " AND L.tid2=T._id AND T.bid= B._id) )" +
-                " UNION ALL SELECT ALL B._id FROM Books B, Links_small L, Texts T WHERE ( (L.tid2 = " + text.tid + " AND L.tid1=T._id AND T.bid= B._id) )) as tmp, Books B2" +
+                " (SELECT ALL B._id FROM Books B, Links_small L, Texts T WHERE ((L.tid1 = " + segment.tid + " AND L.tid2=T._id AND T.bid= B._id) )" +
+                " UNION ALL SELECT ALL B._id FROM Books B, Links_small L, Texts T WHERE ( (L.tid2 = " + segment.tid + " AND L.tid1=T._id AND T.bid= B._id) )) as tmp, Books B2" +
                 " where tmp._id= B2._id GROUP BY tmp._id ORDER BY B2.categories, B2._id";
 
         Cursor cursor = db.rawQuery(sql, null);
@@ -358,7 +358,7 @@ public class LinkFilter {
         String lastCategory = "";
         if (cursor.moveToFirst()) {
             do {
-                //Log.d("LinkFilter", ""+ text.levels[0] + ": " + cursor.getString(4));
+                //Log.d("LinkFilter", ""+ segment.levels[0] + ": " + cursor.getString(4));
                 String [] categories = Util.str2strArray(cursor.getString(4));
                 if(categories.length == 0) continue;
                 if(countGroups == null || !categories[0].equals(lastCategory)){
@@ -381,7 +381,7 @@ public class LinkFilter {
                 String childEnTitle = cursor.getString(0);
                 int childCount = cursor.getInt(1);
                 String childHeTitle = cursor.getString(2);
-                if(cursor.getInt(3) == text.bid) {//Comments on this book
+                if(cursor.getInt(3) == segment.bid) {//Comments on this book
                     commentaryGroup.addCommentaryCount(childEnTitle,childCount,childHeTitle);
                 }else{ //non commentary book
                     LinkFilter linkCount = new LinkFilter(childEnTitle,childCount,childHeTitle,DEPTH_TYPE.BOOK);

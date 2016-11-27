@@ -111,13 +111,13 @@ public class Huffman {
                 }
                 String text = getPlainText(node);
                 if(text != null){
-                    //text = "{"  + text + "}"; //THIS IS MAJOR DEBUGGING!!//+byteString.toString() + ":"
+                    //segment = "{"  + segment + "}"; //THIS IS MAJOR DEBUGGING!!//+byteString.toString() + ":"
                     decode.append(text);
                     node = nodeRoot;
                 }
             }
         }catch(Exception e){
-           Log.e("Huffman", "Problem decoding text.");
+           Log.e("Huffman", "Problem decoding segment.");
             e.printStackTrace();
         }
         return decode.toString();

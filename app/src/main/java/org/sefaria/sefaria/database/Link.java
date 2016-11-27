@@ -8,7 +8,6 @@ import java.util.List;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -57,32 +56,32 @@ public class Link {//implements Parcelable {
                 + ") ";
     }
 
-    private static String makeWhereStatement(Text text){
-        String str = " L." + Kbida + "=" + text.bid;
-        for(int i=0;i<text.levels.length;i++)
-            str += addLevelWhere(Klevel1a, text.levels[0],"L");
+    private static String makeWhereStatement(Segment segment){
+        String str = " L." + Kbida + "=" + segment.bid;
+        for(int i=0;i<segment.levels.length;i++)
+            str += addLevelWhere(Klevel1a, segment.levels[0],"L");
         str += " AND    L.bidb=T.bid "
-                + " AND (T." + Text.Klevel1 + "=L." + Klevel1b + ")"// + " OR L." + Klevel1b + "=0)"
-                + " AND (T." + Text.Klevel2 + "=L." + Klevel2b + ")"//+ " OR L." + Klevel2b + "=0)"
-                + " AND (T." + Text.Klevel3 + "=L." + Klevel3b + ")"//+ " OR L." + Klevel3b + "=0)"
-                + " AND (T." + Text.Klevel4 + "=L." + Klevel4b + ")"//+ " OR L." + Klevel4b + "=0)"
-                //+ " AND (T." + Text.Klevel5 + "=L." + Klevel5b + ")"//+ " OR L." + Klevel5b + "=0)"
-                //+ " AND (T." + Text.Klevel6 + "=L." + Klevel6b + ")"//+ " OR L." + Klevel6b + "=0)"
+                + " AND (T." + Segment.Klevel1 + "=L." + Klevel1b + ")"// + " OR L." + Klevel1b + "=0)"
+                + " AND (T." + Segment.Klevel2 + "=L." + Klevel2b + ")"//+ " OR L." + Klevel2b + "=0)"
+                + " AND (T." + Segment.Klevel3 + "=L." + Klevel3b + ")"//+ " OR L." + Klevel3b + "=0)"
+                + " AND (T." + Segment.Klevel4 + "=L." + Klevel4b + ")"//+ " OR L." + Klevel4b + "=0)"
+                //+ " AND (T." + Segment.Klevel5 + "=L." + Klevel5b + ")"//+ " OR L." + Klevel5b + "=0)"
+                //+ " AND (T." + Segment.Klevel6 + "=L." + Klevel6b + ")"//+ " OR L." + Klevel6b + "=0)"
         ;
         return str;
     }
 
-    private static String makeWhereStatement2(Text text){
-        String str = " L2." + Kbidb + "=" + text.bid ;
-        for(int i=0;i<text.levels.length;i++)
-            str += addLevelWhere(Klevel1b, text.levels[i], "L2");
+    private static String makeWhereStatement2(Segment segment){
+        String str = " L2." + Kbidb + "=" + segment.bid ;
+        for(int i=0;i<segment.levels.length;i++)
+            str += addLevelWhere(Klevel1b, segment.levels[i], "L2");
         str += " AND    L2.bida=T3.bid "
-                + " AND (T3." + Text.Klevel1 + "=L2." + Klevel1a + ")"//+ " OR L2." + Klevel1a + "=0)"
-                + " AND (T3." + Text.Klevel2 + "=L2." + Klevel2a + ")"//+ " OR L2." + Klevel2a + "=0)"
-                + " AND (T3." + Text.Klevel3 + "=L2." + Klevel3a + ")"//+ " OR L2." + Klevel3a + "=0)"
-                + " AND (T3." + Text.Klevel4 + "=L2." + Klevel4a + ")"//+ " OR L2." + Klevel4a + "=0)"
-                //+ " AND (T3." + Text.Klevel5 + "=L2." + Klevel5a + ")"//+ " OR L2." + Klevel5a + "=0)"
-                //+ " AND (T3." + Text.Klevel6 + "=L2." + Klevel6a + ")" ; //+ " OR L2." + Klevel6a + "=0)";
+                + " AND (T3." + Segment.Klevel1 + "=L2." + Klevel1a + ")"//+ " OR L2." + Klevel1a + "=0)"
+                + " AND (T3." + Segment.Klevel2 + "=L2." + Klevel2a + ")"//+ " OR L2." + Klevel2a + "=0)"
+                + " AND (T3." + Segment.Klevel3 + "=L2." + Klevel3a + ")"//+ " OR L2." + Klevel3a + "=0)"
+                + " AND (T3." + Segment.Klevel4 + "=L2." + Klevel4a + ")"//+ " OR L2." + Klevel4a + "=0)"
+                //+ " AND (T3." + Segment.Klevel5 + "=L2." + Klevel5a + ")"//+ " OR L2." + Klevel5a + "=0)"
+                //+ " AND (T3." + Segment.Klevel6 + "=L2." + Klevel6a + ")" ; //+ " OR L2." + Klevel6a + "=0)";
         return str;
     }
     */
@@ -90,8 +89,8 @@ public class Link {//implements Parcelable {
 
 
     /**
-     * Get links for specific text (ex. verse).
-     * @param text
+     * Get links for specific segment (ex. verse).
+     * @param segment
      * @param limit
      * @param offset
      * @return linkList
@@ -99,37 +98,37 @@ public class Link {//implements Parcelable {
 
     /**
      *
-     * @param text
+     * @param segment
      * @param linkFilter null if no filter or linkCount containing anything you want included in the filter (including LinkFilter linkfiler's children)
-     * @return List<Text> for texts links to the input text
+     * @return List<Segment> for texts links to the input segment
      */
-    public static List<Text> getLinkedTexts(Text text, LinkFilter linkFilter) throws API.APIException, Book.BookNotFoundException  {
-        List<Text> linkList;
-        if(text.tid == 0 || Settings.getUseAPI()){ //tid might be 0 if it was gotten using API (So for example with alternate text versions)
-            linkList = getLinkedTextsFromAPI(text,linkFilter);
+    public static List<Segment> getLinkedTexts(Segment segment, LinkFilter linkFilter) throws API.APIException, Book.BookNotFoundException  {
+        List<Segment> linkList;
+        if(segment.tid == 0 || Settings.getUseAPI()){ //tid might be 0 if it was gotten using API (So for example with alternate segment versions)
+            linkList = getLinkedTextsFromAPI(segment,linkFilter);
         }else{
-            linkList = getLinkedTextsFromDB(text, linkFilter);
+            linkList = getLinkedTextsFromDB(segment, linkFilter);
         }
         return linkList;
     }
 
 
-    public static List<Text> getLinkedTextsFromAPI(Text orgText, LinkFilter linkFilter) throws API.APIException, Book.BookNotFoundException {
+    public static List<Segment> getLinkedTextsFromAPI(Segment orgSegment, LinkFilter linkFilter) throws API.APIException, Book.BookNotFoundException {
         Log.d("API.Link","got starting LinksAPI");
-        List<Text> texts = new ArrayList<>();
-        String place = orgText.getURL(false, false);
+        List<Segment> segments = new ArrayList<>();
+        String place = orgSegment.getURL(false, false);
         String url = API.LINK_URL + place;
         String data = API.getDataFromURL(url);
         Log.d("API.Link","got data");
         Book book;
         try {
-            book = new Book(orgText.bid);
+            book = new Book(orgSegment.bid);
         } catch (Book.BookNotFoundException e) {
-            return texts;
+            return segments;
         }
         if(data.length()==0)
-            return texts;
-        List<Text> commentaries = new ArrayList<>();
+            return segments;
+        List<Segment> commentaries = new ArrayList<>();
 
         String commentOn = " on " + book.title;
         try {
@@ -145,11 +144,11 @@ public class Link {//implements Parcelable {
                             (linkFilter.depth_type == LinkFilter.DEPTH_TYPE.CAT && category.equals(linkFilter.enTitle)) ||
                             (linkFilter.depth_type == LinkFilter.DEPTH_TYPE.BOOK && enTitle.equals(linkFilter.enTitle))
                             ) {
-                        Text tempText = new Text(removeEmpty(jsonLink.getString("text")), removeEmpty(jsonLink.getString("he")), Book.getBid(enTitle), ref);
+                        Segment tempSegment = new Segment(removeEmpty(jsonLink.getString("text")), removeEmpty(jsonLink.getString("he")), Book.getBid(enTitle), ref);
                         if (category.equals("Commentary"))
-                            commentaries.add(tempText);
+                            commentaries.add(tempSegment);
                         else
-                            texts.add(tempText);
+                            segments.add(tempSegment);
                     }
                 }catch (Exception e1){
                     e1.printStackTrace();
@@ -161,16 +160,16 @@ public class Link {//implements Parcelable {
         }
 
         Collections.sort(commentaries,compareTexts);
-        Collections.sort(texts, compareTexts);
-        texts.addAll(0,commentaries);
+        Collections.sort(segments, compareTexts);
+        segments.addAll(0,commentaries);
 
         Log.d("API.Link","finished LinksAPI");
-        return texts;
+        return segments;
     }
 
-    static Comparator<Text> compareTexts = new Comparator<Text>() {
+    static Comparator<Segment> compareTexts = new Comparator<Segment>() {
         @Override
-        public int compare(Text a, Text b) {
+        public int compare(Segment a, Segment b) {
             //only sorting on bid. Within same book using stable sort to keep order
             return a.bid - b.bid;
         }
@@ -183,30 +182,30 @@ public class Link {//implements Parcelable {
             return str;
     }
 
-    private static List<Text> getLinkedTextsFromDB(Text text, LinkFilter linkFilter) {
+    private static List<Segment> getLinkedTextsFromDB(Segment segment, LinkFilter linkFilter) {
         SQLiteDatabase db = Database.getDB();
-        List<Text> linkList = new ArrayList<>();
+        List<Segment> linkList = new ArrayList<>();
 
         //Log.d("getLinksTextsFromDB", "Started ... linkFiler:" + linkFilter);
 
-        String sql = "SELECT T.* FROM " + Text.TABLE_TEXTS + " T, Books B WHERE T.bid = B._id AND T._id"
-                + " IN ( SELECT L1.tid2 FROM Links_small L1 WHERE L1.tid1 = " + text.tid
+        String sql = "SELECT T.* FROM " + Segment.TABLE_TEXTS + " T, Books B WHERE T.bid = B._id AND T._id"
+                + " IN ( SELECT L1.tid2 FROM Links_small L1 WHERE L1.tid1 = " + segment.tid
                 + " UNION "
-                + " SELECT L2.tid1 FROM Links_small L2 WHERE L2.tid2 = " + text.tid
+                + " SELECT L2.tid1 FROM Links_small L2 WHERE L2.tid2 = " + segment.tid
                 + ")";
 
         String [] args = null;
         if(linkFilter.depth_type == LinkFilter.DEPTH_TYPE.CAT){
             if(linkFilter.enTitle.equals(LinkFilter.COMMENTARY)){
                 sql += " AND B.commentsOn = ? ";
-                args = new String[] {""+text.bid};
+                args = new String[] {""+ segment.bid};
             }else{
                 String category;
                 if(linkFilter.enTitle.equals(LinkFilter.QUOTING_COMMENTARY)) {
                     //the category in the database is simply "Commentary"
                     category = "Commentary";
                     //don't include the commentary that is directly for this book (like "Rashi on Genesis" for "Genesis")
-                    sql += " AND B.commentsOn <> " + text.bid;
+                    sql += " AND B.commentsOn <> " + segment.bid;
                 }else {
                     category = linkFilter.enTitle;
                 }
@@ -223,7 +222,7 @@ public class Link {//implements Parcelable {
             args = new String[]{linkFilter.enTitle};
         }
 
-        sql += " ORDER BY (case when B.commentsOn=" + text.bid  + " then 0 else 1 end), T.bid";
+        sql += " ORDER BY (case when B.commentsOn=" + segment.bid  + " then 0 else 1 end), T.bid";
 
 
 
@@ -231,7 +230,7 @@ public class Link {//implements Parcelable {
         if (cursor.moveToFirst()) {
             do {
                 // Adding  to list
-                linkList.add(new Text(cursor));
+                linkList.add(new Segment(cursor));
             } while (cursor.moveToNext());
         }
 
@@ -240,7 +239,7 @@ public class Link {//implements Parcelable {
             for(LinkFilter lc: linkFilter.getChildren()){
                 Log.d("Link", lc.toString());
             }
-            for(Text link:linkList){
+            for(Segment link:linkList){
                 link.log();
             }
         }
@@ -251,15 +250,15 @@ public class Link {//implements Parcelable {
 
     /**
      * gets links to a particular level other than the last level
-     * @param text
+     * @param segment
      * @param limit
      * @param offset
      * @return
      */
     /*
-    public static List<Text> getLinkedChapTexts(Text text, int limit, int offset) {
-        List<Text> texts = new ArrayList<Text>();
-        Text dummyChapText = Text.makeDummyChapText(text);
+    public static List<Segment> getLinkedChapTexts(Segment segment, int limit, int offset) {
+        List<Segment> texts = new ArrayList<Segment>();
+        Segment dummyChapText = Segment.makeDummyChapText(segment);
         try{
             texts = getLinkedChapTextsFromDB(dummyChapText, limit, offset);
         }catch(SQLiteException e){
@@ -276,23 +275,23 @@ public class Link {//implements Parcelable {
     }
 
 
-    private static List<Text> getLinkedChapTextsFromDB(Text text, int limit, int offset) {
+    private static List<Segment> getLinkedChapTextsFromDB(Segment segment, int limit, int offset) {
         Database dbHandler = Database.getInstance();
         SQLiteDatabase db = dbHandler.getReadableDatabase();
 
-        List<Text> linkList = new ArrayList<Text>();
-        String whereStatement = makeWhereStatement(text);
-        String whereStatement2 = makeWhereStatement2(text);
+        List<Segment> linkList = new ArrayList<Segment>();
+        String whereStatement = makeWhereStatement(segment);
+        String whereStatement2 = makeWhereStatement2(segment);
 
-        String select = "SELECT T2.* FROM " + Text.TABLE_TEXTS + " T2 WHERE T2._id"
+        String select = "SELECT T2.* FROM " + Segment.TABLE_TEXTS + " T2 WHERE T2._id"
                 + " IN (  SELECT T._id"
-                + " FROM " + TABLE_LINKS +" L, " + Text.TABLE_TEXTS + " T "
+                + " FROM " + TABLE_LINKS +" L, " + Segment.TABLE_TEXTS + " T "
                 + " WHERE " + whereStatement
                 + ")";
 
-        String select2 = "SELECT T4.* FROM " + Text.TABLE_TEXTS + " T4 WHERE T4._id"
+        String select2 = "SELECT T4.* FROM " + Segment.TABLE_TEXTS + " T4 WHERE T4._id"
                 + " IN (  SELECT T3._id"
-                + " FROM " + TABLE_LINKS +" L2, " + Text.TABLE_TEXTS + " T3 "
+                + " FROM " + TABLE_LINKS +" L2, " + Segment.TABLE_TEXTS + " T3 "
                 + " WHERE " + whereStatement2
                 + ")";
 
@@ -305,7 +304,7 @@ public class Link {//implements Parcelable {
         if (cursor.moveToFirst()) {
             do {
                 // Adding  to list
-                linkList.add(new Text(cursor));
+                linkList.add(new Segment(cursor));
             } while (cursor.moveToNext());
         }
         return linkList;

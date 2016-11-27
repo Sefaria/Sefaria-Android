@@ -26,9 +26,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.sefaria.sefaria.Dialog.DialogNoahSnackbar;
-import org.sefaria.sefaria.GoogleTracker;
-import org.sefaria.sefaria.MenuElements.MenuGrid;
-import org.sefaria.sefaria.MenuElements.MenuState;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.SearchElements.SearchAdapter;
@@ -42,14 +39,12 @@ import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Downloader;
 import org.sefaria.sefaria.database.SearchAPI;
 import org.sefaria.sefaria.database.SearchingDB;
-import org.sefaria.sefaria.database.Text;
+import org.sefaria.sefaria.database.Segment;
 import org.sefaria.sefaria.layouts.SefariaTextView;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class SearchActivity extends Activity implements AbsListView.OnScrollListener {
 
@@ -181,7 +176,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.showSoftInput(autoCompleteTextView, InputMethodManager.SHOW_IMPLICIT);
         if (adapter == null)
-            adapter = new SearchAdapter(this, R.layout.search_item_mono,new ArrayList<Text>());
+            adapter = new SearchAdapter(this, R.layout.search_item_mono,new ArrayList<Segment>());
 
         if (listView == null) {
             listView = (ListView) findViewById(R.id.listview);
@@ -360,7 +355,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
                         if(searchingDB == null || pageNum == 0) {
                             searchingDB = new SearchingDB(query,appliedFilters);
                         }
-                        List<Text> results = searchingDB.getResults();
+                        List<Segment> results = searchingDB.getResults();
                         Log.d("search","results size:" + results.size());
                         JSONArray jsonRoot = null;
                         if(getFilters) {
@@ -421,18 +416,18 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
     ListView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            Text text = adapter.getItem(position);
-            String place = text.getLocationString(Util.Lang.EN);
+            Segment segment = adapter.getItem(position);
+            String place = segment.getLocationString(Util.Lang.EN);
             Book book;
             try {
-                book = new Book(text.bid);
+                book = new Book(segment.bid);
             } catch (Book.BookNotFoundException e) {
                 book = null;
             }
             API.PlaceRef placeRef = null;
             try {
                 placeRef = API.PlaceRef.getPlace(place,book);
-                SuperTextActivity.startNewTextActivityIntent(SearchActivity.this,placeRef.book,placeRef.text,placeRef.node,false,autoCompleteTextView.getText().toString(),-1);
+                SuperTextActivity.startNewTextActivityIntent(SearchActivity.this,placeRef.book,placeRef.segment,placeRef.node,false,autoCompleteTextView.getText().toString(),-1);
             } catch (API.APIException e) {
                 API.makeAPIErrorToast(SearchActivity.this);//MyApp.openURLInBrowser(SearchActivity.this,"https://sefaria.org/" + place);
             } catch (Book.BookNotFoundException e) {

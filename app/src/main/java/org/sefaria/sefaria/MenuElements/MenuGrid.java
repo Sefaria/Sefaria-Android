@@ -143,7 +143,7 @@ public class MenuGrid extends LinearLayout {
     }
 
     /**
-     * add the section tabs for different text structures. For example in Genesis these can be:
+     * add the section tabs for different segment structures. For example in Genesis these can be:
      *  Chapters | Parshas | Commentary
      * @param nodeList
      */

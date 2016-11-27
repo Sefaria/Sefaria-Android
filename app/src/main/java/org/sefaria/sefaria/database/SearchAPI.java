@@ -6,11 +6,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.sefaria.sefaria.BilingualNode;
-import org.sefaria.sefaria.SearchElements.SearchFilterNode;
 import org.sefaria.sefaria.SearchElements.SearchResultContainer;
 import org.sefaria.sefaria.Util;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -90,7 +88,7 @@ public class SearchAPI {
     private static SearchResultContainer getParsedResults(String resultString, boolean getFilters) {
         SearchResultContainer searchResultContainer = null;
         JSONArray allFilters = new JSONArray();
-        List<Text> results = new ArrayList<>();
+        List<Segment> results = new ArrayList<>();
 
         int numResults = 0;
         JSONObject resultJson;
@@ -144,9 +142,9 @@ public class SearchAPI {
                 } catch (Book.BookNotFoundException e) {
                     tempBid = -1;
                 }
-                Text text = new Text(enText, heText, tempBid, ref);
+                Segment segment = new Segment(enText, heText, tempBid, ref);
                 //TODO deal with levels stuff
-                results.add(text);
+                results.add(segment);
             }
         } catch (JSONException e) {
             e.printStackTrace();

@@ -49,7 +49,7 @@ public class Node{// implements  Parcelable{
     private String startLevels;
     private String titleKey; // this is only being used
     private List<Node> children;
-    private List<Text> textList;
+    private List<Segment> segmentList;
 
     private Book book;
     private boolean isTextSection = false;
@@ -64,7 +64,7 @@ public class Node{// implements  Parcelable{
 
 
     private String lastSearchedTerm = null;
-    private List<Text> foundFindOnPageList = null;
+    private List<Segment> foundFindOnPageList = null;
 
     private Boolean gotTextListInAPI;
 
@@ -88,7 +88,7 @@ public class Node{// implements  Parcelable{
     public Node(boolean dummy){
         children = new ArrayList<>();
         nid = NID_DUMMY;
-        textList = new ArrayList<>();
+        segmentList = new ArrayList<>();
         parent = null;
         parentNodeID = NID_NO_INFO;
     }
@@ -135,7 +135,7 @@ public class Node{// implements  Parcelable{
 
     /**
      * @param lang
-     * @return full description of current text. For example, Chelek 3 Siman 23
+     * @return full description of current segment. For example, Chelek 3 Siman 23
      */
     public String getWholeTitle(Util.Lang lang, boolean doSectionName, boolean showTextVersion){
         String str = "";
@@ -423,7 +423,7 @@ public class Node{// implements  Parcelable{
 
     /**
      * this is only meant to be called on a node that node.isTextSection()
-     * @return the next node in the tree that contains text
+     * @return the next node in the tree that contains segment
      */
     public Node getNextTextNode() throws LastNodeException {
         Log.d("Node","getNextTextNode started: " + this);
@@ -453,7 +453,7 @@ public class Node{// implements  Parcelable{
     }
     /**
      * this is only meant to be called on a node that node.isTextSection()
-     * @return the prev node in the tree that contains text
+     * @return the prev node in the tree that contains segment
      */
     public Node getPrevTextNode() throws LastNodeException {
         if(parent == null){
@@ -479,8 +479,8 @@ public class Node{// implements  Parcelable{
     }
 
     /**
-     * //TODO work for complex text
-     * @param spot is a number as the level number or the title of the Complex text node
+     * //TODO work for complex segment
+     * @param spot is a number as the level number or the title of the Complex segment node
      * @return correct child for spot name (or null if can't find it)
      */
     public Node getChild(String spot) {
@@ -525,10 +525,10 @@ public class Node{// implements  Parcelable{
 
 
 
-    public List<Text> findWords(String searchingTerm) throws API.APIException {
+    public List<Segment> findWords(String searchingTerm) throws API.APIException {
         Log.d("Node","findwords1:" + searchingTerm + " lastWord:" + lastSearchedTerm + "  ---" + this);
         if(lastSearchedTerm != null && !lastSearchedTerm.equals(searchingTerm)){
-            SearchingDB.removeRed(textList);
+            SearchingDB.removeRed(segmentList);
         }
 
         if(searchingTerm == null)
@@ -762,7 +762,7 @@ public class Node{// implements  Parcelable{
             textVersion = null;
 
         if((textVersion != null && !textVersion.equals(this.textVersion)) || (textVersion == null && this.textVersion != null))  //it's changed in some way
-            textList = null; //so that it will get this specific version next time
+            segmentList = null; //so that it will get this specific version next time
 
         this.textVersion = textVersion;
         try {
@@ -857,7 +857,7 @@ public class Node{// implements  Parcelable{
         }
         //Log.d("Node", "node:" + this.toString());
 
-        String sql = "SELECT DISTINCT " + levels + " FROM "+ Text.TABLE_TEXTS;
+        String sql = "SELECT DISTINCT " + levels + " FROM "+ Segment.TABLE_TEXTS;
 
         if(useNID)  sql += " WHERE bid = " + this.bid + " AND  parentNode = " + this.nid;
         else        sql += " WHERE bid = " + this.bid;
@@ -920,11 +920,11 @@ public class Node{// implements  Parcelable{
         return API.getDataFromURL(completeUrl,timeoutType);
     }
 
-    private List<Text> getTextsFromAPI() throws API.APIException{ //(String booktitle, int []levels)
+    private List<Segment> getTextsFromAPI() throws API.APIException{ //(String booktitle, int []levels)
         String data = getTextFromAPIData();
-        List<Text> textList = new ArrayList<>();
+        List<Segment> segmentList = new ArrayList<>();
         if(data.length()==0)
-            return textList;
+            return segmentList;
 
         int [] levels = new int[0];
         try {
@@ -937,7 +937,7 @@ public class Node{// implements  Parcelable{
                 e1.printStackTrace();
                 GoogleTracker.sendException(e,"676:Node.getlevels" + "bid:" + bid);
             }
-            return textList;
+            return segmentList;
         }
         int bid = getBid();
         try {
@@ -960,7 +960,7 @@ public class Node{// implements  Parcelable{
                     textArray = textArrayBig.getJSONArray(k);
                     heArray = heArrayBig.getJSONArray(k);
                 } catch (JSONException e1) {
-                    //Log.d("Node","didn't find sub arrays in text");
+                    //Log.d("Node","didn't find sub arrays in segment");
                     textArray = textArrayBig;
                     heArray = heArrayBig;
                     stop = 0;
@@ -983,16 +983,16 @@ public class Node{// implements  Parcelable{
                     } catch (JSONException e) {
                         Log.d("api", e.toString());
                     }
-                    Text text = new Text(enText,heText,bid,null);
-                    text.parentNode = this;
+                    Segment segment = new Segment(enText,heText,bid,null);
+                    segment.parentNode = this;
                     for (int j = 0; j < levels.length; j++) {
-                        text.levels[j] = levels[j]; //TODO get full level info in there
+                        segment.levels[j] = levels[j]; //TODO get full level info in there
                     }
                     //only do it at the 2nd level, but currently this can only handle at this level, but can't handle 3 levels of depth in a ref.
-                    text.levels[1] += k;
-                    text.levels[0] = i + startLevel1;
+                    segment.levels[1] += k;
+                    segment.levels[0] = i + startLevel1;
 
-                    textList.add(text);
+                    segmentList.add(segment);
                 }
                 startLevel1 = 1;
             }
@@ -1003,20 +1003,20 @@ public class Node{// implements  Parcelable{
         }
 
 
-        return textList;
+        return segmentList;
     }
 
     /**
      * Get texts for all types of texts
-     * @return textList
+     * @return segmentList
      * @throws API.APIException
      */
-    public List<Text> getTexts() throws API.APIException{
+    public List<Segment> getTexts() throws API.APIException{
         return getTexts(false);
     }
 
 
-    private List<Text> getTextsFromDB(int parentNID){
+    private List<Segment> getTextsFromDB(int parentNID){
         int [] levels;
         try {
              levels = getLevels();
@@ -1029,7 +1029,7 @@ public class Node{// implements  Parcelable{
                 levels = new int[2];
             }
         }
-        return Text.getFromDB(bid,levels,parentNID);
+        return Segment.getFromDB(bid,levels,parentNID);
     }
     /**
      *
@@ -1037,58 +1037,58 @@ public class Node{// implements  Parcelable{
      * @return
      * @throws API.APIException
      */
-    public List<Text> getTexts(boolean ignoreUsingAPI) throws API.APIException{
+    public List<Segment> getTexts(boolean ignoreUsingAPI) throws API.APIException{
         //Log.d("Node","getTexts called");
-        if(textList != null && (nid == NID_DUMMY || gotTextListInAPI == Settings.getUseAPI()|| ignoreUsingAPI)){
-            Log.d("Node","text list not null: " + ignoreUsingAPI + "...." + (nid == NID_DUMMY || gotTextListInAPI == Settings.getUseAPI()));
-            return textList;
+        if(segmentList != null && (nid == NID_DUMMY || gotTextListInAPI == Settings.getUseAPI()|| ignoreUsingAPI)){
+            Log.d("Node","segment list not null: " + ignoreUsingAPI + "...." + (nid == NID_DUMMY || gotTextListInAPI == Settings.getUseAPI()));
+            return segmentList;
         }
-        Log.d("Node","found no textList");
+        Log.d("Node","found no segmentList");
         if(Downloader.getNetworkStatus() == Downloader.ConnectionType.NONE){
-            //if( getTextVersion() != null) Toast.makeText(context,"No internet. Using Default Text Version",Toast.LENGTH_SHORT).show();
-            setTextVersion(null); //don't use alt text version if there's no internet
+            //if( getTextVersion() != null) Toast.makeText(context,"No internet. Using Default Segment Version",Toast.LENGTH_SHORT).show();
+            setTextVersion(null); //don't use alt segment version if there's no internet
             //TODO set the SuperTextAct.lastLoadedNode = null if possible
         }
 
         if(!isTextSection){
             Log.e("Node", "getTexts() was called when it's not a textSection!" + this);
-            textList = new ArrayList<>();
+            segmentList = new ArrayList<>();
         }else if(Settings.getUseAPI() || (getTextVersion() != null && !getTextVersion().isDefaultVersion())) {
-            textList = getTextsFromAPI();
+            segmentList = getTextsFromAPI();
         }else if(!isComplex && !isGridItem){
             Log.e("Node", "It thinks (!isComplex() && !isGridItem())... I don't know how.");
-            textList = new ArrayList<>();
+            segmentList = new ArrayList<>();
         }else if(!isComplex && isGridItem && !isRef){
-            textList =  getTextsFromDB(0);
+            segmentList =  getTextsFromDB(0);
         }else if(isRef()){
             if(!isComplex){
                 Log.e("Node", "It thinks (!isComplex && isRef)... I don't know how.");
-                textList = new ArrayList<>();
+                segmentList = new ArrayList<>();
             }
             else if(startTid>0 && endTid >0) {
-                textList = Text.getWithTids(startTid, endTid);
+                segmentList = Segment.getWithTids(startTid, endTid);
             }
             else{
                 Log.e("Node.getTexts", "My start and end TIDs are no good for trying to get ref. TID:" + startTid + "-" + endTid + " ref:" + extraTidsRef);
-                textList = new ArrayList<>();
+                segmentList = new ArrayList<>();
             }
         }else if(isComplex){
             //levels will be diff based on if it's a gridItem
             if(isGridItem)
-                textList = getTextsFromDB(getNodeInDBParentNID());
+                segmentList = getTextsFromDB(getNodeInDBParentNID());
             else
-                textList = getTextsFromDB(nid);
+                segmentList = getTextsFromDB(nid);
         }
         else{
-            textList = new ArrayList<>();
+            segmentList = new ArrayList<>();
             Log.e("Node", "In Node.getText() and I'm confused. NodeTypeFlags: " + getNodeTypeFlagsStr());
         }
-        //Log.d("Node", "finishing getTexts algo. textList.size():" + textList.size());
-        for(Text text:textList){
-            text.parentNode = this;
+        //Log.d("Node", "finishing getTexts algo. segmentList.size():" + segmentList.size());
+        for(Segment segment : segmentList){
+            segment.parentNode = this;
         }
         gotTextListInAPI = Settings.getUseAPI();
-        return textList;
+        return segmentList;
     }
 
     public boolean isDaf(){
@@ -1100,7 +1100,7 @@ public class Node{// implements  Parcelable{
     }
 
      /**
-     * gets the NID of a parent that is actually in the database. So if it's 3 levels of text, it will be using a real nid
+     * gets the NID of a parent that is actually in the database. So if it's 3 levels of segment, it will be using a real nid
      * @return ancestorNID
      */
     private int getNodeInDBParentNID(){
@@ -1280,7 +1280,7 @@ public class Node{// implements  Parcelable{
         for(int i=0;i<allNodeStructs.size();i++) {
             List<Node> nodes = allNodeStructs.get(i);
             if (nodes.size() > 0) {
-                //Complex text combining nodes into root
+                //Complex segment combining nodes into root
                 root = convertToTree(nodes);
             }
             root.tocRootsNum = allRoots.size();

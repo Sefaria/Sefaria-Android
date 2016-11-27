@@ -68,14 +68,14 @@ public class MenuButton extends MenuElement {
         }
     }
 
-    /*public MenuButton(Context context, String text) {
+    /*public MenuButton(Context context, String segment) {
         super(context);
         inflate(context, R.layout.menu_button, this);
         this.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 1f));
 
         this.tv = (TextView) this.findViewById(R.id.tv);
         this.colorBar = this.findViewById(R.id.color_bar);
-        tv.setText(text);
+        tv.setText(segment);
         this.setClickable(true);
     }*/
 

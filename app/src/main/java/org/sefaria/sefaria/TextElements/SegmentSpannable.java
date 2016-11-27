@@ -1,27 +1,20 @@
 package org.sefaria.sefaria.TextElements;
 
 import android.graphics.Color;
-import android.text.SpannableString;
 import android.text.TextPaint;
-import android.text.style.BackgroundColorSpan;
 import android.text.style.ClickableSpan;
-import android.text.style.StyleSpan;
-import android.text.style.TextAppearanceSpan;
-import android.text.style.URLSpan;
-import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 
-import org.sefaria.sefaria.database.Text;
+import org.sefaria.sefaria.database.Segment;
 
 public class SegmentSpannable extends ClickableSpan {// extend ClickableSpan
 
     private CharSequence segmentStr;
-    private Text segment;
+    private Segment segment;
     private OnSegmentSpanClickListener onSegmentSpanClickListener;
     private boolean isActive;
 
-    public SegmentSpannable(CharSequence segmentStr, Text segment, OnSegmentSpanClickListener onSegmentSpanClickListener) {
+    public SegmentSpannable(CharSequence segmentStr, Segment segment, OnSegmentSpanClickListener onSegmentSpanClickListener) {
         super();
         this.segmentStr = segmentStr;
         this.segment = segment;
@@ -51,7 +44,7 @@ public class SegmentSpannable extends ClickableSpan {// extend ClickableSpan
         //ds.setUnderlineText(false); // set to false to remove underline
     }
 
-    public Text getSegment() {
+    public Segment getSegment() {
         return segment;
     }
 

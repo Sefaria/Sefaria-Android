@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
 
 import android.database.Cursor;
@@ -15,10 +14,10 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
-public class Text implements Parcelable {
+public class Segment implements Parcelable {
 
     public static final int MAX_LEVELS = 4;
-    public static final double BILINGUAL_THRESHOLD = 0.05; //percentage of text that is bilingual for us to default to bilingual
+    public static final double BILINGUAL_THRESHOLD = 0.05; //percentage of segment that is bilingual for us to default to bilingual
 
     private static boolean usingHuffman = true;
 
@@ -34,7 +33,7 @@ public class Text implements Parcelable {
     private int heTextLength = 0;
     private byte [] heTextCompress;
     private boolean isChapter = false;
-    private boolean isLoader = false; //true when this is a filler text which indicates that the next/prev section is loading
+    private boolean isLoader = false; //true when this is a filler segment which indicates that the next/prev section is loading
     private boolean chapterHasTexts = true;
     //protected int parentNID;
     private String ref = null;
@@ -99,10 +98,10 @@ public class Text implements Parcelable {
 
 
     /**
-     * this is used as a chapter heading as part of the text list
+     * this is used as a chapter heading as part of the segment list
      * @param node
      */
-    public Text(Node node) {
+    public Segment(Node node) {
         isChapter = true;
         parentNode = node;
         levels = new int [MAX_LEVELS];
@@ -123,19 +122,19 @@ public class Text implements Parcelable {
     }
 
     /**
-     * Filler constructor to make a Text object which indicates that the next/prev section is loading
+     * Filler constructor to make a Segment object which indicates that the next/prev section is loading
      * @param isLoader
      */
-    public Text(boolean isLoader) {
+    public Segment(boolean isLoader) {
         this.isLoader = isLoader;
     }
 
-    public Text(Cursor cursor ){
+    public Segment(Cursor cursor ){
         getFromCursor(cursor);
     }
 
     // NEW CONSTRUCTOR FOR API:
-    public Text(String enText, String heText, int bid, String ref) {
+    public Segment(String enText, String heText, int bid, String ref) {
         this.enText = enText;
         this.heText = heText;
         this.tid = 0;
@@ -145,7 +144,7 @@ public class Text implements Parcelable {
         this.displayNum = true;//unless we know otherwise, we'll default to display the verse Number
     }
 
-    public Text(int tid) {
+    public Segment(int tid) {
         SQLiteDatabase db = Database.getDB();
         try{
             Cursor cursor = db.query(TABLE_TEXTS, null, "_id" + "=?",
@@ -251,17 +250,17 @@ public class Text implements Parcelable {
             return "";
         }
         String str = book.getTitle(lang);
-        if(parentNode != null && !parentNode.isRef()){ //It's a complex text... I Don't think it's always complex text... it could also be just from the Popupmenu for example
+        if(parentNode != null && !parentNode.isRef()){ //It's a complex segment... I Don't think it's always complex segment... it could also be just from the Popupmenu for example
 
             str = parentNode.getPath(lang,false, true, false);
             if(str.charAt(str.length()-1) == '.' || str.charAt(str.length()-1) == ':')// it ends in a daf
                 str += " " + Header.getNiceGridNum(lang,levels[0],false);
             else
                 str += ":" + Header.getNiceGridNum(lang,levels[0],false);
-            Log.d("Text", "getLocationStri using getPath()" + str);
+            Log.d("Segment", "getLocationStri using getPath()" + str);
             return str;
         }
-        Log.d("Text", "getLocationStri using levels");
+        Log.d("Segment", "getLocationStri using levels");
         int sectionNum = book.sectionNamesL2B.length-1;
         boolean useSpace = true; //starting true so has space after book.title
         for(int i=levels.length-1;i>=0;i--){
@@ -290,18 +289,18 @@ public class Text implements Parcelable {
     /**
      *
      * @param book
-     * @return the Node that is the parent of the current Text or null if it has problems doing that
+     * @return the Node that is the parent of the current Segment or null if it has problems doing that
      * @throws API.APIException
      * @throws Book.BookNotFoundException
      */
     public Node getNodeFromText(Book book) throws API.APIException, Book.BookNotFoundException {
-        Text text = this;
-        if(text.ref != null && text.ref.length() > 0){
-            API.PlaceRef placeRef = API.PlaceRef.getPlace(text.ref,book);
-            text.parentNode = placeRef.node;
-            if(placeRef.text != null){
-                text.levels = placeRef.text.levels.clone();
-                text.tid = placeRef.text.tid;
+        Segment segment = this;
+        if(segment.ref != null && segment.ref.length() > 0){
+            API.PlaceRef placeRef = API.PlaceRef.getPlace(segment.ref,book);
+            segment.parentNode = placeRef.node;
+            if(placeRef.segment != null){
+                segment.levels = placeRef.segment.levels.clone();
+                segment.tid = placeRef.segment.tid;
             }
             return parentNode;
         }
@@ -313,10 +312,10 @@ public class Text implements Parcelable {
         Node node = roots.get(0);
         try {
             if (!node.isComplex()) {
-                for (int i = text.levels.length-1; i > 0; i--) {
-                    if (text.levels[i] == 0)
+                for (int i = segment.levels.length-1; i > 0; i--) {
+                    if (segment.levels[i] == 0)
                         continue;
-                    int num = text.levels[i];
+                    int num = segment.levels[i];
                     boolean foundChild = false;
                     for(Node child:node.getChildren()) {
                         if(num == child.gridNum) {
@@ -327,27 +326,27 @@ public class Text implements Parcelable {
                     }
                     if(!foundChild){
                         Log.e("Node","Problem finding getNodeFromLink child. node" + node);
-                        text.parentNode = node.getFirstDescendant();
-                        return text.parentNode;
+                        segment.parentNode = node.getFirstDescendant();
+                        return segment.parentNode;
                     }
 
                 }
             }else{
                 Log.d("Node","not getting complex node yet");
-                text.parentNode = node.getFirstDescendant();
-                return text.parentNode;
+                segment.parentNode = node.getFirstDescendant();
+                return segment.parentNode;
             }
         }catch (Exception e){
             Log.d("Node",e.toString());
             return null;
         }
 
-        text.parentNode = node.getFirstDescendant();
+        segment.parentNode = node.getFirstDescendant();
         return parentNode;
     }
 
 
-    private static List<Text> getFromDB(Book book, int[] levels) throws API.APIException {
+    private static List<Segment> getFromDB(Book book, int[] levels) throws API.APIException {
         if(book.textDepth != levels.length){
             Log.e("Error_sql", "wrong size of levels.");
             return new ArrayList<>();
@@ -357,12 +356,12 @@ public class Text implements Parcelable {
 
 
 	/*
-	public static void removeFoundWordsColoring(List<Text> list){
-		Text text = null;
+	public static void removeFoundWordsColoring(List<Segment> list){
+		Segment segment = null;
 		for (int i = 0; i< list.size(); i++){
-			text = list.get(i);
-			text.enText = text.enText.replaceAll("<font color='#ff5566'>",  "").replaceAll("</font>", "");
-			text.heText = text.heText.replaceAll("<font color='#ff5566'>",  "").replaceAll("</font>", "");
+			segment = list.get(i);
+			segment.enText = segment.enText.replaceAll("<font color='#ff5566'>",  "").replaceAll("</font>", "");
+			segment.heText = segment.heText.replaceAll("<font color='#ff5566'>",  "").replaceAll("</font>", "");
 		}
 		return;
 	}
@@ -370,8 +369,8 @@ public class Text implements Parcelable {
 
 
 
-    public static List<Text> getFromDB(int bid, int[] levels, int parentNID) {
-        List<Text> textList = new ArrayList<>();
+    public static List<Segment> getFromDB(int bid, int[] levels, int parentNID) {
+        List<Segment> segmentList = new ArrayList<>();
         SQLiteDatabase db = Database.getDB();
 
         String sql = "SELECT DISTINCT * FROM "+ TABLE_TEXTS +" " + fullWhere(bid, levels, parentNID) + " ORDER BY " + orderBy(levels);
@@ -380,10 +379,10 @@ public class Text implements Parcelable {
         if (cursor.moveToFirst()) {
             do {
                 // Adding  to list
-                textList.add(new Text(cursor));
+                segmentList.add(new Segment(cursor));
             } while (cursor.moveToNext());
         }
-        return textList;
+        return segmentList;
 
     }
 
@@ -399,12 +398,12 @@ public class Text implements Parcelable {
      *  set parentNID == 0 if you don't want to use parentNID at all
      *  Sample usage:
      *  int[] levels = new {0, 12};
-     * 	Text.get(1, levels,false); //get book bid 1 everything in chap 12.
+     * 	Segment.get(1, levels,false); //get book bid 1 everything in chap 12.
      * @return textList
      * @throws API.APIException
 
-    public static List<Text> get(int bid, int[] levels, int parentNID) throws API.APIException {
-        List<Text> textList = new ArrayList<>();
+    public static List<Segment> get(int bid, int[] levels, int parentNID) throws API.APIException {
+        List<Segment> textList = new ArrayList<>();
         try {
             if(Settings.getUseAPI()){
                 if(parentNID <=0) //TODO make it work for API with NID
@@ -423,8 +422,8 @@ public class Text implements Parcelable {
     }
     */
 
-    public static List<Text> getWithTids(int startTID,int endTID){
-        List<Text> textList = new ArrayList<Text>();
+    public static List<Segment> getWithTids(int startTID, int endTID){
+        List<Segment> segmentList = new ArrayList<Segment>();
         SQLiteDatabase db = Database.getDB();
 
         String sql = "SELECT * FROM "+ TABLE_TEXTS +" where _id BETWEEN ? AND ? ORDER BY _id";
@@ -433,17 +432,17 @@ public class Text implements Parcelable {
         if (cursor.moveToFirst()) {
             do {
                 // Adding  to list
-                textList.add(new Text(cursor));
+                segmentList.add(new Segment(cursor));
             } while (cursor.moveToNext());
         }
-        return textList;
+        return segmentList;
     }
 
 
     /*
-    public static Text makeDummyChapText(Text text){
-        int wherePage = (new Book(text.bid)).wherePage;
-        Text dummyChapText = deepCopy(text);
+    public static Segment makeDummyChapText(Segment segment){
+        int wherePage = (new Book(segment.bid)).wherePage;
+        Segment dummyChapText = deepCopy(segment);
         //dummyChapText.log();
 
         for(int i=0;i<6;i++){
@@ -459,21 +458,21 @@ public class Text implements Parcelable {
         return dummyChapText;
     }
     */
-    public static Text makeDummyChapText0(Text text, int wherePage){
-        Text dummyChapText = deepCopy(text);
-        //dummyChapText.log();
+    public static Segment makeDummyChapText0(Segment segment, int wherePage){
+        Segment dummyChapSegment = deepCopy(segment);
+        //dummyChapSegment.log();
 
         for(int i=0;i<6;i++){
             if(wherePage > i+1)
-                dummyChapText.levels[i] = 0;
+                dummyChapSegment.levels[i] = 0;
         }
 
         //TODO check that it's correct to use ">" for all types of where pages.
         Log.d("sql_dummytext", "wherePage: " + wherePage);
         Log.d("sql", "TODO check that it's correct to use '>' for all types of where pages.");
-        dummyChapText.log();
+        dummyChapSegment.log();
 
-        return dummyChapText;
+        return dummyChapSegment;
     }
 
 
@@ -484,7 +483,7 @@ public class Text implements Parcelable {
                     int chunkSize = 5000;
                     SQLiteDatabase db = Database.getDB();
 
-                    List<Text> textList = new ArrayList<Text>();
+                    List<Segment> segmentList = new ArrayList<Segment>();
 
                     Cursor cursor;
                     Log.d("sql_textFind", "start");
@@ -517,14 +516,14 @@ public class Text implements Parcelable {
                                 //if(yo.replaceAll("[\u0591-\u05C7]", "").contains("\u05d1\u05d2"))
                                 foundCount++;
 
-                            //textList.add(new Text(cursor));
+                            //segmentList.add(new Segment(cursor));
 
                         } while (cursor.moveToNext());
                     }
                     Log.d("sql_textFind", "end.." + "finished!!! " + foundCount + " ..."  + count);
                     //LOGING:
-                    //for(int i = 0; i < textList.size(); i++)
-                    //	textList.get(i).log();
+                    //for(int i = 0; i < segmentList.size(); i++)
+                    //	segmentList.get(i).log();
                 }catch(Exception e){
                     GoogleTracker.sendException(e, "moving index.json");
                 }
@@ -580,7 +579,7 @@ public class Text implements Parcelable {
     */
 
     /**
-     *  makes a where statement for getting the texts from a book with a id (as bid) or with text that have a parentNode with nid of id
+     *  makes a where statement for getting the texts from a book with a id (as bid) or with segment that have a parentNode with nid of id
      *
      * @param bid
      * @param levels
@@ -610,7 +609,7 @@ public class Text implements Parcelable {
 
 
     public void log() {
-        Log.d("text", toString());
+        Log.d("segment", toString());
     }
 
     @Override
@@ -622,41 +621,41 @@ public class Text implements Parcelable {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof Text))
+        if (!(o instanceof Segment))
             return false;
 
-        Text text = (Text) o;
-        if(text.tid != 0 && this.tid != 0)
-            return text.tid == this.tid;
+        Segment segment = (Segment) o;
+        if(segment.tid != 0 && this.tid != 0)
+            return segment.tid == this.tid;
 
         if(super.equals(o))
             return true;
 
         boolean isEqual =  (
-                Arrays.equals(text.levels,this.levels)
+                Arrays.equals(segment.levels,this.levels)
                 &&
-                this.bid == text.bid
-                //&& this.parentNode.equals(text.parentNode)
+                this.bid == segment.bid
+                //&& this.parentNode.equals(segment.parentNode)
                 //TODO maybe needs stricter def... but for now this is fine
         );
-        if(this.parentNode != null && text.parentNode != null)
-            return isEqual && this.parentNode.pseudoEquals(text.parentNode);
+        if(this.parentNode != null && segment.parentNode != null)
+            return isEqual && this.parentNode.pseudoEquals(segment.parentNode);
         return isEqual;
         /*
-        if((text.tid == 0 && this.tid ==0) || (text.ref != null || this.ref != null)){
+        if((segment.tid == 0 && this.tid ==0) || (segment.ref != null || this.ref != null)){
             //return super.equals(o);
         }
         */
 
     }
 
-    private static Text deepCopy(Text text) {
-        Text newText = new Text(text.getText(Util.Lang.EN), text.getText(Util.Lang.HE),text.bid,text.ref);
-        newText.levels = text.levels.clone();
-        newText.tid    = text.tid;
-        newText.displayNum = text.displayNum;
-        newText.parentNode = text.parentNode;
-        return newText;
+    private static Segment deepCopy(Segment segment) {
+        Segment newSegment = new Segment(segment.getText(Util.Lang.EN), segment.getText(Util.Lang.HE), segment.bid, segment.ref);
+        newSegment.levels = segment.levels.clone();
+        newSegment.tid    = segment.tid;
+        newSegment.displayNum = segment.displayNum;
+        newSegment.parentNode = segment.parentNode;
+        return newSegment;
     }
 
     @Override
@@ -682,14 +681,14 @@ public class Text implements Parcelable {
 
     //PARCELABLE------------------------------------------------------------------------
 
-    public static final Parcelable.Creator<Text> CREATOR
-            = new Parcelable.Creator<Text>() {
-        public Text createFromParcel(Parcel in) {
-            return new Text(in);
+    public static final Parcelable.Creator<Segment> CREATOR
+            = new Parcelable.Creator<Segment>() {
+        public Segment createFromParcel(Parcel in) {
+            return new Segment(in);
         }
 
-        public Text[] newArray(int size) {
-            return new Text[size];
+        public Segment[] newArray(int size) {
+            return new Segment[size];
         }
     };
 
@@ -709,7 +708,7 @@ public class Text implements Parcelable {
         dest.writeString(ref);
     }
 
-    private Text(Parcel in) {
+    private Segment(Parcel in) {
         tid = in.readInt();
         bid = in.readInt();
         enText = in.readString();

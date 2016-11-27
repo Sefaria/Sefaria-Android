@@ -78,7 +78,7 @@ public class TOCSectionName extends LinearLayout implements TOCElement {
             this.setGravity(Gravity.RIGHT);
         }
         String text = node.getTitle(lang);
-        //Log.d("TOCSection",text + " " + node);
+        //Log.d("TOCSection",segment + " " + node);
 
         //http://stackoverflow.com/questions/2701192/character-for-up-down-triangle-arrow-to-display-in-html
         if(node.isTextSection()) {
