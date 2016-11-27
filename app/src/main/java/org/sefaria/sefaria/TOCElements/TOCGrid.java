@@ -449,7 +449,7 @@ public class TOCGrid extends LinearLayout {
             return;
         }
 
-        if(Build.VERSION.SDK_INT >= 21) {
+        if(Build.VERSION.SDK_INT >= 23) {
             versionsDropdown.setBackground(MyApp.getContext().getDrawable(R.drawable.alternate_version_dropdown_spinner));
         }
         try {
