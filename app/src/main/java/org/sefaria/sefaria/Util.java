@@ -667,4 +667,27 @@ public class Util {
         return Color.rgb(r,g,b);
     }
 
+
+    /**
+     * Return a string with a maximum length of <code>length</code> characters.
+     * If there are more than <code>length</code> characters, then string ends with an ellipsis ("...").
+     *
+     * @param text
+     * @param length
+     * @return
+     */
+    public static String ellipsis(final String text, int length, int dontTouchLength)
+    {
+        // The letters [iIl1] are slim enough to only count as half a character.
+        length += Math.ceil(text.replaceAll("[^iIl]", "").length() / 2.0d);
+
+        dontTouchLength = Math.max(length, dontTouchLength);
+        if (text.length() > dontTouchLength)
+        {
+            return text.substring(0, length/2) + "\u2026" + text.substring(text.length() - length/2 -1, text.length());
+        }
+
+        return text;
+    }
+
 }

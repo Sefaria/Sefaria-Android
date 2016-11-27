@@ -243,24 +243,27 @@ public class MyApp extends Application {
 
     public static boolean handleIncomingURL(Activity activity, Intent intent){
         try {
-            if (intent != null && intent.getAction().equalsIgnoreCase(Intent.ACTION_VIEW)
-                //&&  intent.getCategories().contains(Intent.CATEGORY_BROWSABLE)
-                    ) {
-                //url to go to  www.sefaria.org
-                String url = intent.getDataString();
-                Log.d("HomeActivity", "Sefaria URL:" + url);
-                GoogleTracker.sendEvent(GoogleTracker.CATEGORY_OPENED_URL, url);
-                String place = url.replaceAll("(?i).*sefaria\\.org/?(s2/)?", "");
-                try {
-                    API.PlaceRef placeRef = API.PlaceRef.getPlace(place,null);
-                    SuperTextActivity.startNewTextActivityIntent(activity, placeRef.book, placeRef.text, placeRef.node, true, null,-1);
-                }catch (API.APIException e){
-                    openURLInBrowser(activity,url);
-                }catch (Book.BookNotFoundException  e2){
-                    openURLInBrowser(activity,url);
+            if (intent != null){
+                String url = intent.getStringExtra("url");
+                if(url != null || intent.getAction().equalsIgnoreCase(Intent.ACTION_VIEW)){ //&&  intent.getCategories().contains(Intent.CATEGORY_BROWSABLE
+                    //url to go to  www.sefaria.org
+                    if(url == null) {
+                        url = intent.getDataString(); //got here from web click
+                    }// otherwise got here from shortcut
+                    Log.d("HomeActivity", "Sefaria URL:" + url);
+                    GoogleTracker.sendEvent(GoogleTracker.CATEGORY_OPENED_URL, url);
+                    String place = url.replaceAll("(?i).*sefaria\\.org/?(s2/)?", "");
+                    try {
+                        API.PlaceRef placeRef = API.PlaceRef.getPlace(place,null);
+                        SuperTextActivity.startNewTextActivityIntent(activity, placeRef.book, placeRef.text, placeRef.node, true, null,-1);
+                    }catch (API.APIException e){
+                        openURLInBrowser(activity,url);
+                    }catch (Book.BookNotFoundException  e2){
+                        openURLInBrowser(activity,url);
+                    }
+                    activity.finish();
+                    return true;
                 }
-                activity.finish();
-                return true;
             }
         }catch (Exception e){
             //Toast.makeText(activity, MyApp.getRString(R.string.cannot_parse_link), Toast.LENGTH_SHORT).show();

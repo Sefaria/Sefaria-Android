@@ -29,6 +29,7 @@ import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.SearchElements.SearchActionbar;
 import org.sefaria.sefaria.Settings;
+import org.sefaria.sefaria.TextElements.SepTextAdapter;
 import org.sefaria.sefaria.TextElements.TextChapterHeader;
 import org.sefaria.sefaria.TextElements.TextMenuBar;
 import org.sefaria.sefaria.Util;
@@ -68,6 +69,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
     protected static CharSequence CONTEXT_MENU_SHARE = "Share";
     protected static CharSequence CONTEXT_MENU_VISIT = "View on Site";
     protected static CharSequence CONTEXT_MENU_PIN = "Pin Text";
+    protected static CharSequence CONTEXT_MENU_SHORTCUT = "Create Shortcut";
     public static final int PREV_CHAP_DRAWN = 234234;
     public static final int TOC_CHAPTER_CLICKED_CODE = 3456;
     protected static final int LOAD_PIXEL_THRESHOLD = 500; //num pixels before the bottom (or top) of a segment after (before) which the next (previous) segment will be loaded
@@ -372,15 +374,33 @@ public abstract class SuperTextActivity extends FragmentActivity {
         startNewTextActivityIntent(context, book, null, null, openNewTask, null, -1);
     }
 
-    /**
-     * used for coming in from DirectRefMenu and TOC version change
-     * @param context
-     * @param book
-     * @param node
-     */
+    protected void createShortcut(Text text){
+        //Adding shortcut for MainActivity
+        //on Home screen
+        Intent shortcutIntent = new Intent(this, SplashScreenActivity.class);// makeNewTextActivityIntent(this, null, text, null, false, null, -1);
+        try {
+            shortcutIntent.putExtra("url",text.getURL(true,false));
+        } catch (Book.BookNotFoundException e) {
+            e.printStackTrace();
+        }
 
+        shortcutIntent.setAction(Intent.ACTION_MAIN);
 
-    public static void startNewTextActivityIntent(Context context, Book book, Text text, Node node,boolean openNewTask,String searchingTerm,int textNum) {
+        Intent addIntent = new Intent();
+        addIntent
+                .putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
+        String title = Util.ellipsis(text.getLocationString(Settings.getSystemLang()), 16, 19);
+        addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, title);
+        addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE,
+                Intent.ShortcutIconResource.fromContext(getApplicationContext(),
+                        R.drawable.sefaria_icon));
+
+        addIntent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
+        //addIntent.putExtra("duplicate", false);  //may it's already there so don't duplicate
+        sendBroadcast(addIntent);
+    }
+
+    private static Intent makeNewTextActivityIntent(Context context, Book book, Text text, Node node,boolean openNewTask,String searchingTerm,int textNum) {
         Intent intent;
 
         //Open CtsTextActivity if the current book can be cts, and your settings are cts
@@ -415,6 +435,11 @@ public abstract class SuperTextActivity extends FragmentActivity {
         if(openNewTask){
             intent = MyApp.startNewTab(intent);
         }
+        return intent;
+    }
+
+    public static void startNewTextActivityIntent(Context context, Book book, Text text, Node node, boolean openNewTask, String searchingTerm,int textNum) {
+        Intent intent = makeNewTextActivityIntent(context, book, text, node, openNewTask, searchingTerm, textNum);
         context.startActivity(intent);
     }
 

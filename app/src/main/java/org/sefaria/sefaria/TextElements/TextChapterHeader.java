@@ -3,6 +3,7 @@ package org.sefaria.sefaria.TextElements;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.View;
 import android.widget.LinearLayout;
 
 import org.sefaria.sefaria.R;
@@ -74,6 +75,12 @@ public class TextChapterHeader extends LinearLayout {
     public void setSectionTitle(Text segment) {
         enText = segment.getText(Util.Lang.EN);
         heText = segment.getText(Util.Lang.HE);
+        SefariaTextView reloadTv = (SefariaTextView) findViewById(R.id.reload_tv);
+        if(segment.getChapterHasTexts()){
+            reloadTv.setVisibility(View.GONE);
+        }else{
+            reloadTv.setVisibility(View.VISIBLE);
+        }
         setLang(Settings.getMenuLang());
     }
 

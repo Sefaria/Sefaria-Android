@@ -123,11 +123,13 @@ public class SepTextActivity extends SuperTextActivity implements AbsListView.On
             header = segment.getLocationString(getMenuLang());
         menu.setHeaderTitle(header);
         //menu.setHeaderIcon(something.getIcon());
-        menu.add(0, v.getId(), 0, CONTEXT_MENU_COPY_TITLE);
+        int spot = 0;
+        menu.add(0, v.getId(), spot++, CONTEXT_MENU_COPY_TITLE);
         if(!segment.isChapter()) {
-            menu.add(0, v.getId(), 1, CONTEXT_MENU_SEND_CORRECTION);
-            menu.add(0, v.getId(), 2, CONTEXT_MENU_SHARE);
-            menu.add(0, v.getId(), 3, CONTEXT_MENU_VISIT);
+            menu.add(0, v.getId(), spot++, CONTEXT_MENU_SEND_CORRECTION);
+            menu.add(0, v.getId(), spot++, CONTEXT_MENU_SHARE);
+            menu.add(0, v.getId(), spot++, CONTEXT_MENU_VISIT);
+            menu.add(0, v.getId(), spot++, CONTEXT_MENU_SHORTCUT);
         }
     }
 
@@ -154,11 +156,15 @@ public class SepTextActivity extends SuperTextActivity implements AbsListView.On
             visit(segment);
         } else if(title == CONTEXT_MENU_PIN){
             pin(segment);
+        }else if(title == CONTEXT_MENU_SHORTCUT){
+            createShortcut(segment);
         }
 
         //stop processing menu event
         return true;
     }
+
+
 
     private void pin(Text text){
         Settings.RecentTexts.addBookmark(text);

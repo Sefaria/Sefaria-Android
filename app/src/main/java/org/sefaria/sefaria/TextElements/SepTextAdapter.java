@@ -139,12 +139,6 @@ public class SepTextAdapter extends ArrayAdapter<Text> {
 
                 tch.setSectionTitle(segment);
                 tch.setTextSize(sepTextActivity.getTextSize());
-                SefariaTextView reloadTv = (SefariaTextView) view.findViewById(R.id.reload_tv);
-                if(segment.getChapterHasTexts()){
-                    reloadTv.setVisibility(View.GONE);
-                }else{
-                    reloadTv.setVisibility(View.VISIBLE);
-                }
             } else {
                 view.setClickable(false);
 
@@ -194,7 +188,6 @@ public class SepTextAdapter extends ArrayAdapter<Text> {
 
                 tch.setSectionTitle(segment);
                 tch.setTextSize(sepTextActivity.getTextSize());
-
             } else {
                 //view.setClickable(false);
 

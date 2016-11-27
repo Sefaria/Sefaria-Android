@@ -46,5 +46,6 @@
         android:clickable="true"
         android:background="?donate_button_background_drawable"
         app:lang="system"
+        android:visibility="gone"
         />
 </RelativeLayout>
