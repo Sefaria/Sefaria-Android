@@ -19,7 +19,7 @@ public class Segment implements Parcelable {
     public static final int MAX_LEVELS = 4;
     public static final double BILINGUAL_THRESHOLD = 0.05; //percentage of segment that is bilingual for us to default to bilingual
 
-    private static boolean usingHuffman = true;
+    private static final boolean usingHuffman = true;
 
 
 

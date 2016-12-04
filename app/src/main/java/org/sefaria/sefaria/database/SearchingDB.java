@@ -907,11 +907,11 @@ public class SearchingDB {
             queryTypes.add(queries350k); queryTypes.add(queries6k);
             queryTypes.add(queries55); queryTypes.add(queries10);
             StringBuilder testingResults = new StringBuilder();
-
+            testingResults.append("CHUNK SIZE: " + CHUNK_SIZE + " DB#: " + Database.getVersionInDB(false) + "\n\n");
             final int RETURN_RESULTS_REG = 6;
             final int LARGE_INT = 100000000;
             int[] returnResultAmounts = {RETURN_RESULTS_REG};
-            boolean[] usePureNoIndexSearches = {false};
+            boolean[] usePureNoIndexSearches = {true};
             for (boolean usePureNoIndexSearch : usePureNoIndexSearches) {
                 for (int returnResultAmount : returnResultAmounts) {
                     String searchMethod = "[" + (usePureNoIndexSearch ? "NoIndex" : "compressedIndex")

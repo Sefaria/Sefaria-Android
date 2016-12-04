@@ -162,10 +162,14 @@ public class GoogleTracker extends MyApp {
         //Sending toast might break the app if run from other thread
         //Toast.makeText(MyApp.currActivityContext,"" + reportText.length() + ". " + reportText , Toast.LENGTH_SHORT).show(); //TODO comment out b/f release
 
-        tracker.send(new HitBuilders.ExceptionBuilder()
-                .setDescription(reportText)
-                .setFatal(false)
-                .build());
+        try {
+            tracker.send(new HitBuilders.ExceptionBuilder()
+                    .setDescription(reportText)
+                    .setFatal(false)
+                    .build());
+        }catch (Exception e1){
+            e1.printStackTrace();
+        }
 
     }
 

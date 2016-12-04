@@ -22,6 +22,7 @@ public class Section {
     public Section(List<Segment> segmentList, Segment headerSegment, boolean isLoader) {
         this.segmentList = segmentList;
         this.headerSegment = headerSegment;
+        this.isLoader = isLoader;
     }
 
     public List<Segment> getSegmentList() { return segmentList; }

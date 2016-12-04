@@ -37,7 +37,6 @@ public class SplashScreenActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            Log.d("Splash","START");
             startTime = System.currentTimeMillis();
         }
 
@@ -57,7 +56,6 @@ public class SplashScreenActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            Log.d("Splash","STOP");
             Book book;
             try {
                 book = new Book(Settings.getLastBook());

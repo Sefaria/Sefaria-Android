@@ -143,10 +143,15 @@ public class MyApp extends Application {
     }
 
     public static Point getScreenSize(){
-        Configuration configuration = getContext().getResources().getConfiguration();
-        Point size = new Point();
-        size.x = configuration.screenWidthDp;
-        size.y = configuration.screenHeightDp;
+        Configuration configuration;
+        try{
+            configuration = getContext().getResources().getConfiguration();
+        }catch (NullPointerException e){
+            GoogleTracker.sendException(e, "getScreenSize");
+            return new Point(300, 600);
+        }
+
+        Point size = new Point(configuration.screenWidthDp, configuration.screenHeightDp);
         //Log.d("screenSize","X:"+ size.x);
         return size;
     }
