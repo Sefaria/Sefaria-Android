@@ -4,7 +4,8 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="20dp">
+    android:padding="20dp"
+    android:paddingBottom="8dp">
 
     <org.sefaria.sefaria.layouts.SefariaTextView
         android:id="@+id/tv"
@@ -33,8 +34,9 @@
         android:layout_height="36dp"
         android:text="@string/error_loading_section_reload"
         android:textColor="?text_chapter_header_color"
-        android:textSize="@dimen/text_chapter_font_size"
-        android:layout_marginTop="15dp"
+        android:textSize="11sp"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="0dp"
         android:paddingLeft="24dp"
         android:paddingRight="24dp"
         android:paddingTop="5dp"
@@ -46,7 +48,7 @@
         android:clickable="true"
         android:background="?donate_button_background_drawable"
         app:lang="system"
-        android:visibility="gone"
+
 
         />
 </RelativeLayout>
