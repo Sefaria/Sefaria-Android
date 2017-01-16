@@ -200,7 +200,9 @@
             android:gravity="center"
             android:layout_marginRight="5dp"
             android:layout_marginLeft="5dp"
-            android:background="@drawable/text_menu_button_background_grey" />
+            android:background="@drawable/text_menu_button_background_grey"
+            android:visibility="gone"
+            />
 
         <View
             android:id="@+id/black_btn"

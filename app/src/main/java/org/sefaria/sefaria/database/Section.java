@@ -7,24 +7,25 @@ import java.util.List;
  */
 public class Section {
 
-    private List<Text> textList;
-    private Text headerText;
+    private List<Segment> segmentList;
+    private Segment headerSegment;
     private boolean isLoader;
 
     public Section(boolean isLoader) {
         this.isLoader = isLoader;
     }
 
-    public Section(List<Text> textList, Text headerText) {
-        this(textList,headerText,false);
+    public Section(List<Segment> segmentList, Segment headerSegment) {
+        this(segmentList, headerSegment,false);
     }
 
-    public Section(List<Text> textList, Text headerText, boolean isLoader) {
-        this.textList = textList;
-        this.headerText = headerText;
+    public Section(List<Segment> segmentList, Segment headerSegment, boolean isLoader) {
+        this.segmentList = segmentList;
+        this.headerSegment = headerSegment;
+        this.isLoader = isLoader;
     }
 
-    public List<Text> getTextList() { return textList; }
-    public Text getHeaderText() { return headerText; }
+    public List<Segment> getSegmentList() { return segmentList; }
+    public Segment getHeaderSegment() { return headerSegment; }
     public boolean getIsLoader() { return isLoader;}
 }

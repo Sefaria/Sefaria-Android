@@ -39,7 +39,7 @@ public class LinkMainAdapter extends RecyclerView.Adapter<LinkMainAdapter.LinkHo
         public View colorBar;
         public View catPadding;
         private Context context;
-        public LinkHolder(View v,SuperTextActivity context) {
+        public LinkHolder(View v, SuperTextActivity context) {
             super(v);
             v.setClickable(true);
             v.setOnClickListener(this);

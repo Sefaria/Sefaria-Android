@@ -16,13 +16,10 @@ import android.widget.Toast;
 
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
-import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
-import org.sefaria.sefaria.activities.SettingsActivity;
 import org.sefaria.sefaria.database.Book;
-import org.sefaria.sefaria.database.Database;
 import org.sefaria.sefaria.database.Downloader;
-import org.sefaria.sefaria.database.Text;
+import org.sefaria.sefaria.database.Segment;
 import org.sefaria.sefaria.database.UpdateReceiver;
 import org.sefaria.sefaria.database.UpdateService;
 
@@ -222,14 +219,14 @@ public class DialogManager2 {
                         MyApp.getRString(R.string.CANCEL), null, DialogCallable.DialogType.ALERT) {
                     @Override
                     public void positiveClick() {
-                        Text text = (Text) object;
+                        Segment segment = (Segment) object;
                         String email = "corrections@sefaria.org";
                         Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
                                 "mailto", email, null));
                         emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Sefaria Text Correction from Android");
                         String url = null;
                         try {
-                            url = text.getURL(true, false) + "\n\n";
+                            url = segment.getURL(true, false) + "\n\n";
                         } catch (Book.BookNotFoundException e) {
                             url = "";
                             e.printStackTrace();
@@ -238,7 +235,7 @@ public class DialogManager2 {
 
                                 MyApp.getEmailHeader()
                                         + url
-                                        + Html.fromHtml(text.getText(Util.Lang.BI))
+                                        + Html.fromHtml(segment.getText(Util.Lang.BI))
                                         + "\n\nDescribe the error: \n\n"
                         );
                         emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{email});

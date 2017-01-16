@@ -52,7 +52,7 @@ public class TOCCommentary extends LinearLayout implements TOCElement {
     OnClickListener clickListener = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            //go to text page
+            //go to segment page
             SuperTextActivity.startNewTextActivityIntent(context,commentary,false);
 
         }

@@ -3,43 +3,29 @@ package org.sefaria.sefaria.SearchElements;
 import android.app.Activity;
 import android.content.Context;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
-import org.sefaria.sefaria.database.Book;
-import org.sefaria.sefaria.database.Text;
+import org.sefaria.sefaria.database.Segment;
 import org.sefaria.sefaria.layouts.SefariaTextView;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Created by nss on 3/31/16.
  */
-public class SearchAdapter extends ArrayAdapter<Text> {
+public class SearchAdapter extends ArrayAdapter<Segment> {
 
-    private List<Text> results;
+    private List<Segment> results;
     private Context context;
     private Util.Lang langSearchedIn = Util.Lang.HE;
 
-    public SearchAdapter(Context context, int resourceId, List<Text> results) {
+    public SearchAdapter(Context context, int resourceId, List<Segment> results) {
         super(context, resourceId);
         this.context = context;
         this.results = results;
@@ -47,14 +33,14 @@ public class SearchAdapter extends ArrayAdapter<Text> {
 
     @Override
     public View getView(int position, View view, ViewGroup parent) {
-        Text text = results.get(position);
-        //Language is exclusively either Hebrew or Enlgihs, depending on which exists in the text
+        Segment segment = results.get(position);
+        //Language is exclusively either Hebrew or Enlgihs, depending on which exists in the segment
         Util.Lang lang;
-        if (text.getText(langSearchedIn).length() > 0 ){
+        if (segment.getText(langSearchedIn).length() > 0 ){
             lang = langSearchedIn;
-        } else if(text.getText(Util.Lang.HE).length() > 0 ){
+        } else if(segment.getText(Util.Lang.HE).length() > 0 ){
             lang = Util.Lang.HE;
-        } else /*if (text.getText(Util.Lang.EN)...)*/{
+        } else /*if (segment.getText(Util.Lang.EN)...)*/{
             lang = Util.Lang.EN;
         }
 
@@ -67,8 +53,8 @@ public class SearchAdapter extends ArrayAdapter<Text> {
         SefariaTextView title = (SefariaTextView) view.findViewById(R.id.title);
         SefariaTextView mono = (SefariaTextView) view.findViewById(R.id.mono);
 
-        title.setText(text.getLocationString(Settings.getMenuLang()));
-        mono.setText(Html.fromHtml(Util.getBidiString(text.getText(lang),lang)));
+        title.setText(segment.getLocationString(Settings.getMenuLang()));
+        mono.setText(Html.fromHtml(Util.getBidiString(segment.getText(lang),lang)));
 
         title.setFont(Settings.getMenuLang(), true, 18);
         mono.setFont(lang, true,18);
@@ -77,7 +63,7 @@ public class SearchAdapter extends ArrayAdapter<Text> {
         return view;
     }
 
-    public void setResults(List<Text> results, boolean reset) {
+    public void setResults(List<Segment> results, boolean reset) {
         //TODO parse refs
         if (reset) {
             this.results.clear();

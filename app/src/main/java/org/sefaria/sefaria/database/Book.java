@@ -28,11 +28,11 @@ public class Book implements Parcelable {
     public int commentsOn;
     private String  [] sectionNames;
     /**
-     * Little sections (like verse) to Big (like chap) just like Text.levels works
+     * Little sections (like verse) to Big (like chap) just like Segment.levels works
      */
     public String  [] sectionNamesL2B;
     /**
-     * Little sections (like verse) to Big (like chap) just like Text.levels works
+     * Little sections (like verse) to Big (like chap) just like Segment.levels works
      */
     public String  [] heSectionNamesL2B;
     public String [] categories;
@@ -237,6 +237,8 @@ public class Book implements Parcelable {
             heSectionNamesL2B = new String [heSectionNamesTemp.length];
             for(int i = 0; i<heSectionNamesTemp.length;i++)
                 heSectionNamesL2B[i] = heSectionNamesTemp[heSectionNamesTemp.length - i -1];
+            //try: //path // try is needed in case it's an old DB.
+
         }
         catch(Exception e){
             GoogleTracker.sendException(e);

@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="20dp">
+    android:padding="20dp"
+    android:paddingBottom="8dp">
 
     <org.sefaria.sefaria.layouts.SefariaTextView
         android:id="@+id/tv"
@@ -17,10 +20,35 @@
         android:gravity="center"/>
 
     <View
+        android:id="@+id/chapter_header_border_bar"
         android:layout_width="0dp"
         android:layout_height="4dp"
         android:layout_alignBottom="@+id/tv"
         android:layout_alignLeft="@+id/tv"
         android:layout_alignRight="@+id/tv"
         android:background="?text_chapter_header_border"></View>
+
+    <org.sefaria.sefaria.layouts.SefariaTextView
+        android:id="@+id/reload_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
+        android:text="@string/error_loading_section_reload"
+        android:textColor="?text_chapter_header_color"
+        android:textSize="11sp"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="0dp"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:gravity="center"
+        android:layout_alignTop="@+id/chapter_header_border_bar"
+        android:layout_centerHorizontal="true"
+        android:onClick="reloadClick"
+        android:clickable="true"
+        android:background="?donate_button_background_drawable"
+        app:lang="system"
+
+
+        />
 </RelativeLayout>

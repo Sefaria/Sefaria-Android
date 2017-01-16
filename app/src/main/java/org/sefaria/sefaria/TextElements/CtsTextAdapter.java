@@ -3,10 +3,7 @@ package org.sefaria.sefaria.TextElements;
 import android.app.Activity;
 import android.text.Html;
 import android.text.SpannableString;
-import android.text.SpannableStringBuilder;
 import android.text.Spanned;
-import android.text.method.LinkMovementMethod;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,12 +14,11 @@ import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.activities.SuperTextActivity;
 import org.sefaria.sefaria.database.Section;
-import org.sefaria.sefaria.database.Text;
+import org.sefaria.sefaria.database.Segment;
 import org.sefaria.sefaria.layouts.SefariaTextView;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.StringTokenizer;
 
 /**
  * Created by nss on 5/17/16.
@@ -37,7 +33,7 @@ public class CtsTextAdapter extends ArrayAdapter<Section> {
     private SuperTextActivity activity;
     private List<Section> sections;
 
-    private Text highlightIncomingText;
+    private Segment highlightIncomingSegment;
 
     private int resourceId;
     private int preLast;
@@ -80,7 +76,7 @@ public class CtsTextAdapter extends ArrayAdapter<Section> {
         sectionTv.setFont(lang, true);
         setSectionText(currSection, sectionTv, lang);
 
-        headerTv.setSectionTitle(currSection.getHeaderText());
+        headerTv.setSectionTitle(currSection.getHeaderSegment());
 
         headerTv.setTextSize(activity.getTextSize());
         sectionTv.setTextSize(activity.getTextSize());
@@ -94,8 +90,8 @@ public class CtsTextAdapter extends ArrayAdapter<Section> {
         SpannableStringBuilder ssb = new SpannableStringBuilder();
         tv.setMovementMethod(LinkMovementMethod.getInstance());
 
-        for (int i = 0; i < currSection.getTextList().size(); i++) {
-            Text segment = currSection.getTextList().get(i);
+        for (int i = 0; i < currSection.getSegmentList().size(); i++) {
+            Segment segment = currSection.getSegmentList().get(i);
             String words;
             //wait off on this
             if (segment.displayNum && false) {
@@ -117,10 +113,10 @@ public class CtsTextAdapter extends ArrayAdapter<Section> {
         tv.setText(ssb, TextView.BufferType.SPANNABLE);*/
 
         //tv.setMovementMethod(LinkMovementMethod.getInstance());
-        int[] lens = new int[currSection.getTextList().size()];
+        int[] lens = new int[currSection.getSegmentList().size()];
         StringBuilder all = new StringBuilder();
         int count = 0;
-        for (Text t : currSection.getTextList()) {
+        for (Segment t : currSection.getSegmentList()) {
             Spanned spanned;
             if (count == 0)
                 spanned = Html.fromHtml(t.getText(lang));
@@ -133,8 +129,8 @@ public class CtsTextAdapter extends ArrayAdapter<Section> {
         }
         SpannableString ss = new SpannableString(all);
         int currPos = 0;
-        for (int i = 0; i < currSection.getTextList().size(); i++) {
-            Text segment = currSection.getTextList().get(i);
+        for (int i = 0; i < currSection.getSegmentList().size(); i++) {
+            Segment segment = currSection.getSegmentList().get(i);
             String s = segment.getText(lang);
             SegmentSpannable segmentSpannable = new SegmentSpannable(s,segment,onSegmentSpanClickListener);
             ss.setSpan(segmentSpannable,currPos,currPos+lens[i],0);

@@ -314,7 +314,7 @@ public class UpdateService extends Service {
 							throw new Error("Unable to create database");
 						}*/
                     //testing...
-                    //Text.getAllTextsFromDB2();
+                    //Segment.getAllTextsFromDB2();
                     myDbHelper.close();
 
                     //clean up by deleting zip that you downloaded...

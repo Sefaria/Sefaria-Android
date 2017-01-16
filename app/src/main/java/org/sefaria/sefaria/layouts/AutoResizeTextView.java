@@ -39,10 +39,10 @@ public class AutoResizeTextView extends SefariaTextView
     private interface SizeTester
     {
         /**
-         * @param suggestedSize  Size of text to be tested
-         * @param availableSpace available space in which text must fit
+         * @param suggestedSize  Size of segment to be tested
+         * @param availableSpace available space in which segment must fit
          * @return an integer < 0 if after applying {@code suggestedSize} to
-         * text, it takes less space than {@code availableSpace}, > 0
+         * segment, it takes less space than {@code availableSpace}, > 0
          * otherwise
          */
         public int onTestSize(int suggestedSize,RectF availableSpace);
@@ -188,7 +188,7 @@ public class AutoResizeTextView extends SefariaTextView
     }
 
     /**
-     * Set the lower text size limit and invalidate the view
+     * Set the lower segment size limit and invalidate the view
      *
      * @param minTextSize
      */
@@ -205,7 +205,7 @@ public class AutoResizeTextView extends SefariaTextView
 
     private void adjustTextSize()
     {
-        // This is a workaround for truncated text issue on ListView, as shown here: https://github.com/AndroidDeveloperLB/AutoFitTextView/pull/14
+        // This is a workaround for truncated segment issue on ListView, as shown here: https://github.com/AndroidDeveloperLB/AutoFitTextView/pull/14
         // TODO think of a nicer, elegant solution.
 //    post(new Runnable()
 //    {

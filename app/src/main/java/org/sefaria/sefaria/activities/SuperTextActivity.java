@@ -35,9 +35,10 @@ import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Database;
+import org.sefaria.sefaria.database.Downloader;
 import org.sefaria.sefaria.database.Node;
 import org.sefaria.sefaria.database.Section;
-import org.sefaria.sefaria.database.Text;
+import org.sefaria.sefaria.database.Segment;
 import org.sefaria.sefaria.layouts.CustomActionbar;
 import org.sefaria.sefaria.MenuElements.MenuNode;
 
@@ -54,6 +55,10 @@ public abstract class SuperTextActivity extends FragmentActivity {
         NEXT_SECTION, PREV_SECTION
     }
 
+    public enum LoadSectionResult {
+        LAST_NODE, API_EXCEPTION
+    }
+
     public static int SEGMENT_SELECTOR_LINE_FROM_TOP = 150; //pixels from top of layout
     public static int MAX_LINK_FRAG_SNAP_DISTANCE = 230;
     protected static int PREV_DELAY_TIME = 1700; //ms from initTime
@@ -62,7 +67,8 @@ public abstract class SuperTextActivity extends FragmentActivity {
     protected static CharSequence CONTEXT_MENU_SEND_CORRECTION = "Report Mistake";
     protected static CharSequence CONTEXT_MENU_SHARE = "Share";
     protected static CharSequence CONTEXT_MENU_VISIT = "View on Site";
-    protected static CharSequence CONTEXT_MENU_PIN = "Pin Text";
+    protected static CharSequence CONTEXT_MENU_PIN = "Pin Segment";
+    protected static CharSequence CONTEXT_MENU_SHORTCUT = "Add to Home Screen";
     public static final int PREV_CHAP_DRAWN = 234234;
     public static final int TOC_CHAPTER_CLICKED_CODE = 3456;
     protected static final int LOAD_PIXEL_THRESHOLD = 500; //num pixels before the bottom (or top) of a segment after (before) which the next (previous) segment will be loaded
@@ -80,9 +86,9 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
     protected Node firstLoadedNode = null;
     protected Node currNode; // Node which you're currently up to in scrollView
-    protected Text currText;
+    protected Segment currSegment;
     protected Node lastLoadedNode;
-    protected Text openToText;
+    protected Segment openToSegment;
     private int textNum;
 
     protected Util.Lang menuLang;
@@ -198,13 +204,13 @@ public abstract class SuperTextActivity extends FragmentActivity {
             homeFragment = (HomeFragment) getSupportFragmentManager().getFragment(savedInstanceState,HOME_FRAG_TAG);
             nodeHash = savedInstanceState.getInt("nodeHash", NO_HASH_NODE);
             book = savedInstanceState.getParcelable("currBook");
-            openToText = savedInstanceState.getParcelable("incomingLinkText");
+            openToSegment = savedInstanceState.getParcelable("incomingLinkText");
             searchingTerm = savedInstanceState.getString("searchingTerm");
             textNum = savedInstanceState.getInt("textNum",-1);
         }else{
             nodeHash = intent.getIntExtra("nodeHash", NO_HASH_NODE);
             book = intent.getParcelableExtra("currBook");
-            openToText = intent.getParcelableExtra("incomingLinkText");
+            openToSegment = intent.getParcelableExtra("incomingLinkText");
             searchingTerm = intent.getStringExtra("searchingTerm");
             textNum = intent.getIntExtra("textNum",-1);
         }
@@ -228,8 +234,8 @@ public abstract class SuperTextActivity extends FragmentActivity {
                 try {
                     if (firstLoadedNode != null) {
                         book = new Book(firstLoadedNode.getBid());
-                    } else if (openToText != null) {
-                        book = new Book(openToText.bid);
+                    } else if (openToSegment != null) {
+                        book = new Book(openToSegment.bid);
                     } else {
                         book = new Book(Settings.getLastBook());
                     }
@@ -243,9 +249,9 @@ public abstract class SuperTextActivity extends FragmentActivity {
             }
             Settings.RecentTexts.addRecentText(book.title);
 
-            if (firstLoadedNode == null && openToText != null) {
+            if (firstLoadedNode == null && openToSegment != null) {
                 try {
-                    firstLoadedNode = openToText.getNodeFromText(book);
+                    firstLoadedNode = openToSegment.getNodeFromText(book);
                 } catch (Book.BookNotFoundException e) {
                     e.printStackTrace();
                     Toast.makeText(this,MyApp.getRString(R.string.error_getting_book),Toast.LENGTH_SHORT).show();
@@ -281,16 +287,16 @@ public abstract class SuperTextActivity extends FragmentActivity {
                     return false;
                 }
                 Node root = TOCroots.get(0);
-                firstLoadedNode = root.getFirstDescendant();//was getting first text true);
+                firstLoadedNode = root.getFirstDescendant();//was getting first segment true);
                 GoogleTracker.sendEvent(GoogleTracker.CATEGORY_OPEN_NEW_BOOK_ACTION, "Opened New Book");
                 openedNewBookTime = System.currentTimeMillis();
             }
             if(firstLoadedNode != null) //put in saved textVersion
                 firstLoadedNode.setTextVersion(bookSettings.textVersion);
 
-            if (openToText == null && textNum > -1) {
+            if (openToSegment == null && textNum > -1) {
                 try {
-                    openToText = firstLoadedNode.getTexts().get(textNum);
+                    openToSegment = firstLoadedNode.getTexts().get(textNum);
                 }catch (IndexOutOfBoundsException e1) {
                     Log.e("SuperTextAct", e1.getMessage());
                 } catch (API.APIException e) {
@@ -341,7 +347,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        Settings.BookSettings.setSavedBook(book, currNode, currText, textLang);//data also saved with home click
+        Settings.BookSettings.setSavedBook(book, currNode, currSegment, textLang);//data also saved with home click
         outState.putParcelable("currBook", book);
         getSupportFragmentManager().putFragment(outState, LINK_FRAG_TAG, linkFragment);
         getSupportFragmentManager().putFragment(outState, HOME_FRAG_TAG, homeFragment);
@@ -351,10 +357,10 @@ public abstract class SuperTextActivity extends FragmentActivity {
     /**
      * used for pressing on link
      * @param context
-     * @param text
+     * @param segment
      */
-    public static void startNewTextActivityIntent(Context context, Text text, boolean openNewTask){
-        startNewTextActivityIntent(context, null, text, null, openNewTask, null, -1);
+    public static void startNewTextActivityIntent(Context context, Segment segment, boolean openNewTask){
+        startNewTextActivityIntent(context, null, segment, null, openNewTask, null, -1);
     }
 
 
@@ -367,15 +373,33 @@ public abstract class SuperTextActivity extends FragmentActivity {
         startNewTextActivityIntent(context, book, null, null, openNewTask, null, -1);
     }
 
-    /**
-     * used for coming in from DirectRefMenu and TOC version change
-     * @param context
-     * @param book
-     * @param node
-     */
+    protected void createShortcut(Segment segment){
+        //Adding shortcut for MainActivity
+        //on Home screen
+        Intent shortcutIntent = new Intent(this, SplashScreenActivity.class);// makeNewTextActivityIntent(this, null, segment, null, false, null, -1);
+        try {
+            shortcutIntent.putExtra("url", segment.getURL(true,false));
+        } catch (Book.BookNotFoundException e) {
+            e.printStackTrace();
+        }
 
+        shortcutIntent.setAction(Intent.ACTION_MAIN);
 
-    public static void startNewTextActivityIntent(Context context, Book book, Text text, Node node,boolean openNewTask,String searchingTerm,int textNum) {
+        Intent addIntent = new Intent();
+        addIntent
+                .putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
+        String title = Util.ellipsis(segment.getLocationString(Settings.getSystemLang()), 16, 19);
+        addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, title);
+        addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE,
+                Intent.ShortcutIconResource.fromContext(getApplicationContext(),
+                        R.drawable.sefaria_icon));
+
+        addIntent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
+        //addIntent.putExtra("duplicate", false);  //may it's already there so don't duplicate
+        sendBroadcast(addIntent);
+    }
+
+    private static Intent makeNewTextActivityIntent(Context context, Book book, Segment segment, Node node, boolean openNewTask, String searchingTerm, int textNum) {
         Intent intent;
 
         //Open CtsTextActivity if the current book can be cts, and your settings are cts
@@ -393,8 +417,8 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
         if(book != null)
             intent.putExtra("currBook", book);
-        if(text != null)
-            intent.putExtra("incomingLinkText",text);
+        if(segment != null)
+            intent.putExtra("incomingLinkText", segment);
         if(node != null){
             node.log();
             Node.saveNode(node);
@@ -410,6 +434,11 @@ public abstract class SuperTextActivity extends FragmentActivity {
         if(openNewTask){
             intent = MyApp.startNewTab(intent);
         }
+        return intent;
+    }
+
+    public static void startNewTextActivityIntent(Context context, Book book, Segment segment, Node node, boolean openNewTask, String searchingTerm, int textNum) {
+        Intent intent = makeNewTextActivityIntent(context, book, segment, node, openNewTask, searchingTerm, textNum);
         context.startActivity(intent);
     }
 
@@ -447,7 +476,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
                 //Log.d("SuperTextAct", "draw opened");
-                Settings.BookSettings.setSavedBook(book, currNode, currText, textLang);//save this book b/f home frag so that this book is in recent list
+                Settings.BookSettings.setSavedBook(book, currNode, currSegment, textLang);//save this book b/f home frag so that this book is in recent list
                 homeFragment.onHomeFragOpen();
             }
 
@@ -506,7 +535,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d("SuperTextAct", "onActivityResult");
         if (data != null) {
-            //you're returning to text page b/c chapter was clicked in toc
+            //you're returning to segment page b/c chapter was clicked in toc
             if (requestCode == TOC_CHAPTER_CLICKED_CODE) {
                 comingFromTOC(data);
             }
@@ -538,7 +567,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
             reportedNewBookBack = true;
         }
 
-        Settings.BookSettings.setSavedBook(book, currNode, currText, textLang);
+        Settings.BookSettings.setSavedBook(book, currNode, currSegment, textLang);
         if (drawerLayout.isDrawerOpen(Gravity.LEFT)) {
             drawerLayout.closeDrawer(Gravity.LEFT);
         }else if(isTextMenuVisible)
@@ -582,14 +611,14 @@ public abstract class SuperTextActivity extends FragmentActivity {
         return true;
     }
 
-    protected Text getSectionHeaderText(TextEnums dir){
+    protected Segment getSectionHeaderText(TextEnums dir){
         Node node;
         if(dir == TextEnums.NEXT_SECTION) {
             node = lastLoadedNode;
         } else if (dir == TextEnums.PREV_SECTION || true){
             node = firstLoadedNode;
         }
-        return new Text(node);
+        return new Segment(node);
     }
 
 
@@ -610,7 +639,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
     View.OnLongClickListener homeLongClick = new View.OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
-            Settings.BookSettings.setSavedBook(book, currNode, currText, textLang);
+            Settings.BookSettings.setSavedBook(book, currNode, currSegment, textLang);
             //MyApp.homeClick(SuperTextActivity.this, true,false);
             return true;
         }
@@ -646,7 +675,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
         public void onClick(View v) {
             //Log.d("TextAct", "here");
             if(searchActionbar == null) {
-                searchActionbar = new SearchActionbar(SuperTextActivity.this, findOnPageCloseClick, null,findOnPageUpClick,findOnPageDownClick,book.getCatColor(), getRString(R.string.search) + " " + book.getTitle(menuLang));
+                searchActionbar = new SearchActionbar(SuperTextActivity.this, findOnPageCloseClick, null,findOnPageUpClick,findOnPageDownClick,book.getCatColor(), getRString(R.string.search) + " " + book.getTitle(menuLang), null);
             }
             if(searchActionBarRoot == null)
                 searchActionBarRoot = (LinearLayout) findViewById(R.id.searchBarRoot);
@@ -669,7 +698,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
     View.OnClickListener titleClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Settings.BookSettings.setSavedBook(book, currNode, currText, textLang);//data also saved with home click
+            Settings.BookSettings.setSavedBook(book, currNode, currSegment, textLang);//data also saved with home click
             if(openedNewBookTime >0 && !reportedNewBookTOC){
                 String category;
                 if(reportedNewBookScroll || reportedNewBookBack)
@@ -776,8 +805,8 @@ public abstract class SuperTextActivity extends FragmentActivity {
         setTextSize(tempTextSize);
     }
 
-    //return the currently selected text, as determined by the link fragment
-    public Text getCurrLinkSegment() { return linkFragment.getSegment(); }
+    //return the currently selected segment, as determined by the link fragment
+    public Segment getCurrLinkSegment() { return linkFragment.getSegment(); }
     public boolean getFragmentIsOpen() { return linkFragment.getIsOpen(); }
 
     protected void setMenuLang(Util.Lang menuLang){
@@ -815,9 +844,9 @@ public abstract class SuperTextActivity extends FragmentActivity {
     }
 
     protected void restartActivity(){
-        Settings.BookSettings.setSavedBook(book, currNode, currText, textLang);
+        Settings.BookSettings.setSavedBook(book, currNode, currSegment, textLang);
         finish();
-        startNewTextActivityIntent(this, book, currText, currNode, false, searchingTerm, -1);
+        startNewTextActivityIntent(this, book, currSegment, currNode, false, searchingTerm, -1);
     }
 
     protected abstract void setTextLang(Util.Lang textLang);
@@ -837,35 +866,35 @@ public abstract class SuperTextActivity extends FragmentActivity {
         Settings.setIsSideBySide(isSideBySide);
     }
 
-    protected abstract void jumpToText(Text text);
+    protected abstract void jumpToText(Segment segment);
     protected abstract void updateFocusedSegment();
 
     protected void setCurrNode(Node node){
         setCurrNode(node,null);
     }
-    protected  void setCurrNode(Text text) {
+    protected  void setCurrNode(Segment segment) {
         Node node;
-        if (text == null) node = null;
-        else node = text.parentNode;
-        setCurrNode(node, text);
+        if (segment == null) node = null;
+        else node = segment.parentNode;
+        setCurrNode(node, segment);
     }
 
     protected void setCurrNode(Section section) {
         Node node;
-        Text text;
-        if (section == null || section.getTextList() == null || section.getTextList().size() == 0) {
+        Segment segment;
+        if (section == null || section.getSegmentList() == null || section.getSegmentList().size() == 0) {
             node = null;
-            text = null;
+            segment = null;
         } else {
-            text = section.getTextList().get(0);
-            node = text.parentNode;
+            segment = section.getSegmentList().get(0);
+            node = segment.parentNode;
         }
 
-        setCurrNode(node,text);
+        setCurrNode(node, segment);
     }
 
-    private void setCurrNode(Node node, Text text){
-        currText = text;
+    private void setCurrNode(Node node, Segment segment){
+        currSegment = segment;
         if(node == null) return;
         if(currNode != node){
             currNode = node;
@@ -874,46 +903,36 @@ public abstract class SuperTextActivity extends FragmentActivity {
     }
 
 
-    protected List<Text> loadSection(TextEnums dir) {
+    protected List<Segment> loadSection(TextEnums dir) throws API.APIException, Node.LastNodeException {
         Node newNode = null;
-        try {
-            if (dir == TextEnums.NEXT_SECTION) {
-                if (lastLoadedNode == null) { //this is the initial load
-                    newNode = firstLoadedNode;
-                } else {
-                    newNode = lastLoadedNode.getNextTextNode();
-                }
-                lastLoadedNode = newNode;
-            } else if (dir == TextEnums.PREV_SECTION) {
-                if (firstLoadedNode == null) {
-                    newNode = lastLoadedNode;
-                } else {
-                    newNode = firstLoadedNode.getPrevTextNode();
-                }
-                firstLoadedNode = newNode;
+        if (dir == TextEnums.NEXT_SECTION) {
+            if (lastLoadedNode == null) { //this is the initial load
+                newNode = firstLoadedNode;
+            } else {
+                newNode = lastLoadedNode.getNextTextNode();
             }
-        } catch (Node.LastNodeException e) {
-            return null;
+            lastLoadedNode = newNode;
+        } else if (dir == TextEnums.PREV_SECTION) {
+            if (firstLoadedNode == null) {
+                newNode = lastLoadedNode;
+            } else {
+                newNode = firstLoadedNode.getPrevTextNode();
+            }
+            firstLoadedNode = newNode;
         }
+        //if at last node throws LastNodeException
 
 
-        List<Text> textsList;
-        try {
-            //Log.d("SuperTextAct", "trying to getTexts");
-            if(newNode == null){//This error occurs when using API and the book no longer exists in Sefaria (it could also happen other times we don't know about)
-                //TODO add error text into the list.
-                //Node.dummyNode;
-                return new ArrayList<>();
-            }
-            textsList = newNode.getTexts();
-            newNode.findWords(searchingTerm);
-            return textsList;
-        } catch (API.APIException e) {
-            //API.makeAPIErrorToast(SuperTextActivity.this);//can't do this b/c it's in the background
+        List<Segment> textsList;
+        if(newNode == null){//This error occurs when using API and the book no longer exists in Sefaria (it could also happen other times we don't know about)
+            //TODO add error segment into the list.
+            //Node.dummyNode;
             return new ArrayList<>();
         }
-
-
+        textsList = newNode.getTexts();
+        newNode.findWords(searchingTerm);
+        return textsList;
+        //} catch (API.APIException e) {
     }
 
 
@@ -1139,6 +1158,15 @@ public abstract class SuperTextActivity extends FragmentActivity {
         startActivity(intent);
     }
 
+    public void reloadClick(View v){
+
+        if(Downloader.getHasInternet()) {
+            //Toast.makeText(SuperTextActivity.this, "Reloading texts", Toast.LENGTH_SHORT).show();
+            restartActivity();
+        }else{
+            Toast.makeText(SuperTextActivity.this, MyApp.getRString(R.string.problem_internet), Toast.LENGTH_SHORT).show();
+        }
+    }
 
 
     /*@Override

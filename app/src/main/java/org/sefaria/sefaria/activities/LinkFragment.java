@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.LinkElements.LinkMainAdapter;
@@ -25,10 +24,9 @@ import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.API;
-import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Link;
 import org.sefaria.sefaria.database.LinkFilter;
-import org.sefaria.sefaria.database.Text;
+import org.sefaria.sefaria.database.Segment;
 import org.sefaria.sefaria.layouts.SefariaTextView;
 
 import java.util.ArrayList;
@@ -59,7 +57,7 @@ public class LinkFragment extends android.support.v4.app.Fragment {
     private SuperTextActivity activity;
 
 
-    private Text segment;
+    private Segment segment;
     private State currState;
 
     public static LinkFragment newInstance() {
@@ -119,7 +117,7 @@ public class LinkFragment extends android.support.v4.app.Fragment {
         linkSelectorBar = new LinkSelectorBar(activity,linkSelectorBarButtonClick,linkSelectorBackClick);
         linkSelectorBarRoot.addView(linkSelectorBar);
 
-        //updateFragment((Text) getArguments().getParcelable(ARG_CURR_SECTION), view);
+        //updateFragment((Segment) getArguments().getParcelable(ARG_CURR_SECTION), view);
         gotoState(State.MAIN, view, null);
         return view;
     }
@@ -209,7 +207,7 @@ public class LinkFragment extends android.support.v4.app.Fragment {
             noLinksTV.setText(Html.fromHtml("<i>" + MyApp.getRString(R.string.no_links_filtered) + "</i>"));
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(activity,LinearLayoutManager.VERTICAL,false);
 
-            List<Text> linkList = null;
+            List<Segment> linkList = null;
             try {
                 linkList = Link.getLinkedTexts(segment, linkCount);
             } catch (API.APIException e) {
@@ -245,7 +243,7 @@ public class LinkFragment extends android.support.v4.app.Fragment {
      * @param segment - used when main list is scrolled and new segment comes into view.
      * @param view - usually from getView() except on first load in which case it's passed in manually
      */
-    public void updateFragment(Text segment, View view) {
+    public void updateFragment(Segment segment, View view) {
         if (view == null) {
             Log.d("frag","VIEW NULL ;(");
             return;
@@ -273,7 +271,7 @@ public class LinkFragment extends android.support.v4.app.Fragment {
 
     }
 
-    public void updateFragment(Text segment) {
+    public void updateFragment(Segment segment) {
         updateFragment(segment, getView());
     }
 
@@ -293,11 +291,11 @@ public class LinkFragment extends android.support.v4.app.Fragment {
     }
     public boolean getIsOpen() { return isOpen; }
     public void setClicked (boolean clicked) { this.clicked = clicked; }
-    public void setSegment(Text segment) {
+    public void setSegment(Segment segment) {
         this.segment = segment;
     }
 
-    public Text getSegment() { return segment; }
+    public Segment getSegment() { return segment; }
 
     GridLayoutManager.SpanSizeLookup onSpanSizeLookup = new GridLayoutManager.SpanSizeLookup() {
         @Override
@@ -358,7 +356,7 @@ public class LinkFragment extends android.support.v4.app.Fragment {
         }
     }
 
-    private class AsyncLoadLinks extends AsyncTask<Void, Void, List<Text>> {
+    private class AsyncLoadLinks extends AsyncTask<Void, Void, List<Segment>> {
 
         @Override
         protected void onPreExecute() {
@@ -366,9 +364,9 @@ public class LinkFragment extends android.support.v4.app.Fragment {
         }
 
         @Override
-        protected List<Text> doInBackground(Void... params) {
+        protected List<Segment> doInBackground(Void... params) {
 
-            List<Text> linkList = new ArrayList<>();
+            List<Segment> linkList = new ArrayList<>();
             try {
                 linkList = Link.getLinkedTexts(segment, linkTextAdapter.getCurrLinkCount());
             } catch (API.APIException e) {
@@ -380,7 +378,7 @@ public class LinkFragment extends android.support.v4.app.Fragment {
         }
 
         @Override
-        protected void onPostExecute(List<Text> linkList) {
+        protected void onPostExecute(List<Segment> linkList) {
             linkTextAdapter.setItemList(linkList);
             progressCircle.setVisibility(View.GONE);
         }

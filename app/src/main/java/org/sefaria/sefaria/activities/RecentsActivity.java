@@ -71,7 +71,7 @@ public class RecentsActivity extends AppCompatActivity {
         GoogleTracker.sendScreen("RecentsActivity");
         if(!veryFirstTime) {
             //in case the list has changed.
-            // say, for example, you went to a text so now that should be on top (and maybe it will have a different perek in it's name)
+            // say, for example, you went to a segment so now that should be on top (and maybe it will have a different perek in it's name)
             menuDirectRefsGrid.setNewList(Recents.getRecentDirectMenu(this,true,true));
         }else
             veryFirstTime = false;

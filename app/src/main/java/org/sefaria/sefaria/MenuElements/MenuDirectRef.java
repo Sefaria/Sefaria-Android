@@ -94,7 +94,7 @@ public class MenuDirectRef extends LinearLayout{
                     node = Node.getNodeFromPathStr(book,nodePath);
             } catch (Exception e) {
                 try {
-                    node = book.getTOCroots().get(0).getFirstDescendant(); //true); //tihs was used to check about if it has the text
+                    node = book.getTOCroots().get(0).getFirstDescendant(); //true); //tihs was used to check about if it has the segment
                 }catch (Exception e2){
                     e2.printStackTrace();
                 }
@@ -107,7 +107,7 @@ public class MenuDirectRef extends LinearLayout{
         @Override
         public void onClick(View v) {
             GoogleTracker.sendEvent("MenuDirectRef", enTitle);
-            //Text text = new Text();
+            //Segment segment = new Segment();
             ;
             SuperTextActivity.startNewTextActivityIntent(context,book,null,getNode(),false,null,Settings.BookSettings.getSavedBook(book).textNum);
         }

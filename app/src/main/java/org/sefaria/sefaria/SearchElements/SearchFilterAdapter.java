@@ -81,7 +81,12 @@ public class SearchFilterAdapter extends ArrayAdapter<BilingualNode> {
             searchFilterHolder = (SearchFilterHolder) view.getTag();
         }
         String fadedTextHexColor = String.format("#%06X", (0xFFFFFF & Util.getColor(context,R.attr.text_color_faded)));
-        searchFilterHolder.tv.setText(Html.fromHtml(node.getTitle(Settings.getMenuLang()) + " <font color="+fadedTextHexColor+">(" + node.getCount() + ")</font>"));
+        int count = node.getCount();
+        if(count > 0) {
+            searchFilterHolder.tv.setText(Html.fromHtml(node.getTitle(Settings.getMenuLang()) + " <font color=" + fadedTextHexColor + ">(" + count + ")</font>"));
+        }else {
+            searchFilterHolder.tv.setText(Html.fromHtml(node.getTitle(Settings.getMenuLang())));
+        }
         searchFilterHolder.checkBox.setPosition(position);
         searchFilterHolder.checkBox.setState(isCheckedArray[position]);
 

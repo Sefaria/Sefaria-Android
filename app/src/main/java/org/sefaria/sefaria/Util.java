@@ -108,7 +108,7 @@ public class Util {
         InputStream iS = resources.getAssets().open(path);
         //create a buffer that has the same size as the InputStream
         byte[] buffer = new byte[iS.available()];
-        //read the text file as a stream, into the buffer
+        //read the segment file as a stream, into the buffer
         iS.read(buffer);
         //create a output stream to write the buffer into
         ByteArrayOutputStream oS = new ByteArrayOutputStream();
@@ -306,7 +306,7 @@ public class Util {
         return sb.toString();
     }
 
-    //returns true if text has any hebrew character in it
+    //returns true if segment has any hebrew character in it
     public static boolean hasHebrew(String text) {
         Pattern patt = Pattern.compile("[\u05d0-\u05ea]");
         return patt.matcher(text).find();
@@ -369,13 +369,13 @@ public class Util {
         return String.valueOf(DBnum/100) + "." + passDot;
     }
 
-    public static float pixelsToSp(Context context, float px) {
-        float scaledDensity = context.getResources().getDisplayMetrics().scaledDensity;
+    public static float pixelsToSp(float px) {
+        float scaledDensity = MyApp.getContext().getResources().getDisplayMetrics().scaledDensity;
         return px/scaledDensity;
     }
 
-    public static float dpToPixels(Context context, float px) {
-        float scale = context.getResources().getDisplayMetrics().density;
+    public static float dpToPixels(float px) {
+        float scale = MyApp.getContext().getResources().getDisplayMetrics().density;
         return (px * scale + 0.5f);
     }
 
@@ -665,6 +665,29 @@ public class Util {
         g -= g*tint;
         b -= b*tint;
         return Color.rgb(r,g,b);
+    }
+
+
+    /**
+     * Return a string with a maximum length of <code>length</code> characters.
+     * If there are more than <code>length</code> characters, then string ends with an ellipsis ("...").
+     *
+     * @param text
+     * @param length
+     * @return
+     */
+    public static String ellipsis(final String text, int length, int dontTouchLength)
+    {
+        // The letters [iIl1] are slim enough to only count as half a character.
+        length += Math.ceil(text.replaceAll("[^iIl]", "").length() / 2.0d);
+
+        dontTouchLength = Math.max(length, dontTouchLength);
+        if (text.length() > dontTouchLength)
+        {
+            return text.substring(0, length/2) + "\u2026" + text.substring(text.length() - length/2 -1, text.length());
+        }
+
+        return text;
     }
 
 }

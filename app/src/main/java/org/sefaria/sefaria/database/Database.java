@@ -11,7 +11,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -116,7 +115,7 @@ public class Database extends SQLiteOpenHelper{
     private static Boolean hasOfflineDB;
     /**
      *
-     * @return false if there's a Text table in the db. true if not (and should be using API)
+     * @return false if there's a Segment table in the db. true if not (and should be using API)
      */
     public static boolean hasOfflineDB(){
         if(hasOfflineDB != null)
@@ -125,7 +124,7 @@ public class Database extends SQLiteOpenHelper{
         try{
             Database dbHandler = Database.getInstance(false);
             SQLiteDatabase db = dbHandler.getReadableDatabase();
-            Cursor cursor = db.query(Text.TABLE_TEXTS, null, "_id" + "=?",
+            Cursor cursor = db.query(Segment.TABLE_TEXTS, null, "_id" + "=?",
                     new String[]{String.valueOf(1)}, null, null, null, null);
             //Log.d("api", "got here without problems" + cursor);
             hasOfflineDB = true;
@@ -333,7 +332,7 @@ public class Database extends SQLiteOpenHelper{
 
     }
 
-    final static int BAD_SETTING_GET = -12349;
+    public final static int BAD_SETTING_GET = -999999991;
     public static int getDBSetting(String key, Boolean forAPI){
         int value = BAD_SETTING_GET;
         try {

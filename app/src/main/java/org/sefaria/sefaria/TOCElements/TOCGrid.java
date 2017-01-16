@@ -3,10 +3,13 @@ package org.sefaria.sefaria.TOCElements;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.os.Build;
 import android.support.v7.widget.GridLayout;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -65,7 +69,7 @@ public class TOCGrid extends LinearLayout {
 
 
 
-    public TOCGrid(Context context,Book book, List<Node> tocRoots, boolean limitGridSize, Util.Lang lang, String pathDefiningNode) {
+    public TOCGrid(Context context, Book book, List<Node> tocRoots, boolean limitGridSize, Util.Lang lang, String pathDefiningNode) {
         super(context);
         this.tocNodesRoots = tocRoots;
         this.context = context;
@@ -80,7 +84,7 @@ public class TOCGrid extends LinearLayout {
     private void init() {
         this.setOrientation(LinearLayout.VERTICAL);
 
-        int sidePadding = Math.round(Util.dpToPixels(context, context.getResources().getDimension(R.dimen.main_margin_lr)));
+        int sidePadding = Math.round(Util.dpToPixels(context.getResources().getDimension(R.dimen.main_margin_lr)));
         this.setPadding(sidePadding/2, 10, sidePadding/2, 100);
         this.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
         this.flippedForHe = false;
@@ -90,7 +94,7 @@ public class TOCGrid extends LinearLayout {
         this.overflowButtonList = new ArrayList<>();
         this.TocTabList = new ArrayList<>();
         this.hasTabs = true;//lets assume for now... either with enough roots or with commentary
-
+        int positionNum = 0;
 
         bookTitleView = new SefariaTextView(context);
         bookTitleView.setFont(lang, true, 25);
@@ -100,7 +104,7 @@ public class TOCGrid extends LinearLayout {
         bookTitleView.setGravity(Gravity.CENTER);
         final int bookTitlepaddding =10;
         bookTitleView.setPadding(0, 2*bookTitlepaddding, 0, bookTitlepaddding/2);
-        this.addView(bookTitleView, 0);
+        this.addView(bookTitleView, positionNum++);
 
         AutoResizeTextView bookCategoryView = new AutoResizeTextView(context);
         bookCategoryView.setTextColor(getResources().getColor(R.color.toc_curr_section_title));
@@ -110,7 +114,7 @@ public class TOCGrid extends LinearLayout {
         final int padding = 6;
         bookCategoryView.setPadding(0, 0, 0, padding);
         bookCategoryView.setGravity(Gravity.CENTER);
-        this.addView(bookCategoryView, 1);
+        this.addView(bookCategoryView, positionNum++);
 
 
 
@@ -119,14 +123,17 @@ public class TOCGrid extends LinearLayout {
         currSectionTitleView.setTextColor(getResources().getColor(R.color.toc_curr_chap));
         currSectionTitleView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         currSectionTitleView.setGravity(Gravity.CENTER);
-        this.addView(currSectionTitleView, 2);
+        this.addView(currSectionTitleView, positionNum++);
 
+        View dummySpace = new View(context);
+        dummySpace.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,Math.round(Util.dpToPixels(20))));
+        this.addView(dummySpace, positionNum++);
 
         //Alt versions dropdown menu
         versionsDropdown = new Spinner(context,Spinner.MODE_DROPDOWN);
-        //versionsDropdown.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        //versionsDropdown.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         //versionsDropdown.setGravity(Gravity.CENTER);
-        this.addView(versionsDropdown,3);
+        this.addView(versionsDropdown, positionNum++);
 
 
         int defaultTab = setCurrSectionText();
@@ -134,19 +141,19 @@ public class TOCGrid extends LinearLayout {
         //ADD GREY DIVIDER
         View divider = new View(context);
         LinearLayout.LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, 1);
-        lp.setMargins(0,Math.round(Util.dpToPixels(context, 20)), 0,Math.round(Util.dpToPixels(context, 20)));
+        lp.setMargins(0,Math.round(Util.dpToPixels(30)), 0,Math.round(Util.dpToPixels(20)));
         divider.setLayoutParams(lp);
         divider.setBackgroundColor(Color.parseColor("#CCCCCC"));
-        this.addView(divider,4);
+        this.addView(divider, positionNum++);
 
         tabRoot = makeTabSections(tocNodesRoots);
-        this.addView(tabRoot,5);//It's the 3nd view starting with bookTitle and CurrSectionName
+        this.addView(tabRoot, positionNum++);//It's the 3nd view starting with bookTitle and CurrSectionName
 
         this.gridRoot = new LinearLayout(context);
         gridRoot.setOrientation(LinearLayout.VERTICAL);
         gridRoot.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 
-        this.addView(gridRoot, 6);
+        this.addView(gridRoot, positionNum++);
 
         TocTabList.get(defaultTab).setActive(true);//set it true, such that the setLang function will start the right tab
 
@@ -441,6 +448,10 @@ public class TOCGrid extends LinearLayout {
             versionsDropdown.setVisibility(View.GONE);
             return;
         }
+
+        if(Build.VERSION.SDK_INT >= 23) {
+            versionsDropdown.setBackground(MyApp.getContext().getDrawable(R.drawable.alternate_version_dropdown_spinner));
+        }
         try {
             // Alternate versions
             JSONObject textData = new JSONObject(node.getTextFromAPIData(API.TimeoutType.SHORT));
@@ -463,7 +474,14 @@ public class TOCGrid extends LinearLayout {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     if (position == 0) {
+                        if(Build.VERSION.SDK_INT >= 23) {
+                            TypedValue typedValue = new TypedValue();
+                            Resources.Theme theme = context.getTheme();
+                            theme.resolveAttribute(R.attr.text_color_english, typedValue, true);
+                            ((TextView) parent.getChildAt(0)).setTextColor(typedValue.data);//set color of button item
+                        }
                         return;
+
                     }
                     Toast.makeText(context, "Version: " + versionList.get(position).getPrettyString(), Toast.LENGTH_SHORT).show();
                     try {

@@ -4,36 +4,18 @@ package org.sefaria.sefaria.database;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
-import java.sql.Time;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
-import org.sefaria.sefaria.TextElements.TextMenuBar;
 import org.sefaria.sefaria.Util;
-import org.sefaria.sefaria.activities.SuperTextActivity;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.NetworkOnMainThreadException;
 import android.util.Log;
@@ -183,7 +165,7 @@ public class API {
     public static class PlaceRef {
         public Book book;
         public Node node;
-        public Text text;
+        public Segment segment;
 
         PlaceRef() {
         }
@@ -247,11 +229,11 @@ public class API {
                         //it's a most likely a final number (such as a verse number) so that's why there's no Node for it
                         //so, lets get the firstDescendant (which should just be the node itself, but just in case lets do it this way)
                         placeRef.node = placeRef.node.getFirstDescendant();
-                        List<Text> texts = placeRef.node.getTexts();
+                        List<Segment> segments = placeRef.node.getTexts();
                         int num = Util.convertDafOrIntegerToNum(spot);
-                        for (Text tempText : texts) {
-                            if (tempText.levels[0] == num) {
-                                placeRef.text = tempText;
+                        for (Segment tempSegment : segments) {
+                            if (tempSegment.levels[0] == num) {
+                                placeRef.segment = tempSegment;
                                 //Log.d("API","textLevel: " + num);
                                 break;
                             }
@@ -426,9 +408,9 @@ public class API {
 
 
 /*
-    public static ArrayList<Text> getSearchResults(String query,String[] filterArray, int from, int offset) throws APIException {
+    public static ArrayList<Segment> getSearchResults(String query,String[] filterArray, int from, int offset) throws APIException {
         Log.d("SearchingDB", "starting api");
-        ArrayList<Text> texts = new ArrayList<>();
+        ArrayList<Segment> texts = new ArrayList<>();
         String url = SEARCH_URL ;//+ "?" + "&from=" +from + "&offset=" + offset + "q=" + Uri.encode(query) ;
         String data = getDataFromURL(url);
         try {
@@ -436,7 +418,7 @@ public class API {
             JSONArray hits = jsonData.getJSONObject("hits").getJSONArray("hits");
             for(int i=0;i<hits.length();i++){
                 JSONObject hit = hits.getJSONObject(i);
-                if(!hit.getString("_type").equals("text"))
+                if(!hit.getString("_type").equals("segment"))
                     continue;//TODO make it such that this won't prevent further searches
                 JSONObject source = hit.getJSONObject("_source");
                 String content = source.getString("content");
@@ -444,16 +426,16 @@ public class API {
                     content = content.substring(0, 100) + "...";
                 content = "<big><b>" + source.getString("ref") + "</b></big> " + content;
                 String lang = source.getString("lang");
-                Text text = null;
+                Segment segment = null;
                 if(lang.equals("he"))
-                    text = new Text("", content);
+                    segment = new Segment("", content);
                 else //lang is en
-                    text = new Text(content,"");
-                text.bid = 2; //TODO this needs more real info
-                text.levels[0] = 1;
-                text.levels[1] = 1;
-                //z2Log.d("api",text.toString());
-                texts.add(text);
+                    segment = new Segment(content,"");
+                segment.bid = 2; //TODO this needs more real info
+                segment.levels[0] = 1;
+                segment.levels[1] = 1;
+                //z2Log.d("api",segment.toString());
+                texts.add(segment);
             }
         } catch (JSONException e) {
             // TODO Auto-generated catch block
@@ -468,22 +450,22 @@ public class API {
 */
     /**
      * Get links that are tied to the whole chapter, but not to a specific verse.
-     * @param dummyChapText
+     * @param dummyChapSegment
      * @param limit
      * @param offset
      * @return
      * @throws APIException
      */
-    public static List<Text> getChapLinks(Text dummyChapText, int limit, int offset) {
-        List<Text> texts = new ArrayList<>();
-        String place = createPlace(Book.getTitle(dummyChapText.bid), dummyChapText.levels);
+    public static List<Segment> getChapLinks(Segment dummyChapSegment, int limit, int offset) {
+        List<Segment> segments = new ArrayList<>();
+        String place = createPlace(Book.getTitle(dummyChapSegment.bid), dummyChapSegment.levels);
         String url = LINK_URL + place + LINK_ZERO_TEXT;
 
         //String data = getDataFromURL(url);
         //TODO parse
         //TODO make async getting links
 
-        return texts;
+        return segments;
 
     }
 

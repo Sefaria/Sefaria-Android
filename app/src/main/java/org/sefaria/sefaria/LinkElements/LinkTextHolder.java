@@ -7,7 +7,7 @@ import android.view.View;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.activities.SuperTextActivity;
-import org.sefaria.sefaria.database.Text;
+import org.sefaria.sefaria.database.Segment;
 import org.sefaria.sefaria.layouts.SefariaTextView;
 
 import java.util.List;
@@ -20,7 +20,7 @@ public class LinkTextHolder extends RecyclerView.ViewHolder implements View.OnCl
 
     public SefariaTextView title;
 
-    private List<Text> itemList;
+    private List<Segment> itemList;
     private SuperTextActivity activity;
     private int position;
 
@@ -28,7 +28,7 @@ public class LinkTextHolder extends RecyclerView.ViewHolder implements View.OnCl
     /*
     *THIS CLASS SHOULD NEVER BE INSTANTIATED. INSTEAD USE ONE OF ITS SUBCLASSES
      */
-    public LinkTextHolder(View v,List<Text> itemList, SuperTextActivity activity) {
+    public LinkTextHolder(View v, List<Segment> itemList, SuperTextActivity activity) {
         super(v);
         this.itemList = itemList;
         this.activity = activity;
@@ -39,12 +39,12 @@ public class LinkTextHolder extends RecyclerView.ViewHolder implements View.OnCl
 
     @Override
     public void onClick(View v) {
-        Text link = itemList.get(getLayoutPosition());
+        Segment link = itemList.get(getLayoutPosition());
         Log.d("SepTextActivity","LINK " + link.getLocationString(Util.Lang.EN) + " POS " + position);
         SuperTextActivity.startNewTextActivityIntent(activity, link,false);
     }
 
     public void setPosition(int position) { this.position = position; }
-    public void setItemList(List<Text> itemList) { this.itemList = itemList;}
-    public List<Text> getItemList() { return itemList; }
+    public void setItemList(List<Segment> itemList) { this.itemList = itemList;}
+    public List<Segment> getItemList() { return itemList; }
 }

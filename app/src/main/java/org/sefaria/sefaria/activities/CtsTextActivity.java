@@ -20,8 +20,10 @@ import org.sefaria.sefaria.TextElements.CtsTextAdapter;
 import org.sefaria.sefaria.TextElements.OnSegmentSpanClickListener;
 import org.sefaria.sefaria.TextElements.SegmentSpannable;
 import org.sefaria.sefaria.Util;
+import org.sefaria.sefaria.database.API;
+import org.sefaria.sefaria.database.Node;
 import org.sefaria.sefaria.database.Section;
-import org.sefaria.sefaria.database.Text;
+import org.sefaria.sefaria.database.Segment;
 import org.sefaria.sefaria.TextElements.TextListView;
 import org.sefaria.sefaria.layouts.SefariaTextView;
 
@@ -128,15 +130,16 @@ public class CtsTextActivity extends SuperTextActivity implements AbsListView.On
         initTime = System.currentTimeMillis();
     }
 
-    private class AsyncLoadSection extends AsyncTask<Void,Void,List<Text>> {
+    private class AsyncLoadSection extends AsyncTask<Void,Void,List<Segment>> {
 
         private TextEnums dir;
         private Section loaderSection;
         private Section catalystSection;
+        private LoadSectionResult loadSectionResult;
 
         /**
          * @param dir          - direction in which you want to load a section (either prev or next)
-         * @param catalystSection - the Text which caused this loading to happen. Important, in case this text has already failed to generate any new content, meaning that it's either the beginning or end of a book
+         * @param catalystSection - the Segment which caused this loading to happen. Important, in case this segment has already failed to generate any new content, meaning that it's either the beginning or end of a book
          */
         public AsyncLoadSection(TextEnums dir, Section catalystSection) {
             this.dir = dir;
@@ -147,7 +150,7 @@ public class CtsTextActivity extends SuperTextActivity implements AbsListView.On
             if (catalystSection == null || !catalystSection.equals(problemLoadedSection)) {
                 this.execute();
             } else {
-                //Log.d("SepTextActivity","Problem text not loaded");
+                //Log.d("SepTextActivity","Problem segment not loaded");
             }
         }
 
@@ -165,25 +168,41 @@ public class CtsTextActivity extends SuperTextActivity implements AbsListView.On
         }
 
         @Override
-        protected List<Text> doInBackground(Void... params) {
-            return loadSection(dir);
+        protected List<Segment> doInBackground(Void... params) {
+            List<Segment> segmentList = null;
+            try {
+                 segmentList = loadSection(dir);
+            } catch (API.APIException e) {
+                loadSectionResult = LoadSectionResult.API_EXCEPTION;
+                segmentList = new ArrayList<>();
+            } catch (Node.LastNodeException e) {
+                loadSectionResult = LoadSectionResult.LAST_NODE;
+                segmentList = new ArrayList<>();
+            }
+            return segmentList;
         }
 
 
         @Override
-        protected void onPostExecute(List<Text> textsList) {
+        protected void onPostExecute(List<Segment> textsList) {
             isLoadingSection = false;
             isLoadingInit = false;
 
 
 
-            if (textsList == null) {
+            if (loadSectionResult == LoadSectionResult.LAST_NODE){ //textsList == null) {
                 problemLoadedSection = catalystSection;
+                ctsTextAdapter.remove(loaderSection);
+                //ctsTextAdapter.set
+
                 return;
             }
-            //if (textsList.size() == 0) return;//removed this line so that when it doesn't find text it continues to look for the next item for text
+            //if (textsList.size() == 0) return;//removed this line so that when it doesn't find segment it continues to look for the next item for segment
 
-            Text sectionHeader = getSectionHeaderText(dir);
+            Segment sectionHeader = getSectionHeaderText(dir);
+            if (loadSectionResult == LoadSectionResult.API_EXCEPTION){
+                sectionHeader.setChapterHasTexts(false);
+            }
             Section newSection = new Section(textsList, sectionHeader);
             if (dir == TextEnums.NEXT_SECTION) {
 
@@ -208,11 +227,11 @@ public class CtsTextActivity extends SuperTextActivity implements AbsListView.On
                 listView.setSelection(1);
             }
 
-            if (openToText != null) {
+            if (openToSegment != null) {
 
                 //TODO this doesn't actually do anything yet
-                jumpToText(openToText);
-                openToText = null;
+                jumpToText(openToSegment);
+                openToSegment = null;
             }
 
         }
@@ -265,7 +284,7 @@ public class CtsTextActivity extends SuperTextActivity implements AbsListView.On
 
                 SegmentSpannable midVs = getSpanNearY(sectionTv, midmid);
 
-                Text currSeg = midVs.getSegment();
+                Segment currSeg = midVs.getSegment();
 
                 if (currSeg.equals(linkFragment.getSegment())) return; //no need to update
 
@@ -342,7 +361,7 @@ public class CtsTextActivity extends SuperTextActivity implements AbsListView.On
         //double endXCoordinatesOfClickedText = textViewLayout.getPrimaryHorizontal(endOffsetOfClickedText);
 
 
-        // Get the rectangle of the clicked text
+        // Get the rectangle of the clicked segment
         int currentLineStartOffset = textViewLayout.getLineForOffset(startOffsetOfClickedText);
         //int currentLineEndOffset = textViewLayout.getLineForOffset(endOffsetOfClickedText);
         //boolean keywordIsInMultiLine = currentLineStartOffset != currentLineEndOffset;
@@ -362,7 +381,7 @@ public class CtsTextActivity extends SuperTextActivity implements AbsListView.On
         parentTextViewRect.top += parentTextViewTopAndBottomOffset;
         parentTextViewRect.bottom += parentTextViewTopAndBottomOffset;
 
-        // In the case of multi line text, we have to choose what rectangle take
+        // In the case of multi line segment, we have to choose what rectangle take
         if (keywordIsInMultiLine){
 
             int screenHeight = this.mWindowManager.getDefaultDisplay().getHeight();
@@ -432,9 +451,9 @@ public class CtsTextActivity extends SuperTextActivity implements AbsListView.On
     }
 
     @Override
-    protected void jumpToText(Text text) {
-        //int index = ctsTextAdapter.getPosition(text);
-        //ctsTextAdapter.highlightIncomingText(text);
+    protected void jumpToText(Segment segment) {
+        //int index = ctsTextAdapter.getPosition(segment);
+        //ctsTextAdapter.highlightIncomingText(segment);
         //listView.setSelection(index);
     }
 
@@ -490,7 +509,7 @@ public class CtsTextActivity extends SuperTextActivity implements AbsListView.On
         }
     };
 
-    public void onSegmentClick(Text currSegment) {
+    public void onSegmentClick(Segment currSegment) {
 
         if (isTextMenuVisible) {
             toggleTextMenu();
@@ -512,7 +531,7 @@ public class CtsTextActivity extends SuperTextActivity implements AbsListView.On
             //SpannableString ss = (SpannableString) tv.getText();
             //int spanY = getSpanY(ss,tv,segmentSpannable);
 
-            //if (spanY > 0) //don't auto-scroll if the text is super long.
+            //if (spanY > 0) //don't auto-scroll if the segment is super long.
             //    listView.smoothScrollToPositionFromTop(position,SuperTextActivity.SEGMENT_SELECTOR_LINE_FROM_TOP,SuperTextActivity.LINK_FRAG_ANIM_TIME);
             linkFragment.setClicked(true);
             linkFragment.updateFragment(currSegment);

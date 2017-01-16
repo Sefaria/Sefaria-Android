@@ -18,7 +18,7 @@ public class GoogleTracker extends MyApp {
     public static String randomID = null;
     private static Tracker tracker = null;
 
-    public static final String CATEGORY_NEW_TEXT = "Opened Text Page";
+    public static final String CATEGORY_NEW_TEXT = "Opened Segment Page";
     public static final String BUTTON_PRESS = "Button Press";
     public static final String SETTING_CHANGE = "Setting Change";
     public static final String CATEGORY_OPEN_MENU = "Opened Menu page";
@@ -48,7 +48,7 @@ public class GoogleTracker extends MyApp {
         sendEvent("Theme",themeName);
         Boolean sideBySide = Settings.getIsSideBySide();
         sendEvent("sideBySide", sideBySide.toString());
-        sendEvent("Text lang",Settings.lang2Str(Settings.getDefaultTextLang()));
+        sendEvent("Segment lang",Settings.lang2Str(Settings.getDefaultTextLang()));
     }
 
 
@@ -162,10 +162,14 @@ public class GoogleTracker extends MyApp {
         //Sending toast might break the app if run from other thread
         //Toast.makeText(MyApp.currActivityContext,"" + reportText.length() + ". " + reportText , Toast.LENGTH_SHORT).show(); //TODO comment out b/f release
 
-        tracker.send(new HitBuilders.ExceptionBuilder()
-                .setDescription(reportText)
-                .setFatal(false)
-                .build());
+        try {
+            tracker.send(new HitBuilders.ExceptionBuilder()
+                    .setDescription(reportText)
+                    .setFatal(false)
+                    .build());
+        }catch (Exception e1){
+            e1.printStackTrace();
+        }
 
     }
 
