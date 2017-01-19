@@ -550,6 +550,12 @@ public class Node{// implements  Parcelable{
         Node node = this;
         String separator;
         boolean addSpace = true;
+        /*
+        if(forURL && node.isRef && "default".equals(node.titleKey)){ //for somethinbg like sefer HaChinach
+            Log.d("node", "it's default.. " + node);
+            return
+        }
+        */
 
         while(node.getParent() != null){//checking parent node so that don't get root (or book name) in there
             if(forURL)
@@ -1135,7 +1141,6 @@ public class Node{// implements  Parcelable{
         if(isRef){
             String [] strArray = Util.str2strArray(startLevels.replace(" ",""));
             for(String level: strArray){
-                Log.d("Node", "start.level: " + level);
                 try {
                     levels.add(Integer.valueOf(level));
                 }catch (Exception e){
