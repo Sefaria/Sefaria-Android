@@ -4,13 +4,16 @@ package org.sefaria.sefaria.MenuElements;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -25,6 +28,7 @@ import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Database;
+import org.sefaria.sefaria.layouts.SefariaTextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,6 +62,7 @@ public class MenuGrid extends LinearLayout {
     private boolean flippedForHe; //are the views flipped for hebrew
 
     private MenuButton moreMenuButton;
+    SefariaTextView williamDTalumd;
 
     public MenuGrid(Context context,int numColumns,MenuState menuState, boolean limitGridSize, Util.Lang lang) {
         super(context);
@@ -204,6 +209,17 @@ public class MenuGrid extends LinearLayout {
         return moreMenuButton;
     }
 
+    public static SefariaTextView getWilliamDTalumd(Context context, int paddingTop, int paddingBottom){
+        SefariaTextView williamDTalumd = new SefariaTextView(context);
+        williamDTalumd.setTextColor(Util.getColor(context, R.attr.text_color_faded));
+        williamDTalumd.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        williamDTalumd.setGravity(Gravity.CENTER);
+        williamDTalumd.setText(MyApp.getRString(R.string.william_d_tal));
+        williamDTalumd.setFont(Util.Lang.EN, true, 25, TypedValue.COMPLEX_UNIT_SP, Typeface.ITALIC);
+        williamDTalumd.setPadding(0, paddingTop, 0, paddingBottom);
+        return williamDTalumd;
+    }
+
     public void buildPage() {
 
         List<BilingualNode> sections = new ArrayList<>();
@@ -217,12 +233,17 @@ public class MenuGrid extends LinearLayout {
             addTabsection(nonSections);
             //default to the first tab in the list
             menuState = menuState.goForward((MenuNode)nonSections.get(0), null);
-            menuButtonTabList.get(0).setActive(true);
+            MenuButtonTab mbt = menuButtonTabList.get(0);
+            mbt.setActive(true);
+            setVisablityOfWillaimTalmud(mbt);
 
             sections = new ArrayList<>();
             subsections = new ArrayList<>();
             nonSections = new ArrayList<>();
             menuState.getPageSections(sections, subsections, nonSections);
+
+            williamDTalumd = getWilliamDTalumd(context, 60, 95);
+            this.addView(williamDTalumd, 1);
         }
         //MenuNode otherNode = new MenuNode("Other", "עוד", null, null);
         //if (sections.size() == 0) otherNode = null;
@@ -377,6 +398,14 @@ public class MenuGrid extends LinearLayout {
         return false;
     }
 
+    void setVisablityOfWillaimTalmud(MenuButtonTab currentMenuButtonTab){
+        if(williamDTalumd != null) {
+            if ("Bavli".equals(currentMenuButtonTab.getNode().getBookTitle()))
+                williamDTalumd.setVisibility(View.VISIBLE);
+            else
+                williamDTalumd.setVisibility(View.GONE);
+        }
+    }
 
 
     public OnClickListener moreButtonClick = new OnClickListener() {
@@ -401,8 +430,11 @@ public class MenuGrid extends LinearLayout {
         @Override
         public void onClick(View v) {
             MenuButtonTab mbt = (MenuButtonTab) v;
-            for (MenuButtonTab tempMBT : menuButtonTabList) tempMBT.setActive(false);
+            for (MenuButtonTab tempMBT : menuButtonTabList)
+                tempMBT.setActive(false);
+
             mbt.setActive(true);
+            setVisablityOfWillaimTalmud(mbt);
 
             gridRoot.removeAllViews();
             menuState = menuState.goBack(false, false);

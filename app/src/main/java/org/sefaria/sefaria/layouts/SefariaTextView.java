@@ -65,7 +65,13 @@ public class SefariaTextView extends TextView {
      * @param isSerif
      * @param textSize -1 means keep the textSize the same. else, set to that value in SP
      */
-    public void setFont(Util.Lang lang, boolean isSerif, float textSize) { setFont(lang,isSerif,textSize,TypedValue.COMPLEX_UNIT_SP); }
+    public void setFont(Util.Lang lang, boolean isSerif, float textSize) {
+        setFont(lang, isSerif, textSize, TypedValue.COMPLEX_UNIT_SP);
+    }
+
+    public void setFont(Util.Lang lang, boolean isSerif, float textSize, int typedValue) {
+        setFont(lang, isSerif, textSize, typedValue, null);
+    }
 
     /**
      *
@@ -80,7 +86,7 @@ public class SefariaTextView extends TextView {
      * @param textSize -1 means keep the textSize the same
      * @param typedValue can use TypedValue.COMPLEX_UNIT_PX if the number is in pixels. Useful when using getResources().getDimension() which converts to pixels
      */
-    public void setFont(Util.Lang lang, boolean isSerif, float textSize, int typedValue) {
+    public void setFont(Util.Lang lang, boolean isSerif, float textSize, int typedValue, Integer style) {
         MyApp.Font font;
         if (lang == Util.Lang.HE) {
             if (isSerif) font = MyApp.Font.TAAMEY_FRANK;
@@ -101,7 +107,12 @@ public class SefariaTextView extends TextView {
             }
             //setLineSpacing(0, 1.3f);
         }
-        setTypeface(MyApp.getFont(font));
+        if (style != null){
+            setTypeface(MyApp.getFont(font), style);
+        }else{
+            setTypeface(MyApp.getFont(font));
+        }
+
 
     }
 

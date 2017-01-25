@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.support.v7.widget.GridLayout;
 import android.util.Log;
@@ -23,6 +24,7 @@ import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.sefaria.sefaria.MenuElements.MenuGrid;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
@@ -96,13 +98,18 @@ public class TOCGrid extends LinearLayout {
         this.hasTabs = true;//lets assume for now... either with enough roots or with commentary
         int positionNum = 0;
 
+        if("Talmud".equals(book.categories[0]) &&  "Bavli".equals(book.categories[1])) {
+            SefariaTextView williamDTalumd = MenuGrid.getWilliamDTalumd(context, 45, 65);
+            this.addView(williamDTalumd, positionNum++);
+        }
+
         bookTitleView = new SefariaTextView(context);
         bookTitleView.setFont(lang, true, 25);
         bookTitleView.setTextColor(Util.getColor(context, R.attr.text_color_main));
         bookTitleView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
         bookTitleView.setGravity(Gravity.CENTER);
-        final int bookTitlepaddding =10;
+        final int bookTitlepaddding = 10;
         bookTitleView.setPadding(0, 2*bookTitlepaddding, 0, bookTitlepaddding/2);
         this.addView(bookTitleView, positionNum++);
 
