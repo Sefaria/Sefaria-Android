@@ -612,10 +612,10 @@ public abstract class SuperTextActivity extends FragmentActivity {
     }
 
     protected Segment getSectionHeaderText(TextEnums dir){
-        Node node;
+        Node node = null;
         if(dir == TextEnums.NEXT_SECTION) {
             node = lastLoadedNode;
-        } else if (dir == TextEnums.PREV_SECTION || true){
+        } else if (dir == TextEnums.PREV_SECTION){
             node = firstLoadedNode;
         }
         return new Segment(node);

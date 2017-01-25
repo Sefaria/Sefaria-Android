@@ -128,7 +128,7 @@ public class SearchAPI {
                 String path = source.getString("path");
                 String title = path.substring(path.lastIndexOf("/")+1);
 
-                Log.d("title", title);
+
                 String heText = "";
                 String enText = "";
                 if (id.contains("[he]")) {
@@ -142,6 +142,7 @@ public class SearchAPI {
                 } catch (Book.BookNotFoundException e) {
                     tempBid = -1;
                 }
+                Log.d("title", title + " BID = " + tempBid);
                 Segment segment = new Segment(enText, heText, tempBid, ref);
                 //TODO deal with levels stuff
                 results.add(segment);
