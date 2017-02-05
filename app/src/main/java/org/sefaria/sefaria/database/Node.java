@@ -18,6 +18,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Node{// implements  Parcelable{
 
@@ -926,8 +928,37 @@ public class Node{// implements  Parcelable{
         return API.getDataFromURL(completeUrl,timeoutType);
     }
 
+    private static String replaceAllGroup(String input, Pattern p, String bfString, String afterString){
+        Matcher m = p.matcher(input);
+        StringBuffer sb = new StringBuffer();
+        while (m.find()) {
+            String rep = bfString + m.group(1) + afterString;
+            m.appendReplacement(sb, rep);
+        }
+        m.appendTail(sb);
+        return sb.toString();
+    }
+
+    private static String talmudFormatConverter(String input){
+        final Pattern gReg = Pattern.compile("<span\\s+class=\"gemarra-regular\">(.+?)</span>");
+        input = replaceAllGroup(input, gReg, "<b>", "</b>");
+        final Pattern gIt = Pattern.compile("<span\\s+class=\"gemarra-italic\">(.+?)</span>");
+        input = replaceAllGroup(input, gIt, "<b><i>", "</i></b>");
+        final Pattern itText = Pattern.compile("<span\\s+class=\"it-text\">(.+?)</span>");
+        input = replaceAllGroup(input, itText, "<i>", "</i>");
+
+        return input;
+    }
+
     private List<Segment> getTextsFromAPI() throws API.APIException{ //(String booktitle, int []levels)
         String data = getTextFromAPIData();
+        boolean isTalmudBavli;
+        try {
+             isTalmudBavli = this.getBook().isTalmudBavli();
+        } catch (Book.BookNotFoundException e) {
+            isTalmudBavli = false;
+            e.printStackTrace();
+        }
         List<Segment> segmentList = new ArrayList<>();
         if(data.length()==0)
             return segmentList;
@@ -979,6 +1010,9 @@ public class Node{// implements  Parcelable{
                     String enText = "";
                     try {
                         enText = textArray.getString(i);
+                        if(isTalmudBavli){
+                            enText = talmudFormatConverter(enText);
+                        }
                     } catch (JSONException e) {
                         Log.d("api", e.toString());
                         //GoogleTracker.sendException(e,);
