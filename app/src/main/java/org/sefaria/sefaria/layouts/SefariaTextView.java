@@ -2,6 +2,7 @@ package org.sefaria.sefaria.layouts;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
@@ -33,12 +34,12 @@ public class SefariaTextView extends TextView {
 
         TypedArray a = context.obtainStyledAttributes(attributeSet, R.styleable.SefariaTextView);
         final int N = a.getIndexCount();
+        Integer style = null;
         for(int i = 0; i < N; i++){
             int attr = a.getIndex(i);
             switch(attr){
                 case R.styleable.SefariaTextView_isSerif:
                     isSerif = a.getBoolean(attr,false);
-
                     break;
                 case R.styleable.SefariaTextView_lang:
                     int langInt = a.getInt(attr,0); //Default to english
@@ -46,11 +47,21 @@ public class SefariaTextView extends TextView {
                     else if (langInt == 1) lang = Util.Lang.HE;
                     else if(langInt == 2) lang = Settings.getSystemLang();
                     break;
+                case R.styleable.SefariaTextView_isItalic:
+                    if(a.getBoolean(attr,false))
+                        style = Typeface.ITALIC;
+                    break;
+
             }
         }
         a.recycle();
 
-        setFont(lang, isSerif);
+        if(lang == Util.Lang.HE) {
+            //don't do italics when it's Hebrew b/c it's weird.
+            // Honestly this b/c of william D Talmud and if there's something else that needs it we can chaneg this
+            style = null;
+        }
+        setFont(lang, isSerif, -1, TypedValue.COMPLEX_UNIT_SP, style);
     }
 
 

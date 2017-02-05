@@ -40,8 +40,11 @@ public class CustomActionbar extends MenuElement {
     private boolean isSerif;
 
     private static final boolean noBackButton = false;
-
     public CustomActionbar(Activity activity, MenuNode menuNode, Util.Lang lang, OnClickListener homeClick, OnLongClickListener homeLongClick, OnClickListener closeClick, OnClickListener searchClick, OnClickListener titleClick, OnClickListener menuClick, OnClickListener backClick, OnClickListener menuLangClick, int catColor,boolean isSerif, boolean isMenu) {
+        this(activity, menuNode, lang, homeClick, homeLongClick, closeClick, searchClick, titleClick, menuClick, backClick, menuLangClick, catColor, isSerif, isMenu, false);
+    }
+
+    public CustomActionbar(Activity activity, MenuNode menuNode, Util.Lang lang, OnClickListener homeClick, OnLongClickListener homeLongClick, OnClickListener closeClick, OnClickListener searchClick, OnClickListener titleClick, OnClickListener menuClick, OnClickListener backClick, OnClickListener menuLangClick, int catColor,boolean isSerif, boolean isMenu, boolean showWillDTalmud) {
         super(activity);
         inflate(activity, R.layout.custom_actionbar, this);
 
@@ -124,6 +127,11 @@ public class CustomActionbar extends MenuElement {
 
         //TODO - make this look normal centered
         //tocBtn.setVisibility(View.GONE);
+
+        if(showWillDTalmud){
+            SefariaTextView williamDTalmud = (SefariaTextView) findViewById(R.id.william_d_talmud);
+            williamDTalmud.setVisibility(View.VISIBLE);
+        }
 
 
         this.isSerif = isSerif;

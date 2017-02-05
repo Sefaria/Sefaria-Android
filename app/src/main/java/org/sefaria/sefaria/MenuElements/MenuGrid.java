@@ -215,7 +215,10 @@ public class MenuGrid extends LinearLayout {
         williamDTalumd.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         williamDTalumd.setGravity(Gravity.CENTER);
         williamDTalumd.setText(MyApp.getRString(R.string.william_d_tal));
-        williamDTalumd.setFont(Util.Lang.EN, true, 25, TypedValue.COMPLEX_UNIT_SP, Typeface.ITALIC);
+        if(Settings.getSystemLang() == Util.Lang.HE)
+            williamDTalumd.setFont(Util.Lang.EN, true, 25);
+        else //EN
+            williamDTalumd.setFont(Util.Lang.EN, true, 25, TypedValue.COMPLEX_UNIT_SP, Typeface.ITALIC);
         williamDTalumd.setPadding(0, paddingTop, 0, paddingBottom);
         return williamDTalumd;
     }

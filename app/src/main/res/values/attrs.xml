@@ -51,6 +51,7 @@
 
     <declare-styleable name="SefariaTextView">
         <attr name="isSerif" format="boolean"/>
+        <attr name="isItalic" format="boolean"/>
         <attr name="lang">
             <enum name="english" value="0"/>
             <enum name="hebrew" value="1"/>

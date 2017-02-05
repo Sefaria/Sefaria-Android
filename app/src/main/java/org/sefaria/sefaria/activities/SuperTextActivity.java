@@ -510,7 +510,8 @@ public abstract class SuperTextActivity extends FragmentActivity {
                 searchClick = null;
             backClick = null;
             homeLongClick = null;
-            customActionbar = new CustomActionbar(this, menuNode, menuLang,homeClick,homeLongClick, null,searchClick,titleClick,menuClick,backClick,null,catColor,true,false); //TODO.. I'm not actually sure this should be lang.. instead it shuold be MENU_LANG from Util.S
+
+            customActionbar = new CustomActionbar(this, menuNode, menuLang,homeClick,homeLongClick, null,searchClick,titleClick,menuClick,backClick,null,catColor,true,false, book.isTalmudBavli()); //TODO.. I'm not actually sure this should be lang.. instead it shuold be MENU_LANG from Util.S
             LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
             abRoot.addView(customActionbar);
             customActionbar.setLang(menuLang);
@@ -612,10 +613,10 @@ public abstract class SuperTextActivity extends FragmentActivity {
     }
 
     protected Segment getSectionHeaderText(TextEnums dir){
-        Node node;
+        Node node = null;
         if(dir == TextEnums.NEXT_SECTION) {
             node = lastLoadedNode;
-        } else if (dir == TextEnums.PREV_SECTION || true){
+        } else if (dir == TextEnums.PREV_SECTION){
             node = firstLoadedNode;
         }
         return new Segment(node);
