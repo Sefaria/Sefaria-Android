@@ -373,14 +373,13 @@ public class Settings {
     public static boolean getIfShouldDoUpdateCheck(){
         SharedPreferences settings = getGeneralSettings();
         long now = System.currentTimeMillis();
-        Log.d("Settings","now:" + now);
-        return (now - settings.getLong("lastUpdateCheck", 0) > TIME_TO_RECHECK);
+        return (now - settings.getLong("lastUpdateCheck2", 0) > TIME_TO_RECHECK);
     }
 
     public static void setLastUpdateCheckToNow(){
         SharedPreferences.Editor editor = getGeneralSettings().edit();
         long time = System.currentTimeMillis();
-        editor.putLong("lastUpdateCheck", time);
+        editor.putLong("lastUpdateCheck2", time);
         editor.apply();
     }
 
