@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.support.v7.widget.GridLayout;
 import android.util.Log;
@@ -23,6 +24,7 @@ import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.sefaria.sefaria.MenuElements.MenuGrid;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
@@ -96,13 +98,18 @@ public class TOCGrid extends LinearLayout {
         this.hasTabs = true;//lets assume for now... either with enough roots or with commentary
         int positionNum = 0;
 
+        if(book.isTalmudBavli()) {
+            SefariaTextView williamDTalumd = MenuGrid.getWilliamDTalumd(context, 45, 65);
+            this.addView(williamDTalumd, positionNum++);
+        }
+
         bookTitleView = new SefariaTextView(context);
         bookTitleView.setFont(lang, true, 25);
         bookTitleView.setTextColor(Util.getColor(context, R.attr.text_color_main));
         bookTitleView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
         bookTitleView.setGravity(Gravity.CENTER);
-        final int bookTitlepaddding =10;
+        final int bookTitlepaddding = 10;
         bookTitleView.setPadding(0, 2*bookTitlepaddding, 0, bookTitlepaddding/2);
         this.addView(bookTitleView, positionNum++);
 
@@ -125,6 +132,11 @@ public class TOCGrid extends LinearLayout {
         currSectionTitleView.setGravity(Gravity.CENTER);
         this.addView(currSectionTitleView, positionNum++);
 
+        if(book.isTalmudBavli()) {
+            View bookVersionInfo = LayoutInflater.from(context).inflate(R.layout.book_version_info, null);
+            this.addView(bookVersionInfo, positionNum++);
+        }
+
         View dummySpace = new View(context);
         dummySpace.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,Math.round(Util.dpToPixels(20))));
         this.addView(dummySpace, positionNum++);
@@ -134,6 +146,8 @@ public class TOCGrid extends LinearLayout {
         //versionsDropdown.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         //versionsDropdown.setGravity(Gravity.CENTER);
         this.addView(versionsDropdown, positionNum++);
+
+
 
 
         int defaultTab = setCurrSectionText();

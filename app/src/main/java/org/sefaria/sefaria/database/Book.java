@@ -42,7 +42,6 @@ public class Book implements Parcelable {
     public String heTitle;
     public int languages;
 
-
     private static final int DEFAULT_WHERE_PAGE = 2;
     public Book(){
         //empty constructor
@@ -499,6 +498,14 @@ public class Book implements Parcelable {
 
         }
 
+    }
+
+    public boolean isTalmudBavli(){
+        try{
+            return ("Talmud".equals(this.categories[0]) &&  "Bavli".equals(this.categories[1]));
+        }catch (Exception e){
+            return false;
+        }
     }
 
     //PARCELABLE------------------------------------------------------------------------

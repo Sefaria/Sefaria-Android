@@ -51,4 +51,4 @@ yo1.out
 yo.json
 
 
-.DS_Store
+*.DS_Store

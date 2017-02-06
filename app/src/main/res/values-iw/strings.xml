@@ -94,5 +94,7 @@
     <string name="More">&lt; עוד </string>
     <string name="recently_viewed">נצפה לאחרונה</string>
     <string name="error_loading_section_reload">Load Text</string>
+    <string name="william_d_tal">תלמוד מהדורת ויליאם דוידסון</string>
+    <string name="william_d_tal_long_info">English from The William Davidson digital edition of the Koren Noé Talmud, with commentary by Rabbi Adin Steinsaltz Even-Israel</string>
 
 </resources>
