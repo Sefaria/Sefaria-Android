@@ -187,6 +187,18 @@ public class Settings {
         editor.apply();
     }
 
+    public static boolean getUseSDCard() {
+        SharedPreferences generalSettings = getGeneralSettings();
+        return generalSettings.getBoolean("useSDCard",true);
+    }
+
+    public static void setUseSDCard(boolean useSDCard) {
+        SharedPreferences generalSettings = getGeneralSettings();
+        SharedPreferences.Editor editor = generalSettings.edit();
+        editor.putBoolean("useSDCard", useSDCard);
+        editor.apply();
+    }
+
     private static final int DEFAULT_THEME = R.style.SefariaTheme_White;
     public static int getTheme(){
         SharedPreferences generalSettings = getGeneralSettings();

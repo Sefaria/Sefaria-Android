@@ -47,7 +47,7 @@ public class Database extends SQLiteOpenHelper{
      * @param context
      */
     public Database(Context context){
-        super(context,getDbPath() + DB_NAME + ".db" , null, DB_VERSION);
+        super(new DatabaseContext(context, getDbPath()), DB_NAME , null, DB_VERSION);
         this.myContext = context;
     }
 
@@ -59,7 +59,7 @@ public class Database extends SQLiteOpenHelper{
      * @param context
      */
     public Database(Context context, int useAPI) {
-        super(context, getDbPath() + API_DB_NAME + ".db", null, DB_VERSION);
+        super(new DatabaseContext(context, getDbPath()), API_DB_NAME, null, DB_VERSION);
         this.myContext = context;
     }
 
