@@ -409,6 +409,7 @@ public class LinkFilter {
         String [] heTitles = menuNode.getChildrenTitles(Util.Lang.HE);
         for(int i=0;i<titles.length;i++){
             String title = titles[i];
+            Log.d("commentary", title);
             for(int j=0;j<getChildren().size();j++){
                 LinkFilter child = getChildren().get(j);
                 if(child.enTitle.equals(title)){

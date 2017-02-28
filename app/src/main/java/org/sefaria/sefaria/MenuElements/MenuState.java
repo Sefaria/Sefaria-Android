@@ -35,7 +35,7 @@ public class MenuState implements Parcelable {
     public static final int TAB_GRID_PAGE = 3; //primarily used for talmud
 
     private static final String[] TAB_GRID_PAGE_LIST = {"Talmud"};
-    private static final String[] PAGE_EXCEPTIONS = {"Mishneh Torah", "Shulchan Arukh", "Midrash Rabbah", "Maharal"};
+    private static final String[] PAGE_EXCEPTIONS = {"Commentary","Targum"};
     public static final String jsonIndexFileName = "index.json";
 
     private static MenuNode rootNode;
@@ -100,7 +100,6 @@ public class MenuState implements Parcelable {
         }
 
         for (int i = 0; i < node.length(); i++) {
-            //this is a book, so add its bid
             String enTitle;
             String heTitle;
             MenuNode tempMenuNode;
@@ -108,8 +107,8 @@ public class MenuState implements Parcelable {
             try {
                 JSONArray tempChildNode = tempNode.getJSONArray("contents");
                 enTitle = tempNode.getString("category");
-                if(enTitle.equals("Commentary2"))
-                    continue;
+                //if(enTitle.equals("Commentary2"))
+                //    continue;
                 heTitle = tempNode.getString("heCategory");
                 tempMenuNode = new MenuNode(enTitle, heTitle, parent);
                 createChildrenNodes(tempChildNode, tempMenuNode, false);
@@ -189,7 +188,14 @@ public class MenuState implements Parcelable {
         //if coming from memory restore, currPath contains half-nodes, but you need full-node
         List<BilingualNode> tempChildren = currPath.get(currPath.size()-1).getChildren();
         int ind = tempChildren.indexOf(tempNode);
-        MenuNode realNode = (MenuNode) tempChildren.get(ind);
+        MenuNode realNode;
+        if (ind == -1) {
+            tempChildren = tempChildren.get(0).getChildren();
+            ind = tempChildren.indexOf(tempNode);
+            realNode = (MenuNode) tempChildren.get(ind);
+        } else {
+            realNode = (MenuNode) tempChildren.get(ind);
+        }
 
         List<MenuNode> tempCurrPath = new ArrayList<>(currPath);
         tempCurrPath.add(realNode);
@@ -258,11 +264,25 @@ public class MenuState implements Parcelable {
         for (int i = 0; i < currNode.getNumChildren(); i++) {
             MenuNode tempChild = (MenuNode) currNode.getChild(i);
             //commentary is not shown in the menu
-            if (tempChild.getTitle(Util.Lang.EN).equals("Commentary")) continue;
+            //if (tempChild.getTitle(Util.Lang.EN).equals("Commentary")) continue;
+
+
+            List<String> exceptions = Arrays.asList(PAGE_EXCEPTIONS);
 
             int minDepth = tempChild.getMinDepthToLeaf();
-            if (minDepth >= 1 && minDepth != 2 && !isHome) {
-                subsectionList.add(tempChild.getChildren());
+            if ((minDepth >= 1 && minDepth != 2 && !isHome) || exceptions.indexOf(tempChild.getTitle(Util.Lang.EN)) != -1) {
+                //check if any of the children has only one child which is a leaf. in that case, put the leaf in instead of the actual child
+                List<BilingualNode> tempSubsection = new ArrayList<>();
+                for (BilingualNode child : tempChild.getChildren()) {
+                    if (child.getNumChildren() == 1 && child.getChild(0).getNumChildren() == 0) {
+                        MenuNode tempSubChild = (MenuNode) child.getChild(0);
+                        tempSubChild.overridePrettyTitle(true);
+                        tempSubsection.add(tempSubChild);
+                    } else {
+                        tempSubsection.add(child);
+                    }
+                }
+                subsectionList.add(tempSubsection);
                 sectionList.add(tempChild);
             } else {
                 sectionlessNodes.add(tempChild);
