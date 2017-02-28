@@ -44,7 +44,7 @@ public class LinkSelectorBarButton extends SefariaTextView {
     }
 
     public void setLang(Util.Lang lang) {
-        setText(linkCount.getSlimmedTitle(book,lang));
+        setText(linkCount.getGroupTitle(lang));
     }
 
     public LinkFilter getLinkCount() { return linkCount; }

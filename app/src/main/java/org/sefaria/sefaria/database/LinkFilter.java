@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MenuElements.MenuNode;
@@ -24,6 +25,8 @@ public class LinkFilter {
 
     protected String enTitle;
     protected String heTitle;
+    protected String groupEnTitle; //the group titles are mostly for commentaries. e.g. all books of rashi have the group title "Rashi"
+    protected String groupHeTitle;
     protected DEPTH_TYPE depth_type;
     protected int count;
     protected List<LinkFilter> children;
@@ -33,23 +36,31 @@ public class LinkFilter {
         ALL,CAT,BOOK,ERR
     }
 
-    //category is passed in only if DEPTH_TYPE == DEPTH_TYPE.BOOK
     public LinkFilter(String enTitle, int count, String heTitle, DEPTH_TYPE depth_type){
+        this(enTitle, count, heTitle, enTitle, heTitle, depth_type);
+    }
+
+    //category is passed in only if DEPTH_TYPE == DEPTH_TYPE.BOOK
+    public LinkFilter(String enTitle, int count, String heTitle, String groupEnTitle, String groupHeTitle, DEPTH_TYPE depth_type){
         this.enTitle = enTitle;
         this.heTitle = heTitle;
+        this.groupEnTitle = groupEnTitle;
+        this.groupHeTitle = groupHeTitle;
         this.count = count;
         this.depth_type = depth_type;
     }
 
-    /**
-     * This will convert the commentary name to remove the name of the book that it is commenting on.
-     * For example, it will transform "Rashi on Genesis" to "Rashi"
-     * @param book the book that it is commenting on (for example, Genesis)
-     * @param menuLang the lang for the displayed title
-     * @return the name of the commentary without the " on xyzBook" (for example, Rashi)
-     */
-    public String getSlimmedTitle(Book book, Util.Lang menuLang){
+
+    /*public String getSlimmedTitle(Book book, Util.Lang menuLang){
         return Book.removeOnMainBookFromTitle(this.getRealTitle(menuLang),book);
+    }*/
+
+
+    public String getGroupTitle(Util.Lang lang) {
+        if (lang == Util.Lang.HE)
+            return groupHeTitle;
+        else
+            return groupEnTitle;
     }
 
     /**
@@ -149,6 +160,7 @@ public class LinkFilter {
     final public static String ALL_CONNECTIONS = "All";
     final public static String COMMENTARY = "Commentary";
     final public static String QUOTING_COMMENTARY = "Quoting Commentary";
+    final public static String TARGUM = "Targum";
 
     private static LinkFilter getCommentaryOnChap(int chapStart, int chapEnd, int bid){
 
@@ -230,7 +242,6 @@ public class LinkFilter {
         if(data.length()==0)
             return allLinkCounts;
 
-
         try {
             JSONArray linksArray = new JSONArray(data);
             //Log.d("api", "jsonData:" + jsonData.toString());
@@ -238,16 +249,31 @@ public class LinkFilter {
             Map<String,LinkFilter> booksMap = new HashMap<>();
 
             for(int i=0;i<linksArray.length();i++){
+
+
                 JSONObject jsonLink = linksArray.getJSONObject(i);
                 String enTitle = jsonLink.getString("index_title");
+
                 LinkFilter bookFilter = booksMap.get(enTitle);
                 if(bookFilter != null){
                     bookFilter.addCount();
                     continue;
                 }
                 String category = jsonLink.getString("category");
-                String heTitle = jsonLink.getString("heTitle");
-                LinkFilter linkCount = new LinkFilter(enTitle,1,heTitle,DEPTH_TYPE.BOOK);
+
+                JSONObject groupTitles = jsonLink.getJSONObject("linkGroupTitle");
+                String enGroupTitle = groupTitles.getString("en");
+                String heGroupTitle = groupTitles.getString("he");
+
+                //it seems that some books dont have heTitles
+                String heTitle;
+                try {
+                    heTitle = jsonLink.getString("heTitle");
+                } catch (JSONException e) {
+                    continue; //jetison!!!
+                }
+
+                LinkFilter linkCount = new LinkFilter(enTitle, 1, heTitle, enGroupTitle, heGroupTitle, DEPTH_TYPE.BOOK);
                 booksMap.put(enTitle,linkCount);
                 String heCategory;
                 LinkFilter groupFilter = null;
@@ -260,6 +286,10 @@ public class LinkFilter {
                 if(groupFilter == null){//didn't find the group already
                     if(category.equals(QUOTING_COMMENTARY)) {
                         heCategory = "מפרשים מצטטים";
+                    } else if (category.equals(COMMENTARY)) {
+                        heCategory = "מפרשים";
+                    } else if (category.equals(TARGUM)) {
+                        heCategory = "תרגום";
                     }
                     else {
                         heCategory = category;
@@ -370,7 +400,7 @@ public class LinkFilter {
                     if(categories[0].equals("Commentary")) {
                         category = QUOTING_COMMENTARY;
                         heCategory = "מפרשים מצטטים";
-                    }else {
+                    } else {
                         category = categories[0];
                         heCategory = category;
                         //the real he titles will be added in sortLinkCountCategories() if it finds match
@@ -409,7 +439,6 @@ public class LinkFilter {
         String [] heTitles = menuNode.getChildrenTitles(Util.Lang.HE);
         for(int i=0;i<titles.length;i++){
             String title = titles[i];
-            Log.d("commentary", title);
             for(int j=0;j<getChildren().size();j++){
                 LinkFilter child = getChildren().get(j);
                 if(child.enTitle.equals(title)){

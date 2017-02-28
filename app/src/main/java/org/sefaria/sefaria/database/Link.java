@@ -129,8 +129,6 @@ public class Link {//implements Parcelable {
         if(data.length()==0)
             return segments;
         List<Segment> commentaries = new ArrayList<>();
-
-        String commentOn = " on " + book.title;
         try {
             JSONArray linksArray = new JSONArray(data);
             //Log.d("api", "jsonData:" + jsonData.toString());
