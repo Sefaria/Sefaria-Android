@@ -62,10 +62,10 @@ public class SearchAPI {
                 String filterString = Util.regexpEscape(appliedFilters.get(i));
 
                 //to account for Commentary and Commentary2...
-                filterString = filterString.replace("Commentary","Commentary.*");
+                //filterString = filterString.replace("Commentary","Commentary.*");
 
                 clauses += "{\"regexp\":{" +
-                        "\"path\":\"" + filterString + ".*\"}}";
+                        "\"path\":\"" + filterString + "/.*\"}}";
                 if (i != appliedFilters.size()-1) clauses += ",";
             }
             clauses += "]";

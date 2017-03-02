@@ -286,6 +286,14 @@ public class SearchFilterBox extends LinearLayout{
         }
     }
 
+    private void openFilterAtPos(int position) {
+        SearchFilterNode node = (SearchFilterNode) filterAdapterMain.getItem(position);
+        filterAdapterSlave.clearAndAdd(node.getLeaves(),isCheckedArraySlave[position]);
+        filterListSlave.setSelection(0);
+        filterAdapterSlave.setMasterPosition(position);
+        filterAdapterMain.notifyDataSetChanged(); //update so that it shows nice little arrow
+    }
+
     OnClickListener filterTitleClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -296,11 +304,7 @@ public class SearchFilterBox extends LinearLayout{
     AdapterView.OnItemClickListener filterListItemClick = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            SearchFilterNode node = (SearchFilterNode) filterAdapterMain.getItem(position);
-            filterAdapterSlave.clearAndAdd(node.getLeaves(),isCheckedArraySlave[position]);
-            filterListSlave.setSelection(0);
-            filterAdapterSlave.setMasterPosition(position);
-            filterAdapterMain.notifyDataSetChanged(); //update so that it shows nice little arrow
+            openFilterAtPos(position);
         }
     };
 
@@ -315,11 +319,14 @@ public class SearchFilterBox extends LinearLayout{
     IndeterminateCheckBox.OnStateChangedListener checkedChangeListener = new IndeterminateCheckBox.OnStateChangedListener() {
         @Override
         public void onStateChanged(IndeterminateCheckBox buttonView, @Nullable Boolean state) {
+
+
             ListViewCheckBox listViewCheckBox = (ListViewCheckBox) buttonView;
             int position = listViewCheckBox.getPosition();
             SearchFilterAdapter searchFilterAdapter = (SearchFilterAdapter) listViewCheckBox.getAdapter();
             searchFilterAdapter.setIsCheckedAtPos(state,position);
 
+            //openFilterAtPos(position);
 
             //if this is the master listview and this checkbox is the one that is controlling the slave listview
             if (searchFilterAdapter.getIsMaster() && state != null) {
