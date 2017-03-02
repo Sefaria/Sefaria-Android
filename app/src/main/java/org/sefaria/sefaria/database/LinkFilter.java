@@ -434,7 +434,7 @@ public class LinkFilter {
 
     private LinkFilter sortLinkCountCategories(){
         LinkFilter newLinkCount = new LinkFilter(enTitle,0,heTitle,depth_type);
-        MenuNode menuNode = MenuState.getRootNode();
+        MenuNode menuNode = MenuState.getRootNode(MenuState.IndexType.MAIN);
         String [] titles = menuNode.getChildrenTitles(Util.Lang.EN);
         String [] heTitles = menuNode.getChildrenTitles(Util.Lang.HE);
         for(int i=0;i<titles.length;i++){

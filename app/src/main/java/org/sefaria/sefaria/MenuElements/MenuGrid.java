@@ -334,10 +334,6 @@ public class MenuGrid extends LinearLayout {
 
     }
 
-    public void goHome() {
-        menuState.goHome();
-    }
-
     public OnLongClickListener menuButtonLongClick = new OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {

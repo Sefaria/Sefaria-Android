@@ -40,7 +40,7 @@ public class MenuNode extends BilingualNode {
 
         //set color
         this.color = MyApp.getCatColor(enTitle);
-        this.isHomeButton = color != -1 && (parent == null || parent.equals(MenuState.getRootNode()));
+        this.isHomeButton = color != -1 && (parent == null || parent.equals(MenuState.getRootNode(MenuState.IndexType.MAIN)));
     }
 
     public static final Parcelable.Creator<MenuNode> CREATOR

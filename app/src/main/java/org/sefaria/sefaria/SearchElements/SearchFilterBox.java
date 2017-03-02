@@ -125,7 +125,7 @@ public class SearchFilterBox extends LinearLayout{
 
 
                 String[] filterStringList = filterPath.split("/");
-                String[] filterStringListHe = MenuState.translatePath(filterStringList); //TODO suspicious
+                String[] filterStringListHe = MenuState.translatePath(MenuState.IndexType.SEARCH, filterStringList); //TODO suspicious
                 String[] fullFilterStringList = getFullFilterStringList(filterStringList);
                 //Log.d("Search", Arrays.toString(filterStringList) + " ==> " + Arrays.toString(filterStringListHe));
                 int count = jsonObject.getInt("doc_count");

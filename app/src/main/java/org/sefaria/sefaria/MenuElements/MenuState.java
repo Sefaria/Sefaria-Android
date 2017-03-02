@@ -37,52 +37,77 @@ public class MenuState implements Parcelable {
     private static final String[] TAB_GRID_PAGE_LIST = {"Talmud"};
     private static final String[] PAGE_EXCEPTIONS = {"Commentary","Targum"};
     public static final String jsonIndexFileName = "index.json";
+    public static final String searchIndexFileName = "search-filter-index.json";
 
     private static MenuNode rootNode;
+    private static MenuNode rootSearchNode;
     private MenuNode currNode;
     private List<MenuNode> currPath;
     private Util.Lang currLang;
+    private IndexType type;
 
-    public MenuState() {
-        if (!isMenuInited()) initMenu();
-        currNode = rootNode;
-        currPath = new ArrayList<>();
-        currPath.add(rootNode);
+    public enum IndexType {
+        MAIN, SEARCH
     }
 
-    public static MenuNode getRootNode(){
-        if (!isMenuInited()) initMenu();
-        return rootNode;
+    public MenuState(IndexType type) {
+        if (!isMenuInited(type)) initMenu(type);
+        this.type = type;
+        if (type == IndexType.MAIN) {
+            currNode = rootNode;
+            currPath = new ArrayList<>();
+            currPath.add(rootNode);
+        } else {
+            currNode = rootSearchNode;
+            currPath = new ArrayList<>();
+            currPath.add(rootSearchNode);
+        }
     }
 
-    public MenuState(List<MenuNode> currPath, Util.Lang lang) {
+    public static MenuNode getRootNode(IndexType type){
+        if (!isMenuInited(type)) initMenu(type);
+        if (type == IndexType.MAIN) {
+            return rootNode;
+        } else {
+            return rootSearchNode;
+        }
+    }
+
+    public MenuState(IndexType type, List<MenuNode> currPath, Util.Lang lang) {
         this.currNode = currPath.get(currPath.size()-1);
         this.currPath = currPath;
         this.currLang = lang;
+        this.type = type;
         //Log.d("menu","CURRNODECHLIDREN = " + currNode.getNumChildren());
     }
 
-    private static boolean isMenuInited() {return rootNode != null;}
+    private static boolean isMenuInited(IndexType type) {
+        if (type == IndexType.MAIN)
+            return rootNode != null;
+        else
+            return rootSearchNode != null;
+    }
 
-    private static JSONArray getMenuJSON() throws IOException, JSONException {
+    private static JSONArray getMenuJSON(IndexType type) throws IOException, JSONException {
         JSONArray jsonRoot;
+        String tempIndexName = type == IndexType.MAIN ? jsonIndexFileName : searchIndexFileName;
         if(!Settings.getUseAPI()){
             try {
-                jsonRoot = new JSONArray(Util.readFile(Database.getInternalFolder() + MenuState.jsonIndexFileName));
+                jsonRoot = new JSONArray(Util.readFile(Database.getInternalFolder() + tempIndexName));
             }catch (Exception e1){
                 e1.printStackTrace();
-                jsonRoot = Util.openJSONArrayFromAssets(jsonIndexFileName);
+                jsonRoot = Util.openJSONArrayFromAssets(tempIndexName);
             }
         }else{
-            jsonRoot = Util.openJSONArrayFromAssets(jsonIndexFileName);
+            jsonRoot = Util.openJSONArrayFromAssets(tempIndexName);
         }
         return jsonRoot;
     }
 
-    private static void initMenu() {
+    private static void initMenu(IndexType type) {
         try {
-            JSONArray jsonRoot = getMenuJSON();
-            createChildrenNodes(jsonRoot, null, true);
+            JSONArray jsonRoot = getMenuJSON(type);
+            createChildrenNodes(type, jsonRoot, null, true);
         } catch (IOException e) {
             e.printStackTrace();
             //Log.d("IO", "JSON not loaded");
@@ -91,12 +116,17 @@ public class MenuState implements Parcelable {
         }
     }
 
-    private static void createChildrenNodes(JSONArray node, MenuNode parent, boolean isRoot) throws JSONException {
+    private static void createChildrenNodes(IndexType type, JSONArray node, MenuNode parent, boolean isRoot) throws JSONException {
 
         //make sure to save the root
         if (isRoot) {
-            rootNode = new MenuNode();
-            parent = rootNode;
+            if (type == IndexType.MAIN) {
+                rootNode = new MenuNode();
+                parent = rootNode;
+            } else {
+                rootSearchNode = new MenuNode();
+                parent = rootSearchNode;
+            }
         }
 
         for (int i = 0; i < node.length(); i++) {
@@ -111,7 +141,7 @@ public class MenuState implements Parcelable {
                 //    continue;
                 heTitle = tempNode.getString("heCategory");
                 tempMenuNode = new MenuNode(enTitle, heTitle, parent);
-                createChildrenNodes(tempChildNode, tempMenuNode, false);
+                createChildrenNodes(type, tempChildNode, tempMenuNode, false);
             }catch (JSONException e){//This means it didn't find contents and it's at a book
                 enTitle = tempNode.getString("title");
                 heTitle = tempNode.getString("heTitle");
@@ -120,56 +150,34 @@ public class MenuState implements Parcelable {
         }
 
         if (isRoot) {
-            MenuNode tosefta = (MenuNode) rootNode.getChildren().remove(rootNode.getChildIndex("Tosefta",Util.Lang.EN));
-            rootNode.getChildren().add(rootNode.getChildIndex("Philosophy",Util.Lang.EN)+1,tosefta);
+            if (type == IndexType.MAIN) {
+                MenuNode tosefta = (MenuNode) rootNode.getChildren().remove(rootNode.getChildIndex("Tosefta", Util.Lang.EN));
+                rootNode.getChildren().add(rootNode.getChildIndex("Philosophy", Util.Lang.EN) + 1, tosefta);
+            } else {
+                MenuNode tosefta = (MenuNode) rootSearchNode.getChildren().remove(rootSearchNode.getChildIndex("Tosefta", Util.Lang.EN));
+                rootSearchNode.getChildren().add(rootSearchNode.getChildIndex("Philosophy", Util.Lang.EN) + 1, tosefta);
+            }
         }
     }
 
-    public static String[] translatePath(String[] enPath) {
+    public static String[] translatePath(IndexType type, String[] enPath) {
         String[] hePath = new String[enPath.length];
-        BilingualNode currNode = getRootNode();
-        if (enPath[0].equals("Commentary") || enPath[0].equals("Commentary2")) {
-            //if it's a commentary, hard code the first element, search for the second and query for the last. those are the only elements you actually need
+        BilingualNode currNode = getRootNode(type);
 
-            hePath[0] = "מפרשים";
+        for (int i = 0; i < enPath.length; i++) {
             List<BilingualNode> children = currNode.getChildren();
             for (BilingualNode child : children) {
-                if (child.getTitle(Util.Lang.EN).equals(enPath[1])) {
-                    hePath[1] = child.getTitle(Util.Lang.HE);
+                if (child.getTitle(Util.Lang.EN).equals(enPath[i])) {
+                    hePath[i] = child.getTitle(Util.Lang.HE);
+                    currNode = child;
                     break;
-                }
-            }
-            try{
-                SQLiteDatabase db = Database.getDB();
-                Cursor cursor = db.query(Book.TABLE_BOOKS,new String[]{"heTitle"},"title=?",new String[]{enPath[enPath.length-1]},null,null,null);
-                if (cursor != null) {
-
-                    cursor.moveToFirst();
-                    hePath[hePath.length-1] = cursor.getString(0);
-
-                    hePath[hePath.length-1] = enPath[enPath.length-1];
-
-                }
-            }catch(Exception e){
-
-            }
-        } else {
-
-
-            for (int i = 0; i < enPath.length; i++) {
-                List<BilingualNode> children = currNode.getChildren();
-                for (BilingualNode child : children) {
-                    if (child.getTitle(Util.Lang.EN).equals(enPath[i])) {
-                        hePath[i] = child.getTitle(Util.Lang.HE);
-                        currNode = child;
-                        break;
-                    }
                 }
             }
         }
 
         return hePath;
     }
+
 
     /***************
     MEMBER FUNCTIONS
@@ -201,7 +209,7 @@ public class MenuState implements Parcelable {
         tempCurrPath.add(realNode);
 
 
-        MenuState tempMenuState = new MenuState(tempCurrPath,currLang);
+        MenuState tempMenuState = new MenuState(this.type, tempCurrPath,currLang);
 
 
         if (sectionNode != null) return tempMenuState.goForward(node,null);
@@ -213,7 +221,7 @@ public class MenuState implements Parcelable {
         List<MenuNode> tempCurrPath = new ArrayList<>(currPath);
         tempCurrPath.remove(tempCurrPath.size() - 1);
 
-        MenuState tempMenuState = new MenuState(tempCurrPath,currLang);
+        MenuState tempMenuState = new MenuState(this.type, tempCurrPath,currLang);
 
         if (hasSectionBack) return tempMenuState.goBack(false, false); //go back twice to account for clicking on subsection
         if (hasTabBack) return tempMenuState.goBack(false, false); //potentially go back thrice if tabs
@@ -221,40 +229,11 @@ public class MenuState implements Parcelable {
         return tempMenuState;
     }
 
-    public void goHome() {
-        currNode = rootNode;
-        currPath = new ArrayList<>();
-    }
-
-    public int getPageType() {
-        if (currNode == rootNode) return HOME_PAGE;
-        else if ( isBrokenGrid()) return BROKEN_GRID_PAGE;
-        else return GRID_PAGE;
-    }
-
-    public List<MenuNode> getCurrPath() { return currPath; }
-
     //a bit confusing. the difference between this function and the property in MenuGrid 'hasTabs'
     //is that this can tell if the currNode has tabs. Later on, however, when you goForward into the tab,
     //it will be impossible to tell, so that state is save in the property 'hasTabs'
     public boolean hasTabs() {
         return Arrays.asList(TAB_GRID_PAGE_LIST).contains(currNode.getTitle(Util.Lang.EN));
-    }
-
-    private boolean isBrokenGrid() {
-        boolean isBrokenGrid = false;
-        if (currNode.getNumChildren() > 0) {
-            for (int i = 0; i < currNode.getNumChildren(); i++) {
-                if (currNode.getChild(i).getNumChildren() > 0) {
-                    isBrokenGrid = true;
-                    break;
-                }
-            }
-        } else {
-            isBrokenGrid = false;
-        }
-
-        return isBrokenGrid;
     }
 
     //parameters are changed in-place and "returned"
@@ -324,6 +303,7 @@ public class MenuState implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeTypedList(currPath);
+        dest.writeString(type.name());
     }
 
     private MenuState(Parcel in) {
@@ -331,7 +311,8 @@ public class MenuState implements Parcelable {
 
 
         in.readTypedList(tempPath, MenuNode.CREATOR);
-        if (!isMenuInited()) initMenu();
+        type = IndexType.valueOf(in.readString());
+        if (!isMenuInited(type)) initMenu(type);
         currNode = rootNode;
         currPath = new ArrayList<>();
         currPath.add(rootNode);
