@@ -524,6 +524,8 @@ public class Util {
      * @return
      */
     public static String getBidiString(String input, Util.Lang mainLang) {
+        Pattern htmlPat = Pattern.compile("<.+?>");
+
         boolean rtlContext;
         int bidiDirection;
         int defaultBidiDirection;
@@ -540,8 +542,6 @@ public class Util {
         Bidi bidi = new Bidi(input,defaultBidiDirection);
         if (!bidi.isMixed()) return input;
 
-
-
         BidiFormatter bidiFormatter = BidiFormatter.getInstance(rtlContext);
         StringBuilder bidiTestBuilder = new StringBuilder();
         for (int i = 0; i < bidi.getRunCount(); i++)
@@ -551,9 +551,13 @@ public class Util {
             int limit = bidi.getRunLimit(i);
             String run = input.substring(start, limit);
 
+
+            //if there is HTML in this run, don't unicode wrap it because this will mess up the presentation
+            boolean hasHtml = htmlPat.matcher(run).find();
+
             //apparently level is even when ltr and odd when rtl
             //bidiDirection == 0 when LTR and 1 when RTL
-            if ((level % 2) != bidiDirection) {
+            if ((level % 2) != bidiDirection && !hasHtml) {
                 run = bidiFormatter.unicodeWrap(run ,!rtlContext) + " ";
             }
             bidiTestBuilder.append(run);
