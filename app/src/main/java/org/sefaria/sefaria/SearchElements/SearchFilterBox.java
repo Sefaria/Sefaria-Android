@@ -316,6 +316,7 @@ public class SearchFilterBox extends LinearLayout{
         }
     });*/
 
+
     IndeterminateCheckBox.OnStateChangedListener checkedChangeListener = new IndeterminateCheckBox.OnStateChangedListener() {
         @Override
         public void onStateChanged(IndeterminateCheckBox buttonView, @Nullable Boolean state) {
@@ -365,6 +366,12 @@ public class SearchFilterBox extends LinearLayout{
         @Override
         public void onClick(View v) {
             searchActivity.runFilteredSearch();
+            ListViewCheckBox listViewCheckBox = (ListViewCheckBox) v;
+            SearchFilterAdapter searchFilterAdapter = (SearchFilterAdapter) listViewCheckBox.getAdapter();
+            int position = listViewCheckBox.getPosition();
+            if (searchFilterAdapter.getIsMaster() && listViewCheckBox.getState()) {
+                openFilterAtPos(position);
+            }
         }
     };
 
