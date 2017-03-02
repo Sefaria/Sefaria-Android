@@ -78,8 +78,8 @@ public class SearchAPI {
 
         jsonString += "}";
 
-        Log.d("YOYO",jsonString);
-        Log.d("YOYO","GF = " + getFilters);
+        //Log.d("YOYO",jsonString);
+        //Log.d("YOYO","GF = " + getFilters);
         String result = API.getDataFromURL(SEARCH_URL, jsonString, true, API.TimeoutType.REG);
 
         return getParsedResults(result,getFilters);
@@ -103,7 +103,7 @@ public class SearchAPI {
         if (getFilters) {
             try {
                 allFilters = resultJson.getJSONObject("aggregations").getJSONObject("category").getJSONArray("buckets");
-                Log.d("YOYO","ALLFILETER LEN " + allFilters.length());
+                //Log.d("YOYO","ALLFILETER LEN " + allFilters.length());
             } catch (JSONException e) {
                 e.printStackTrace();
                 return searchResultContainer;
