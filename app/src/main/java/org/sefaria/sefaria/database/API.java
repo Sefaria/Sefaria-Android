@@ -22,9 +22,9 @@ import android.util.Log;
 import android.widget.Toast;
 
 public class API {
-    final static String TEXT_URL = "http://www.sefaria.org/api/texts/";
-    final static String COUNT_URL = "http://www.sefaria.org/api/counts/";
-    final static String LINK_URL = "http://www.sefaria.org/api/links/";
+    final static String TEXT_URL = "https://www.sefaria.org/api/texts/";
+    final static String COUNT_URL = "https://www.sefaria.org/api/counts/";
+    final static String LINK_URL = "https://www.sefaria.org/api/links/";
     final static String LINK_ZERO_TEXT = "?with_text=0";
     final static String ZERO_CONTEXT = "&context=0";
     final static String ZERO_COMMENTARY = "&commentary=0";

@@ -226,7 +226,7 @@ public class DialogManager2 {
                         emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Sefaria Text Correction from Android");
                         String url = null;
                         try {
-                            url = segment.getURL(true, false) + "\n\n";
+                            url = segment.getURL(true) + "\n\n";
                         } catch (Book.BookNotFoundException e) {
                             url = "";
                             e.printStackTrace();

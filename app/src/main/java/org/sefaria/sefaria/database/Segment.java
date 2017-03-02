@@ -202,17 +202,13 @@ public class Segment implements Parcelable {
     /**
      *
      * @param prependDomain if you want to go to the GUI site
-     * @param useHTTPS if you want to bypass the Intent calling the app again
      * @return "" if there's an error
      */
-    public String getURL(boolean prependDomain, boolean useHTTPS) throws Book.BookNotFoundException {
+    public String getURL(boolean prependDomain) throws Book.BookNotFoundException {
 
         StringBuilder str = new StringBuilder();
         if(prependDomain) {
-            if (useHTTPS)
-                str.append("https://www.sefaria.org/");
-            else
-                str.append("http://www.sefaria.org/");
+            str.append("https://www.sefaria.org/");
         }
         if(parentNode != null && (!parentNode.isRef())){
             String path = parentNode.getPath(Util.Lang.EN,true, true, true)

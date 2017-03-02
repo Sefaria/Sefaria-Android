@@ -426,7 +426,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
             }
             API.PlaceRef placeRef = null;
             try {
-                placeRef = API.PlaceRef.getPlace(place,book);
+                placeRef = API.PlaceRef.getPlace(place, book);
                 SuperTextActivity.startNewTextActivityIntent(SearchActivity.this,placeRef.book,placeRef.segment,placeRef.node,false,autoCompleteTextView.getText().toString(),-1);
             } catch (API.APIException e) {
                 API.makeAPIErrorToast(SearchActivity.this);//MyApp.openURLInBrowser(SearchActivity.this,"https://sefaria.org/" + place);

@@ -363,6 +363,7 @@ public class SearchingDB {
             ///TEST Hebrew words
             Util.Lang lang = Util.Lang.HE;
             m = hePattern.matcher(segment.getText(lang));
+
             if(m.find()){
                 segment.setText(addRedToFoundWord(m, segment.getText(lang), removeLongText, false), lang);
                 if(!foundEn){//didn't already add this to the list for found English
@@ -633,6 +634,14 @@ public class SearchingDB {
             if (cursor.moveToFirst()) {
                 do {
                     Segment segment = new Segment(cursor);
+                    /* this finds the number of times the item occurs.
+                    Matcher m1 = patterns[0].matcher(segment.getText(Util.Lang.HE));
+                    while (m1.find())
+                        foundCount++;
+                        Log.d("counter", "" + foundCount);
+                    */
+
+
                     results.add(segment);
                 }while (cursor.moveToNext());
             }
@@ -902,16 +911,16 @@ public class SearchingDB {
             String [] queries6k = new String[] {"ישב", "נפשו", "ברית"};
             String [] queries55 = new String[] {"מפספס", "אורבי", "מפנהו"};
             String [] queries10 = new String[] {"איפוק", "בשאיני", "קיללו"};
-            String [] querySizes = new String[] {"350k", "6k", "55", "10"}; // {"350k", "6k", "55", "10"};
+            String [] querySizes = new String[] {"350k", "6k", "55"};//, "10"}; // {"350k", "6k", "55", "10"};
             List<String []> queryTypes = new ArrayList<>();
             queryTypes.add(queries350k); queryTypes.add(queries6k);
-            queryTypes.add(queries55); queryTypes.add(queries10);
+            queryTypes.add(queries55); //queryTypes.add(queries10);
             StringBuilder testingResults = new StringBuilder();
             testingResults.append("CHUNK SIZE: " + CHUNK_SIZE + " DB#: " + Database.getVersionInDB(false) + "\n\n");
-            final int RETURN_RESULTS_REG = 6;
-            final int LARGE_INT = 100000000;
+            final int RETURN_RESULTS_REG = 100; //6;
+            final int LARGE_INT = 10000000;
             int[] returnResultAmounts = {RETURN_RESULTS_REG};
-            boolean[] usePureNoIndexSearches = {false};
+            boolean[] usePureNoIndexSearches = {true};
             for (boolean usePureNoIndexSearch : usePureNoIndexSearches) {
                 for (int returnResultAmount : returnResultAmounts) {
                     String searchMethod = "[" + (usePureNoIndexSearch ? "NoIndex" : "compressedIndex")
@@ -938,7 +947,8 @@ public class SearchingDB {
                                         + totalTime + "ms."
                                         + " blockIndex:" + (searchingDB.currSearchIndex + (searchingDB.usePureSearchEvenHe ? 0 : 1))
                                         //+ (searchingDB.usePureSearchEvenHe ? "" : ". blockNum:" +  searchingDB.searchableTids.get(searchingDB.currSearchIndex).second/CHUNK_SIZE)
-                                        + "}";
+                                        + "}"
+                                        ;
                                 testingResults.append("\n" + timing + "\n");
                                 Log.d("searching", timing);
                             } catch (SQLException e) {
