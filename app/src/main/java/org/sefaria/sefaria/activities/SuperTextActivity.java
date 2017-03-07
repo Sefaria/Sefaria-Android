@@ -378,7 +378,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
         //on Home screen
         Intent shortcutIntent = new Intent(this, SplashScreenActivity.class);// makeNewTextActivityIntent(this, null, segment, null, false, null, -1);
         try {
-            shortcutIntent.putExtra("url", segment.getURL(true,false));
+            shortcutIntent.putExtra("url", segment.getURL(true));
         } catch (Book.BookNotFoundException e) {
             e.printStackTrace();
         }
@@ -1116,14 +1116,12 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
     public void aboutClick(View v) {
         String url = "https://www.sefaria.org/about";
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-        startActivity(intent);
+        MyApp.openURLInBrowser(this, url);
     }
 
     public void donateClick(View v){
         String url = "https://www.sefaria.org/donate";
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-        startActivity(intent);
+        MyApp.openURLInBrowser(this, url);
     }
 
     public void feedbackClick(View v) {
@@ -1150,8 +1148,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
     public void siteClick(View v){
         String url = "https://www.sefaria.org";
-        Intent intent = new Intent(Intent.ACTION_VIEW,Uri.parse(url));
-        startActivity(intent);
+        MyApp.openURLInBrowser(this, url);
     }
 
     public void recentMoreClick(View v){

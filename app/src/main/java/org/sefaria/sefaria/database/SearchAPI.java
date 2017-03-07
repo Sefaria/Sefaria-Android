@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
  * Created by nss on 4/1/16.
  */
 public class SearchAPI {
-    private final static String SEARCH_URL = "http://search.sefaria.org/merged/_search/";
+    private final static String SEARCH_URL = "https://search.sefaria.org/merged/_search/";
 
     private static Set<String> refSet;
 

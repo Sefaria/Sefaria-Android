@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
@@ -171,13 +172,12 @@ public class SepTextActivity extends SuperTextActivity implements AbsListView.On
 
     private void visit(Segment segment){
         try{
-            String url = segment.getURL(true,true);
+            String url = segment.getURL(true);
             if(url.length() <1){
                 Toast.makeText(SepTextActivity.this,"Unable to go to site",Toast.LENGTH_SHORT).show();
                 return;
             }
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-            startActivity(intent);
+            MyApp.openURLInBrowser(this, url);
         }catch (Exception e){
             Log.e("SepTextActivity", e.getMessage());
             Toast.makeText(SepTextActivity.this,"Unable to go to site",Toast.LENGTH_SHORT).show();
@@ -190,17 +190,22 @@ public class SepTextActivity extends SuperTextActivity implements AbsListView.On
         sendIntent.setAction(Intent.ACTION_SEND);
         String str = null;
         try {
-            str = segment.getURL(true,false) + "\n\n";
+            str = segment.getURL(true) + "\n\n";
         } catch (Book.BookNotFoundException e) {
             e.printStackTrace();
         }
         if(str == null)
             str = "";
 
-        str += Html.fromHtml(segment.getText(textLang));
+        String plain_str = str + Html.fromHtml(segment.getText(textLang));
+        String html_str = str + segment.getText(textLang);
 
-        sendIntent.putExtra(Intent.EXTRA_TEXT,str);
-        sendIntent.setType("segment/plain");
+        sendIntent.putExtra(Intent.EXTRA_TEXT, plain_str);
+
+        if(MyApp.validSDKVersion(16)) {
+            sendIntent.putExtra(Intent.EXTRA_HTML_TEXT, html_str);
+        }
+        sendIntent.setType("text/plain");
         startActivity(Intent.createChooser(sendIntent, MyApp.getRString(R.string.send_to)));
     }
 
@@ -224,7 +229,7 @@ public class SepTextActivity extends SuperTextActivity implements AbsListView.On
                 for(Segment subSegment :list){
                     if(url == null) {
                         try{
-                            url = subSegment.getURL(true, false);
+                            url = subSegment.getURL(true);
                         }catch (Exception e){
                             url = "";
                         }

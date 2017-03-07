@@ -4,17 +4,22 @@ import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.Application;
 import android.app.PendingIntent;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.graphics.Point;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Parcelable;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
+import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
 import org.sefaria.sefaria.activities.SepTextActivity;
@@ -24,7 +29,9 @@ import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Database;
 import org.sefaria.sefaria.database.LinkFilter;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by nss on 9/16/15.
@@ -193,6 +200,10 @@ public class MyApp extends Application {
         return color;
     }
 
+    public static boolean validSDKVersion(int requiredVersion){
+        return (Build.VERSION.SDK_INT >= requiredVersion);
+    }
+
     public static String getEmailHeader(){
         return  "App Version: " + BuildConfig.VERSION_NAME + " ("  + BuildConfig.VERSION_CODE + ")" + "\n"
                 + "Online Mode Version: " + Util.convertDBnum(Database.getVersionInDB(true)) + "\n"
@@ -240,10 +251,39 @@ public class MyApp extends Application {
         return intent;
     }
 
+    private static void openWithInstalledAppExceptCurrentApp(final Activity activity, String url) {
+        Intent intent = new Intent();
+        intent.setAction(android.content.Intent.ACTION_VIEW);
+
+        intent.setData(Uri.parse(url));
+        PackageManager packageManager = activity.getPackageManager();
+        List<ResolveInfo> activities = packageManager.queryIntentActivities(intent, 0);
+        ArrayList<Intent> targetIntents = new ArrayList<>();
+        for (ResolveInfo currentInfo : activities) {
+            String packageName = currentInfo.activityInfo.packageName;
+            Log.d("packages", packageName);
+            if (!appPackageName.equals(packageName)) {
+                Intent targetIntent = new Intent(Intent.ACTION_VIEW);
+                targetIntent.setData(Uri.parse(url));
+                targetIntent.setPackage(packageName);
+                targetIntents.add(targetIntent);
+            }
+        }
+        if(targetIntents.size() > 0) {
+            Intent chooserIntent = Intent.createChooser(targetIntents.remove(0), "Open with");
+            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, targetIntents.toArray(new Parcelable[] {}));
+            activity.startActivity(chooserIntent);
+        }
+        else {
+            Toast.makeText(activity, "No app found", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     public static void openURLInBrowser(Activity activity, String url){
-        url = url.replaceFirst("http", "https");
-        Intent intent2 = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-        activity.startActivity(intent2);
+        if (!url.startsWith("https://") && !url.startsWith("http://")){
+            url = "https://" + url;
+        }
+        openWithInstalledAppExceptCurrentApp(activity, url);
     }
 
     public static boolean handleIncomingURL(Activity activity, Intent intent){

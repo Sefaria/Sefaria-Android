@@ -116,7 +116,7 @@ public class Link {//implements Parcelable {
     public static List<Segment> getLinkedTextsFromAPI(Segment orgSegment, LinkFilter linkFilter) throws API.APIException, Book.BookNotFoundException {
         Log.d("API.Link","got starting LinksAPI");
         List<Segment> segments = new ArrayList<>();
-        String place = orgSegment.getURL(false, false);
+        String place = orgSegment.getURL(false);
         String url = API.LINK_URL + place;
         String data = API.getDataFromURL(url);
         Log.d("API.Link","got data");
