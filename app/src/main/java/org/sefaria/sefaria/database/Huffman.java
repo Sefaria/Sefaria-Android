@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import org.sefaria.sefaria.GoogleTracker;
+import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
 
@@ -146,7 +147,7 @@ public class Huffman {
         Log.d("Huffman", "getTree started");
         long startTime= System.currentTimeMillis();
         try {
-            String path = Database.getDbPath() + "/SefariaHuffmanDeflated.txt";
+            String path = Database.getDbPath(MyApp.getContext()) + "/SefariaHuffmanDeflated.txt";
             String deflated = Util.readFile(path);
 
             int size = Database.getDBSetting("huffmanSize",false);

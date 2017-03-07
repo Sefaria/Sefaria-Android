@@ -45,8 +45,13 @@ public class SettingsActivity extends Activity {
     private SefariaTextView deleteBtn;
     private SefariaTextView downloadBtn;
 
+    private SefariaTextView internalBtn;
+    private SefariaTextView sdCardBtn;
+    private LinearLayout dbLocationGroup;
+
     private Util.Lang currMenuLang;
     private Util.Lang currBookLang;
+    private boolean usingSD;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +78,10 @@ public class SettingsActivity extends Activity {
         deleteBtn = (SefariaTextView) findViewById(R.id.delete_library);
         downloadBtn = (SefariaTextView) findViewById(R.id.download_library);
 
+        internalBtn = (SefariaTextView) findViewById(R.id.internal_db_btn);
+        sdCardBtn = (SefariaTextView) findViewById(R.id.sd_card_db_btn);
+        dbLocationGroup = (LinearLayout) findViewById(R.id.db_location_group);
+
         menuEnBtn.setOnClickListener(btnClick);
         menuHeBtn.setOnClickListener(btnClick);
         bookEnBtn.setOnClickListener(btnClick);
@@ -86,6 +95,9 @@ public class SettingsActivity extends Activity {
         downloadBtn.setOnClickListener(downloadClick);
         updateBtn.setOnClickListener(updateClick);
         updateBtn.setOnLongClickListener(longUpdateLibrary);
+
+        internalBtn.setOnClickListener(btnClick);
+        sdCardBtn.setOnClickListener(btnClick);
 
 
     }
@@ -119,8 +131,8 @@ public class SettingsActivity extends Activity {
                 MyApp.getRString(R.string.CANCEL), null, DialogCallable.DialogType.ALERT) {
             @Override
             public void positiveClick() {
-                Database.deleteDatabase();
-                setState(null,null,Settings.getUseAPI());
+                Database.deleteDatabase(SettingsActivity.this);
+                setState(null,null,Settings.getUseAPI(), Database.hasSDCard(SettingsActivity.this), false);
                 setDatabaseInfo();
             }
         });
@@ -193,13 +205,19 @@ public class SettingsActivity extends Activity {
                 case R.id.book_he_btn:
                     currBookLang = Util.Lang.HE;
                     break;
+                case R.id.internal_db_btn:
+                    usingSD = false;
+                    break;
+                case R.id.sd_card_db_btn:
+                    usingSD = true;
+                    break;
             }
 
-            setState(currMenuLang,currBookLang,Settings.getUseAPI());
+            setState(currMenuLang,currBookLang,Settings.getUseAPI(), Database.hasSDCard(SettingsActivity.this), usingSD);
         }
     };
 
-    public void setState(Util.Lang menuLang, Util.Lang bookLang, boolean useAPI) {
+    public void setState(Util.Lang menuLang, Util.Lang bookLang, boolean useAPI, boolean hasSD, boolean usingSD) {
 
         if(menuLang != null)
             currMenuLang = menuLang;
@@ -261,6 +279,21 @@ public class SettingsActivity extends Activity {
             deleteBtn.setVisibility(View.VISIBLE);
             updateBtn.setVisibility(View.VISIBLE);
         }
+
+        if (hasSD && !useAPI) {
+            dbLocationGroup.setVisibility(View.VISIBLE);
+            if (usingSD) {
+                Settings.setUseSDCard(true);
+                sdCardBtn.setBackgroundResource(Util.getDrawable(this, R.attr.text_menu_button_background_right_clicked_drawable));
+                internalBtn.setBackgroundResource(Util.getDrawable(this, R.attr.text_menu_button_background_left_ripple_drawable));
+            } else {
+                Settings.setUseSDCard(false);
+                sdCardBtn.setBackgroundResource(Util.getDrawable(this, R.attr.text_menu_button_background_right_ripple_drawable));
+                internalBtn.setBackgroundResource(Util.getDrawable(this, R.attr.text_menu_button_background_left_clicked_drawable));
+            }
+        } else {
+            dbLocationGroup.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -269,9 +302,9 @@ public class SettingsActivity extends Activity {
         Util.Lang defaultTextLang = Settings.getDefaultTextLang();
         Util.Lang menuLang = Settings.getMenuLang();
         boolean useAPI = Settings.getUseAPI();
+        boolean hasSD = Database.hasSDCard(this);
 
-
-        setState(menuLang,defaultTextLang,useAPI);
+        setState(menuLang,defaultTextLang,useAPI, hasSD, Settings.getUseSDCard());
 
         //fontSize.setText(""+Settings.getDefaultFontSize());
         //fontSize.clearFocus();
@@ -339,7 +372,7 @@ public class SettingsActivity extends Activity {
             Settings.setUseAPI(!Settings.getUseAPI()); //toggle
             Toast.makeText(this,"usingAPI == " + Settings.getUseAPI(),Toast.LENGTH_SHORT).show();
             Database.checkAndSwitchToNeededDB(this);
-            setState(currMenuLang,currBookLang,Settings.getUseAPI());
+            setState(currMenuLang,currBookLang,Settings.getUseAPI(),Database.hasSDCard(this), Settings.getUseSDCard());
         } else {
             numDebugAPIClicks++;
         }

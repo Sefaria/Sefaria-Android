@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
+import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Downloader;
@@ -34,7 +35,8 @@ public class DialogManager2 {
         NO_NEW_UPDATE,UPDATE_STARTED,
         ARE_YOU_SURE_CANCEL,CHECKING_FOR_UPDATE,
         SWITCHING_TO_API,NO_INTERNET,DATA_CONNECTED,
-        HOW_TO_REPORT_CORRECTIONS, NEW_UPDATE_FROM_SILENT_CHECK
+        HOW_TO_REPORT_CORRECTIONS, NEW_UPDATE_FROM_SILENT_CHECK,
+        INSTALL_WHERE
     }
 
     private static Dialog currDialog;
@@ -143,6 +145,23 @@ public class DialogManager2 {
 
                     @Override
                     public void negativeClick() {
+                    }
+                });
+                break;
+            case INSTALL_WHERE:
+                showDialog(activity, new DialogCallable(MyApp.getRString(R.string.INSTALL_WHERE_TITLE),
+                        MyApp.getRString(R.string.INSTALL_WHERE_MESSAGE),MyApp.getRString(R.string.internal_db),
+                        MyApp.getRString(R.string.sd_card_db),null, DialogCallable.DialogType.ALERT) {
+                    @Override
+                    public void positiveClick() {
+                        Settings.setUseSDCard(false);
+                        Downloader.updateLibrary(activity, false);
+                    }
+
+                    @Override
+                    public void negativeClick() {
+                        Settings.setUseSDCard(true);
+                        Downloader.updateLibrary(activity, false);
                     }
                 });
                 break;

@@ -260,7 +260,64 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/db_location_group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="0dp">
+                <org.sefaria.sefaria.layouts.SefariaTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/library_location"
+                    android:textAllCaps="true"
+                    app:isSerif="false"
+                    android:gravity="center"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:textColor="?text_color_soft"
+                    android:textSize="@dimen/settings_subsection_font_size"
+                    app:lang="system"
+                    />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center"
+                    android:layout_gravity="center">
+                    <org.sefaria.sefaria.layouts.SefariaTextView
+                        android:id="@+id/internal_db_btn"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="@dimen/text_menu_button_height"
+                        android:layout_gravity="center_vertical"
+                        android:text="@string/internal_db"
+                        android:textAllCaps="true"
+                        android:textSize="@dimen/settings_button_font_size"
+                        android:textColor="?text_color_soft"
+                        android:gravity="center"
+                        android:background="?text_menu_button_background_left_drawable"
+                        app:lang="system"
+                        />
+                    <org.sefaria.sefaria.layouts.SefariaTextView
+                        android:id="@+id/sd_card_db_btn"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="@dimen/text_menu_button_height"
+                        android:layout_gravity="center_vertical"
+                        android:text="@string/sd_card_db"
+                        android:textAllCaps="true"
+                        android:textSize="@dimen/settings_button_font_size"
+                        android:textColor="?text_color_soft"
+                        android:gravity="center"
+                        app:lang="system"
+                        android:background="?text_menu_button_background_right_drawable" />
 
+
+                </LinearLayout>
+            </LinearLayout>
 
             <org.sefaria.sefaria.layouts.SefariaTextView
                 android:id="@+id/appInfo"

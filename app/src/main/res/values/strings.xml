@@ -62,7 +62,12 @@
     <string name="ARE_YOU_SURE_MESSAGE">Your update would need to be restarted</string>
     <string name="USING_DATA_MESSAGE">You are using mobile data (not WIFI). The library is about 200MB. Do you want to download it anyways?</string>
     <string name="USING_DATA_TITLE">Using mobile data</string>
+    <string name="INSTALL_WHERE_TITLE">Install Location</string>
+    <string name="INSTALL_WHERE_MESSAGE">Where do you want to install the library?</string>
 
+    <string name="library_location">Library Location</string>
+    <string name="internal_db">Phone</string>
+    <string name="sd_card_db">SD Card</string>
     <string name="requires_250">Requires ~250MB of storage on your device</string>
     <string name="save_settings">Save Settings</string>
     <string name="offline_access">Offline Access</string>

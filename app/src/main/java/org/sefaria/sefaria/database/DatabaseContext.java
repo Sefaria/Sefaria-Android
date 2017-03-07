@@ -19,26 +19,19 @@ import java.io.File;
 
 class DatabaseContext extends ContextWrapper {
 
+    private Context context;
     private static final String DEBUG_CONTEXT = "DatabaseContext";
-    private String internalDBPath;
+    private String dbPath;
 
-    public DatabaseContext(Context base, String internalDBPath) {
-        super(base);
-        this.internalDBPath = internalDBPath;
+    public DatabaseContext(Context context, String dbPath) {
+        super(context);
+        this.context = context;
+        this.dbPath = dbPath;
     }
 
     @Override
     public File getDatabasePath(String name)  {
-        String dbfile;
-        if (Settings.getUseSDCard()) {
-            File sdcard = Environment.getExternalStorageDirectory();
-            dbfile = sdcard.getAbsolutePath() + File.separator + "databases" + File.separator + name;
-        } else {
-            dbfile = this.internalDBPath + name + ".db";
-        }
-        if (!dbfile.endsWith(".db")) {
-            dbfile += ".db" ;
-        }
+        String dbfile = this.dbPath + name + ".db";
 
         File result = new File(dbfile);
 

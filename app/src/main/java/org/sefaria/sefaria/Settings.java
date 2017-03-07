@@ -189,7 +189,7 @@ public class Settings {
 
     public static boolean getUseSDCard() {
         SharedPreferences generalSettings = getGeneralSettings();
-        return generalSettings.getBoolean("useSDCard",true);
+        return generalSettings.getBoolean("useSDCard",false);
     }
 
     public static void setUseSDCard(boolean useSDCard) {

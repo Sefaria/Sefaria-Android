@@ -292,8 +292,8 @@ public class UpdateService extends Service {
 
                     myDbHelper.getReadableDatabase();
                     try {
-                        Database.deleteDatabase();
-                        myDbHelper.unzipDatabase(DATABASE_ZIP_DOWNLOAD_LOC, Database.getDbPath(), false);
+                        Database.deleteDatabase(MyApp.getContext());
+                        myDbHelper.unzipDatabase(DATABASE_ZIP_DOWNLOAD_LOC, Database.getDbPath(MyApp.getContext()), false);
 
                         //move index.json file into right location
                         Util.moveFile(Downloader.FULL_DOWNLOAD_PATH, Downloader.INDEX_JSON_NAME, Database.getInternalFolder(), MenuState.jsonIndexFileName);

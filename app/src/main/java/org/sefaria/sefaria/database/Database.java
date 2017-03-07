@@ -1,4 +1,6 @@
 package org.sefaria.sefaria.database;
+import org.sefaria.sefaria.Dialog.DialogCallable;
+import org.sefaria.sefaria.Dialog.DialogManager2;
 import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
@@ -47,7 +49,7 @@ public class Database extends SQLiteOpenHelper{
      * @param context
      */
     public Database(Context context){
-        super(new DatabaseContext(context, getDbPath()), DB_NAME , null, DB_VERSION);
+        super(new DatabaseContext(context, getDbPath(context)), DB_NAME , null, DB_VERSION);
         this.myContext = context;
     }
 
@@ -59,17 +61,52 @@ public class Database extends SQLiteOpenHelper{
      * @param context
      */
     public Database(Context context, int useAPI) {
-        super(new DatabaseContext(context, getDbPath()), API_DB_NAME, null, DB_VERSION);
+        super(new DatabaseContext(context, getDbPath(context)), API_DB_NAME, null, DB_VERSION);
         this.myContext = context;
     }
 
-    static public String getDbPath(){
-        //The Android's default system path of your application database.
-        String DB_PATH = getInternalFolder() + "databases/";
-        Log.d("databasepath", DB_PATH + " mkdirs: " + mkDirs(DB_PATH));
-        File[] files = new File(DB_PATH).listFiles();
-        return DB_PATH;
+    /**
+     *
+     * @param context
+     * @param getNonMainPath - true if you want to get the path associated with !Settings.getUseSDCard(). this effectively returns the other possible db storage path. Note, if the SD card doesn't exist, this will return the internal path anyway
+     * @return
+     */
+    static public String getDbPath(Context context, boolean getNonMainPath) {
+        String dbPath;
+        if (Settings.getUseSDCard() || getNonMainPath) {
+            File sdcard = context.getExternalFilesDir(null);
+            try {
+                dbPath = sdcard.getAbsolutePath() + File.separator;
+            } catch (NullPointerException e) {
+                Toast.makeText(context, "SDCard is Null?", Toast.LENGTH_SHORT).show();
+                Log.d("DbError","SDCARD PRBLEMDSDJKQ!!!");
+                dbPath = getInternalFolder() + "databases/";
+            }
+        } else {
+            //The Android's default system path of your application database.
+            dbPath = getInternalFolder() + "databases/";
+        }
+
+
+        Log.d("databasepath", dbPath + " mkdirs: " + mkDirs(dbPath));
+        //File[] files = new File(DB_PATH).listFiles();
+        return dbPath;
     }
+
+    static public String getDbPath(Context context){
+        return getDbPath(context, false);
+    }
+
+    public class SDCardNotFoundException extends Exception{
+        public SDCardNotFoundException() {
+            super("SD card not found exception");
+        }
+        public SDCardNotFoundException(String message){
+            super(message);
+        }
+        private static final long serialVersionUID = 613L;
+    }
+
     static private boolean mkDirs(String path){
         File folder = new File(path);
         return (folder.mkdirs() ||  folder.isDirectory());
@@ -88,6 +125,8 @@ public class Database extends SQLiteOpenHelper{
                 Settings.setUseAPI(false);
             }
         }
+
+        checkAndSwitchToNeededDB(activity);
 
         Util.deleteNonRecursiveDir(Downloader.FULL_DOWNLOAD_PATH); //remove any old temp downloads
         Cache.clearExpiredCache(); //TODO I suspect this line is taking a lot of time to run. not sure
@@ -137,9 +176,24 @@ public class Database extends SQLiteOpenHelper{
     public static void checkAndSwitchToNeededDB(Activity activity){
         boolean hasInternet = (Downloader.getNetworkStatus() != Downloader.ConnectionType.NONE);
 
-        if(!Database.hasOfflineDB() && !Settings.getUseAPI()){ //There's no DB
+        if (Settings.getUseSDCard() && !hasSDCard(activity)) {
+            //there's an issue with your SD card db. switch to online made
+
+            DialogManager2.showDialog(activity, new DialogCallable("SD Card Error",
+                    "Couldn't find library on SD card. Switching to online mode.",MyApp.getRString(R.string.OK),null,null, DialogCallable.DialogType.ALERT) {
+                @Override
+                public void positiveClick() {
+                    DialogManager2.dismissCurrentDialog();
+                }
+            });
+            //Settings.setUseSDCard(false); actually, probably better to keep this set and then if they reinsert their card, they get their library back
+        } else if (Settings.getUseSDCard() && hasSDCard(activity)) {
+            Settings.setUseAPI(false);
+        } else if(!Database.hasOfflineDB() && !Settings.getUseAPI()){ //There's no DB
             Toast.makeText(activity,MyApp.getRString(R.string.switching_to_api),Toast.LENGTH_LONG).show();
             //DialogManager2.showDialog(activity, DialogManager2.DialogPreset.SWITCHING_TO_API);
+
+
             Settings.setUseAPI(true);
         } else if(Settings.getUseAPI() && !hasInternet && Database.hasOfflineDB()){
             Toast.makeText(activity,MyApp.getRString(R.string.NO_INTERNET_TITLE) + " - " + MyApp.getRString(R.string.switching_to_offline),Toast.LENGTH_SHORT).show();
@@ -208,6 +262,15 @@ public class Database extends SQLiteOpenHelper{
         return regularPath;
     }
 
+    static public boolean hasSDCard(Context context) {
+        File sdcard = context.getExternalFilesDir(null);
+        try {
+            return sdcard.exists();
+        } catch (NullPointerException e) {
+            return false;
+        }
+    }
+
     /**
      * Creates a empty database on the system and rewrites it with your own database.
      * */
@@ -226,11 +289,16 @@ public class Database extends SQLiteOpenHelper{
         //Log.d("db", "the files are the same (T/F)? " + result);
     }
 
-    public static void deleteDatabase() {
-        File oldDB = new File(getDbPath() + DB_NAME + ".db");
-        if (oldDB.exists()) {
-            Log.d("db","deleting");
-            oldDB.delete();
+    public static void deleteDatabase(Context context) {
+        File oldMainDB = new File(getDbPath(context) + DB_NAME + ".db");
+        if (oldMainDB.exists()) {
+            Log.d("db","deleting main db");
+            oldMainDB.delete();
+        }
+        File oldOtherDB = new File(getDbPath(context, true) + DB_NAME + ".db");
+        if (oldOtherDB.exists()) {
+            Log.d("db","deleting other db");
+            oldOtherDB.delete();
         }
         hasOfflineDB = null;
         Settings.setUseAPI(true);
@@ -256,7 +324,7 @@ public class Database extends SQLiteOpenHelper{
                 offlineInstance = new Database(context.getApplicationContext());
                 return offlineInstance;
             }else {
-                Database.createAPIdb();
+                Database.createAPIdb(context);
                 APIInstance = new Database(context.getApplicationContext(), 1);
                 return APIInstance;
             }
@@ -269,12 +337,12 @@ public class Database extends SQLiteOpenHelper{
         return getInstance(null).getReadableDatabase();
     }
 
-    public static boolean checkDataBase(){
+    public static boolean checkDataBase(Context context){
 
         SQLiteDatabase checkDB = null;
 
         try{
-            String myPath = getDbPath() + DB_NAME + ".db";
+            String myPath = getDbPath(context) + DB_NAME + ".db";
             checkDB = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
         }catch(Exception e){
             GoogleTracker.sendException(e, "database doesn't exist");
@@ -286,7 +354,7 @@ public class Database extends SQLiteOpenHelper{
             checkDB.close();
         }
 
-        return checkDB != null ? true : false;
+        return checkDB != null;
     }
 
     /**
@@ -350,12 +418,12 @@ public class Database extends SQLiteOpenHelper{
         return value;
     }
 
-    public static void createAPIdb(){
+    public static void createAPIdb(Context context){
         Log.d("api", "trying to create db");
         Database myDbHelper = new Database(MyApp.getContext());
         myDbHelper.getReadableDatabase();
         try {
-            myDbHelper.unzipDatabase("API_UpdateForSefariaMobileDatabase.zip", Database.getDbPath(),true);
+            myDbHelper.unzipDatabase("API_UpdateForSefariaMobileDatabase.zip", Database.getDbPath(context),true);
         } catch (IOException e) {
             Log.e("api",e.toString());
         }
@@ -414,10 +482,10 @@ public class Database extends SQLiteOpenHelper{
     }
 
 
-    public void openDataBase() throws SQLException{
+    public void openDataBase(Context context) throws SQLException{
 
         //Open the database
-        String myPath = getDbPath() + DB_NAME + ".db";
+        String myPath = getDbPath(context) + DB_NAME + ".db";
         myDataBase = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
     }
 
