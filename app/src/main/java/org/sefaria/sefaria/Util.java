@@ -312,7 +312,7 @@ public class Util {
         return patt.matcher(text).find();
     }
 
-    public static void moveFile(String inputPath, String inputFile, String outputPath, String outputFile) {
+    public static boolean moveFile(String inputPath, String inputFile, String outputPath, String outputFile) {
 
         InputStream in = null;
         OutputStream out = null;
@@ -344,8 +344,10 @@ public class Util {
 
             // delete the original file
             new File(inputPath + inputFile).delete();
+            return true;
         } catch (Exception e) {
             GoogleTracker.sendException(e, "Moving file");
+            return false;
         }
 
 

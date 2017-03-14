@@ -2,8 +2,10 @@ package org.sefaria.sefaria.activities;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -17,14 +19,19 @@ import org.sefaria.sefaria.Dialog.DialogCallable;
 import org.sefaria.sefaria.Dialog.DialogManager2;
 import org.sefaria.sefaria.Dialog.DialogNoahSnackbar;
 import org.sefaria.sefaria.MenuElements.MenuNode;
+import org.sefaria.sefaria.MenuElements.MenuState;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.Database;
 import org.sefaria.sefaria.database.Downloader;
+import org.sefaria.sefaria.database.Huffman;
+import org.sefaria.sefaria.database.UpdateService;
 import org.sefaria.sefaria.layouts.CustomActionbar;
 import org.sefaria.sefaria.layouts.SefariaTextView;
+
+import java.io.IOException;
 
 public class SettingsActivity extends Activity {
 
@@ -166,7 +173,11 @@ public class SettingsActivity extends Activity {
     };
 
     public void updateLibrary(View v){
-        Downloader.updateLibrary(this, false);
+        if (Database.hasSDCard(this)) {
+            DialogManager2.showDialog(this, DialogManager2.DialogPreset.INSTALL_WHERE);
+        } else {
+            Downloader.updateLibrary(this,false);
+        }
     }
 
     public void done(){
@@ -189,6 +200,8 @@ public class SettingsActivity extends Activity {
     View.OnClickListener btnClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            boolean delayStateUpdate = false;
+
             switch (v.getId()) {
                 case R.id.menu_en_btn:
                     currMenuLang = Util.Lang.EN;
@@ -207,13 +220,19 @@ public class SettingsActivity extends Activity {
                     break;
                 case R.id.internal_db_btn:
                     usingSD = false;
+                    delayStateUpdate = true;
+                    toggleMoveDatabase();
                     break;
                 case R.id.sd_card_db_btn:
                     usingSD = true;
+                    delayStateUpdate = true;
+                    toggleMoveDatabase();
                     break;
             }
 
-            setState(currMenuLang,currBookLang,Settings.getUseAPI(), Database.hasSDCard(SettingsActivity.this), usingSD);
+            if (!delayStateUpdate) {
+                setState(currMenuLang, currBookLang, Settings.getUseAPI(), Database.hasSDCard(SettingsActivity.this), usingSD);
+            }
         }
     };
 
@@ -376,6 +395,92 @@ public class SettingsActivity extends Activity {
         } else {
             numDebugAPIClicks++;
         }
+
+    }
+
+    /**
+     * moves db from (phone/sd) to (sd/phone) assuming (phone/sd) is where the db is right now. make sense? good.
+     */
+    private void toggleMoveDatabase() {
+        String fromPath = Database.getDbPath(this);
+        String toPath = Database.getDbPath(this, true);
+
+        Database myDbHelper;
+        myDbHelper = new Database(MyApp.getContext());
+        myDbHelper.closeAll();
+        boolean movedDB = Util.moveFile(fromPath, Database.DB_NAME + ".db", toPath, Database.DB_NAME + ".db");
+        boolean movedAPIDB = Util.moveFile(fromPath, Database.API_DB_NAME + ".db", toPath, Database.API_DB_NAME + ".db");
+        boolean movedIndex = Util.moveFile(fromPath, MenuState.jsonIndexFileName, toPath, MenuState.jsonIndexFileName);
+        boolean movedHuffman = Util.moveFile(fromPath, Huffman.HUFFMAN_FILE_NAME, toPath, Huffman.HUFFMAN_FILE_NAME);
+
+        MyApp.restart();
+
+        //AsyncMoveDatabase amd = new AsyncMoveDatabase(fromPath, toPath, !Settings.getUseSDCard());
+        //amd.execute();
+    }
+
+    private class AsyncMoveDatabase extends AsyncTask<Void,Void,Boolean> {
+
+        private String fromPath, toPath;
+        private boolean toSD;
+
+        private AsyncMoveDatabase (String fromPath, String toPath, boolean toSD) {
+            this.fromPath = fromPath;
+            this.toPath = toPath;
+            this.toSD = toSD;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            String messageFrom = this.toSD ? MyApp.getRString(R.string.internal_db) : MyApp.getRString(R.string.sd_card_db);
+            String messageTo = this.toSD? MyApp.getRString(R.string.sd_card_db) : MyApp.getRString(R.string.internal_db);
+
+            String fullMessage = String.format("%s %s %s %s. %s", MyApp.getRString(R.string.MOVING_DATABASE_MESSAGE1), messageFrom, MyApp.getRString(R.string.MOVING_DATABASE_MESSAGE2), messageTo, MyApp.getRString(R.string.MOVING_DATABASE_MESSAGE3));
+
+
+            UpdateService.lockOrientation(SettingsActivity.this);
+            DialogManager2.showDialog(SettingsActivity.this, new DialogCallable(MyApp.getRString(R.string.MOVING_DATABASE_TITLE),
+                    fullMessage, null,null,null, DialogCallable.DialogType.PROGRESS) {
+            });
+        }
+
+
+        protected Boolean doInBackground(Void... params) {
+            /*Database myDbHelper;
+            myDbHelper = new Database(MyApp.getContext());
+            myDbHelper.getReadableDatabase();
+            myDbHelper.closeAll();*/
+
+            boolean movedDB = Util.moveFile(this.fromPath, Database.DB_NAME + ".db", this.toPath, Database.DB_NAME + ".db");
+            boolean movedAPIDB = Util.moveFile(this.fromPath, Database.API_DB_NAME + ".db", this.toPath, Database.API_DB_NAME + ".db");
+            boolean movedIndex = Util.moveFile(this.fromPath, MenuState.jsonIndexFileName, this.toPath, MenuState.jsonIndexFileName);
+            boolean movedHuffman = Util.moveFile(this.fromPath, Huffman.HUFFMAN_FILE_NAME, this.toPath, Huffman.HUFFMAN_FILE_NAME);
+
+
+            if (!movedDB) {
+                Log.e("badness", "error trying to move db");
+                return false;
+            }
+            return true;
+        }
+
+
+        @Override
+        protected void onPostExecute(Boolean didItWork) {
+            DialogManager2.dismissCurrentDialog();
+            if (didItWork) {
+                setState(currMenuLang, currBookLang, Settings.getUseAPI(), Database.hasSDCard(SettingsActivity.this), usingSD);
+            }
+            Toast.makeText(SettingsActivity.this, "It worked == " + didItWork.toString(), Toast.LENGTH_SHORT).show();
+
+            MyApp.restart();
+        }
+
+
+
+
 
     }
 

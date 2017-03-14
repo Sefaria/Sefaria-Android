@@ -14,6 +14,8 @@ import java.io.IOException;
 
 public class Huffman {
 
+    public static final String HUFFMAN_FILE_NAME = "SefariaHuffmanDeflated.txt";
+
     private static String [] plainTexts;
     private static int [] leftChilds;
     private static int [] rightChilds;
@@ -147,7 +149,7 @@ public class Huffman {
         Log.d("Huffman", "getTree started");
         long startTime= System.currentTimeMillis();
         try {
-            String path = Database.getDbPath(MyApp.getContext()) + "/SefariaHuffmanDeflated.txt";
+            String path = Database.getDbPath(MyApp.getContext()) + File.separator + HUFFMAN_FILE_NAME;
             String deflated = Util.readFile(path);
 
             int size = Database.getDBSetting("huffmanSize",false);

@@ -64,6 +64,10 @@
     <string name="USING_DATA_TITLE">Using mobile data</string>
     <string name="INSTALL_WHERE_TITLE">Install Location</string>
     <string name="INSTALL_WHERE_MESSAGE">Where do you want to install the library?</string>
+    <string name="MOVING_DATABASE_TITLE">Moving Library</string>
+    <string name="MOVING_DATABASE_MESSAGE1">Moving library from</string>
+    <string name="MOVING_DATABASE_MESSAGE2">to</string>
+    <string name="MOVING_DATABASE_MESSAGE3">Please wait.</string>
 
     <string name="library_location">Library Location</string>
     <string name="internal_db">Phone</string>

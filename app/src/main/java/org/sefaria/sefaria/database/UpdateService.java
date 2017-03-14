@@ -296,7 +296,7 @@ public class UpdateService extends Service {
                         myDbHelper.unzipDatabase(DATABASE_ZIP_DOWNLOAD_LOC, Database.getDbPath(MyApp.getContext()), false);
 
                         //move index.json file into right location
-                        Util.moveFile(Downloader.FULL_DOWNLOAD_PATH, Downloader.INDEX_JSON_NAME, Database.getInternalFolder(), MenuState.jsonIndexFileName);
+                        Util.moveFile(Downloader.FULL_DOWNLOAD_PATH, Downloader.INDEX_JSON_NAME, Database.getDbPath(MyApp.getContext()), MenuState.jsonIndexFileName);
 
                         long timeToCompleteUpdate = System.currentTimeMillis() - startedUpdateTime;
                         if(startedUpdateTime != 0 && timeToCompleteUpdate > 0){
@@ -390,7 +390,7 @@ public class UpdateService extends Service {
         ac.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
     }
 
-    private static void restart() {
+    public static void restart() {
         inUpdateStage3 = false;
 
         DialogManager2.dismissCurrentDialog();

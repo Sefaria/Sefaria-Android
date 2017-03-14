@@ -12,6 +12,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.sefaria.sefaria.BilingualNode;
 import org.sefaria.sefaria.GoogleTracker;
+import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.Book;
@@ -68,7 +69,7 @@ public class MenuState implements Parcelable {
         JSONArray jsonRoot;
         if(!Settings.getUseAPI()){
             try {
-                jsonRoot = new JSONArray(Util.readFile(Database.getInternalFolder() + MenuState.jsonIndexFileName));
+                jsonRoot = new JSONArray(Util.readFile(Database.getDbPath(MyApp.getContext()) + MenuState.jsonIndexFileName));
             }catch (Exception e1){
                 e1.printStackTrace();
                 jsonRoot = Util.openJSONArrayFromAssets(jsonIndexFileName);

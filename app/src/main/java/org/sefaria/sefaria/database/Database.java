@@ -75,10 +75,12 @@ public class Database extends SQLiteOpenHelper{
         String dbPath;
         if (Settings.getUseSDCard() || getNonMainPath) {
             File sdcard = context.getExternalFilesDir(null);
+
             try {
-                dbPath = sdcard.getAbsolutePath() + File.separator;
+                Log.d("external",sdcard.getAbsolutePath());
+                dbPath = sdcard.getAbsolutePath() + File.separator; //+ "databases" + File.separator;
             } catch (NullPointerException e) {
-                Toast.makeText(context, "SDCard is Null?", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(context, "SDCard is Null?", Toast.LENGTH_SHORT).show();
                 Log.d("DbError","SDCARD PRBLEMDSDJKQ!!!");
                 dbPath = getInternalFolder() + "databases/";
             }
@@ -145,7 +147,12 @@ public class Database extends SQLiteOpenHelper{
     static public boolean getOfflineDBIfNeeded(Activity activity, boolean evenIfUsingAPI){
         if(!isDownloadingDatabase && (evenIfUsingAPI || !Settings.getUseAPI()) && (!Database.isValidOfflineDB()|| !Database.hasOfflineDB())) {
             Toast.makeText(activity, MyApp.getRString(R.string.starting_download), Toast.LENGTH_SHORT).show();
-            Downloader.updateLibrary(activity,false);
+            if (Database.hasSDCard(activity)) {
+                DialogManager2.showDialog(activity, DialogManager2.DialogPreset.INSTALL_WHERE);
+            } else {
+                Downloader.updateLibrary(activity,false);
+            }
+
             return true;
         }
         return false;
@@ -209,7 +216,8 @@ public class Database extends SQLiteOpenHelper{
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Downloader.updateLibrary(activity, false);
+
+                    Downloader.updateLibrary(activity,false);
                 } else {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
@@ -287,6 +295,13 @@ public class Database extends SQLiteOpenHelper{
         //Log.d("db","now, to decide it once and for all...");
         //boolean result = FileUtils.contentEquals(new File(path + "testReal.db"), new File (path + "test.db"));
         //Log.d("db", "the files are the same (T/F)? " + result);
+    }
+
+    public static void deleteDatabaseFromPath(String path) {
+        File dbfile = new File(path + DB_NAME + ".db");
+        if (dbfile.exists()) {
+            dbfile.delete();
+        }
     }
 
     public static void deleteDatabase(Context context) {
@@ -380,6 +395,45 @@ public class Database extends SQLiteOpenHelper{
 
         // Path to the just created empty db
         String outFileName = path + name;
+
+        //Open the empty db as the output stream
+        OutputStream myOutput = new FileOutputStream(outFileName);
+
+        //transfer bytes from the inputfile to the outputfile
+        byte[] buffer = new byte[1024];
+        int length;
+        while ((length = myInput.read(buffer))>0){
+            myOutput.write(buffer, 0, length);
+        }
+
+        //Close the streams
+        myOutput.flush();
+        myOutput.close();
+        myInput.close();
+
+
+
+    }
+
+    public static void moveFile(String fromPath, String toPath, String fileName) throws IOException{
+        //the following ensures all directories and files that we want will exist
+        // Path to the just created empty db
+        String outFileName = toPath + fileName;
+        File testFile = new File(outFileName);
+        if (!testFile.exists()) {
+            File testParent = new File(toPath);
+            if (!testParent.exists()) {
+                Log.d("yo","creating pars");
+                testParent.mkdirs();
+            }
+            Log.d("yo","creating");
+            testFile.createNewFile();
+        }
+
+        //Open your local db as the input stream
+        InputStream myInput = new FileInputStream(fromPath + fileName);
+
+
 
         //Open the empty db as the output stream
         OutputStream myOutput = new FileOutputStream(outFileName);
@@ -497,6 +551,15 @@ public class Database extends SQLiteOpenHelper{
 
         super.close();
 
+    }
+
+    public void closeAll() {
+        try {
+            getInstance(null).close();
+            this.close();
+        } catch (Exception e) {
+
+        }
     }
 
     @Override

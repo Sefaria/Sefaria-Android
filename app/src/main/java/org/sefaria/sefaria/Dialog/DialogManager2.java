@@ -19,6 +19,7 @@ import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.Book;
+import org.sefaria.sefaria.database.Database;
 import org.sefaria.sefaria.database.Downloader;
 import org.sefaria.sefaria.database.Segment;
 import org.sefaria.sefaria.database.UpdateReceiver;
@@ -62,8 +63,13 @@ public class DialogManager2 {
                         MyApp.getRString(R.string.LATER),null, DialogCallable.DialogType.ALERT) {
                     @Override
                     public void positiveClick() {
-                        Downloader.updateLibrary(activity,false);
                         DialogNoahSnackbar.showDialog(activity, (ViewGroup) activity.findViewById(R.id.dialogNoahSnackbarRoot));
+                        if (Database.hasSDCard(activity)) {
+                            DialogManager2.showDialog(activity, DialogManager2.DialogPreset.INSTALL_WHERE);
+                        } else {
+                            Downloader.updateLibrary(activity,false);
+                        }
+
                     }
 
                     @Override
@@ -140,7 +146,11 @@ public class DialogManager2 {
                         MyApp.getRString(R.string.LATER),null, DialogCallable.DialogType.ALERT) {
                     @Override
                     public void positiveClick() {
-                        Downloader.updateLibrary(activity, false);
+                        if (Database.hasSDCard(activity)) {
+                            DialogManager2.showDialog(activity, DialogManager2.DialogPreset.INSTALL_WHERE);
+                        } else {
+                            Downloader.updateLibrary(activity,false);
+                        }
                     }
 
                     @Override
@@ -151,17 +161,23 @@ public class DialogManager2 {
             case INSTALL_WHERE:
                 showDialog(activity, new DialogCallable(MyApp.getRString(R.string.INSTALL_WHERE_TITLE),
                         MyApp.getRString(R.string.INSTALL_WHERE_MESSAGE),MyApp.getRString(R.string.internal_db),
-                        MyApp.getRString(R.string.sd_card_db),null, DialogCallable.DialogType.ALERT) {
+                        MyApp.getRString(R.string.sd_card_db),MyApp.getRString(R.string.CANCEL), DialogCallable.DialogType.ALERT) {
                     @Override
                     public void positiveClick() {
                         Settings.setUseSDCard(false);
-                        Downloader.updateLibrary(activity, false);
+                        Downloader.updateLibrary(activity,false);
                     }
 
                     @Override
                     public void negativeClick() {
                         Settings.setUseSDCard(true);
-                        Downloader.updateLibrary(activity, false);
+                        Downloader.updateLibrary(activity,false);
+                    }
+
+                    @Override
+                    public void neutralClick() {
+                        UpdateService.unlockOrientation(Downloader.getActivity());
+                        UpdateService.endService();
                     }
                 });
                 break;

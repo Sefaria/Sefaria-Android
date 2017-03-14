@@ -28,6 +28,7 @@ import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import org.sefaria.sefaria.Dialog.DialogManager2;
 import org.sefaria.sefaria.Dialog.DialogNoahSnackbar;
 import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MyApp;
@@ -104,6 +105,9 @@ public class Downloader {
             Toast.makeText(activity,MyApp.getRString(R.string.cant_download_without_storage_perms), Toast.LENGTH_SHORT).show();
             return;
         }
+
+
+
         Downloader.activity = activity;
         Intent intent = new Intent(activity,UpdateReceiver.class);
         intent.putExtra("isPre", true);
@@ -198,6 +202,11 @@ public class Downloader {
 
                     downloadErrorNum = reason;
                 }*/
+                for (int i = 0; i < Downloader.downloadIdList.size(); i++) {
+                    Downloader.manager.remove(Downloader.downloadIdList.get(i));
+                }
+
+
                 Log.e("Downloader",reasonStr);
                 Toast.makeText(context,reasonStr,Toast.LENGTH_LONG).show();
                 UpdateService.handler.sendEmptyMessage(Downloader.UNKNOWN_ERROR);
