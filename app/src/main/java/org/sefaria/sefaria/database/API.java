@@ -110,8 +110,7 @@ public class API {
             readTimeout = READ_TIMEOUT_SHORT;
             connectionTimeout = CONNECT_TIMEOUT_SHORT;
         }
-
-        //urlString = urlString.replace("https", "http");
+        
         try {
             if(jsonString == null) {//!use JSON post
                 URL url = new URL(urlString);
