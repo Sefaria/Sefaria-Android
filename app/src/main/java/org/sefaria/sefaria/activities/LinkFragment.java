@@ -208,13 +208,6 @@ public class LinkFragment extends android.support.v4.app.Fragment {
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(activity,LinearLayoutManager.VERTICAL,false);
 
             List<Segment> linkList = null;
-            try {
-                linkList = Link.getLinkedTexts(segment, linkCount);
-            } catch (API.APIException e) {
-                API.makeAPIErrorToast(activity);
-            } catch (Exception e){
-                e.printStackTrace();
-            }
 
             linkTextAdapter = new LinkTextAdapter(activity,linkList,noLinksTV);
             linkRecycler.setLayoutManager(linearLayoutManager);
@@ -227,6 +220,8 @@ public class LinkFragment extends android.support.v4.app.Fragment {
             lp.setMargins(sideMargin, 0, sideMargin, 0);
             linkRecycler.setLayoutParams(lp);
 
+            AsyncLoadLinks all = new AsyncLoadLinks(linkCount);
+            all.execute();
         }
     }
 
@@ -257,13 +252,11 @@ public class LinkFragment extends android.support.v4.app.Fragment {
                 AsyncLoadLinkFilter alf = new AsyncLoadLinkFilter();
                 alf.execute();
             } else if (currState == State.BOOK || currState == State.CAT) { //change visibilty of links
-                AsyncLoadLinks all = new AsyncLoadLinks();
+                AsyncLoadLinks all = new AsyncLoadLinks(linkTextAdapter.getCurrLinkCount());
                 all.execute();
-            } else { //CAT load new cat links
+            } else { //nothing you come here...
 
             }
-            //if(!segment.isChapter()) Log.d("frag", "UPDATE FRAG TEXT " + segment.levels[0]);
-            linkRecycler.scrollToPosition(0); //reset scroll to top
 
         } else {
             //Log.d("frag", "DONT UPDATE");
@@ -358,6 +351,12 @@ public class LinkFragment extends android.support.v4.app.Fragment {
 
     private class AsyncLoadLinks extends AsyncTask<Void, Void, List<Segment>> {
 
+        private LinkFilter linkFilter;
+
+        public AsyncLoadLinks(LinkFilter linkFilter) {
+            this.linkFilter = linkFilter;
+        }
+
         @Override
         protected void onPreExecute() {
             progressCircle.setVisibility(View.VISIBLE);
@@ -368,7 +367,7 @@ public class LinkFragment extends android.support.v4.app.Fragment {
 
             List<Segment> linkList = new ArrayList<>();
             try {
-                linkList = Link.getLinkedTexts(segment, linkTextAdapter.getCurrLinkCount());
+                linkList = Link.getLinkedTexts(segment, this.linkFilter);
             } catch (API.APIException e) {
                 API.makeAPIErrorToast(activity);
             }catch (Exception e){
@@ -381,6 +380,7 @@ public class LinkFragment extends android.support.v4.app.Fragment {
         protected void onPostExecute(List<Segment> linkList) {
             linkTextAdapter.setItemList(linkList);
             progressCircle.setVisibility(View.GONE);
+            linkRecycler.scrollToPosition(0); //reset scroll to top
         }
     }
 

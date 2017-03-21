@@ -79,6 +79,15 @@ public class API {
         }
     }
 
+    private boolean isRedirect(int status) {
+        if (status != HttpURLConnection.HTTP_OK) {
+            if (status == HttpURLConnection.HTTP_MOVED_TEMP
+                    || status == HttpURLConnection.HTTP_MOVED_PERM
+                    || status == HttpURLConnection.HTTP_SEE_OTHER)
+                return true;
+        }
+        return false;
+    }
 
     //non-static methods
     private String fetchData(String urlString){
@@ -110,6 +119,12 @@ public class API {
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setReadTimeout(readTimeout);
                 conn.setConnectTimeout(connectionTimeout);
+
+                if (isRedirect(conn.getResponseCode())) {
+                    Log.d("API","redirecting to " + conn.getHeaderField("Location"));
+                    return fetchData(conn.getHeaderField("Location"));
+                }
+
                 conn.connect();
                 InputStream stream = conn.getInputStream();
                 data = convertStreamToString(stream);
