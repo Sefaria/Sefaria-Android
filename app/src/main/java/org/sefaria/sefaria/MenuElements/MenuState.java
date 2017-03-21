@@ -35,7 +35,12 @@ public class MenuState implements Parcelable {
     public static final int TAB_GRID_PAGE = 3; //primarily used for talmud
 
     private static final String[] TAB_GRID_PAGE_LIST = {"Talmud"};
-    private static final String[] PAGE_EXCEPTIONS = {"Commentary","Targum"};
+
+    private static final String[] START_SECTION_RIGHT_AWAY = {"Commentary", "Targum"};
+    /**
+     * sections that we don't care how many levels it has left to leaf, but want to display on main page right away
+     */
+
     public static final String jsonIndexFileName = "index.json";
     public static final String searchIndexFileName = "search-filter-index.json";
 
@@ -239,30 +244,38 @@ public class MenuState implements Parcelable {
     //parameters are changed in-place and "returned"
     //TODO currently nonsections are only books. probs want to expand that to anything else
     public void getPageSections(List<BilingualNode> sectionList, List<List<BilingualNode>> subsectionList, List<BilingualNode> sectionlessNodes) {
+        final List<String> START_SECTION_RIGHT_AWAY_LIST = Arrays.asList(START_SECTION_RIGHT_AWAY);
         boolean isHome = currNode.equals(rootNode);
         for (int i = 0; i < currNode.getNumChildren(); i++) {
             MenuNode tempChild = (MenuNode) currNode.getChild(i);
-            //commentary is not shown in the menu
-            //if (tempChild.getTitle(Util.Lang.EN).equals("Commentary")) continue;
-
-
-            List<String> exceptions = Arrays.asList(PAGE_EXCEPTIONS);
 
             int minDepth = tempChild.getMinDepthToLeaf();
-            if ((minDepth >= 1 && minDepth != 2 && !isHome) || exceptions.indexOf(tempChild.getTitle(Util.Lang.EN)) != -1) {
-                //check if any of the children has only one child which is a leaf. in that case, put the leaf in instead of the actual child
-                List<BilingualNode> tempSubsection = new ArrayList<>();
-                for (BilingualNode child : tempChild.getChildren()) {
-                    if (child.getNumChildren() == 1 && child.getChild(0).getNumChildren() == 0) {
-                        MenuNode tempSubChild = (MenuNode) child.getChild(0);
-                        tempSubChild.overridePrettyTitle(true);
-                        tempSubsection.add(tempSubChild);
-                    } else {
-                        tempSubsection.add(child);
+            // with minDepth == 2 (like Mishneh Torah) we want to display it on it's own page b/c
+            // that would look nice. If it's in START_SECTION_RIGHT_AWAY_LIST, then just put it there right away
+            if (minDepth >= 1 && !isHome && (minDepth != 2 || START_SECTION_RIGHT_AWAY_LIST.contains(tempChild.getTitle(Util.Lang.EN)))){
+                if(tempChild.getNumChildren() == 1 && tempChild.getChild(0).getNumChildren() == 0
+                        && tempChild.getChild(0).getTitle(Util.Lang.EN).startsWith(tempChild.getTitle(Util.Lang.EN))) {
+                    //check if any of the children has only one child which is a leaf
+                    // and the leaf starts with the parents' name (so it's just a repeat).
+                    // In that case, put the leaf in instead of the actual child
+                    MenuNode tempSubChild = (MenuNode) tempChild.getChild(0);
+                    tempSubChild.overridePrettyTitle(true);
+                    sectionlessNodes.add(tempSubChild);
+                }else {
+                    //check if any of the children has only one child which is a leaf. in that case, put the leaf in instead of the actual child
+                    List<BilingualNode> tempSubsection = new ArrayList<>();
+                    for (BilingualNode child : tempChild.getChildren()) {
+                        if (child.getNumChildren() == 1 && child.getChild(0).getNumChildren() == 0) {
+                            MenuNode tempSubChild = (MenuNode) child.getChild(0);
+                            tempSubChild.overridePrettyTitle(true);
+                            tempSubsection.add(tempSubChild);
+                        } else {
+                            tempSubsection.add(child);
+                        }
                     }
+                    subsectionList.add(tempSubsection);
+                    sectionList.add(tempChild);
                 }
-                subsectionList.add(tempSubsection);
-                sectionList.add(tempChild);
             } else {
                 sectionlessNodes.add(tempChild);
             }

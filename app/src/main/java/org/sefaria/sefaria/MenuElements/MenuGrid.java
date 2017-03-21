@@ -369,7 +369,7 @@ public class MenuGrid extends LinearLayout {
                     context.startActivity(intent);
                     return true;
                 }else {
-                    SuperTextActivity.startNewTextActivityIntent(context,book,longClick);
+                    SuperTextActivity.startNewTextActivityIntent(context, book, longClick);
                 }
             } catch (Book.BookNotFoundException e) {
                 Toast.makeText(context,MyApp.getRString(R.string.sorry_book_not_found),Toast.LENGTH_SHORT).show();
