@@ -114,7 +114,6 @@ public class API {
         //urlString = urlString.replace("https", "http");
         try {
             if(jsonString == null) {//!use JSON post
-                Log.d("api", "not using jsonString");
                 URL url = new URL(urlString);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setReadTimeout(readTimeout);
@@ -396,7 +395,6 @@ public class API {
 
             data = Cache.getCache(url,jsonString);
             if(data != null && data.length()>0) {
-                Log.d("api", "actually using cache");
                 return data;
             }
         }
@@ -415,7 +413,7 @@ public class API {
         }
 
 
-        Log.d("api","4325 in getDataFromURL: data length: " + data.length() );
+        Log.d("api","in API.getDataFromURL: data length: " + data.length() );
 
         if(api.status != API.STATUS_GOOD){
             Log.e("api","throwing apiexception");
