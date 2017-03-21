@@ -102,8 +102,10 @@ public class API {
             connectionTimeout = CONNECT_TIMEOUT_SHORT;
         }
 
+        //urlString = urlString.replace("https", "http");
         try {
             if(jsonString == null) {//!use JSON post
+                Log.d("api", "not using jsonString");
                 URL url = new URL(urlString);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setReadTimeout(readTimeout);
@@ -376,9 +378,12 @@ public class API {
     public static String getDataFromURL(String url, String jsonString, boolean useCache, TimeoutType timeoutType) throws APIException{
         String data;
         if(useCache){
+
             data = Cache.getCache(url,jsonString);
-            if(data != null && data.length()>0)
+            if(data != null && data.length()>0) {
+                Log.d("api", "actually using cache");
                 return data;
+            }
         }
 
         API api = new API();
@@ -394,7 +399,8 @@ public class API {
             data = api.getData();//waiting for data to be returned from internet
         }
 
-        Log.d("api","in getDataFromURL: data length: " + data.length() );
+
+        Log.d("api","4325 in getDataFromURL: data length: " + data.length() );
 
         if(api.status != API.STATUS_GOOD){
             Log.e("api","throwing apiexception");

@@ -896,7 +896,23 @@ public class SearchingDB {
         return (Database.hasOfflineDB() && CHUNK_SIZE != Database.BAD_SETTING_GET);
     }
 
+    public static String [] createPhrase(String [] queries){
+        String [] queries_phrases = new String[queries.length];
 
+        for(int i = 0; i < queries.length; i++){
+            String phrase = "";
+            for(int j = 0; j < queries.length; j++){
+                if(i != j){
+                    if(phrase.length() > 0){
+                        phrase += " ";
+                    }
+                    phrase += queries[j];
+                }
+            }
+            queries_phrases[i] = phrase;
+        }
+        return queries_phrases;
+    }
 
     public static class AsyncRunTests extends AsyncTask<Void,Void,String> {
 
@@ -911,13 +927,21 @@ public class SearchingDB {
             String [] queries6k = new String[] {"ישב", "נפשו", "ברית"};
             String [] queries55 = new String[] {"מפספס", "אורבי", "מפנהו"};
             String [] queries10 = new String[] {"איפוק", "בשאיני", "קיללו"};
-            String [] querySizes = new String[] {"350k", "6k", "55"};//, "10"}; // {"350k", "6k", "55", "10"};
+            String [] querySizes = new String[] {"350k", "6k", "55", "10"}; // {"350k", "6k", "55", "10"};
+            boolean USE_PHRASE = true;
+            if(USE_PHRASE) {
+                queries350k = createPhrase(queries350k);
+                queries6k = createPhrase(queries6k);
+                queries55 = createPhrase(queries55);
+                queries10 = createPhrase(queries10);
+            }
             List<String []> queryTypes = new ArrayList<>();
-            queryTypes.add(queries350k); queryTypes.add(queries6k);
-            queryTypes.add(queries55); //queryTypes.add(queries10);
+            queryTypes.add(queries350k);
+            queryTypes.add(queries6k);
+            queryTypes.add(queries55); queryTypes.add(queries10);
             StringBuilder testingResults = new StringBuilder();
-            testingResults.append("CHUNK SIZE: " + CHUNK_SIZE + " DB#: " + Database.getVersionInDB(false) + "\n\n");
-            final int RETURN_RESULTS_REG = 100; //6;
+            testingResults.append(" CHUNK SIZE: " + CHUNK_SIZE + " DB#: " + Database.getVersionInDB(false) + " USE_PHRASE: " + USE_PHRASE + "\n\n");
+            final int RETURN_RESULTS_REG = 6; //6;
             final int LARGE_INT = 10000000;
             int[] returnResultAmounts = {RETURN_RESULTS_REG};
             boolean[] usePureNoIndexSearches = {true};
@@ -942,7 +966,7 @@ public class SearchingDB {
                                 long totalTime = System.currentTimeMillis() - startTime;
                                 sumTime += totalTime;
                                 sumResults += results.size();
-                                String timing = " (Q: " + query + ") " +
+                                String timing = " (Q: >>" + query + "<<) " +
                                         " {results: " + results.size() + ". took: "
                                         + totalTime + "ms."
                                         + " blockIndex:" + (searchingDB.currSearchIndex + (searchingDB.usePureSearchEvenHe ? 0 : 1))
