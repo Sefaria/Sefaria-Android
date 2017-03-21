@@ -40,11 +40,11 @@ public class SearchFilterNode extends BilingualNode implements Comparable<Search
             bid = -1;
         }
         if (bid == -1) {
-            menuIndex = MenuState.getRootNode().indexOfTitle(enTitle, Util.Lang.EN);
+            menuIndex = MenuState.getRootNode(MenuState.IndexType.SEARCH).indexOfTitle(enTitle, Util.Lang.EN);
             if (enTitle.contains("Commentary"))
-                menuIndex = MenuState.getRootNode().indexOfTitle(enTitle.split(" ")[0], Util.Lang.EN);
+                menuIndex = MenuState.getRootNode(MenuState.IndexType.SEARCH).indexOfTitle(enTitle.split(" ")[0], Util.Lang.EN);
             else
-                menuIndex = MenuState.getRootNode().indexOfTitle(enTitle, Util.Lang.EN);
+                menuIndex = MenuState.getRootNode(MenuState.IndexType.SEARCH).indexOfTitle(enTitle, Util.Lang.EN);
         }
         //Log.d("yosup","Title " + enTitle + " Bid " + bid);
 
@@ -85,10 +85,10 @@ public class SearchFilterNode extends BilingualNode implements Comparable<Search
             String title = nodeStack.pop().getTitle(Util.Lang.EN);
 
             //change "Tanakh Commentary" to "Commentary/Tanakh"
-            if (isFirst && title.contains("Commentary")) {
+            /*if (isFirst && title.contains("Commentaries")) {
                 String[] titleArray = title.split(" ");
                 title = titleArray[1] + "/" + titleArray[0];
-            }
+            }*/
             filterString += title;
             if (!nodeStack.isEmpty()) filterString += "/";
 
@@ -129,9 +129,9 @@ public class SearchFilterNode extends BilingualNode implements Comparable<Search
             order = -1;
         } else if (order == 0) {
             //probably means these are root-level menu items.
-            if (this.enTitle.contains(another.enTitle) && this.enTitle.contains("Commentary"))
+            if (this.enTitle.contains(another.enTitle) && this.enTitle.contains("Commentaries"))
                 order = 1;
-            else if (another.enTitle.contains(this.enTitle) && another.enTitle.contains("Commentary"))
+            else if (another.enTitle.contains(this.enTitle) && another.enTitle.contains("Commentaries"))
                 order = -1;
             else if (this.menuIndex == -1 && another.menuIndex != -1) { //for those weird cases that aren't books and aren't in the menu
                 order = 1;

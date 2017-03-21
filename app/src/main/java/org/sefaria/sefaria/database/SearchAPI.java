@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
  * Created by nss on 4/1/16.
  */
 public class SearchAPI {
-    private final static String SEARCH_URL = "https://search.sefaria.org/merged/_search/";
+    private final static String SEARCH_URL = "https://search.sefaria.org/merged-c/_search/";
 
     private static Set<String> refSet;
 
@@ -59,13 +59,14 @@ public class SearchAPI {
         } else {
             String clauses = "[";
             for (int i = 0; i < appliedFilters.size(); i++) {
+                String filterSuffix = appliedFilters.get(i).contains("/") ? ".*" : "/.*";
                 String filterString = Util.regexpEscape(appliedFilters.get(i));
 
                 //to account for Commentary and Commentary2...
-                filterString = filterString.replace("Commentary","Commentary.*");
+                //filterString = filterString.replace("Commentary","Commentary.*");
 
                 clauses += "{\"regexp\":{" +
-                        "\"path\":\"" + filterString + ".*\"}}";
+                        "\"path\":\"" + filterString + filterSuffix + "\"}}";
                 if (i != appliedFilters.size()-1) clauses += ",";
             }
             clauses += "]";
@@ -78,8 +79,8 @@ public class SearchAPI {
 
         jsonString += "}";
 
-        Log.d("YOYO",jsonString);
-        Log.d("YOYO","GF = " + getFilters);
+        //Log.d("YOYO",jsonString);
+        //Log.d("YOYO","GF = " + getFilters);
         String result = API.getDataFromURL(SEARCH_URL, jsonString, true, API.TimeoutType.REG);
 
         return getParsedResults(result,getFilters);
@@ -103,7 +104,7 @@ public class SearchAPI {
         if (getFilters) {
             try {
                 allFilters = resultJson.getJSONObject("aggregations").getJSONObject("category").getJSONArray("buckets");
-                Log.d("YOYO","ALLFILETER LEN " + allFilters.length());
+                //Log.d("YOYO","ALLFILETER LEN " + allFilters.length());
             } catch (JSONException e) {
                 e.printStackTrace();
                 return searchResultContainer;

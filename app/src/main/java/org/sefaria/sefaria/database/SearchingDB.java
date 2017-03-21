@@ -944,7 +944,7 @@ public class SearchingDB {
             final int RETURN_RESULTS_REG = 6; //6;
             final int LARGE_INT = 10000000;
             int[] returnResultAmounts = {RETURN_RESULTS_REG};
-            boolean[] usePureNoIndexSearches = {true};
+            boolean[] usePureNoIndexSearches = {false};
             for (boolean usePureNoIndexSearch : usePureNoIndexSearches) {
                 for (int returnResultAmount : returnResultAmounts) {
                     String searchMethod = "[" + (usePureNoIndexSearch ? "NoIndex" : "compressedIndex")

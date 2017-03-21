@@ -119,41 +119,35 @@ public class SearchFilterBox extends LinearLayout{
             root = new SearchFilterNode();
             Map<String, SearchFilterNode> nodeMap = new HashMap<>();
 
-            int yo = 3;
-            if (jsonArray.length() == 0) {
-                yo += 4;
-            }
-
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 String filterPath = jsonObject.getString("key");
 
 
                 String[] filterStringList = filterPath.split("/");
-                String[] filterStringListHe = MenuState.translatePath(filterStringList);
+                String[] filterStringListHe = MenuState.translatePath(MenuState.IndexType.SEARCH, filterStringList); //TODO suspicious
                 String[] fullFilterStringList = getFullFilterStringList(filterStringList);
                 //Log.d("Search", Arrays.toString(filterStringList) + " ==> " + Arrays.toString(filterStringListHe));
                 int count = jsonObject.getInt("doc_count");
 
                 int j = 0;
-                boolean foundCommentary = false;
+                //boolean foundCommentary = false;
 
                 for (String filterString : filterStringList) {
                     String filterStringHe = filterStringListHe[j];
                     String fullFilterString = fullFilterStringList[j];
 
-                    if (foundCommentary) {
+                    /*if (foundCommentary) {
                         j++;
                         foundCommentary = false;
                         continue;
                     }
+
                     if ((filterString.equals("Commentary") || filterString.equals("Commentary2")) && j == 0) {
                         filterString = filterStringList[1] + " Commentary";
                         filterStringList[1] = filterString; //so that it will recognize "tanakh commentary" as the parent in the next iteration
 
-                        /*if (filterStringListHe[1] == null) {
-                            Log.d("Search",Arrays.toString(filterStringList));
-                        }*/
+
                         if (filterStringListHe[1] != null) {
                             filterStringHe = "מפרשי " + filterStringListHe[1];
                             filterStringListHe[1] = filterStringHe;
@@ -166,7 +160,7 @@ public class SearchFilterBox extends LinearLayout{
 
                         fullFilterString = filterString;
                         fullFilterStringList[1] = fullFilterString;
-                    }
+                    }*/
                     SearchFilterNode searchFilterNode;
                     if (nodeMap.containsKey(fullFilterString))
                         searchFilterNode = nodeMap.get(fullFilterString);
@@ -292,6 +286,14 @@ public class SearchFilterBox extends LinearLayout{
         }
     }
 
+    private void openFilterAtPos(int position) {
+        SearchFilterNode node = (SearchFilterNode) filterAdapterMain.getItem(position);
+        filterAdapterSlave.clearAndAdd(node.getLeaves(),isCheckedArraySlave[position]);
+        filterListSlave.setSelection(0);
+        filterAdapterSlave.setMasterPosition(position);
+        filterAdapterMain.notifyDataSetChanged(); //update so that it shows nice little arrow
+    }
+
     OnClickListener filterTitleClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -302,11 +304,7 @@ public class SearchFilterBox extends LinearLayout{
     AdapterView.OnItemClickListener filterListItemClick = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            SearchFilterNode node = (SearchFilterNode) filterAdapterMain.getItem(position);
-            filterAdapterSlave.clearAndAdd(node.getLeaves(),isCheckedArraySlave[position]);
-            filterListSlave.setSelection(0);
-            filterAdapterSlave.setMasterPosition(position);
-            filterAdapterMain.notifyDataSetChanged(); //update so that it shows nice little arrow
+            openFilterAtPos(position);
         }
     };
 
@@ -318,14 +316,18 @@ public class SearchFilterBox extends LinearLayout{
         }
     });*/
 
+
     IndeterminateCheckBox.OnStateChangedListener checkedChangeListener = new IndeterminateCheckBox.OnStateChangedListener() {
         @Override
         public void onStateChanged(IndeterminateCheckBox buttonView, @Nullable Boolean state) {
+
+
             ListViewCheckBox listViewCheckBox = (ListViewCheckBox) buttonView;
             int position = listViewCheckBox.getPosition();
             SearchFilterAdapter searchFilterAdapter = (SearchFilterAdapter) listViewCheckBox.getAdapter();
             searchFilterAdapter.setIsCheckedAtPos(state,position);
 
+            //openFilterAtPos(position);
 
             //if this is the master listview and this checkbox is the one that is controlling the slave listview
             if (searchFilterAdapter.getIsMaster() && state != null) {
@@ -364,6 +366,12 @@ public class SearchFilterBox extends LinearLayout{
         @Override
         public void onClick(View v) {
             searchActivity.runFilteredSearch();
+            ListViewCheckBox listViewCheckBox = (ListViewCheckBox) v;
+            SearchFilterAdapter searchFilterAdapter = (SearchFilterAdapter) listViewCheckBox.getAdapter();
+            int position = listViewCheckBox.getPosition();
+            if (searchFilterAdapter.getIsMaster() && listViewCheckBox.getState()) {
+                openFilterAtPos(position);
+            }
         }
     };
 

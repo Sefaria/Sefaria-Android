@@ -86,7 +86,7 @@ public class LinkMainAdapter extends RecyclerView.Adapter<LinkMainAdapter.LinkHo
         LinkFilter linkCount = itemList.get(position);
 
         Util.Lang lang = Settings.getMenuLang();
-        String bookTitle = linkCount.getSlimmedTitle(book, lang);
+        String bookTitle = linkCount.getGroupTitle(lang);
         holder.tv.setFont(lang,true);
 
         String fadedTextHexColor = String.format("#%06X", (0xFFFFFF & Util.getColor(context,R.attr.text_color_faded)));
