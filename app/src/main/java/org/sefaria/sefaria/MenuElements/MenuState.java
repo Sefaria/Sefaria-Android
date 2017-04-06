@@ -14,6 +14,7 @@ import org.sefaria.sefaria.BilingualNode;
 import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
+import org.sefaria.sefaria.activities.SuperTextActivity;
 import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Database;
 import org.sefaria.sefaria.database.UpdateService;
@@ -37,6 +38,9 @@ public class MenuState implements Parcelable {
     private static final String[] TAB_GRID_PAGE_LIST = {"Talmud"};
 
     private static final String[] START_SECTION_RIGHT_AWAY = {"Commentary", "Targum"};
+
+    private static final String[] PRE_DB_262_DONT_DISPLAY = {"Commentary", "Targum"};
+    private static final int PRE_DB_262_DONT_DISPLAY_NUM = 263;
     /**
      * sections that we don't care how many levels it has left to leaf, but want to display on main page right away
      */
@@ -241,18 +245,45 @@ public class MenuState implements Parcelable {
         return Arrays.asList(TAB_GRID_PAGE_LIST).contains(currNode.getTitle(Util.Lang.EN));
     }
 
-    //parameters are changed in-place and "returned"
+
+    private List<BilingualNode> sectionlessGroup = null;
+    private void addSectionlessNode(MenuNode tempSubChild, List<BilingualNode> sectionList, List<List<BilingualNode>> subsectionList){
+        if(sectionlessGroup == null){
+            sectionlessGroup = new ArrayList<>();
+            sectionList.add(null);
+            subsectionList.add(sectionlessGroup);
+        }
+        sectionlessGroup.add(tempSubChild);
+    }
+
+    public class SectionAndSub{
+        List<BilingualNode> sections = new ArrayList<>();
+        List<List<BilingualNode>> subsections = new ArrayList<>();
+        public SectionAndSub(){
+        }
+    }
+
     //TODO currently nonsections are only books. probs want to expand that to anything else
-    public void getPageSections(List<BilingualNode> sectionList, List<List<BilingualNode>> subsectionList, List<BilingualNode> sectionlessNodes) {
+    public SectionAndSub getPageSections() {
+        SectionAndSub sectionAndSub = new SectionAndSub();
         final List<String> START_SECTION_RIGHT_AWAY_LIST = Arrays.asList(START_SECTION_RIGHT_AWAY);
+        final List<String> PRE_START_SECTION_RIGHT_AWAY_LIST = Arrays.asList(PRE_DB_262_DONT_DISPLAY);
         boolean isHome = currNode.equals(rootNode);
         for (int i = 0; i < currNode.getNumChildren(); i++) {
             MenuNode tempChild = (MenuNode) currNode.getChild(i);
-
+            if(Database.getVersionInDB(false) < PRE_DB_262_DONT_DISPLAY_NUM && PRE_START_SECTION_RIGHT_AWAY_LIST.contains(tempChild.getTitle(Util.Lang.EN))){
+                //don't display these guys
+                continue;
+            }
             int minDepth = tempChild.getMinDepthToLeaf();
             // with minDepth == 2 (like Mishneh Torah) we want to display it on it's own page b/c
             // that would look nice. If it's in START_SECTION_RIGHT_AWAY_LIST, then just put it there right away
-            if (minDepth >= 1 && !isHome && (minDepth != 2 || START_SECTION_RIGHT_AWAY_LIST.contains(tempChild.getTitle(Util.Lang.EN)))){
+            if (minDepth >= 1 && !isHome &&
+                (
+                    minDepth != 2 ||
+                    START_SECTION_RIGHT_AWAY_LIST.contains(tempChild.getTitle(Util.Lang.EN))
+                )
+            ){
                 if(tempChild.getNumChildren() == 1 && tempChild.getChild(0).getNumChildren() == 0
                         && tempChild.getChild(0).getTitle(Util.Lang.EN).startsWith(tempChild.getTitle(Util.Lang.EN))) {
                     //check if any of the children has only one child which is a leaf
@@ -260,7 +291,7 @@ public class MenuState implements Parcelable {
                     // In that case, put the leaf in instead of the actual child
                     MenuNode tempSubChild = (MenuNode) tempChild.getChild(0);
                     tempSubChild.overridePrettyTitle(true);
-                    sectionlessNodes.add(tempSubChild);
+                    addSectionlessNode(tempSubChild, sectionAndSub.sections, sectionAndSub.subsections);
                 }else {
                     //check if any of the children has only one child which is a leaf. in that case, put the leaf in instead of the actual child
                     List<BilingualNode> tempSubsection = new ArrayList<>();
@@ -273,14 +304,15 @@ public class MenuState implements Parcelable {
                             tempSubsection.add(child);
                         }
                     }
-                    subsectionList.add(tempSubsection);
-                    sectionList.add(tempChild);
+                    sectionAndSub.subsections.add(tempSubsection);
+                    sectionAndSub.sections.add(tempChild);
+                    sectionlessGroup = null;
                 }
             } else {
-                sectionlessNodes.add(tempChild);
+                addSectionlessNode(tempChild, sectionAndSub.sections, sectionAndSub.subsections);
             }
         }
-
+        return sectionAndSub;
     }
 
     public Util.Lang getLang() {

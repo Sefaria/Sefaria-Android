@@ -123,7 +123,6 @@ public class MenuGrid extends LinearLayout {
         if (subNodes.size() == 0) return;
 
         if (mainNode != null) {
-            Log.d("MenuGrid",""+isFirst);
             MenuSubtitle ms = new MenuSubtitle(context,mainNode, menuState.getLang(),isFirst);
             menuElementList.add(ms);
             gridRoot.addView(ms);
@@ -142,8 +141,9 @@ public class MenuGrid extends LinearLayout {
                 currNodeIndex++;
             }
             //add 'more' button in the row which was overflowed
-            if (Math.floor(HOME_MENU_OVERFLOW_NUM/numColumns) == i+1 && limitGridSize)
+            if (Math.floor(HOME_MENU_OVERFLOW_NUM/numColumns) == i+1 && limitGridSize) {
                 addMoreButton(ll);
+            }
         }
     }
 
@@ -223,47 +223,55 @@ public class MenuGrid extends LinearLayout {
         return williamDTalumd;
     }
 
+
+    //add a little space
+    private void addLittleSpace(){
+        MenuSubtitle ms = new MenuSubtitle(context, new MenuNode("","",null), Util.Lang.EN, true);
+        menuElementList.add(ms);
+        gridRoot.addView(ms);
+    }
+
+    private void buildPageSections(MenuState menuState1, boolean considerLimitingGridSize){
+        //thing that has (like Prophets) subsections first
+        MenuState.SectionAndSub sectionAndSub = menuState1.getPageSections();
+        boolean wasSectionless = false;
+        for (int i = 0; i < sectionAndSub.sections.size(); i++) {
+            MenuNode sectionsItem = (MenuNode) sectionAndSub.sections.get(i);
+            if(sectionsItem == null){
+                if(!wasSectionless && i != 0){
+                    addLittleSpace();
+                }
+                wasSectionless = true;
+            }else{
+                wasSectionless = false;
+            }
+
+            boolean limitGridSize = considerLimitingGridSize && sectionsItem == null;
+            addSubsection(sectionsItem, sectionAndSub.subsections.get(i), limitGridSize, (i==0));
+        }
+    }
+
     public void buildPage() {
-
-        List<BilingualNode> sections = new ArrayList<>();
-        List<List<BilingualNode>> subsections = new ArrayList<>();
-        List<BilingualNode> nonSections = new ArrayList<>();
-
-        menuState.getPageSections(sections, subsections, nonSections);
         if (menuState.hasTabs()) {
             hasTabs = true;
 
-            addTabsection(nonSections);
+            MenuState.SectionAndSub sectionAndSub = menuState.getPageSections();
+            if(sectionAndSub.sections != null || sectionAndSub.subsections.size() != 1){
+                Log.e("MENU", "We shouldn't be with tabs like this... " + sectionAndSub.sections + "..." + sectionAndSub.subsections.size());
+            }
+            List<BilingualNode> tabSections = sectionAndSub.subsections.get(0);
+            addTabsection(tabSections);
             //default to the first tab in the list
-            menuState = menuState.goForward((MenuNode)nonSections.get(0), null);
+            menuState = menuState.goForward((MenuNode)tabSections.get(0), null);
             MenuButtonTab mbt = menuButtonTabList.get(0);
             mbt.setActive(true);
             setVisablityOfWillaimTalmud(mbt);
 
-            sections = new ArrayList<>();
-            subsections = new ArrayList<>();
-            nonSections = new ArrayList<>();
-            menuState.getPageSections(sections, subsections, nonSections);
-
             williamDTalumd = getWilliamDTalumd(context, 60, 95);
             this.addView(williamDTalumd, 1);
         }
-        //MenuNode otherNode = new MenuNode("Other", "עוד", null, null);
-        //if (sections.size() == 0) otherNode = null;
 
-        //thing that has subsections first (like Shulchan Arukh b/c the rest of Halacha
-        for (int i = 0; i < sections.size(); i++) {
-            addSubsection((MenuNode)sections.get(i),subsections.get(i),false,i==0);
-        }
-
-        if(sections.size()>0){
-            MenuSubtitle ms = new MenuSubtitle(context,new MenuNode("","",null), Util.Lang.EN,false);
-            menuElementList.add(ms);
-
-            gridRoot.addView(ms);
-        }
-
-        addSubsection(null, nonSections, limitGridSize,false);
+        buildPageSections(menuState, limitGridSize);
 
         if (getLang() == Util.Lang.HE) {
             flippedForHe = true;
@@ -348,7 +356,7 @@ public class MenuGrid extends LinearLayout {
         }
     };
 
-    private boolean menuClick(View v,boolean longClick){
+    private boolean menuClick(View v, boolean longClick){
         boolean goToTOC = longClick;
         longClick = false;
         MenuButton mb = (MenuButton) v;
@@ -440,15 +448,7 @@ public class MenuGrid extends LinearLayout {
             menuState = menuState.goForward(mbt.getNode(), null);
 
             menuElementList = new ArrayList<>();
-            List<BilingualNode> sections = new ArrayList<>();
-            List<List<BilingualNode>> subsections = new ArrayList<>();
-            List<BilingualNode> nonSections = new ArrayList<>();
-            menuState.getPageSections(sections, subsections, nonSections);
-
-            for (int i = 0; i < sections.size(); i++) {
-                addSubsection((MenuNode)sections.get(i),subsections.get(i),false,i==0);
-            }
-            addSubsection(null, nonSections, false,false);
+            buildPageSections(menuState, false);
 
             //don't flip tabs b/c they're already flipped
             if (flippedForHe) flipViews(false);

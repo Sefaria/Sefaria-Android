@@ -369,17 +369,19 @@ public class Settings {
     }
 
 
+    //on new apps it will always check for updates
+    final private static String LAST_UPDATE_CHECK_VAR = "lastUpdateCheck" + MyApp.getVersionCode();
     final private static long TIME_TO_RECHECK = 604800000;//7*24*60*60*1000
     public static boolean getIfShouldDoUpdateCheck(){
         SharedPreferences settings = getGeneralSettings();
         long now = System.currentTimeMillis();
-        return (now - settings.getLong("lastUpdateCheck2", 0) > TIME_TO_RECHECK);
+        return (now - settings.getLong(LAST_UPDATE_CHECK_VAR, 0) > TIME_TO_RECHECK);
     }
 
     public static void setLastUpdateCheckToNow(){
         SharedPreferences.Editor editor = getGeneralSettings().edit();
         long time = System.currentTimeMillis();
-        editor.putLong("lastUpdateCheck2", time);
+        editor.putLong(LAST_UPDATE_CHECK_VAR, time);
         editor.apply();
     }
 
