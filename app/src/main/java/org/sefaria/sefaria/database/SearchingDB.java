@@ -82,10 +82,12 @@ public class SearchingDB {
         return bytes;
     }
 
-    private ArrayList<Integer> bytesToNums(byte [] bytes) {
+    private ArrayList<Integer> bytesToNums(byte [] bytes){//{}, int maxNumber){
         ArrayList<Integer> chunkList = new ArrayList<>();
-        int maxBytes = Math.min(returnResultsSize*4,bytes.length);
-        Log.d("searching", "maxBytes:" + maxBytes);
+        int maxNumber = returnResultsSize*200;
+        int maxBytes = bytes.length;
+        maxBytes = Math.min(maxNumber * 4, bytes.length);
+
         byte [] bArray = new byte[4];
         for(int i = 0; i< maxBytes; i+=4){
             for(int j = 0; j < 4; j++){
@@ -178,10 +180,10 @@ public class SearchingDB {
         ArrayList<Integer> list = new ArrayList<>();
         if(query.length() == 0)
             return list;
-        String [] words =  getWords(query, Util.Lang.HE);
+        String [] words = getWords(query, Util.Lang.HE);
         String likeStatement = "_id LIKE ? ";
         String[] testWords;
-        for(int i =0; i< words.length;i++){
+        for(int i =0; i< words.length; i++){
             ArrayList<Integer> unionlist = null;
             if(words[i].charAt(0) == '_'){//you need to also get the chunks for when this first letter is a vav
                 likeStatement = likeStatement + " OR " + likeStatement;
@@ -189,10 +191,11 @@ public class SearchingDB {
             }
             else
                 testWords = new String[] {words[i] };
-            final boolean USE_FULL_INDEX = true;
-            String tableName = "Searching";
+            String tableName;
             if(CHUNK_SIZE == 1){
                 tableName = "SearchingFull";
+            }else{
+                tableName = "Searching";
             }
             Cursor cursor = db.query(tableName, new String[] {"chunks"}, likeStatement,
                     testWords, null, null, null, null);
@@ -204,6 +207,7 @@ public class SearchingDB {
                     if(CHUNK_SIZE != 1){
                         list1 = JHpacketToNums(bytes);
                     }else{
+
                         list1 = bytesToNums(bytes);
                     }
                     if(unionlist == null){
@@ -217,10 +221,15 @@ public class SearchingDB {
             }
             else //the word doesn't exist in the db
                 return list;
+
             if(i == 0)
                 list = unionlist;
             else
                 list = findIntersect(list, unionlist); //only find intersect with previous list
+        }
+        if(CHUNK_SIZE == 1){
+            // since it's full Index, we can get just the first x results and that will be enough
+            ;//list = new ArrayList<>(list.subList(0, Math.min(returnResultsSize, list.size())));
         }
 
         return list;
@@ -940,7 +949,7 @@ public class SearchingDB {
             queryTypes.add(queries6k);
             queryTypes.add(queries55); queryTypes.add(queries10);
             StringBuilder testingResults = new StringBuilder();
-            testingResults.append(" CHUNK SIZE: " + CHUNK_SIZE + " DB#: " + Database.getVersionInDB(false) + " USE_PHRASE: " + USE_PHRASE + "\n\n");
+            testingResults.append(" CHUNK SIZE: " + CHUNK_SIZE + " DB#: " + Database.getVersionInDB(false) + " USE_PHRASE: " + USE_PHRASE + "__DONOT_200_unloadAllInts\n\n");
             final int RETURN_RESULTS_REG = 6; //6;
             final int LARGE_INT = 10000000;
             int[] returnResultAmounts = {RETURN_RESULTS_REG};
