@@ -306,7 +306,7 @@ public class Node{// implements  Parcelable{
     public Book getBook() throws Book.BookNotFoundException {
         if(book != null)
             return book;
-        book = new Book(bid);
+        book = Book.getByBid(bid);
         return book;
     }
     /*
@@ -583,7 +583,7 @@ public class Node{// implements  Parcelable{
 
         if(includeBook) {
             try {
-                path = (new Book(this.bid)).getTitle(lang) + path;
+                path = (Book.getByBid(this.bid)).getTitle(lang) + path;
             } catch (Book.BookNotFoundException e) {
                 e.printStackTrace();
             }
@@ -903,6 +903,7 @@ public class Node{// implements  Parcelable{
                     }
                 } while (cursor.moveToNext());
             }
+            cursor.close();
         }catch(Exception e){
             Log.e("Node", e.toString());
             e.printStackTrace();
@@ -1287,18 +1288,21 @@ public class Node{// implements  Parcelable{
 
         int lastStructNum = -1;
         List<List<Node>> allNodeStructs = new ArrayList<>();
-        if (cursor != null && cursor.moveToFirst()){
-            do {
-                Node node = new Node(cursor);
-                //node.log();
-                if(lastStructNum != node.structNum){
-                    allNodeStructs.add(new ArrayList<Node>());
-                    lastStructNum = node.structNum;
-                    //Log.d("Node", "On structNum" + node.structNum);
-                }
-                allNodeStructs.get(allNodeStructs.size()-1).add(node);
-                //nodes.add(node);
-            } while (cursor.moveToNext());
+        if (cursor != null){
+            if(cursor.moveToFirst()) {
+                do {
+                    Node node = new Node(cursor);
+                    //node.log();
+                    if (lastStructNum != node.structNum) {
+                        allNodeStructs.add(new ArrayList<Node>());
+                        lastStructNum = node.structNum;
+                        //Log.d("Node", "On structNum" + node.structNum);
+                    }
+                    allNodeStructs.get(allNodeStructs.size() - 1).add(node);
+                    //nodes.add(node);
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
         }
 
         /**

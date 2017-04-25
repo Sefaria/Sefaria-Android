@@ -150,13 +150,14 @@ public class Segment implements Parcelable {
             Cursor cursor = db.query(TABLE_TEXTS, null, "_id" + "=?",
                     new String[] { String.valueOf(tid) }, null, null, null, null);
 
-            if (cursor != null && cursor.moveToFirst()){
+            if (cursor.moveToFirst()){
                 getFromCursor(cursor);
             }
             else{
                 this.tid = 0;
                 this.levels = new int [MAX_LEVELS];
             }
+            cursor.close();
         }catch(SQLiteException e){
             if(!e.toString().contains(API.NO_TEXT_MESSAGE)){
                 throw e; //don't know what the problem is so throw it back out
@@ -216,7 +217,7 @@ public class Segment implements Parcelable {
             return str + path;
         }
 
-        Book book = new Book(bid);
+        Book book = Book.getByBid(bid);
         try {
             str.append(book.getTitle(Util.Lang.EN));
             int sectionNum = book.sectionNamesL2B.length - 1;
@@ -241,7 +242,7 @@ public class Segment implements Parcelable {
             return ref;
         Book book = null;
         try {
-            book = new Book(bid);
+            book = Book.getByBid(bid);
         } catch (Book.BookNotFoundException e) {
             return "";
         }
@@ -378,6 +379,7 @@ public class Segment implements Parcelable {
                 segmentList.add(new Segment(cursor));
             } while (cursor.moveToNext());
         }
+        cursor.close();
         return segmentList;
 
     }
@@ -431,6 +433,7 @@ public class Segment implements Parcelable {
                 segmentList.add(new Segment(cursor));
             } while (cursor.moveToNext());
         }
+        cursor.close();
         return segmentList;
     }
 
@@ -486,16 +489,6 @@ public class Segment implements Parcelable {
                     String sql = "select heText from Texts "+
                             " WHERE _id >= " + 0  + " AND _id <" + chunkSize ;
 
-                    // +
-                    //" where (bid = 1 OR bid = 11 OR bid = 12 OR bid = 13 OR bid = 14 OR bid = 51 OR bid = 61 OR bid = 71 OR bid = 81 OR bid = 91 OR bid = 111 OR bid = 2 OR bid = 22 OR bid = 22 OR bid = 23 OR bid = 24 OR bid = 52 OR bid = 62 OR bid = 72 OR bid = 82 OR bid = 92 OR bid = 222 " +
-                    //"OR bid = 3 OR bid = 33 OR bid = 33 OR bid = 33 OR bid = 34 OR bid = 53 OR bid = 63 OR bid = 73 OR bid = 83 OR bid = 93 OR bid = 333 " +
-                    ///"OR bid = 4 OR bid = 44 OR bid = 44 OR bid = 43 OR bid = 44 OR bid = 54 OR bid = 64 OR bid = 74 OR bid = 84 OR bid = 94 OR bid = 444 " +
-                    //"OR bid = 5 OR bid = 55 OR bid = 55 OR bid = 53 OR bid = 54 OR bid = 55 OR bid = 65 OR bid = 75 OR bid = 85 OR bid = 95 OR bid = 555 " +
-                    //"OR bid = 6 OR bid = 66 OR bid = 66 OR bid = 63 OR bid = 64 OR bid = 56 OR bid = 66 OR bid = 76 OR bid = 86 OR bid = 96 OR bid = 666 " +
-                    //"OR bid = 7 OR bid = 77 OR bid = 77 OR bid = 73 OR bid = 74 OR bid = 57 OR bid = 67 OR bid = 77 OR bid = 87 OR bid = 97 OR bid = 777 " +
-                    //"OR bid = 8 OR bid = 88 OR bid = 88 OR bid = 83 OR bid = 84 OR bid = 58 OR bid = 68 OR bid = 78 OR bid = 88 OR bid = 98 OR bid = 888 " +
-                    //")"
-                    ;// AND enText like '%gems%' LIMIT 10";
                     cursor = db.rawQuery(sql, null);
                     // looping through all rows and adding to list
                     int count = 0;
@@ -516,6 +509,7 @@ public class Segment implements Parcelable {
 
                         } while (cursor.moveToNext());
                     }
+                    cursor.close();
                     Log.d("sql_textFind", "end.." + "finished!!! " + foundCount + " ..."  + count);
                     //LOGING:
                     //for(int i = 0; i < segmentList.size(); i++)
@@ -538,41 +532,6 @@ public class Segment implements Parcelable {
         return nonZeroLevel;
     }
 
-
-    /**
-     * //TODO maybe add usingNID to function and generalize it
-     * @param bid
-     * @param levels
-     * @return
-     * @throws API.APIException
-
-    public static ArrayList<Integer> getChaps(int bid, int[] levels) throws API.APIException {
-        Database dbHandler = Database.getInstance();
-        SQLiteDatabase db = dbHandler.getReadableDatabase();
-
-        ArrayList<Integer> chapList = new ArrayList<Integer>();
-
-        int nonZeroLevel = getNonZeroLevel(levels);
-        String sql = "SELECT DISTINCT level" + nonZeroLevel + " FROM " + TABLE_TEXTS + " " + fullWhere(bid, levels,0) + " ORDER BY " + "level" + nonZeroLevel;
-
-        try {
-            Cursor cursor = db.rawQuery(sql, null);
-
-            // looping through all rows and adding to list
-            if (cursor.moveToFirst()) {
-                do {
-                    // Adding  to list
-                    chapList.add(Integer.valueOf((cursor.getInt(0))));
-                } while (cursor.moveToNext());
-            }
-        } catch (Exception e) {
-            chapList = API.getChaps(Book.getTitle(bid), levels);
-
-        }
-
-        return chapList;
-    }
-    */
 
     /**
      *  makes a where statement for getting the texts from a book with a id (as bid) or with segment that have a parentNode with nid of id

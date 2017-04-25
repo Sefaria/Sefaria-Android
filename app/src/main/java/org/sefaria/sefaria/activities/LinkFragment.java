@@ -209,7 +209,7 @@ public class LinkFragment extends android.support.v4.app.Fragment {
 
             List<Segment> linkList = null;
 
-            linkTextAdapter = new LinkTextAdapter(activity,linkList,noLinksTV);
+            linkTextAdapter = new LinkTextAdapter(activity, linkList, noLinksTV);
             linkRecycler.setLayoutManager(linearLayoutManager);
             linkRecycler.setAdapter(linkTextAdapter);
             linkTextAdapter.setCurrLinkCount(linkCount,null);

@@ -541,7 +541,7 @@ public class Settings {
         public static void addRecentText(String bookTitle) {
             Log.d("Recents","starting addRecentText");
             List<String> books = getRecentTexts(0);
-            for (int i = 0; i <books.size() && i<MAX_RECENT_TEXTS ; i++) {
+            for (int i = 0; i < books.size() && i < MAX_RECENT_TEXTS ; i++) {
                 if(books.get(i).equals(bookTitle))
                     books.remove(i);
             }
@@ -561,7 +561,7 @@ public class Settings {
             Set<String> pinnedTextStringSet = getBookmarks();
             try {
 
-                Book book = new Book(segment.bid);
+                Book book = Book.getByBid(segment.bid);
                 Node node = segment.getNodeFromText(book);
                 int textNum = BookSettings.getTextNum(node, segment);
                 String settingStr = node.getMenuBarTitle(book, Util.Lang.EN) + SPLITTER

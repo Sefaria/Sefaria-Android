@@ -122,7 +122,7 @@ public class Link {//implements Parcelable {
         Log.d("API.Link","got data");
         Book book;
         try {
-            book = new Book(orgSegment.bid);
+            book = Book.getByBid(orgSegment.bid);
         } catch (Book.BookNotFoundException e) {
             return segments;
         }
@@ -180,6 +180,7 @@ public class Link {//implements Parcelable {
             return str;
     }
 
+    //TODO NEEDS WORK!!
     private static List<Segment> getLinkedTextsFromDB(Segment segment, LinkFilter linkFilter) {
         SQLiteDatabase db = Database.getDB();
         List<Segment> linkList = new ArrayList<>();
@@ -195,7 +196,11 @@ public class Link {//implements Parcelable {
         String [] args = null;
         if(linkFilter.depth_type == LinkFilter.DEPTH_TYPE.CAT){
             if(linkFilter.enTitle.equals(LinkFilter.COMMENTARY)){
-                sql += " AND B.commentsOn = ? ";
+                if(Database.isNewCommentaryVersion()){
+                    sql += " and B.commentsOnMultiple like '%(?)%'";
+                }else {
+                    sql += " AND B.commentsOn = ? ";
+                }
                 args = new String[] {""+ segment.bid};
             }else{
                 String category;
@@ -203,7 +208,12 @@ public class Link {//implements Parcelable {
                     //the category in the database is simply "Commentary"
                     category = "Commentary";
                     //don't include the commentary that is directly for this book (like "Rashi on Genesis" for "Genesis")
-                    sql += " AND B.commentsOn <> " + segment.bid;
+                    if(Database.isNewCommentaryVersion()){
+                        sql += " and B.commentsOnMultiple not like '%(" + segment.bid + ")%'";
+                    }else {
+                        sql += " AND B.commentsOn <> " + segment.bid;
+                    }
+
                 }else {
                     category = linkFilter.enTitle;
                 }
@@ -220,9 +230,13 @@ public class Link {//implements Parcelable {
             args = new String[]{linkFilter.enTitle};
         }
 
-        sql += " ORDER BY (case when B.commentsOn=" + segment.bid  + " then 0 else 1 end), T.bid";
+        ///more more more
 
-
+        if(Database.isNewCommentaryVersion()){
+            sql += " ORDER BY (case when B.commentsOnMultiple like '%(" + segment.bid + ")%' then 0 else 1 end), T.bid";
+        }else{
+            sql += " ORDER BY (case when B.commentsOn=" + segment.bid  + " then 0 else 1 end), T.bid";
+        }
 
         Cursor cursor = db.rawQuery(sql, args);
         if (cursor.moveToFirst()) {
@@ -231,7 +245,7 @@ public class Link {//implements Parcelable {
                 linkList.add(new Segment(cursor));
             } while (cursor.moveToNext());
         }
-
+        cursor.close();
         //Log.d("getLinksTextsFromDB", "Finished ... linkList.size():" + linkList.size());
         if(linkList.size()!= linkFilter.count && linkList.size() < 7){
             for(LinkFilter lc: linkFilter.getChildren()){
@@ -244,70 +258,7 @@ public class Link {//implements Parcelable {
         return linkList;
     }
 
-
-
-    /**
-     * gets links to a particular level other than the last level
-     * @param segment
-     * @param limit
-     * @param offset
-     * @return
-     */
     /*
-    public static List<Segment> getLinkedChapTexts(Segment segment, int limit, int offset) {
-        List<Segment> texts = new ArrayList<Segment>();
-        Segment dummyChapText = Segment.makeDummyChapText(segment);
-        try{
-            texts = getLinkedChapTextsFromDB(dummyChapText, limit, offset);
-        }catch(SQLiteException e){
-            if(!e.toString().contains(API.NO_TEXT_MESSAGE)){
-                throw e; //don't know what the problem is so throw it back out
-            }
-            texts = API.getChapLinks(dummyChapText,limit,offset);
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-
-        return texts;
-
-    }
-
-
-    private static List<Segment> getLinkedChapTextsFromDB(Segment segment, int limit, int offset) {
-        Database dbHandler = Database.getInstance();
-        SQLiteDatabase db = dbHandler.getReadableDatabase();
-
-        List<Segment> linkList = new ArrayList<Segment>();
-        String whereStatement = makeWhereStatement(segment);
-        String whereStatement2 = makeWhereStatement2(segment);
-
-        String select = "SELECT T2.* FROM " + Segment.TABLE_TEXTS + " T2 WHERE T2._id"
-                + " IN (  SELECT T._id"
-                + " FROM " + TABLE_LINKS +" L, " + Segment.TABLE_TEXTS + " T "
-                + " WHERE " + whereStatement
-                + ")";
-
-        String select2 = "SELECT T4.* FROM " + Segment.TABLE_TEXTS + " T4 WHERE T4._id"
-                + " IN (  SELECT T3._id"
-                + " FROM " + TABLE_LINKS +" L2, " + Segment.TABLE_TEXTS + " T3 "
-                + " WHERE " + whereStatement2
-                + ")";
-
-        String sql = select + " UNION " + select2 //"( " + select + " )";// + " UNION " + "( " + select2 + " )"
-                + "ORDER BY bid"
-                + " LIMIT " + String.valueOf(limit)
-                + " OFFSET " + String.valueOf(offset)
-                ;
-        Cursor cursor = db.rawQuery(sql, null);
-        if (cursor.moveToFirst()) {
-            do {
-                // Adding  to list
-                linkList.add(new Segment(cursor));
-            } while (cursor.moveToNext());
-        }
-        return linkList;
-    }
-
 
     //PARCELABLE------------------------------------------------------------------------
 
