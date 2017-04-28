@@ -361,15 +361,21 @@ public class LinkFilter {
         }
     }
 
+    private static boolean categoryIsCommentary(String [] categories){
+        return (categories.length > 1 && categories[1].equals(COMMENTARY))
+                || (categories.length > 0 && categories[0].equals(COMMENTARY));
+    }
+
     private static LinkFilter getFromLinks_small(Segment segment) throws API.APIException {
         LinkFilter allLinkCounts = makeAllLinkCounts();
 
-        int commentaryAddonAmount = 15;
+        final int commentaryAddonAmount = 15;
         LinkFilter commentaryGroup = getCommentaryOnChap(
                 segment.tid - commentaryAddonAmount,
                 segment.tid + commentaryAddonAmount,
                 segment.bid);//getting all commentaries +-commentaryAddonAmount of the current segment
 
+        LinkFilter quotingCommentaryGroup = new LinkFilter(QUOTING_COMMENTARY, 0, "מפרשים מצטטים", DEPTH_TYPE.CAT, null);
 
         if(segment.getNumLinks() == 0){
             if(commentaryGroup.getChildren().size() > 0)
@@ -410,25 +416,21 @@ public class LinkFilter {
         }
         if (cursor.moveToFirst()) {
             do {
+
                 //Log.d("LinkFilter", ""+ segment.levels[0] + ": " + cursor.getString(4));
                 String [] categories = Util.str2strArray(cursor.getString(4));
                 if(categories.length == 0) continue;
-                if(countGroups == null || !categories[0].equals(lastCategory)){
+                boolean isCommentary = categoryIsCommentary(categories);
+                if(!isCommentary && (countGroups == null || !categories[0].equals(lastCategory))){
                     if(countGroups != null && countGroups.count >0) {
+                        //add the last group
                         allLinkCounts.addChild(countGroups);
                     }
-                    lastCategory = categories[0];
-                    String category,heCategory;
-                    if(categories[0].equals("Commentary")) {
-                        category = QUOTING_COMMENTARY;
-                        heCategory = "מפרשים מצטטים";
-                    } else {
-                        category = categories[0];
-                        heCategory = category;
-                        //the real he titles will be added in sortLinkCountCategories() if it finds match
-                    }
-
-                    countGroups = new LinkFilter(category, 0, heCategory ,DEPTH_TYPE.CAT, null);
+                    //create a new group
+                    String category = categories[0];
+                    lastCategory = category;
+                    //the real heCategory will be added in sortLinkCountCategories() if it finds match
+                    countGroups = new LinkFilter(category, 0, category, DEPTH_TYPE.CAT, null);
                 }
                 String childEnTitle = cursor.getString(0);
                 int childCount = cursor.getInt(1);
@@ -438,24 +440,34 @@ public class LinkFilter {
                     commentsOnMulti = cursor.getString(5); //can be null
                 }
                 if(cursor.getInt(3) == segment.bid ||
-                        (commentsOnMulti != null && commentsOnMulti.contains("(" + segment.bid + ")"))) {//Comments on this book
-                    Log.d("commentary", segment.toString());
+                        (commentsOnMulti != null && commentsOnMulti.contains("(" + segment.bid + ")"))) {
+                    //Comments on this book
                     commentaryGroup.addCommentaryCount(childEnTitle, childCount, childHeTitle, parentBook);
-                }else{ //non commentary book
+                }else{
                     LinkFilter linkCount = new LinkFilter(childEnTitle, childCount, childHeTitle, DEPTH_TYPE.BOOK, null);
-                    countGroups.addChild(linkCount);
+                    if(categoryIsCommentary(categories)) {
+                        //It's not commenting on this book,
+                        // but it's a commentary. So that means it's a quotingCommentary
+                        quotingCommentaryGroup.addChild(linkCount);
+                    }else {
+                        //it's a regular cat group
+                        countGroups.addChild(linkCount);
+                    }
                 }
 
             } while (cursor.moveToNext());
         }
         cursor.close();
-        if(countGroups.count >0)
+        if(countGroups.count >0 && countGroups != quotingCommentaryGroup)
             allLinkCounts.addChild(countGroups);
 
         allLinkCounts = allLinkCounts.sortLinkCountCategories();
 
         if(commentaryGroup.count >0 || commentaryGroup.getChildren().size()>0)
             allLinkCounts.addChild(commentaryGroup,true);
+
+        if(quotingCommentaryGroup.count >0 || quotingCommentaryGroup.getChildren().size() > 0)
+            allLinkCounts.addChild(quotingCommentaryGroup);
 
         //Log.d("LinkFilter", "...finished: " + allLinkCounts.count);
         return allLinkCounts;
