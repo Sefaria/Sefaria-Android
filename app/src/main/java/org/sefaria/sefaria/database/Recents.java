@@ -27,7 +27,7 @@ public class Recents {
             try {
                 Book book = new Book(title);
                 Pair<String, String> pair = Settings.BookSettings.getSavedBookTitle(title);
-                MenuDirectRef menuDirectRef = new MenuDirectRef(context, pair.first, pair.second, null, book, null);
+                MenuDirectRef menuDirectRef = new MenuDirectRef(context, pair.first, pair.second, null, book, null, null);
                 if(setLongClickPinning)
                     menuDirectRef.setLongClickPinning();
                 recents.add(menuDirectRef);

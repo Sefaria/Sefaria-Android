@@ -1,6 +1,7 @@
 package org.sefaria.sefaria.MenuElements;
 
 import android.content.Context;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -25,16 +26,23 @@ public class MenuDirectRef extends LinearLayout{
     private String heTitle;
     private Context context;
     private Book book;
+    private int textNum;
 
     private SefariaTextView tv;
     private View colorBar;
 
-    public MenuDirectRef(Context context, String enTitle, String heTitle, String nodePath, Book book, String colorWording){
+    public MenuDirectRef(Context context, String enTitle, String heTitle, String nodePath, Book book, String colorWording, Integer textNum){
         super(context);
         inflate(context, R.layout.menu_direct_ref_button, this);
 
 
         this.context = context;
+        if(textNum == null){
+            this.textNum = -1;
+        }else {
+            this.textNum = textNum;
+        }
+
         if(enTitle.length()>0)
             this.enTitle = enTitle;
         else
@@ -90,11 +98,15 @@ public class MenuDirectRef extends LinearLayout{
                 if(nodePath == null) {
                     Settings.BookSettings bookSettings = Settings.BookSettings.getSavedBook(book);
                     node = bookSettings.node;
-                }else
-                    node = Node.getNodeFromPathStr(book,nodePath);
+                    textNum = bookSettings.textNum;
+                }else {
+                    node = Node.getNodeFromPathStr(book, nodePath);
+                }
+
             } catch (Exception e) {
                 try {
                     node = book.getTOCroots().get(0).getFirstDescendant(); //true); //tihs was used to check about if it has the segment
+                    textNum = -1;
                 }catch (Exception e2){
                     e2.printStackTrace();
                 }
@@ -109,7 +121,14 @@ public class MenuDirectRef extends LinearLayout{
             GoogleTracker.sendEvent("MenuDirectRef", enTitle);
             //Segment segment = new Segment();
             ;
-            SuperTextActivity.startNewTextActivityIntent(context,book,null,getNode(),false,null,Settings.BookSettings.getSavedBook(book).textNum);
+            SuperTextActivity.startNewTextActivityIntent(context,
+                    book,
+                    null,
+                    getNode(),
+                    false,
+                    null,
+                    textNum
+            );
         }
     };
 
