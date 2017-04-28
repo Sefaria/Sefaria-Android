@@ -290,17 +290,14 @@ public class Settings {
             String stringThatRepsSavedSettings = bookSavedSettings.getString(book.title, "");
             //Log.d("SuperTextAct", "bookSavedSettings:" + stringThatRepsSavedSettings);
             String[] settings = stringThatRepsSavedSettings.split(SETTINGS_SPLITTER);
-            Log.d("Settings", "stringThatRepsSavedSettings:" + stringThatRepsSavedSettings);
+            //Log.d("Settings", "stringThatRepsSavedSettings:" + stringThatRepsSavedSettings);
             String nodePathStr = settings[0];
             int textNum = -1;
             Util.Lang lang = null;
             try {
-                Log.d("Settings0", settings[0]);
-                Log.d("Settings1", settings[1]);
                 textNum = Integer.valueOf(settings[1]);
                 lang = str2Lang(settings[2]);
             }catch (Exception e){
-                e.printStackTrace();
             }
             TOCVersion textVersion = getTextVersion(book);
 
@@ -313,7 +310,7 @@ public class Settings {
                 ;
             }
 
-            BookSettings bookSettings = new BookSettings(node,lang,textNum,textVersion);
+            BookSettings bookSettings = new BookSettings(node, lang, textNum, textVersion);
             return bookSettings;
         }
 
