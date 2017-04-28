@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MenuElements.MenuNode;
@@ -16,6 +17,7 @@ import org.sefaria.sefaria.Util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -24,32 +26,38 @@ public class LinkFilter {
 
     protected String enTitle;
     protected String heTitle;
+    protected String groupEnTitle; //the group titles are mostly for commentaries. e.g. all books of rashi have the group title "Rashi"
+    protected String groupHeTitle;
     protected DEPTH_TYPE depth_type;
     protected int count;
     protected List<LinkFilter> children;
     protected LinkFilter parent = null;
 
     public enum DEPTH_TYPE {
-        ALL,CAT,BOOK,ERR
+        ALL, CAT, BOOK, ERR
+    }
+
+    public LinkFilter(String enTitle, int count, String heTitle, DEPTH_TYPE depth_type, Book parentBook){
+        this(enTitle, count, heTitle, enTitle, heTitle, depth_type);
+        if(parentBook != null) {
+            try {
+                Book linkBook = new Book(this.enTitle);
+                this.groupEnTitle = linkBook.getCleanedCommentaryTitle(Util.Lang.EN, parentBook);
+                this.groupHeTitle = linkBook.getCleanedCommentaryTitle(Util.Lang.HE, parentBook);
+            } catch (Book.BookNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     //category is passed in only if DEPTH_TYPE == DEPTH_TYPE.BOOK
-    public LinkFilter(String enTitle, int count, String heTitle, DEPTH_TYPE depth_type){
+    public LinkFilter(String enTitle, int count, String heTitle, String groupEnTitle, String groupHeTitle, DEPTH_TYPE depth_type){
         this.enTitle = enTitle;
         this.heTitle = heTitle;
+        this.groupEnTitle = groupEnTitle;
+        this.groupHeTitle = groupHeTitle;
         this.count = count;
         this.depth_type = depth_type;
-    }
-
-    /**
-     * This will convert the commentary name to remove the name of the book that it is commenting on.
-     * For example, it will transform "Rashi on Genesis" to "Rashi"
-     * @param book the book that it is commenting on (for example, Genesis)
-     * @param menuLang the lang for the displayed title
-     * @return the name of the commentary without the " on xyzBook" (for example, Rashi)
-     */
-    public String getSlimmedTitle(Book book, Util.Lang menuLang){
-        return Book.removeOnMainBookFromTitle(this.getRealTitle(menuLang),book);
     }
 
     /**
@@ -63,6 +71,13 @@ public class LinkFilter {
             return heTitle;
         else
             return enTitle;
+    }
+
+    public String getGroupTitle(Util.Lang lang){
+        if(lang == Util.Lang.HE)
+            return groupHeTitle;
+        else
+            return groupEnTitle;
     }
 
     public int getCount(){ return count; }
@@ -149,10 +164,11 @@ public class LinkFilter {
     final public static String ALL_CONNECTIONS = "All";
     final public static String COMMENTARY = "Commentary";
     final public static String QUOTING_COMMENTARY = "Quoting Commentary";
+    final public static String TARGUM = "Targum";
 
     private static LinkFilter getCommentaryOnChap(int chapStart, int chapEnd, int bid){
 
-        LinkFilter commentaryGroup = new LinkFilter(COMMENTARY,0, "מפרשים",DEPTH_TYPE.CAT);
+        LinkFilter commentaryGroup = new LinkFilter(COMMENTARY, 0, "מפרשים", DEPTH_TYPE.CAT, null);
 
         SQLiteDatabase db = Database.getDB();
         String sql;
@@ -174,18 +190,29 @@ public class LinkFilter {
         ;
         sql = "SELECT B.title, B.heTitle, B._id FROM Books B, Texts T, (" +
                 "SELECT L.tid2 as tid FROM Links_small L WHERE L.tid1 BETWEEN " + chapStart + " AND " + chapEnd
-                + " UNION SELECT L.tid1 as tid FROM Links_small L WHERE  L.tid2 BETWEEN " + chapStart + " AND " + chapEnd + ") as tmp" +
-                "  WHERE tmp.tid=T._id AND T.bid= B._id AND B.commentsOn=" + bid + " GROUP BY B._id ORDER BY B._id";
+                + " UNION SELECT L.tid1 as tid FROM Links_small L WHERE  L.tid2 BETWEEN " + chapStart + " AND " + chapEnd + ") as tmp";
+        if(Database.isNewCommentaryVersion()){
+            sql += "  WHERE tmp.tid=T._id AND T.bid= B._id AND B.commentsOnMultiple like '%(" + bid + ")%' GROUP BY B._id ORDER BY B._id";
+        }else{
+            sql += "  WHERE tmp.tid=T._id AND T.bid= B._id AND B.commentsOn=" + bid + " GROUP BY B._id ORDER BY B._id";
+        }
+
 
         Cursor cursor = db.rawQuery(sql, null);
-
+        Book parentBook;
+        try {
+            parentBook = Book.getByBid(bid);
+        }catch (Book.BookNotFoundException e){
+            parentBook = null;
+        }
         int count = 0;
         if (cursor.moveToFirst()) {
             do {
-                LinkFilter linkCount = new LinkFilter(cursor.getString(0),0,cursor.getString(1),DEPTH_TYPE.BOOK);
+                LinkFilter linkCount = new LinkFilter(cursor.getString(0), 0, cursor.getString(1), DEPTH_TYPE.BOOK, parentBook);
                 commentaryGroup.addChild(linkCount);
             } while (cursor.moveToNext());
         }
+        cursor.close();
         return commentaryGroup;
     }
 
@@ -194,7 +221,7 @@ public class LinkFilter {
      * @param title
      * @param count
      */
-    private void addCommentaryCount(String title, int count, String heTitle){
+    private void addCommentaryCount(String title, int count, String heTitle, Book parentBook){
         if(count == 0) return; //it's not worth trying to go through the whole list testing a match, if this is just zero anyways. (It should never happen that this is 0).
         for(LinkFilter child: children){
             if(child.enTitle.equals(title)){
@@ -204,7 +231,7 @@ public class LinkFilter {
             }
         }
         Log.e("LinkFilter", "I couldn't find the book, even though the list is supposed to contain all books that comment on the chap... I'll create a new LinkFilter if I hae to");
-        LinkFilter linkCount = new LinkFilter(title,count,heTitle,DEPTH_TYPE.BOOK);
+        LinkFilter linkCount = new LinkFilter(title, count, heTitle, DEPTH_TYPE.BOOK, parentBook);
         this.addChild(linkCount);
     }
 
@@ -230,7 +257,6 @@ public class LinkFilter {
         if(data.length()==0)
             return allLinkCounts;
 
-
         try {
             JSONArray linksArray = new JSONArray(data);
             //Log.d("api", "jsonData:" + jsonData.toString());
@@ -238,16 +264,36 @@ public class LinkFilter {
             Map<String,LinkFilter> booksMap = new HashMap<>();
 
             for(int i=0;i<linksArray.length();i++){
+
+
                 JSONObject jsonLink = linksArray.getJSONObject(i);
                 String enTitle = jsonLink.getString("index_title");
+
                 LinkFilter bookFilter = booksMap.get(enTitle);
                 if(bookFilter != null){
                     bookFilter.addCount();
                     continue;
                 }
                 String category = jsonLink.getString("category");
-                String heTitle = jsonLink.getString("heTitle");
-                LinkFilter linkCount = new LinkFilter(enTitle,1,heTitle,DEPTH_TYPE.BOOK);
+
+                //it seems that some books dont have heTitles
+                String heTitle;
+                try {
+                    heTitle = jsonLink.getString("heTitle");
+                } catch (JSONException e) {
+                    heTitle = enTitle;//continue; //jetison!!!
+                }
+                String enGroupTitle, heGroupTitle;
+                try{
+                    JSONObject groupTitles = jsonLink.getJSONObject("collectiveTitle");
+                    enGroupTitle= groupTitles.getString("en");
+                    heGroupTitle = groupTitles.getString("he");
+                }catch (JSONException e){
+                    enGroupTitle = enTitle;
+                    heGroupTitle = heTitle;
+                }
+
+                LinkFilter linkCount = new LinkFilter(enTitle, 1, heTitle, enGroupTitle, heGroupTitle, DEPTH_TYPE.BOOK);
                 booksMap.put(enTitle,linkCount);
                 String heCategory;
                 LinkFilter groupFilter = null;
@@ -260,12 +306,16 @@ public class LinkFilter {
                 if(groupFilter == null){//didn't find the group already
                     if(category.equals(QUOTING_COMMENTARY)) {
                         heCategory = "מפרשים מצטטים";
+                    } else if (category.equals(COMMENTARY)) {
+                        heCategory = "מפרשים";
+                    } else if (category.equals(TARGUM)) {
+                        heCategory = "תרגום";
                     }
                     else {
                         heCategory = category;
                         //the real he titles will be added in sortLinkCountCategories() if it finds match
                     }
-                    groupFilter = new LinkFilter(category,0,heCategory ,DEPTH_TYPE.CAT);
+                    groupFilter = new LinkFilter(category, 0, heCategory, DEPTH_TYPE.CAT, null);
                     allLinkCounts.addChild(groupFilter);
                 }
 
@@ -283,11 +333,11 @@ public class LinkFilter {
     }
 
     public static LinkFilter makeAllLinkCounts(){
-        return new LinkFilter(ALL_CONNECTIONS, 0, "הכל",DEPTH_TYPE.ALL);
+        return new LinkFilter(ALL_CONNECTIONS, 0, "הכל",DEPTH_TYPE.ALL, null);
     }
 
     public static LinkFilter makeAllLinkCountsError(String shortMessage){
-        return new LinkFilter(shortMessage, 0, shortMessage,DEPTH_TYPE.ERR);
+        return new LinkFilter(shortMessage, 0, shortMessage,DEPTH_TYPE.ERR, null);
     }
 
     public static LinkFilter getLinkFilters(Segment segment){
@@ -311,27 +361,25 @@ public class LinkFilter {
         }
     }
 
+    private static boolean categoryIsCommentary(String [] categories){
+        return (categories.length > 1 && categories[1].equals(COMMENTARY))
+                || (categories.length > 0 && categories[0].equals(COMMENTARY));
+    }
+
     private static LinkFilter getFromLinks_small(Segment segment) throws API.APIException {
-        //Log.d("LinkFilter", segment.levels[0] + " starting...")
-        Log.d("LinkFilter","Segment:" + segment);
         LinkFilter allLinkCounts = makeAllLinkCounts();
 
-        int commentaryAddonAmount = 11;
-        try {
-            Book book = new Book(segment.bid);
-            if(book.categories[0].equals("Talmud")) {
-                commentaryAddonAmount = 100;
-                Log.d("FilterLink","commentaryAddonAmount" + commentaryAddonAmount);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        LinkFilter commentaryGroup = getCommentaryOnChap(segment.tid - commentaryAddonAmount, segment.tid + commentaryAddonAmount, segment.bid);//getting all commentaries +-11 of the current segment
+        final int commentaryAddonAmount = 15;
+        LinkFilter commentaryGroup = getCommentaryOnChap(
+                segment.tid - commentaryAddonAmount,
+                segment.tid + commentaryAddonAmount,
+                segment.bid);//getting all commentaries +-commentaryAddonAmount of the current segment
 
+        LinkFilter quotingCommentaryGroup = new LinkFilter(QUOTING_COMMENTARY, 0, "מפרשים מצטטים", DEPTH_TYPE.CAT, null);
 
         if(segment.getNumLinks() == 0){
-            if(commentaryGroup.getChildren().size()>0)
-                allLinkCounts.addChild(commentaryGroup,true);
+            if(commentaryGroup.getChildren().size() > 0)
+                allLinkCounts.addChild(commentaryGroup, true);
             return allLinkCounts;
         }
 
@@ -347,7 +395,11 @@ public class LinkFilter {
             ;
         }
         */
-        sql = "select B2.title, Count(*) as booksCount, B2.heTitle, B2.commentsOn, B2.categories FROM" +
+        sql = "select B2.title, Count(*) as booksCount, B2.heTitle, B2.commentsOn, B2.categories";
+        if(Database.isNewCommentaryVersion()){
+            sql += ", B2.commentsOnMultiple ";
+        }// else don't need more
+        sql +=  " FROM" +
                 " (SELECT ALL B._id FROM Books B, Links_small L, Texts T WHERE ((L.tid1 = " + segment.tid + " AND L.tid2=T._id AND T.bid= B._id) )" +
                 " UNION ALL SELECT ALL B._id FROM Books B, Links_small L, Texts T WHERE ( (L.tid2 = " + segment.tid + " AND L.tid1=T._id AND T.bid= B._id) )) as tmp, Books B2" +
                 " where tmp._id= B2._id GROUP BY tmp._id ORDER BY B2.categories, B2._id";
@@ -356,41 +408,57 @@ public class LinkFilter {
 
         LinkFilter countGroups = null;
         String lastCategory = "";
+        Book parentBook;
+        try {
+            parentBook = Book.getByBid(segment.bid);
+        }catch (Book.BookNotFoundException e){
+            parentBook = null;
+        }
         if (cursor.moveToFirst()) {
             do {
+
                 //Log.d("LinkFilter", ""+ segment.levels[0] + ": " + cursor.getString(4));
                 String [] categories = Util.str2strArray(cursor.getString(4));
                 if(categories.length == 0) continue;
-                if(countGroups == null || !categories[0].equals(lastCategory)){
+                boolean isCommentary = categoryIsCommentary(categories);
+                if(!isCommentary && (countGroups == null || !categories[0].equals(lastCategory))){
                     if(countGroups != null && countGroups.count >0) {
+                        //add the last group
                         allLinkCounts.addChild(countGroups);
                     }
-                    lastCategory = categories[0];
-                    String category,heCategory;
-                    if(categories[0].equals("Commentary")) {
-                        category = QUOTING_COMMENTARY;
-                        heCategory = "מפרשים מצטטים";
-                    }else {
-                        category = categories[0];
-                        heCategory = category;
-                        //the real he titles will be added in sortLinkCountCategories() if it finds match
-                    }
-
-                    countGroups = new LinkFilter(category,0,heCategory ,DEPTH_TYPE.CAT);
+                    //create a new group
+                    String category = categories[0];
+                    lastCategory = category;
+                    //the real heCategory will be added in sortLinkCountCategories() if it finds match
+                    countGroups = new LinkFilter(category, 0, category, DEPTH_TYPE.CAT, null);
                 }
                 String childEnTitle = cursor.getString(0);
                 int childCount = cursor.getInt(1);
                 String childHeTitle = cursor.getString(2);
-                if(cursor.getInt(3) == segment.bid) {//Comments on this book
-                    commentaryGroup.addCommentaryCount(childEnTitle,childCount,childHeTitle);
-                }else{ //non commentary book
-                    LinkFilter linkCount = new LinkFilter(childEnTitle,childCount,childHeTitle,DEPTH_TYPE.BOOK);
-                    countGroups.addChild(linkCount);
+                String commentsOnMulti = null;
+                if(Database.isNewCommentaryVersion()){
+                    commentsOnMulti = cursor.getString(5); //can be null
+                }
+                if(cursor.getInt(3) == segment.bid ||
+                        (commentsOnMulti != null && commentsOnMulti.contains("(" + segment.bid + ")"))) {
+                    //Comments on this book
+                    commentaryGroup.addCommentaryCount(childEnTitle, childCount, childHeTitle, parentBook);
+                }else{
+                    LinkFilter linkCount = new LinkFilter(childEnTitle, childCount, childHeTitle, DEPTH_TYPE.BOOK, null);
+                    if(categoryIsCommentary(categories)) {
+                        //It's not commenting on this book,
+                        // but it's a commentary. So that means it's a quotingCommentary
+                        quotingCommentaryGroup.addChild(linkCount);
+                    }else {
+                        //it's a regular cat group
+                        countGroups.addChild(linkCount);
+                    }
                 }
 
             } while (cursor.moveToNext());
         }
-        if(countGroups.count >0)
+        cursor.close();
+        if(countGroups.count >0 && countGroups != quotingCommentaryGroup)
             allLinkCounts.addChild(countGroups);
 
         allLinkCounts = allLinkCounts.sortLinkCountCategories();
@@ -398,13 +466,16 @@ public class LinkFilter {
         if(commentaryGroup.count >0 || commentaryGroup.getChildren().size()>0)
             allLinkCounts.addChild(commentaryGroup,true);
 
+        if(quotingCommentaryGroup.count >0 || quotingCommentaryGroup.getChildren().size() > 0)
+            allLinkCounts.addChild(quotingCommentaryGroup);
+
         //Log.d("LinkFilter", "...finished: " + allLinkCounts.count);
         return allLinkCounts;
     }
 
     private LinkFilter sortLinkCountCategories(){
-        LinkFilter newLinkCount = new LinkFilter(enTitle,0,heTitle,depth_type);
-        MenuNode menuNode = MenuState.getRootNode();
+        LinkFilter newLinkCount = new LinkFilter(enTitle, 0, heTitle, depth_type, null);
+        MenuNode menuNode = MenuState.getRootNode(MenuState.IndexType.MAIN);
         String [] titles = menuNode.getChildrenTitles(Util.Lang.EN);
         String [] heTitles = menuNode.getChildrenTitles(Util.Lang.HE);
         for(int i=0;i<titles.length;i++){

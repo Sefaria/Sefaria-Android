@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -26,18 +27,20 @@ public class MenuNode extends BilingualNode {
     private int color;
     private boolean isHomeButton;
 
+
     public MenuNode() {
         super();
     }
 
     public MenuNode(String enTitle, String heTitle, MenuNode parent) {
         super(enTitle,heTitle,parent);
+        // true if you want the full title to be shown, even though a previous category is in it. e.g. Abarbanel on Torah
         this.enPrettyTitle = makePrettyTitle(Util.Lang.EN);
         this.hePrettyTitle = makePrettyTitle(Util.Lang.HE);
 
         //set color
         this.color = MyApp.getCatColor(enTitle);
-        this.isHomeButton = color != -1;
+        this.isHomeButton = color != -1 && (parent == null || parent.equals(MenuState.getRootNode(MenuState.IndexType.MAIN)));
     }
 
     public static final Parcelable.Creator<MenuNode> CREATOR
@@ -54,6 +57,17 @@ public class MenuNode extends BilingualNode {
         super(in);
     }
 
+
+    public void overridePrettyTitle(boolean shouldOverride) {
+        if (shouldOverride) {
+            this.enPrettyTitle = this.enTitle;
+            this.hePrettyTitle = this.heTitle;
+        } else {
+            this.enPrettyTitle = makePrettyTitle(Util.Lang.EN);
+            this.hePrettyTitle = makePrettyTitle(Util.Lang.HE);
+        }
+    }
+
     private String makePrettyTitle(Util.Lang lang) {
         MenuNode tempNode = this;
         boolean foundTitleMatch = false;
@@ -67,10 +81,11 @@ public class MenuNode extends BilingualNode {
             if (lang == Util.Lang.EN) tempTitle = ((MenuNode)tempNode.parent).enTitle;
             else tempTitle = ((MenuNode)tempNode.parent).heTitle;
 
-            Pattern titlePattern = Pattern.compile("\\b" + tempTitle + "( |, )");
-            if (tempTitle.length() > 0 && titlePattern.matcher(currTitle).find()) {
+            Pattern titlePattern = Pattern.compile("\\b" + tempTitle + "( on | על | |, )");
+            Matcher titleMatcher = titlePattern.matcher(currTitle);
+            if (tempTitle.length() > 0 && titleMatcher.find()) {
                 foundTitleMatch = true;
-                currTitle = titlePattern.matcher(currTitle).replaceAll("");
+                currTitle = currTitle.replaceAll(titleMatcher.group(),"");
             } else {
                 tempNode = (MenuNode)tempNode.parent;
             }

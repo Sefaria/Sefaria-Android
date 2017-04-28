@@ -420,7 +420,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
             String place = segment.getLocationString(Util.Lang.EN);
             Book book;
             try {
-                book = new Book(segment.bid);
+                book = Book.getByBid(segment.bid);
             } catch (Book.BookNotFoundException e) {
                 book = null;
             }

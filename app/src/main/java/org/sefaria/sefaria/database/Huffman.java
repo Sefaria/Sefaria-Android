@@ -149,7 +149,7 @@ public class Huffman {
             String path = Database.getDbPath() + "/SefariaHuffmanDeflated.txt";
             String deflated = Util.readFile(path);
 
-            int size = Database.getDBSetting("huffmanSize",false);
+            int size = Database.getDBSetting("huffmanSize", false);
             if(size == Database.BAD_SETTING_GET) {
                 Log.e("Huffman", "BAD_SETTING_GET" + size);
                 size = ((int) Math.ceil(deflated.length() / 2.5));

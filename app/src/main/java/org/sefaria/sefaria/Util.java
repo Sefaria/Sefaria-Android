@@ -162,6 +162,18 @@ public class Util {
         return strArray;
     }
 
+    public static int[] str2intArray(String str) {
+        if(str == null)
+            return new int [] {};
+        final Pattern r = Pattern.compile("(\\[|\\]|\")+"); //matches all [ , ] & "
+        str = r.matcher(str).replaceAll("");
+        String[] strArray = str.split(",");
+        int [] intArray = new int[strArray.length];
+        for(int i=0; i<strArray.length; i++){
+            intArray[i] = Integer.parseInt(strArray[i]);
+        }
+        return intArray;
+    }
 
 
     /**

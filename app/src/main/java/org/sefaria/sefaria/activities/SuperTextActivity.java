@@ -233,9 +233,9 @@ public abstract class SuperTextActivity extends FragmentActivity {
             if (book == null) {
                 try {
                     if (firstLoadedNode != null) {
-                        book = new Book(firstLoadedNode.getBid());
+                        book = Book.getByBid(firstLoadedNode.getBid());
                     } else if (openToSegment != null) {
-                        book = new Book(openToSegment.bid);
+                        book = Book.getByBid(openToSegment.bid);
                     } else {
                         book = new Book(Settings.getLastBook());
                     }

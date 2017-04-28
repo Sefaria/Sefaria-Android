@@ -2,6 +2,7 @@ package org.sefaria.sefaria.database;
 import org.json.JSONArray;
 import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MyApp;
+import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
 
 
@@ -25,7 +26,7 @@ public class Book implements Parcelable {
 
     private List<Book> allCommentaries = null;
     public int bid;
-    public int commentsOn;
+    private int commentsOn;
     private String  [] sectionNames;
     /**
      * Little sections (like verse) to Big (like chap) just like Segment.levels works
@@ -41,6 +42,8 @@ public class Book implements Parcelable {
     public String title;
     public String heTitle;
     public int languages;
+    private String enCollectiveTitle;
+    private String heCollectiveTitle;
 
     private static final int DEFAULT_WHERE_PAGE = 2;
     public Book(){
@@ -50,7 +53,6 @@ public class Book implements Parcelable {
     public Book(Cursor cursor){
         wherePage = DEFAULT_WHERE_PAGE; //this is the default value for it.
         getFromCursor(cursor);
-
     }
 
     public Book(String title) throws BookNotFoundException {
@@ -61,11 +63,6 @@ public class Book implements Parcelable {
     public Book(String title,boolean searchHeAndEnTitles) throws BookNotFoundException {
         wherePage = DEFAULT_WHERE_PAGE;
         get(title,searchHeAndEnTitles);
-    }
-
-    public Book(int bid) throws BookNotFoundException {
-        wherePage = DEFAULT_WHERE_PAGE;
-        get(bid);
     }
 
     private Book(boolean dummy){
@@ -237,6 +234,15 @@ public class Book implements Parcelable {
             for(int i = 0; i<heSectionNamesTemp.length;i++)
                 heSectionNamesL2B[i] = heSectionNamesTemp[heSectionNamesTemp.length - i -1];
             //try: //path // try is needed in case it's an old DB.
+            try{
+                //if it's blank(or null) it will use the reguar title with " on .*" filtered out
+                enCollectiveTitle = cursor.getString(18);
+                heCollectiveTitle = cursor.getString(19);
+                //not doing b/c its not needed for anything and is using a weird
+                // format "[(1),(2),(6),]" so not worth the time trying to parse
+                //commentsOnMultiple = Util.str2intArray(cursor.getString(17));
+            }catch (Exception e){
+            }
 
         }
         catch(Exception e){
@@ -263,32 +269,45 @@ public class Book implements Parcelable {
         Cursor cursor = db.query(TABLE_BOOKS, null, Ktitle + "=?",
                 new String[] { title }, null, null, null, null);
 
-        if (cursor != null && cursor.moveToFirst()){
-            getFromCursor(cursor);
-        }
-        else if(searchHeAndEnTitles){
-            cursor = db.query(TABLE_BOOKS, null, KheTitle + "=?",
-                    new String[] { title }, null, null, null, null);
-            if (cursor != null && cursor.moveToFirst()){
+        try{
+            if (cursor.moveToFirst()){
                 getFromCursor(cursor);
             }
+            else if(searchHeAndEnTitles){
+                cursor.close();
+                cursor = db.query(TABLE_BOOKS, null, KheTitle + "=?",
+                        new String[] { title }, null, null, null, null);
+                if (cursor.moveToFirst()){
+                    getFromCursor(cursor);
+                }
+            }
+            else
+                throw new BookNotFoundException();
+        }finally {
+            cursor.close();
         }
-        else
-            throw new BookNotFoundException();
     }
 
-    public void get(int bid) throws BookNotFoundException {
-        SQLiteDatabase db = Database.getDB();
-        Cursor cursor = db.query(TABLE_BOOKS, null, "_id" + "=?",
-                new String[]{String.valueOf(bid)}, null, null, null, null);
+    private static HashMap<Integer, Book> bid2Book = null;
 
-        if (cursor != null){
-            cursor.moveToFirst();
-            getFromCursor(cursor);
+    public static Book getByBid(int bid) throws BookNotFoundException {
+        if(bid2Book == null) {
+            bid2Book = new HashMap<>();
+            SQLiteDatabase db = Database.getDB();
+            Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_BOOKS, null);
+            if (cursor.moveToFirst()) {
+                do {
+                    Book book = new Book(cursor);
+                    bid2Book.put(book.bid, book);
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
         }
-        else
+        Book book = bid2Book.get(bid);
+        if(book == null)
             throw new BookNotFoundException();
-
+        else
+            return book;
     }
 
 
@@ -302,17 +321,16 @@ public class Book implements Parcelable {
         Cursor cursor = db.query(TABLE_BOOKS, new String[]{"_id"}, Ktitle + "=?",
                 new String[]{title}, null, null, null, null);
         try {
-            if (cursor != null && cursor.moveToFirst()) {
+            if (cursor.moveToFirst()) {
                 int bid = cursor.getInt(0);
-                cursor.close();
                 return bid;
             } else {
-                if (cursor != null) cursor.close();
                 throw new BookNotFoundException();
             }
         } catch (Exception e) {
-            if (cursor != null) cursor.close();
             throw new BookNotFoundException();
+        }finally {
+            cursor.close();
         }
     }
 
@@ -321,21 +339,18 @@ public class Book implements Parcelable {
         Cursor cursor = db.query(TABLE_BOOKS, new String[]{"title"}, "_id=?",
                 new String[]{String.valueOf(bid)}, null, null, null, null);
 
-        if (cursor != null){
-            cursor.moveToFirst();
+        if (cursor.moveToFirst()){
             try{
                 String title = cursor.getString(0);
-                cursor.close();
                 return title;
             }catch(Exception e){
-                if (cursor != null) cursor.close();
                 GoogleTracker.sendException(e, "" + bid);
                 return ""; //I'm having a problem... I assume it means that this book isn't in the database.
+            }finally {
+                cursor.close();
             }
 
         }
-        if (cursor != null) cursor.close();
-
         return "";
     }
 
@@ -353,6 +368,8 @@ public class Book implements Parcelable {
             }catch(Exception e){
                 GoogleTracker.sendException(e, title);
                 return 0; //I'm having a problem... I assume it means that this book isn't in the database.
+            }finally {
+                cursor.close();
             }
 
         }
@@ -402,9 +419,14 @@ public class Book implements Parcelable {
             return allCommentaries;
         SQLiteDatabase db = Database.getDB();
         List<Book> bookList = new ArrayList<>();
-        String selectQuery = "SELECT  * FROM " + TABLE_BOOKS + " WHERE commentsOn = ?";
+        String selectQuery;
+        if(Database.isNewCommentaryVersion()){
+            selectQuery = "SELECT * FROM " + TABLE_BOOKS + " WHERE commentsOnMultiple like '%(" + this.bid + ")%'";
+        }else{
+            selectQuery = "SELECT * FROM " + TABLE_BOOKS + " WHERE commentsOn = " + this.bid;
+        }
 
-        Cursor cursor = db.rawQuery(selectQuery, new String[]{"" + this.bid});
+        Cursor cursor = db.rawQuery(selectQuery, null);
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
@@ -412,7 +434,7 @@ public class Book implements Parcelable {
                 bookList.add(new Book(cursor));
             } while (cursor.moveToNext());
         }
-
+        cursor.close();
 
         allCommentaries = bookList;
         //Log.d("Book", "getAllCommentary returning .size():" + allCommentaries.size());
@@ -422,17 +444,27 @@ public class Book implements Parcelable {
 
     /**
      *
-     * @param commentaryTitle (for example Rashi on Genesis)
      * @param mainBook the book that it is commenting on (for example, Genesis)
      * @return the name of the commentary without the " on xyzBook" (for example, Rashi)
      */
-    public static String removeOnMainBookFromTitle(String commentaryTitle, Book mainBook){
-        return commentaryTitle.replace(" on " + mainBook.title, "").replace(" על " + mainBook.heTitle, "");
+
+    public String getCleanedCommentaryTitle(Util.Lang lang, Book mainBook){
+        if(lang == Util.Lang.HE) {
+            if(heCollectiveTitle == null)
+                return getTitle(Util.Lang.HE).replace(" על " + mainBook.heTitle, "");
+            else
+                return heCollectiveTitle;
+        }else{
+            if(enCollectiveTitle == null)
+                return getTitle(Util.Lang.EN).replace(" on " + mainBook.title, "");
+            else
+                return enCollectiveTitle;
+        }
     }
 
     public static List<Book> getAll() {
         SQLiteDatabase db = Database.getDB();
-        List<Book> bookList = new ArrayList<Book>();
+        List<Book> bookList = new ArrayList<>();
         // Select All Query
         String selectQuery = "SELECT  * FROM " + TABLE_BOOKS;
 
@@ -444,11 +476,7 @@ public class Book implements Parcelable {
                 bookList.add(new Book(cursor));
             } while (cursor.moveToNext());
         }
-
-		/*  //LOGING:
-	    for(int i = 0; i < bookList.size(); i++)
-			bookList.get(i).log();
-		 */
+        cursor.close();
         return bookList;
     }
 
@@ -470,11 +498,7 @@ public class Book implements Parcelable {
                 }
             } while (cursor.moveToNext());
         }
-
-		/*  //LOGING:
-	    for(int i = 0; i < bookList.size(); i++)
-			bookList.get(i).log();
-		 */
+        cursor.close();
         return bookNameList;
     }
 

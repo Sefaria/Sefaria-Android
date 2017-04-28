@@ -28,9 +28,7 @@ public class MenuSubtitle extends MenuElement {
 
         int pad = (int)Util.dpToPixels(25);
         if (isFirst) {
-
             tv.setPadding(0,0,0,pad);
-            Log.d("MenuGrid","HEREE " + tv.getPaddingTop() + node.getPrettyTitle(Util.Lang.EN));
         } else {
             tv.setPadding(0,pad,0,pad);
         }

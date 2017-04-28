@@ -369,17 +369,19 @@ public class Settings {
     }
 
 
+    //on new apps it will always check for updates
+    final private static String LAST_UPDATE_CHECK_VAR = "lastUpdateCheck" + MyApp.getVersionCode();
     final private static long TIME_TO_RECHECK = 604800000;//7*24*60*60*1000
     public static boolean getIfShouldDoUpdateCheck(){
         SharedPreferences settings = getGeneralSettings();
         long now = System.currentTimeMillis();
-        return (now - settings.getLong("lastUpdateCheck2", 0) > TIME_TO_RECHECK);
+        return (now - settings.getLong(LAST_UPDATE_CHECK_VAR, 0) > TIME_TO_RECHECK);
     }
 
     public static void setLastUpdateCheckToNow(){
         SharedPreferences.Editor editor = getGeneralSettings().edit();
         long time = System.currentTimeMillis();
-        editor.putLong("lastUpdateCheck2", time);
+        editor.putLong(LAST_UPDATE_CHECK_VAR, time);
         editor.apply();
     }
 
@@ -539,7 +541,7 @@ public class Settings {
         public static void addRecentText(String bookTitle) {
             Log.d("Recents","starting addRecentText");
             List<String> books = getRecentTexts(0);
-            for (int i = 0; i <books.size() && i<MAX_RECENT_TEXTS ; i++) {
+            for (int i = 0; i < books.size() && i < MAX_RECENT_TEXTS ; i++) {
                 if(books.get(i).equals(bookTitle))
                     books.remove(i);
             }
@@ -559,7 +561,7 @@ public class Settings {
             Set<String> pinnedTextStringSet = getBookmarks();
             try {
 
-                Book book = new Book(segment.bid);
+                Book book = Book.getByBid(segment.bid);
                 Node node = segment.getNodeFromText(book);
                 int textNum = BookSettings.getTextNum(node, segment);
                 String settingStr = node.getMenuBarTitle(book, Util.Lang.EN) + SPLITTER

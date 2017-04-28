@@ -63,7 +63,7 @@ public class HomeFragment extends android.support.v4.app.Fragment {
         //setTheme(Settings.getTheme());
         //setContentView(R.layout.fragment_home);
 
-        menuState = new MenuState();
+        menuState = new MenuState(MenuState.IndexType.MAIN);
 
     }
 

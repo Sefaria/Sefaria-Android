@@ -11,6 +11,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -50,6 +51,7 @@ public class Database extends SQLiteOpenHelper{
         super(context,getDbPath() + DB_NAME + ".db" , null, DB_VERSION);
         this.myContext = context;
     }
+
 
 
 
@@ -110,6 +112,10 @@ public class Database extends SQLiteOpenHelper{
             return true;
         }
         return false;
+    }
+
+    public static boolean isNewCommentaryVersion(){
+        return Database.getVersionInDB(Settings.getUseAPI()) >= 266;
     }
 
     private static Boolean hasOfflineDB;
@@ -344,6 +350,7 @@ public class Database extends SQLiteOpenHelper{
             if (cursor != null && cursor.moveToFirst()) {
                 value = cursor.getInt(1);
             }
+            cursor.close();
         }catch(Exception e){
             ;
         }
@@ -406,10 +413,19 @@ public class Database extends SQLiteOpenHelper{
         zis.close();
     }
 
+    private static Integer [] versionNums = new Integer[] {null, null};
     public static int getVersionInDB(Boolean forAPI){
-        int versionNum = getDBSetting("version",forAPI);
+        if(forAPI == null){
+            forAPI = Settings.getUseAPI();
+        }
+        int index = forAPI ? 1 : 0;
+        if(versionNums[index] != null)
+            return versionNums[index];
+
+        int versionNum = getDBSetting("version", forAPI);
         if(versionNum == BAD_SETTING_GET)
             versionNum = -1;
+        versionNums[index] = versionNum;
         return versionNum;
     }
 

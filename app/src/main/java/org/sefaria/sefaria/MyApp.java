@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
@@ -86,6 +87,7 @@ public class MyApp extends Application {
     public static final String APP_NAME = "Sefaria";//TODO get rid of variable
     public static final int REQUEST_WRITE_STORAGE = 112;
 
+
     public static final int KILL_SWITCH_NUM = -247;
     private static String appPackageName = "org.sefaria.sefaria";
     public static boolean askedForUpgradeThisTime = false;
@@ -102,6 +104,17 @@ public class MyApp extends Application {
         initFonts();
         GoogleTracker googleTracker = new GoogleTracker();
     }
+
+    public static int getVersionCode(){
+        try {
+            PackageInfo pinfo = context.getPackageManager().getPackageInfo(appPackageName, 0);
+            //String versionName = pinfo.versionName;
+            return pinfo.versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            return 0;
+        }
+    }
+
 
     private static void initFonts() {
         monserrat_tf = Typeface.createFromAsset(context.getAssets(), "fonts/Montserrat-Regular.otf");
