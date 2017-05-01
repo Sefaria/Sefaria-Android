@@ -147,14 +147,16 @@ public class DailyLearning {
                     Node node = getParshaFromSefar(book, multiParshas[0]);
                     Settings.BookSettings bookSettings = Settings.BookSettings.getSavedBook(book);
                     Integer textNum = null;
-                    String currSavedPlaceParshaName = bookSettings.node.getParent().getTitle(Util.Lang.EN);
-                    if(currSavedPlaceParshaName.equals(node.getParent().getTitle(Util.Lang.EN))
-                            || (multiParshas.length == 2 && currSavedPlaceParshaName.equals(multiParshas[1]))){
-                        //The saved stop is actually in the same parsha.
-                        // So lets just go to the saved spot in the book
+                    if(bookSettings.node != null) {
+                        String currSavedPlaceParshaName = bookSettings.node.getParent().getTitle(Util.Lang.EN);
+                        if (currSavedPlaceParshaName.equals(node.getParent().getTitle(Util.Lang.EN))
+                                || (multiParshas.length == 2 && currSavedPlaceParshaName.equals(multiParshas[1]))) {
+                            //The saved stop is actually in the same parsha.
+                            // So lets just go to the saved spot in the book
 
-                        node = bookSettings.node;
-                        textNum = bookSettings.textNum;
+                            node = bookSettings.node;
+                            textNum = bookSettings.textNum;
+                        }
                     }
                     String heTitle;
                     if(multiParshas.length == 1){
