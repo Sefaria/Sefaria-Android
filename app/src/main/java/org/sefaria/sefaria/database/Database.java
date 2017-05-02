@@ -35,7 +35,7 @@ public class Database extends SQLiteOpenHelper{
     static int DB_VERSION = 1;
 
 
-    public static boolean isDownloadingDatabase = false; //used for showing "snackbar" on top of actionbar
+    private static boolean isDownloadingDatabase = false; //used for showing "snackbar" on top of actionbar
     private static final int MIN_DB_VERSION = 151;
 
     private SQLiteDatabase myDataBase;
@@ -51,8 +51,6 @@ public class Database extends SQLiteOpenHelper{
         super(context,getDbPath() + DB_NAME + ".db" , null, DB_VERSION);
         this.myContext = context;
     }
-
-
 
 
     /**
@@ -413,13 +411,22 @@ public class Database extends SQLiteOpenHelper{
         zis.close();
     }
 
+    public static void setIsDownloadingDatabase(boolean isDownloading){
+        isDownloadingDatabase = isDownloading;
+        versionNums[0] = null; //only need to change offline version
+    }
+
+    public static boolean getIsDownloadingDatabase(){
+        return isDownloadingDatabase;
+    }
+
     private static Integer [] versionNums = new Integer[] {null, null};
     public static int getVersionInDB(Boolean forAPI){
         if(forAPI == null){
             forAPI = Settings.getUseAPI();
         }
         int index = forAPI ? 1 : 0;
-        if(versionNums[index] != null)
+        if(versionNums[index] != null && !isDownloadingDatabase)
             return versionNums[index];
 
         int versionNum = getDBSetting("version", forAPI);
