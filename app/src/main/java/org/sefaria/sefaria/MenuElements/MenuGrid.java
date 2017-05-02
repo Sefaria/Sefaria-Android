@@ -17,7 +17,10 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.google.android.gms.analytics.GoogleAnalytics;
+
 import org.sefaria.sefaria.BilingualNode;
+import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Settings;
@@ -262,7 +265,13 @@ public class MenuGrid extends LinearLayout {
             List<BilingualNode> tabSections = sectionAndSub.subsections.get(0);
             addTabsection(tabSections);
             //default to the first tab in the list
-            menuState = menuState.goForward((MenuNode)tabSections.get(0), null);
+            try {
+                menuState = menuState.goForward((MenuNode)tabSections.get(0), null);
+            } catch (Book.BookNotFoundException e) {
+                //This shouldn't happen here
+                GoogleTracker.sendException(e, "MenuGrid no tab");
+                Toast.makeText(context, "Unable to find content. Please  contact Sefaria team. ", Toast.LENGTH_SHORT).show();
+            }
             MenuButtonTab mbt = menuButtonTabList.get(0);
             mbt.setActive(true);
             setVisablityOfWillaimTalmud(mbt);
@@ -360,7 +369,14 @@ public class MenuGrid extends LinearLayout {
         boolean goToTOC = longClick;
         longClick = false;
         MenuButton mb = (MenuButton) v;
-        MenuState newMenuState = menuState.goForward(mb.getNode(), mb.getSectionNode());
+        MenuState newMenuState;
+        try{
+             newMenuState = menuState.goForward(mb.getNode(), mb.getSectionNode());
+        }catch (Book.BookNotFoundException e){
+            Toast.makeText(context,MyApp.getRString(R.string.sorry_book_not_found),Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
         Intent intent;
         if (mb.isBook()) {
             Book book = null;
@@ -445,7 +461,13 @@ public class MenuGrid extends LinearLayout {
 
             gridRoot.removeAllViews();
             menuState = menuState.goBack(false, false);
-            menuState = menuState.goForward(mbt.getNode(), null);
+            try {
+                menuState = menuState.goForward(mbt.getNode(), null);
+            } catch (Book.BookNotFoundException e) {
+                //This shouldn't happen here
+                GoogleTracker.sendException(e, "MenuGrid no tab");
+                Toast.makeText(context, "Unable to find content. Please  contact Sefaria team. ", Toast.LENGTH_SHORT).show();
+            }
 
             menuElementList = new ArrayList<>();
             buildPageSections(menuState, false);

@@ -401,7 +401,7 @@ public class UpdateService extends Service {
     }
 
     public static void endService() {
-        Database.isDownloadingDatabase = false;
+        Database.setIsDownloadingDatabase(false);
 
         try {
             DialogNoahSnackbar.dismissCurrentDialog();

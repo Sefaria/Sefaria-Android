@@ -196,7 +196,7 @@ public class MenuState implements Parcelable {
 
     //optional parameter 'sectionNode' is used when user clicks on button in a section
     //technically, goForward needs to be run twice, once for the section and once for the button
-    public MenuState goForward(MenuNode node, MenuNode sectionNode) {
+    public MenuState goForward(MenuNode node, MenuNode sectionNode) throws Book.BookNotFoundException {
 
         MenuNode tempNode;
         if (sectionNode != null) tempNode = sectionNode;
@@ -208,7 +208,13 @@ public class MenuState implements Parcelable {
         MenuNode realNode;
         if (ind == -1) {
             tempChildren = tempChildren.get(0).getChildren();
+
             ind = tempChildren.indexOf(tempNode);
+            if(ind == -1){
+                // then we  don't have the next level at all
+                // (probably means we don't have the book)
+                throw new Book.BookNotFoundException();
+            }
             realNode = (MenuNode) tempChildren.get(ind);
         } else {
             realNode = (MenuNode) tempChildren.get(ind);
@@ -367,7 +373,12 @@ public class MenuState implements Parcelable {
         for (int i = 1; i < tempPath.size(); i++) {
             MenuNode daNode = tempPath.get(i);
             //Log.d("menu","REBUILT NODE: " + daNode);
-            tempMenuState = tempMenuState.goForward(daNode, null);
+            try {
+                tempMenuState = tempMenuState.goForward(daNode, null);
+            } catch (Book.BookNotFoundException e) {
+                Log.e("MenuState", "lets hope this doesn't happen");
+                e.printStackTrace();
+            }
         }
         this.currPath = tempMenuState.currPath;
         this.currNode = tempMenuState.currNode;

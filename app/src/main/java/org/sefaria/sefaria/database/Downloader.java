@@ -89,7 +89,7 @@ public class Downloader {
 
 
     public static void updateLibrary(Activity activity, boolean evenOverwriteOldDB) {
-        if(Database.isDownloadingDatabase == true){
+        if(Database.getIsDownloadingDatabase()){
             Toast.makeText(activity, MyApp.getRString(R.string.still_downloading_library), Toast.LENGTH_SHORT).show();
             return;
         }
@@ -113,7 +113,7 @@ public class Downloader {
         MyApp.setContext(activity);
         activity.sendBroadcast(intent);
         //DialogManager2.showDialog(activity, DialogManager2.DialogPreset.CHECKING_FOR_UPDATE);
-        Database.isDownloadingDatabase = true;
+        Database.setIsDownloadingDatabase(true);
 
         DialogNoahSnackbar.showDialog(activity, (ViewGroup) activity.findViewById(R.id.dialogNoahSnackbarRoot));
 

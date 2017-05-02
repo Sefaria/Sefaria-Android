@@ -46,7 +46,7 @@ public class DialogNoahSnackbar extends LinearLayout {
 
     public static void checkCurrentDialog(Activity activity, ViewGroup viewGroup) {
         try {
-            if (Database.isDownloadingDatabase) {
+            if (Database.getIsDownloadingDatabase()) {
                 DialogNoahSnackbar.showDialog(activity, viewGroup);
             } else {
                 DialogNoahSnackbar.dismissCurrentDialog(viewGroup);
