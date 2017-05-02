@@ -218,7 +218,7 @@ public class MenuState implements Parcelable {
         tempCurrPath.add(realNode);
 
 
-        MenuState tempMenuState = new MenuState(this.type, tempCurrPath,currLang);
+        MenuState tempMenuState = new MenuState(this.type, tempCurrPath, currLang);
 
 
         if (sectionNode != null) return tempMenuState.goForward(node,null);
