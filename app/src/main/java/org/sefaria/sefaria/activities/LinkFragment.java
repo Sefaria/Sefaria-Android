@@ -334,8 +334,7 @@ public class LinkFragment extends android.support.v4.app.Fragment {
 
         @Override
         protected LinkFilter doInBackground(Void... params) {
-            LinkFilter linkFilter = LinkFilter.getLinkFilters(segment);
-            return linkFilter;
+            return LinkFilter.getLinkFilters(segment);
         }
 
         @Override

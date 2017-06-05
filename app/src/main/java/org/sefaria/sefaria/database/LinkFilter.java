@@ -256,7 +256,6 @@ public class LinkFilter {
 
 
         Log.d("API.Link","got starting LinksAPI");
-        List<Segment> segments = new ArrayList<>();
         String place = segment.getURL(false);
         String url = API.LINK_URL + place + API.LINK_ZERO_TEXT;
         String data = API.getDataFromURL(url);
@@ -488,8 +487,10 @@ public class LinkFilter {
             String title = titles[i];
             for(int j=0;j<getChildren().size();j++){
                 LinkFilter child = getChildren().get(j);
+                Log.d("hetitle",child.enTitle + " == " + title + ": " + child.enTitle.equals(title));
                 if(child.enTitle.equals(title)){
                     child.heTitle = heTitles[i];
+                    child.groupHeTitle = heTitles[i];
                     newLinkCount.addChild(child);
                     getChildren().remove(j);
                     break;
