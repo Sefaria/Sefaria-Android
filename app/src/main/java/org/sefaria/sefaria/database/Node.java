@@ -38,7 +38,7 @@ public class Node{// implements  Parcelable{
     private int bid;
     private int parentNodeID;
     private Node parent = null;
-    //private int siblingNum;
+    //private int siblingNum; //grid
     private String enTitle;
     private String heTitle;
     private String [] sectionNames;
@@ -558,22 +558,26 @@ public class Node{// implements  Parcelable{
             return
         }
         */
+        if(node.isRef()&& forURL){
+            return  node.getExtraTidsRef() + path;
+        }
 
-        while(node.getParent() != null){//checking parent node so that don't get root (or book name) in there
-            if(forURL)
+        while (node.getParent() != null) {//checking parent node so that don't get root (or book name) in there
+            if (forURL)
                 separator = ".";
-            else if(!addSpace)
+            else if (!addSpace)
                 separator = ":";
             else
                 separator = " ";
-
-            if(!node.isGridItem() && (forURL && isComplex || !forURL)) //TODO tech this is wrong. B/c if it forURL && isComplex and it 3 or more levels of depth then it shouldn't be using the comma
+            if (!node.isGridItem() && (isComplex || !forURL)) {
+                //TODO tech this is wrong. B/c if it forURL && isComplex and it 3 or more levels of depth then it shouldn't be using the comma
                 path = ", " + node.getTitle(lang) + path;
-            else
+            } else {
                 path = separator + node.getNiceGridNum(lang) + path;
+            }
 
 
-            if(path.equals(separator)) //fixes problems with texts with only 1 level (like Hadran where it ends up looking like "Hadran." otherwise)
+            if (path.equals(separator)) //fixes problems with texts with only 1 level (like Hadran where it ends up looking like "Hadran." otherwise)
                 path = "";
 
             addSpace = node.isDaf() && (lang == Util.Lang.HE) && !forURL;

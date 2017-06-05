@@ -40,6 +40,7 @@ public class Database extends SQLiteOpenHelper{
 
     private SQLiteDatabase myDataBase;
 
+
     private final Context myContext;
 
     /**
@@ -114,6 +115,10 @@ public class Database extends SQLiteOpenHelper{
 
     public static boolean isNewCommentaryVersion(){
         return Database.getVersionInDB(Settings.getUseAPI()) >= 266;
+    }
+
+    public static boolean isNewCommentaryVersionWithConnType(){
+        return Database.getVersionInDB(Settings.getUseAPI()) >= 274;
     }
 
     private static Boolean hasOfflineDB;

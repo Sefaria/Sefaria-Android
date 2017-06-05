@@ -121,44 +121,49 @@ public class Link {//implements Parcelable {
             return str;
     }
 
+    public static String connTypeCheck(String tableAlias, boolean equals){
+        return " AND " + tableAlias + ".connType " + (equals ? "=" : "!=") + "'co' ";
+    }
+
     //TODO NEEDS WORK!!
     private static List<Segment> getLinkedTextsFromDB(Segment segment, LinkFilter linkFilter) {
         SQLiteDatabase db = Database.getDB();
         List<Segment> linkList = new ArrayList<>();
 
-        //Log.d("getLinksTextsFromDB", "Started ... linkFiler:" + linkFilter);
-
-        StringBuilder sql = new StringBuilder("SELECT T.* FROM " + Segment.TABLE_TEXTS + " T, Books B WHERE T.bid = B._id AND T._id"
-                + " IN ( SELECT L1.tid2 FROM Links_small L1 WHERE L1.tid1 = " + segment.tid
-                + " UNION "
-                + " SELECT L2.tid1 FROM Links_small L2 WHERE L2.tid2 = " + segment.tid
-                + ")");
-
         List<String> args = new ArrayList<>();
+        String connType1 = "", connType2 = "";
+        StringBuilder endOfSql = new StringBuilder();
         if(linkFilter.depth_type == LinkFilter.DEPTH_TYPE.CAT){
             if(linkFilter.enTitle.equals(LinkFilter.COMMENTARY)){
+                if(Database.isNewCommentaryVersionWithConnType()){
+                    connType1 = connTypeCheck("L1", true);
+                    connType2 = connTypeCheck("L2", true);
+                }
                 if(Database.isNewCommentaryVersion()){
-                    sql.append(" and B.commentsOnMultiple like '%(" + segment.bid + ")%'");
+                    endOfSql.append(" AND B.commentsOnMultiple like '%(" + segment.bid + ")%'");
                 }else {
-                    sql.append(" AND B.commentsOn = " + segment.bid);
+                    endOfSql.append(" AND B.commentsOn = " + segment.bid);
                 }
             }else{
                 String category;
                 if(linkFilter.enTitle.equals(LinkFilter.QUOTING_COMMENTARY)) {
-
                     //don't include the commentary that is directly for this book (like "Rashi on Genesis" for "Genesis")
+                    if(Database.isNewCommentaryVersionWithConnType()){
+                        connType1 = connTypeCheck("L1", false);
+                        connType2 = connTypeCheck("L2", false);
+                    }
                     if(Database.isNewCommentaryVersion()){
-                        sql.append(" AND B.commentsOnMultiple not like '%(" + segment.bid + ")%'");
+                        endOfSql.append(" AND B.commentsOnMultiple not like '%(" + segment.bid + ")%'");
                     }else {
-                        sql.append(" AND B.commentsOn <> " + segment.bid);
+                        endOfSql.append(" AND B.commentsOn <> " + segment.bid);
                     }
                     //the category in the database is simply "Commentary"
-                    sql.append(" AND B.categories like '[\"%\",\"Commentary\",%' ");
+                    endOfSql.append(" AND B.categories like '[\"%\",\"Commentary\",%' ");
                 }else {
 
                     category = linkFilter.enTitle;
                     // I think || line concat strings in the sql statement
-                    sql.append(" AND B.categories like '[\"' || ? || '%' ");
+                    endOfSql.append(" AND B.categories like '[\"' || ? || '%' ");
                     args.add(category);
                 }
 
@@ -166,23 +171,29 @@ public class Link {//implements Parcelable {
                 //if(Build.VERSION.SDK_INT >= 21) sql += " AND B.categories like printf('%s%s%s','[\"',?,'%') "; else
             }
         }else if(linkFilter.depth_type == LinkFilter.DEPTH_TYPE.BOOK){
-            sql.append(" AND B.title = ?");
+            endOfSql.append(" AND B.title = ?");
             args.add(linkFilter.enTitle);
         }
 
         ///more more more
         if(linkFilter.depth_type == LinkFilter.DEPTH_TYPE.ALL) {
             if (Database.isNewCommentaryVersion()) {
-                sql.append(" ORDER BY (case when B.commentsOnMultiple like '%(" + segment.bid + ")%' then 0 else 1 end), T.bid");
+                endOfSql.append(" ORDER BY (case when B.commentsOnMultiple like '%(" + segment.bid + ")%' then 0 else 1 end), T.bid");
             } else {
-                sql.append(" ORDER BY (case when B.commentsOn=" + segment.bid + " then 0 else 1 end), T.bid");
+                endOfSql.append(" ORDER BY (case when B.commentsOn=" + segment.bid + " then 0 else 1 end), T.bid");
             }
         } else {
-            sql.append(" ORDER BY T._id");
+            endOfSql.append(" ORDER BY T._id");
         }
 
+        String sql = "SELECT T.* FROM " + Segment.TABLE_TEXTS + " T, Books B WHERE T.bid = B._id AND T._id"
+                + " IN ( SELECT L1.tid2 FROM Links_small L1 WHERE L1.tid1 = " + segment.tid + connType1
+                + " UNION "
+                + " SELECT L2.tid1 FROM Links_small L2 WHERE L2.tid2 = " + segment.tid + connType2
+                + ") " + endOfSql.toString();
+
         String [] argsArray = args.toArray((new String [args.size()]));
-        Cursor cursor = db.rawQuery(sql.toString(), argsArray);
+        Cursor cursor = db.rawQuery(sql, argsArray);
         // Populate list of texts that are linked
         if (cursor.moveToFirst()) {
             do {
@@ -190,17 +201,6 @@ public class Link {//implements Parcelable {
             } while (cursor.moveToNext());
         }
         cursor.close();
-        /*
-        //Log.d("getLinksTextsFromDB", "Finished ... linkList.size():" + linkList.size());
-        if(linkList.size()!= linkFilter.count && linkList.size() < 7){
-            for(LinkFilter lc: linkFilter.getChildren()){
-                Log.d("Link", lc.toString());
-            }
-            for(Segment link:linkList){
-                link.log();
-            }
-        }
-        */
         return linkList;
     }
 
