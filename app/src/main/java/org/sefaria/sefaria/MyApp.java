@@ -265,10 +265,25 @@ public class MyApp extends Application {
     }
 
     private static void openWithInstalledAppExceptCurrentApp(final Activity activity, String url) {
+        Intent i = new Intent(Intent.ACTION_SEND);
+        i.setType("text/plain");
+        //i.setData(Uri.parse(url));
+        Toast.makeText(activity, "Unable to open with Sefaria App. Open in Browser.", Toast.LENGTH_SHORT).show();
+        i.putExtra(Intent.EXTRA_SUBJECT, "Open in Browser");
+        i.putExtra(Intent.EXTRA_TEXT, url);
+        activity.startActivity(Intent.createChooser(i, "Open in Browser"));
+
+        if(true) return;
+
+
         Intent intent = new Intent();
         intent.setAction(android.content.Intent.ACTION_VIEW);
 
+
+
+
         intent.setData(Uri.parse(url));
+        intent.setType("text/plain");
         PackageManager packageManager = activity.getPackageManager();
         List<ResolveInfo> activities = packageManager.queryIntentActivities(intent, 0);
         ArrayList<Intent> targetIntents = new ArrayList<>();
