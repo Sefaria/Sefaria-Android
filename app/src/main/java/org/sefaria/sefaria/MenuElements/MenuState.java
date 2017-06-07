@@ -158,15 +158,23 @@ public class MenuState implements Parcelable {
             }
         }
 
-        if (isRoot) {
-            if (type == IndexType.MAIN) {
-                MenuNode tosefta = (MenuNode) rootNode.getChildren().remove(rootNode.getChildIndex("Tosefta", Util.Lang.EN));
-                rootNode.getChildren().add(rootNode.getChildIndex("Philosophy", Util.Lang.EN) + 1, tosefta);
-            } else {
-                MenuNode tosefta = (MenuNode) rootSearchNode.getChildren().remove(rootSearchNode.getChildIndex("Tosefta", Util.Lang.EN));
-                rootSearchNode.getChildren().add(rootSearchNode.getChildIndex("Philosophy", Util.Lang.EN) + 1, tosefta);
+            if (isRoot) {
+                String [] moveNames = new String[] {"Tosefta", "Tanaitic"};
+                for(String moveName: moveNames) {
+                    try {
+                        if (type == IndexType.MAIN) {
+                            MenuNode tosefta = (MenuNode) rootNode.getChildren().remove(rootNode.getChildIndex(moveName, Util.Lang.EN));
+                            rootNode.getChildren().add(rootNode.getChildIndex("Philosophy", Util.Lang.EN) + 1, tosefta);
+                        } else {
+                            MenuNode tosefta = (MenuNode) rootSearchNode.getChildren().remove(rootSearchNode.getChildIndex(moveName, Util.Lang.EN));
+                            rootSearchNode.getChildren().add(rootSearchNode.getChildIndex("Philosophy", Util.Lang.EN) + 1, tosefta);
+                        }
+                    } catch (Exception e) {
+                        ;//this is expected with newer indexes without "Tosefeta
+                    }
+                }
             }
-        }
+
     }
 
     public static String[] translatePath(IndexType type, String[] enPath) {
