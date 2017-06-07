@@ -180,6 +180,7 @@ public class LinkFilter {
                     + ") GROUP BY B._id ORDER BY B._id"
             ;
         }else {*/
+        /*
         sql = " SELECT B.title, B.heTitle, B._id FROM Books B, Texts T WHERE tid=T._id AND T.bid= B._id AND B.commentsOn=" + bid + " AND  T._id in (" +
                 "SELECT L.tid2 as tid FROM Links_small L WHERE (" +
                 "L.tid1 BETWEEN " + chapStart + " AND " + chapEnd
@@ -187,16 +188,21 @@ public class LinkFilter {
                 "SELECT L.tid1 as tid FROM Links_small L WHERE (" +
                 " L2.tid2 BETWEEN " + chapStart + " AND " + chapEnd
                 + ") GROUP BY B._id ORDER BY B._id"
-        ;
-        sql = "SELECT B.title, B.heTitle, B._id FROM Books B, Texts T, (" +
-                "SELECT L.tid2 as tid FROM Links_small L WHERE L.tid1 BETWEEN " + chapStart + " AND " + chapEnd
-                + " UNION SELECT L.tid1 as tid FROM Links_small L WHERE  L.tid2 BETWEEN " + chapStart + " AND " + chapEnd + ") as tmp";
+        ;*/
+        String endOfSql = "", connTypeCheck = "";
+        if(Database.isNewCommentaryVersionWithConnType()){
+            connTypeCheck = Link.connTypeCheck("L", true);
+        }
         if(Database.isNewCommentaryVersion()){
-            sql += "  WHERE tmp.tid=T._id AND T.bid= B._id AND B.commentsOnMultiple like '%(" + bid + ")%' GROUP BY B._id ORDER BY B._id";
+            endOfSql = "  WHERE tmp.tid=T._id AND T.bid= B._id AND B.commentsOnMultiple like '%(" + bid + ")%' GROUP BY B._id ORDER BY B._id";
         }else{
-            sql += "  WHERE tmp.tid=T._id AND T.bid= B._id AND B.commentsOn=" + bid + " GROUP BY B._id ORDER BY B._id";
+            endOfSql = "  WHERE tmp.tid=T._id AND T.bid= B._id AND B.commentsOn=" + bid + " GROUP BY B._id ORDER BY B._id";
         }
 
+        sql = "SELECT B.title, B.heTitle, B._id FROM Books B, Texts T, (" +
+                "SELECT L.tid2 as tid FROM Links_small L WHERE L.tid1 BETWEEN " + chapStart + " AND " + chapEnd + connTypeCheck
+                + " UNION SELECT L.tid1 as tid FROM Links_small L WHERE  L.tid2 BETWEEN " + chapStart + " AND " + chapEnd + connTypeCheck + ") as tmp"
+                + endOfSql;
 
         Cursor cursor = db.rawQuery(sql, null);
         Book parentBook;
