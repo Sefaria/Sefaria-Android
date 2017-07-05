@@ -11,6 +11,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.sefaria.sefaria.Settings;
 
@@ -84,7 +85,12 @@ public class Link {//implements Parcelable {
                             (linkFilter.depth_type == LinkFilter.DEPTH_TYPE.CAT && category.equals(linkFilter.enTitle)) ||
                             (linkFilter.depth_type == LinkFilter.DEPTH_TYPE.BOOK && enTitle.equals(linkFilter.enTitle))
                             ) {
-                        Segment tempSegment = new Segment(removeEmpty(jsonLink.getString("text")), removeEmpty(jsonLink.getString("he")), Book.getBid(enTitle), ref);
+
+                        // deal with section links / range links correctly. these come back as
+                        String englishText = getLinkTextFromField(jsonLink, "text");
+                        String hebrewText = getLinkTextFromField(jsonLink, "he");
+                        
+                        Segment tempSegment = new Segment(englishText, hebrewText, Book.getBid(enTitle), ref);
                         if (category.equals("Commentary"))
                             commentaries.add(tempSegment);
                         else
@@ -104,6 +110,24 @@ public class Link {//implements Parcelable {
         segments.addAll(0,commentaries);
 
         return segments;
+    }
+
+    private static String getLinkTextFromField(JSONObject linkObj, String field) {
+        String text = "";
+        try {
+            JSONArray englishTextList = linkObj.getJSONArray(field);
+            for (int j = 0; j < englishTextList.length(); j++) {
+                text += englishTextList.getString(j) + "\n";
+            }
+        } catch (JSONException e1) {
+            try {
+                text = linkObj.getString(field);
+            } catch (JSONException e2) {
+                // you lose :(
+            }
+        }
+
+        return text;
     }
 
     static Comparator<Segment> compareTexts = new Comparator<Segment>() {
