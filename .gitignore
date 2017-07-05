@@ -44,7 +44,6 @@ proguard/
 .idea/scopes/scope_settings.xml
 .idea/vcs.xml
 .idea/workspace.xml
-app/app.iml
 
 #yo curl files
 yo.out
