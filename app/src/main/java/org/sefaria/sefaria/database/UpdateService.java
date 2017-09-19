@@ -70,7 +70,7 @@ public class UpdateService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Downloader.init(this);
 
-        WifiManager wm = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+        WifiManager wm = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         wifiLock= wm.createWifiLock(WifiManager.WIFI_MODE_FULL, "wifiTag");
         wifiLock.acquire();
 

@@ -42,9 +42,16 @@ public class Downloader {
     //public static final String GOOGLE_DRIVE_PATH = "https://googledrive.com/host/0B42RTqGcyx8kbjgtaVJLRlFBSlE/";
     public static final String CSV_FILE_NAME = "sefaria_mobile_updating_csv.csv";
     //reason for moving to v3 is the old code couldn't handle rming the "Tosefta" from the index.
+    /*
     private static final String CSV_DEBUG_URL = "http://betamidrash.org/other/app/v3/dev/" + CSV_FILE_NAME; //developing version
     private static final String CSV_TESTER_URL = "http://betamidrash.org/other/app/v3/dev/tester_" + CSV_FILE_NAME; //developing version
     private static final String CSV_REAL_URL  = "http://betamidrash.org/other/app/v3/" + CSV_FILE_NAME;
+    */
+
+    private static final String HOSTING_URL = "http://readonly.sefaria.org/static/android-export/v3/";
+    private static final String CSV_DEBUG_URL = HOSTING_URL + "dev_" + CSV_FILE_NAME; //developing version
+    private static final String CSV_TESTER_URL = HOSTING_URL + "dev_tester_" + CSV_FILE_NAME; //developing version
+    private static final String CSV_REAL_URL  = HOSTING_URL + CSV_FILE_NAME;
 
     public static final String CSV_DOWNLOAD_TITLE = "Sefaria Pre Update";
     public static final String DB_DOWNLOAD_TITLE = "Sefaria Library Update";
