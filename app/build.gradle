@@ -9,7 +9,7 @@ android {
         minSdkVersion 14
         targetSdkVersion 23
         versionCode 346
-        versionName "3.46"
+        versionName "3.46d"
         // Enabling multidex support
         //multiDexEnabled true
     }
