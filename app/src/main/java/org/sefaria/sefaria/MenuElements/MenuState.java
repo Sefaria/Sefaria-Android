@@ -143,7 +143,7 @@ public class MenuState implements Parcelable {
             String heTitle;
             MenuNode tempMenuNode;
             JSONObject tempNode = node.getJSONObject(i);
-            try {
+            if(tempNode.has("contents")){
                 JSONArray tempChildNode = tempNode.getJSONArray("contents");
                 enTitle = tempNode.getString("category");
                 //if(enTitle.equals("Commentary2"))
@@ -151,11 +151,11 @@ public class MenuState implements Parcelable {
                 heTitle = tempNode.getString("heCategory");
                 tempMenuNode = new MenuNode(enTitle, heTitle, parent);
                 createChildrenNodes(type, tempChildNode, tempMenuNode, false);
-            }catch (JSONException e){//This means it didn't find contents and it's at a book
+            }else if(tempNode.has("title")){//This means it didn't find contents and it's at a book
                 enTitle = tempNode.getString("title");
                 heTitle = tempNode.getString("heTitle");
                 new MenuNode(enTitle, heTitle, parent);
-            }
+            }//if for some reason it doesn't have a title or a contents, then just skip it
         }
 
             if (isRoot) {
