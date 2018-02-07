@@ -454,7 +454,7 @@ public class LinkFilter {
                         //It's not commenting on this book,
                         // but it's a commentary. So that means it's a quotingCommentary
                         quotingCommentaryGroup.addChild(linkCount);
-                    }else {
+                    }else if (countGroups != null ){
                         //it's a regular cat group
                         countGroups.addChild(linkCount);
                     }
@@ -463,7 +463,7 @@ public class LinkFilter {
             } while (cursor.moveToNext());
         }
         cursor.close();
-        if(countGroups.count >0 && countGroups != quotingCommentaryGroup)
+        if(countGroups != null && countGroups.count >0 && countGroups != quotingCommentaryGroup)
             allLinkCounts.addChild(countGroups);
 
         allLinkCounts = allLinkCounts.sortLinkCountCategories();
