@@ -75,7 +75,8 @@ public class MenuNode extends BilingualNode {
         if (lang == Util.Lang.EN) currTitle = enTitle;
         else currTitle = heTitle;
 
-        if (currTitle.equals("Midrash Rabbah")) return currTitle;
+        if (enTitle.equals("Midrash Rabbah")) return currTitle;
+        if (enTitle.contains("Haggadah")) return currTitle; // all titles with haggadah should not be replaced
         while (tempNode.parent != null && !foundTitleMatch) {
             String tempTitle;
             if (lang == Util.Lang.EN) tempTitle = ((MenuNode)tempNode.parent).enTitle;
