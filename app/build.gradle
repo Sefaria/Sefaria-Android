@@ -1,15 +1,15 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion '25.0.0'
+    compileSdkVersion 26
+    buildToolsVersion '25.0.2'
 
     defaultConfig {
         applicationId "org.sefaria.sefaria"
         minSdkVersion 14
-        targetSdkVersion 23
-        versionCode 357
-        versionName "3.57"
+        targetSdkVersion 26
+        versionCode 359
+        versionName "3.59"
         // Enabling multidex support
         //multiDexEnabled true
     }
