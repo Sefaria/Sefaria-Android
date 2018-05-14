@@ -5,13 +5,18 @@ import android.content.Context;
 import android.util.Log;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.sefaria.sefaria.MenuElements.MenuDirectRef;
 import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 public class DailyLearning {
@@ -128,10 +133,37 @@ public class DailyLearning {
         return chapVersePath;
     }
 
+    private static boolean shouldOverrideParsha() {
+        boolean isBeforeIsraelMeetsUS = false;
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/mm/yyyy");
+            Date strDate = sdf.parse("12/05/2018");
+            Calendar dayIsraelMeetsUS = new GregorianCalendar();
+            dayIsraelMeetsUS.setTime(strDate);
+            isBeforeIsraelMeetsUS = Calendar.getInstance().after(dayIsraelMeetsUS);
+            if (isBeforeIsraelMeetsUS) {
+                String data = API.getDataFromURL("http://ip-api.com/json");
+                JSONObject response = new JSONObject(data);
+                return response.getString("countryCode").equals("IL");
+            } else {
+                return false;
+            }
+        } catch (API.APIException e) {
+            return false;
+        } catch (JSONException e) {
+            return false;
+        } catch (ParseException e) {
+            return false;
+        }
+
+    }
+
     public static MenuDirectRef [] getParsha(Context context){
         String todaysDate = getLongDate(1);
+        boolean shouldOverrideParsha = shouldOverrideParsha();
+
         JSONArray weeks = null;
-        // todaysDate = "26-Sep-2020"; //fake date for testing
+        //todaysDate = "12-May-2018"; //fake date for testing
         try {
             //Log.d("DailyLearning", "getParsha..today: "+ todaysDate);
             weeks = Util.openJSONArrayFromAssets("calendar/parshiot.json");
@@ -142,6 +174,16 @@ public class DailyLearning {
                     String parsha = week.getString("parasha");
                     String [] multiParshas = parsha.split("-"); // If it's a double parsha only get the first
                     String aliyah = week.getJSONArray("aliyot").getString(0);
+                    if (shouldOverrideParsha && parsha.equals("Emor")) {
+                        parsha = "Behar";
+                        multiParshas = parsha.split("-");
+                        aliyah = "Leviticus 25:1-25:18";
+                    } else if (shouldOverrideParsha && parsha.equals("Behar-Bechukotai")) {
+                        parsha = "Bechukotai";
+                        multiParshas = parsha.split("-");
+                        aliyah = "Leviticus 26:3-26:5";
+                    }
+
                     String bookName = aliyah.replaceFirst("\\s[0-9]+.*$", "");
                     Book book = new Book(bookName);
                     Node node = getParshaFromSefar(book, multiParshas[0]);
