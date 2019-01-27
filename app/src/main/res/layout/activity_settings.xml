@@ -282,7 +282,7 @@
                 android:gravity="center"
                 android:padding="1dp"
                 android:textColor="?text_color_soft"
-                android:onClick="debubDBUnlockClick"
+                android:onClick="debugDBUnlockClick"
                 android:clickable="true"/>
             <org.sefaria.sefaria.layouts.SefariaTextView
                 android:id="@+id/offlineInfo"
@@ -293,7 +293,7 @@
                 android:padding="1dp"
                 app:lang="system"
                 android:textColor="?text_color_soft"
-                android:onClick="debubDBUnlockClick"
+                android:onClick="debugDBUnlockClick"
                 android:clickable="true"/>
 
         </LinearLayout>
