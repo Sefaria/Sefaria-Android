@@ -955,7 +955,7 @@ public class Node{// implements  Parcelable{
         return input;
     }
 
-    private List<Segment> getTextsFromAPI() throws API.APIException{ //(String booktitle, int []levels)
+    private List<Segment> getTextsFromAPI() throws API.APIException{ //(String bookTitle, int []levels)
         String data = getTextFromAPIData();
         boolean isTalmudBavli;
         try {
