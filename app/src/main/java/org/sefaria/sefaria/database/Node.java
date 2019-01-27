@@ -553,7 +553,7 @@ public class Node{// implements  Parcelable{
         String separator;
         boolean addSpace = true;
         /*
-        if(forURL && node.isRef && "default".equals(node.titleKey)){ //for somethinbg like sefer HaChinuch
+        if(forURL && node.isRef && "default".equals(node.titleKey)){ //for something like sefer HaChinuch
             Log.d("node", "it's default.. " + node);
             return
         }
