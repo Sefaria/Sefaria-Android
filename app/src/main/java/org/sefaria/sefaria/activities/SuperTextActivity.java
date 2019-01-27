@@ -172,7 +172,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
         }
 
 
-        //These vars are specifically initialized here and not in init() so that they don't get overidden when coming from TOC
+        //These vars are specifically initialized here and not in init() so that they don't get overridden when coming from TOC
         //defaults
         isCts = Settings.getIsCts(book);
         isSideBySide = Settings.getIsSideBySide();
