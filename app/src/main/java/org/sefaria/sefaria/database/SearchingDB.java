@@ -353,7 +353,7 @@ public class SearchingDB {
                 enPattern  = Pattern.compile(word.replaceAll("_", ".").replaceAll("%", ".*"),Pattern.CASE_INSENSITIVE); //make case insensitive
             else
                 enPattern  = Pattern.compile(word.replaceAll("_", replace_(false)).replaceAll("%", replacePer(false)),Pattern.CASE_INSENSITIVE); //make case insensitive
-        }catch(Exception e){//maybe try excaping the regex
+        }catch(Exception e){//maybe try escaping the regex
             enPattern = Pattern.compile("");
             Toast.makeText(MyApp.getContext(), MyApp.getContext().getString(R.string.error_parsing_query), Toast.LENGTH_SHORT).show();
         }
