@@ -168,13 +168,13 @@ public class HomeFragment extends android.support.v4.app.Fragment {
         else{
             recentRoot.removeAllViews();
         }
-        final int columNum = 1;
+        final int columnNum = 1;
         List<MenuDirectRef> recents = Recents.getRecentDirectMenu(getContext(),true, false);
         recentTexts = new ArrayList<>();
         if(recents.size()>0) {
             LinearLayout recentRow = null;
             for (int i=0;i<recents.size();i++){
-                if(i%columNum  == 0){
+                if(i%columnNum  == 0){
                     recentRow = new LinearLayout(getContext());
                     recentRow.setOrientation(LinearLayout.HORIZONTAL);
                     recentRow.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
