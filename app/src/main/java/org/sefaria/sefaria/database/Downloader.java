@@ -168,7 +168,7 @@ public class Downloader {
         public void onReceive(Context context, Intent intent) {
             long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0L);
             if (downloadIdList.indexOf(id) == -1) {
-                Log.v("download", "Ingnoring unrelated download " + id);
+                Log.v("download", "Ignoring unrelated download " + id);
                 return;
             } else {
                 //Toast.makeText(context, "did: " + downloadId, Toast.LENGTH_SHORT).show();
