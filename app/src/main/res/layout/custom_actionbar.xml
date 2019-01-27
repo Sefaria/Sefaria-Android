@@ -99,7 +99,7 @@
         </FrameLayout>
 
         <FrameLayout
-            android:id="@+id/invisable_btn_left"
+            android:id="@+id/invisible_btn_left"
             android:layout_width="@dimen/custom_action_bar_button_frame_width"
             android:layout_height="match_parent"
             android:layout_toRightOf="@id/close_btn"
@@ -174,7 +174,7 @@
         </FrameLayout>
 
         <FrameLayout
-            android:id="@+id/invisable_btn"
+            android:id="@+id/invisible_btn"
             android:layout_width="@dimen/custom_action_bar_button_frame_width"
             android:layout_height="match_parent"
             android:layout_toLeftOf="@id/menu_btn"
