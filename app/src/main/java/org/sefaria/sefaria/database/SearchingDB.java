@@ -293,7 +293,7 @@ public class SearchingDB {
     private static String replacePer(boolean wholeWord){
         //if(wholeWord)
         return "[^\\s\u05be]*";//it's not perfect, but basically it's saying as long as there's no space in between it's good
-        //else return ".*?"; //you might want this for not whole words... but then it basically gets eberything
+        //else return ".*?"; //you might want this for not whole words... but then it basically gets everything
 
 
     }
