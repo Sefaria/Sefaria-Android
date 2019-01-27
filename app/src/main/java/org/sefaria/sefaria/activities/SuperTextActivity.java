@@ -504,7 +504,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
         //this specifically comes before menugrid, b/c in tabs it menugrid does funny stuff to currnode
         if (customActionbar == null) {
-            MenuNode menuNode = new MenuNode("Error (if you see this)","Error (if you see this)",null); //TODO possibly replace this object with a more general bilinual node
+            MenuNode menuNode = new MenuNode("Error (if you see this)","Error (if you see this)",null); //TODO possibly replace this object with a more general bilingual node
             int catColor = book.getCatColor();
             if(Settings.getUseAPI()|| true) //findOnPae temp removed for all versions
                 searchClick = null;
