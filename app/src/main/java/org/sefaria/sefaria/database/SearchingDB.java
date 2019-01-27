@@ -104,7 +104,7 @@ public class SearchingDB {
         for(int i = 0;i< bytes.length/4;i++){
             int a = (Integer.valueOf(bytes[i*4]) & 0xff)*BITS_PER_PACKET; //0xff should remove the negative from byte
             if(a < 0){
-                Log.e("searching", "bad byte ocnvertion..");
+                Log.e("searching", "bad byte conversion..");
             }
             int bitNum = 0;
             for(int j = 3; j >=1;j--){
