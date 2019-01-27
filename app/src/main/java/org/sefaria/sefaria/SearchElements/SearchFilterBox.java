@@ -308,7 +308,7 @@ public class SearchFilterBox extends LinearLayout{
         }
     };
 
-    /*indetermCheckBox.setOnStateChangedListener(new IndeterminateCheckBox.OnStateChangedListener() {
+    /*IndeterminateCheckBox.setOnStateChangedListener(new IndeterminateCheckBox.OnStateChangedListener() {
         @Override
         public void onStateChanged(IndeterminateCheckBox check, @Nullable Boolean state) {
             String stateText = (state != null) ? (state ? "Checked" : "Unchecked") : "Indeterminate";

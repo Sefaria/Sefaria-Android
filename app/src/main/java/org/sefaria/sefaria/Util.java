@@ -619,7 +619,7 @@ public class Util {
             throw new IllegalArgumentException("view must implement IndeterminateCheckable");
         }
 
-        final ColorStateList colorStateList = createIndetermColorStateList(view.getContext());
+        final ColorStateList colorStateList = createIndeterminateColorStateList(view.getContext());
 
         final Drawable d = DrawableCompat.wrap(ContextCompat.getDrawable(view.getContext(), drawable));
         DrawableCompat.setTintList(d, colorStateList);
@@ -627,7 +627,7 @@ public class Util {
         return d;
     }
 
-    private static ColorStateList createIndetermColorStateList(Context context) {
+    private static ColorStateList createIndeterminateColorStateList(Context context) {
 
         final int[][] states = new int[][]{
                 new int[]{-android.R.attr.state_enabled},
