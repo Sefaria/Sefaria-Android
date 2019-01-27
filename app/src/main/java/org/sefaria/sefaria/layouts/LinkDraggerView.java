@@ -143,7 +143,7 @@ public class LinkDraggerView extends LinearLayout {
             case MotionEvent.ACTION_MOVE: {
                 long clickDuration = Calendar.getInstance().getTimeInMillis() - startClickTime;
                 if(clickDuration < MAX_CLICK_DURATION) {
-                    return false; //click event has occured
+                    return false; //click event has occurred
                 } else {
                     //drag event
                     return true;
