@@ -151,7 +151,7 @@ public class LinkFragment extends android.support.v4.app.Fragment {
         currState = state;
         View linkBackButton = view.findViewById(R.id.link_back_btn);
         View colorBar = view.findViewById(R.id.main_color_bar);
-        View topDivider = view.findViewById(R.id.top_divider);
+        View topDivider = view.findViewById(R.id.top_divideer);
         SefariaTextView noLinksTV = (SefariaTextView) view.findViewById(R.id.no_links_tv);
         if (state == State.MAIN) {
             view.setBackgroundColor(Util.getColor(activity, R.attr.link_bg));
@@ -251,7 +251,7 @@ public class LinkFragment extends android.support.v4.app.Fragment {
             if (currState == State.MAIN) { //load new linkCounts
                 AsyncLoadLinkFilter alf = new AsyncLoadLinkFilter();
                 alf.execute();
-            } else if (currState == State.BOOK || currState == State.CAT) { //change visibilty of links
+            } else if (currState == State.BOOK || currState == State.CAT) { //change visibility of links
                 AsyncLoadLinks all = new AsyncLoadLinks(linkTextAdapter.getCurrLinkCount());
                 all.execute();
             } else { //nothing you come here...

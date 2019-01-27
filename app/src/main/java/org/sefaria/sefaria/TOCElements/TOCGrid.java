@@ -153,12 +153,12 @@ public class TOCGrid extends LinearLayout {
         int defaultTab = setCurrSectionText();
 
         //ADD GREY DIVIDER
-        View divider = new View(context);
+        View divideer = new View(context);
         LinearLayout.LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, 1);
         lp.setMargins(0,Math.round(Util.dpToPixels(30)), 0,Math.round(Util.dpToPixels(20)));
-        divider.setLayoutParams(lp);
-        divider.setBackgroundColor(Color.parseColor("#CCCCCC"));
-        this.addView(divider, positionNum++);
+        divideer.setLayoutParams(lp);
+        divideer.setBackgroundColor(Color.parseColor("#CCCCCC"));
+        this.addView(divideer, positionNum++);
 
         tabRoot = makeTabSections(tocNodesRoots);
         this.addView(tabRoot, positionNum++);//It's the 3nd view starting with bookTitle and CurrSectionName
@@ -396,7 +396,7 @@ public class TOCGrid extends LinearLayout {
                 LayoutInflater inflater = (LayoutInflater)
                         context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
 
-                inflater.inflate(R.layout.tab_divider_menu, tabs);
+                inflater.inflate(R.layout.tab_divideer_menu, tabs);
             }
 
             TOCTab tocTab;
@@ -549,7 +549,7 @@ public class TOCGrid extends LinearLayout {
 
 
     /*
-    //used when you're rebuilding after memore dump
+    //used when you're rebuilding after memory dump
     //you need to make sure that you add the correct tabs
     public void setHasTabs(boolean hasTabs) {
         this.hasTabs = hasTabs;

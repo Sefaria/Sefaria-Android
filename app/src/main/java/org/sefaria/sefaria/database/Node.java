@@ -553,7 +553,7 @@ public class Node{// implements  Parcelable{
         String separator;
         boolean addSpace = true;
         /*
-        if(forURL && node.isRef && "default".equals(node.titleKey)){ //for somethinbg like sefer HaChinach
+        if(forURL && node.isRef && "default".equals(node.titleKey)){ //for something like sefer HaChinuch
             Log.d("node", "it's default.. " + node);
             return
         }
@@ -721,7 +721,7 @@ public class Node{// implements  Parcelable{
             }catch (JSONException e1){
                 all = jsonObject.getJSONObject("default").getJSONObject("_all");//TODO this doesn't actually fix anything
                 // https://trello.com/c/1trTrZ1S/108-zohar-text-toc-in-parasha-view-doesn-t-show-dappim
-                // Sefer HaChinkh bug
+                // Sefer HaChinuch bug
             }
             counts = all.getJSONArray("availableTexts");
         } catch (JSONException e) {
@@ -955,7 +955,7 @@ public class Node{// implements  Parcelable{
         return input;
     }
 
-    private List<Segment> getTextsFromAPI() throws API.APIException{ //(String booktitle, int []levels)
+    private List<Segment> getTextsFromAPI() throws API.APIException{ //(String bookTitle, int []levels)
         String data = getTextFromAPIData();
         boolean isTalmudBavli;
         try {

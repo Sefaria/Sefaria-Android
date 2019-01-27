@@ -141,7 +141,7 @@ public class Header implements Parcelable {
      *
      * levels should be as long as the full length of textDepth...
      * @param book
-     * @param levels (could be segment.levels) ex. {0, 2, 3} would return headers.size() == 2, with headers.get(0) reffering to the middle level (2), and headers.get(1) would reffer to the highest level (3)
+     * @param levels (could be segment.levels) ex. {0, 2, 3} would return headers.size() == 2, with headers.get(0) refering to the middle level (2), and headers.get(1) would refer to the highest level (3)
      * @return empty list if there's a problem. And normally a list of headers for each nonZero level of levels (headers.get(0) is the lowest non zero level (ex. verse))
      */
     private static ArrayList<Header> getAllSectionDepthsHeaders(Book book, int [] levels){
@@ -155,7 +155,7 @@ public class Header implements Parcelable {
             if(levels[i] == 0)
                 return finalHeaders;
         }
-        int numOfrequestedLevels = levels.length - nonZeroLevel;
+        int numOfRequestedLevels = levels.length - nonZeroLevel;
 
         String sql = "SELECT * FROM Headers WHERE bid = " + book.bid;
         for(int  i = 0; i < levels.length; i++){
@@ -194,7 +194,7 @@ public class Header implements Parcelable {
 
             for(int i = levels.length - 1; i>=0; i--){
                 if(headNum + 1 > headers.size()){
-                    if(headNum + 1 > numOfrequestedLevels){
+                    if(headNum + 1 > numOfRequestedLevels){
                         break;
                     }
                     finalHeaders.add(createHeader(book.sectionNamesL2B[i],  book.heSectionNamesL2B[i], levels[i]));
@@ -393,7 +393,7 @@ public class Header implements Parcelable {
             Database dbHandler = Database.getInstance(MyApp.context);
             SQLiteDatabase db = dbHandler.getWritableDatabase();
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_HEADERS); //TODO be able to update only a bit at a time.
-            db.execSQL(CREATE_HEADES_TABLE);
+            db.execSQL(CREATE_HEADES_TABLE /* headers? heads? */);
 
             Log.d("sql_headers_add", "about to add headers");
 

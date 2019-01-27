@@ -5,7 +5,7 @@
     <color name="mishnah">#5a99b7</color>
     <color name="talmud">#ccb479</color>
     <color name="midrash">#5d956f</color>
-    <color name="halkhah">#802f3e</color>
+    <color name="halakhah">#802f3e</color>
     <color name="kabbalah">#594176</color>
     <color name="liturgy">#ab4e66</color>
     <color name="philosophy">#7f85a9</color>
@@ -24,7 +24,7 @@
 
     <color name="menu_background">#F9F9F7</color>
     <color name="menu_foreground">#dddddd</color>
-    <color name="menu_divid_section_bar">#c1c1c1</color>
+    <color name="menu_divide_section_bar">#c1c1c1</color>
 
     <color name="subtitle">#9B9B9B</color>
     <color name="tab_inactive">#9B9B9B</color>
@@ -51,7 +51,7 @@
 
     <color name="splash_background">#142b51</color>
 
-    <!--THEME STUPIDNESSS -->
+    <!--THEME STUPIDITY -->
     <!-- white -->
     <color name="button_bg_w">#fff</color>
     <color name="button_clicked_w">#bbb</color>

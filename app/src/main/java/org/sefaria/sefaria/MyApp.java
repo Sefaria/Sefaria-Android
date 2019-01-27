@@ -62,7 +62,7 @@ public class MyApp extends Application {
     public static final int[] CAT_COLORS = {R.color.tanach, R.color.mishnah,R.color.talmud,
             R.color.tosefta,R.color.liturgy,R.color.liturgy,
             R.color.philosophy,R.color.chasidut,R.color.musar,
-            R.color.system_color,R.color.halkhah,R.color.midrash,
+            R.color.system_color,R.color.halakhah,R.color.midrash,
             R.color.kabbalah,R.color.responsa,R.color.parshanut,
             R.color.apocrypha,R.color.system_color,R.color.quoting_commentary,
             R.color.modern_works,R.color.commentary, R.color.system_color,
@@ -73,7 +73,7 @@ public class MyApp extends Application {
         MONTSERRAT,TAAMEY_FRANK,OPEN_SANS_EN,OPEN_SANS_HE,GARAMOND,NEW_ATHENA,CRIMSON,QUATTROCENTO,CARDO
     }
 
-    private static Typeface monserrat_tf;
+    private static Typeface montserrat_tf;
     private static Typeface taamey_frank_tf;
     private static Typeface open_sans_en_tf;
     private static Typeface open_sans_he_tf;
@@ -117,7 +117,7 @@ public class MyApp extends Application {
 
 
     private static void initFonts() {
-        monserrat_tf = Typeface.createFromAsset(context.getAssets(), "fonts/Montserrat-Regular.otf");
+        montserrat_tf = Typeface.createFromAsset(context.getAssets(), "fonts/Montserrat-Regular.otf");
         taamey_frank_tf = Typeface.createFromAsset(context.getAssets(), "fonts/TaameyFrankCLM-Medium.ttf");
         open_sans_en_tf = Typeface.createFromAsset(context.getAssets(), "fonts/OpenSans-Regular.ttf");
         open_sans_he_tf = Typeface.createFromAsset(context.getAssets(), "fonts/OpenSansHebrew-Regular.ttf");
@@ -131,7 +131,7 @@ public class MyApp extends Application {
     public static Typeface getFont(Font font) {
         switch (font) {
             case MONTSERRAT:
-                return monserrat_tf;
+                return montserrat_tf;
             case TAAMEY_FRANK:
                 return taamey_frank_tf;
             case OPEN_SANS_EN:

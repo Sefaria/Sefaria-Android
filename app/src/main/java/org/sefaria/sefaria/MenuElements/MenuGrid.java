@@ -174,7 +174,7 @@ public class MenuGrid extends LinearLayout {
                 LayoutInflater inflater = (LayoutInflater)
                         context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
 
-                inflater.inflate(R.layout.tab_divider_menu,tabRoot);
+                inflater.inflate(R.layout.tab_divideer_menu,tabRoot);
             }
 
             MenuButtonTab mbt = new MenuButtonTab(context,menuNode, menuState.getLang());
@@ -274,7 +274,7 @@ public class MenuGrid extends LinearLayout {
             }
             MenuButtonTab mbt = menuButtonTabList.get(0);
             mbt.setActive(true);
-            setVisablityOfWillaimTalmud(mbt);
+            setVisibilityOfWilliamTalmud(mbt);
 
             williamDTalumd = getWilliamDTalumd(context, 60, 95);
             this.addView(williamDTalumd, 1);
@@ -339,7 +339,7 @@ public class MenuGrid extends LinearLayout {
 
     public boolean getHasTabs() { return hasTabs; }
 
-    //used when you're rebuilding after memore dump
+    //used when you're rebuilding after memory dump
     //you need to make sure that you add the correct tabs
     public void setHasTabs(boolean hasTabs) {
         this.hasTabs = hasTabs;
@@ -421,7 +421,7 @@ public class MenuGrid extends LinearLayout {
         return false;
     }
 
-    void setVisablityOfWillaimTalmud(MenuButtonTab currentMenuButtonTab){
+    void setVisibilityOfWilliamTalmud(MenuButtonTab currentMenuButtonTab){
         if(williamDTalumd != null) {
             if ("Bavli".equals(currentMenuButtonTab.getNode().getBookTitle()))
                 williamDTalumd.setVisibility(View.VISIBLE);
@@ -457,7 +457,7 @@ public class MenuGrid extends LinearLayout {
                 tempMBT.setActive(false);
 
             mbt.setActive(true);
-            setVisablityOfWillaimTalmud(mbt);
+            setVisibilityOfWilliamTalmud(mbt);
 
             gridRoot.removeAllViews();
             menuState = menuState.goBack(false, false);

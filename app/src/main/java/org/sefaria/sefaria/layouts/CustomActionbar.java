@@ -29,8 +29,8 @@ public class CustomActionbar extends MenuElement {
     private View menuBtn;
     private View menuLangBtn;
     private View backBtn;
-    private View invisableBtn;
-    private View invisableBtnLeft;
+    private View invisibleBtn;
+    private View invisibleBtnLeft;
     private LinearLayout wholeTitleLinearLayout;
     private SefariaTextView titleTV;
     private String heText = null;
@@ -56,8 +56,8 @@ public class CustomActionbar extends MenuElement {
         menuBtn = findViewById(R.id.menu_btn);
         menuLangBtn = findViewById(R.id.menu_lang_btn);
         backBtn = findViewById(R.id.back_btn);
-        invisableBtn = findViewById(R.id.invisable_btn);
-        invisableBtnLeft = findViewById(R.id.invisable_btn_left);
+        invisibleBtn = findViewById(R.id.invisible_btn);
+        invisibleBtnLeft = findViewById(R.id.invisible_btn_left);
         colorBar = findViewById(R.id.color_bar);
         wholeTitleLinearLayout = (LinearLayout) findViewById(R.id.whole_title);
         titleTV = (SefariaTextView) findViewById(R.id.title);
@@ -84,8 +84,8 @@ public class CustomActionbar extends MenuElement {
         if (homeClick != null) homeBtn.setOnClickListener(homeClick);
         else{
             homeBtn.setVisibility(View.GONE);
-            invisableBtn.setVisibility(View.GONE);
-            invisableBtnLeft.setVisibility(View.GONE);
+            invisibleBtn.setVisibility(View.GONE);
+            invisibleBtnLeft.setVisibility(View.GONE);
         }
 
         if(homeLongClick != null)
@@ -171,7 +171,7 @@ public class CustomActionbar extends MenuElement {
 
         if (lang == Util.Lang.HE) {
             tv.setText("A");
-            tv.setFont(Util.Lang.EN, true,getResources().getDimension(R.dimen.custom_action_bar_lang_font_size), TypedValue.COMPLEX_UNIT_PX);//using pixels b/c when using getDimentions it actually converts to pixels
+            tv.setFont(Util.Lang.EN, true,getResources().getDimension(R.dimen.custom_action_bar_lang_font_size), TypedValue.COMPLEX_UNIT_PX);//using pixels b/c when using getDimensions it actually converts to pixels
         }
         else /* if (lang == Util.Lang.EN) */ {
             tv.setText("א");

@@ -104,7 +104,7 @@ public class SearchingDB {
         for(int i = 0;i< bytes.length/4;i++){
             int a = (Integer.valueOf(bytes[i*4]) & 0xff)*BITS_PER_PACKET; //0xff should remove the negative from byte
             if(a < 0){
-                Log.e("searching", "bad byte ocnvertion..");
+                Log.e("searching", "bad byte conversion..");
             }
             int bitNum = 0;
             for(int j = 3; j >=1;j--){
@@ -293,12 +293,12 @@ public class SearchingDB {
     private static String replacePer(boolean wholeWord){
         //if(wholeWord)
         return "[^\\s\u05be]*";//it's not perfect, but basically it's saying as long as there's no space in between it's good
-        //else return ".*?"; //you might want this for not whole words... but then it basically gets eberything
+        //else return ".*?"; //you might want this for not whole words... but then it basically gets everything
 
 
     }
     private static Pattern nikkudlessRegEx(String word, boolean wholeWord, Util.Lang lang){
-        String nikkuds = "[\u0591-\u05bd\u05bf-\u05C7\u05f3\u05f4\'\"]*";//all nukkids but - mark
+        String nikkuds = "[\u0591-\u05bd\u05bf-\u05C7\u05f3\u05f4\'\"]*";//all nikkuds but - mark
         if(lang == Util.Lang.EN){
             nikkuds = "";
         }
@@ -353,7 +353,7 @@ public class SearchingDB {
                 enPattern  = Pattern.compile(word.replaceAll("_", ".").replaceAll("%", ".*"),Pattern.CASE_INSENSITIVE); //make case insensitive
             else
                 enPattern  = Pattern.compile(word.replaceAll("_", replace_(false)).replaceAll("%", replacePer(false)),Pattern.CASE_INSENSITIVE); //make case insensitive
-        }catch(Exception e){//maybe try excaping the regex
+        }catch(Exception e){//maybe try escaping the regex
             enPattern = Pattern.compile("");
             Toast.makeText(MyApp.getContext(), MyApp.getContext().getString(R.string.error_parsing_query), Toast.LENGTH_SHORT).show();
         }
@@ -693,7 +693,7 @@ public class SearchingDB {
                     do {
                         Segment segment = new Segment(cursor);
 
-                        //if(verse.length() > 4000) continue;//TODO this is a major hackk!!, but we aren't searching huge things
+                        //if(verse.length() > 4000) continue;//TODO this is a major hack!!, but we aren't searching huge things
 
                         String verse = segment.getText(Util.Lang.HE);
                         boolean foundAllWords = true;
@@ -704,7 +704,7 @@ public class SearchingDB {
                                 break;
                             }
                         }
-                        if(foundAllWords) { //divided into different parts so the addingHighlighting doesn't need to run each time
+                        if(foundAllWords) { //divideed into different parts so the addingHighlighting doesn't need to run each time
                             for (int j = 0; j < words.length; j++) {
                                 verse = segment.getText(Util.Lang.HE);
                                 Matcher m = patterns[j].matcher(verse);

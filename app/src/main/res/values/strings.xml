@@ -47,7 +47,7 @@
     <string name="library_version_is">Library Version:\u0020</string>
     <string name="NO_INTERNET_TITLE">No Internet</string>
     <string name="NO_INTERNET_MESSAGE">You need internet in order to download the update. Try again later.</string>
-    <string name="problem_writting_file">There was a problem writing file. Please check app permissions.</string>
+    <string name="problem_writing_file">There was a problem writing file. Please check app permissions.</string>
     <string name="error_parsing_query_n">Error Parsing Query - trying nikudah dependent search.</string>
     <string name="error_parsing_query">Error Parsing Query</string>
     <string name="upgrade_to_newest">Upgrade to the newest version of</string>
@@ -60,7 +60,7 @@
     <string name="NEW_UPDATE_MESSAGE">Do you want to download the new Sefaria library now?\nYou can always tap \'Update Library\' in settings to update.</string>
     <string name="ARE_YOU_SURE_TITLE">Are you sure you want to cancel?</string>
     <string name="ARE_YOU_SURE_MESSAGE">Your update would need to be restarted</string>
-    <string name="USING_DATA_MESSAGE">You are using mobile data (not WIFI). The library is about 200MB. Do you want to download it anyways?</string>
+    <string name="USING_DATA_MESSAGE">You are using mobile data (not Wi-Fi). The library is about 200MB. Do you want to download it anyway?</string>
     <string name="USING_DATA_TITLE">Using mobile data</string>
 
     <string name="requires_250">Requires ~250MB of storage on your device</string>

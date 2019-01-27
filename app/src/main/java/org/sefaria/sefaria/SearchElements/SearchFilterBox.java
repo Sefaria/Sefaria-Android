@@ -106,7 +106,7 @@ public class SearchFilterBox extends LinearLayout{
             findViewById(R.id.arrow_left).setVisibility(VISIBLE);
             LinearLayout yo = (LinearLayout) findViewById(R.id.filterTitle);
             yo.setGravity(Gravity.RIGHT);
-        } else /* if (systemLang == Utile.Lang.EN) */ {
+        } else /* if (systemLang == Util.Lang.EN) */ {
             findViewById(R.id.arrow_right).setVisibility(VISIBLE);
             findViewById(R.id.arrow_left).setVisibility(GONE);
             LinearLayout yo = (LinearLayout) findViewById(R.id.filterTitle);
@@ -308,7 +308,7 @@ public class SearchFilterBox extends LinearLayout{
         }
     };
 
-    /*indetermCheckBox.setOnStateChangedListener(new IndeterminateCheckBox.OnStateChangedListener() {
+    /*IndeterminateCheckBox.setOnStateChangedListener(new IndeterminateCheckBox.OnStateChangedListener() {
         @Override
         public void onStateChanged(IndeterminateCheckBox check, @Nullable Boolean state) {
             String stateText = (state != null) ? (state ? "Checked" : "Unchecked") : "Indeterminate";

@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/color_bar_height"
         android:background="?custom_actionbar_border"/>
-    <View android:id="@+id/top_divider"
+    <View android:id="@+id/top_divideer"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="?custom_actionbar_border"/>

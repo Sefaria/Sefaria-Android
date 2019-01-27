@@ -60,7 +60,7 @@ public class Util {
 
 
     public static final String VERSE_BULLET = "\u25CF";
-    public static final String LINK_CAT_VERICAL_LINE = "\u007C";
+    public static final String LINK_CAT_VERTICAL_LINE = "\u007C";
     public static final float EN_HE_RATIO = 40f/35f; //universal constant
 
 
@@ -291,7 +291,7 @@ public class Util {
             place++;
         }
         //now search for 15 & 16 to replace
-        final String ka = "\u05D9\u05D4"; //carefull...don't join these strings
+        final String ka = "\u05D9\u05D4"; //careful...don't join these strings
         final String ku = "\u05D9\u05D5";
         final Pattern kaPatt = Pattern.compile("(" + ka + ")+");
         final Pattern kuPatt = Pattern.compile("(" + ku + ")+");
@@ -406,10 +406,10 @@ public class Util {
     }
 
 
-    private static final Pattern DIR_SEPORATOR = Pattern.compile("/");
+    private static final Pattern DIR_SEPARATOR = Pattern.compile("/");
 
     /**
-     * Raturns all available SD-Cards in the system (include emulated)
+     * Returns all available SD-Cards in the system (include emulated)
      *
      * Warning: Hack! Based on Android source code of version 4.3 (API 18)
      * Because there is no standart way to get it.
@@ -452,7 +452,7 @@ public class Util {
             else
             {
                 final String path = Environment.getExternalStorageDirectory().getAbsolutePath();
-                final String[] folders = DIR_SEPORATOR.split(path);
+                final String[] folders = DIR_SEPARATOR.split(path);
                 final String lastFolder = folders[folders.length - 1];
                 boolean isDigit = false;
                 try
@@ -619,7 +619,7 @@ public class Util {
             throw new IllegalArgumentException("view must implement IndeterminateCheckable");
         }
 
-        final ColorStateList colorStateList = createIndetermColorStateList(view.getContext());
+        final ColorStateList colorStateList = createIndeterminateColorStateList(view.getContext());
 
         final Drawable d = DrawableCompat.wrap(ContextCompat.getDrawable(view.getContext(), drawable));
         DrawableCompat.setTintList(d, colorStateList);
@@ -627,7 +627,7 @@ public class Util {
         return d;
     }
 
-    private static ColorStateList createIndetermColorStateList(Context context) {
+    private static ColorStateList createIndeterminateColorStateList(Context context) {
 
         final int[][] states = new int[][]{
                 new int[]{-android.R.attr.state_enabled},

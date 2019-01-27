@@ -182,7 +182,7 @@ public class Database extends SQLiteOpenHelper{
 
     static public String getInternalFolder(){
         String path = getStorageDir(true);
-        Log.d("databasepath", path + " makdirs:" + mkDirs(path));
+        Log.d("databasepath", path + " makedirs:" + mkDirs(path));
         return path;
     }
 
@@ -287,7 +287,7 @@ public class Database extends SQLiteOpenHelper{
             checkDB = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
         }catch(Exception e){
             GoogleTracker.sendException(e, "database doesn't exist");
-            //database does't exist yet.
+            //database doesn't exist yet.
 
         }
 
@@ -301,7 +301,7 @@ public class Database extends SQLiteOpenHelper{
     /**
      * Copies your database from your local assets-folder to the just created empty database in the
      * system folder, from where it can be accessed and handled.
-     * This is done by transfering bytestream.
+     * This is done by transferring bytestream.
      * */
     private void copyDatabase(String path, String name) throws IOException{
         //the following ensures all directories and files that we want will exist

@@ -127,7 +127,7 @@ public class DialogManager {
                 });
 
                 builder.setTitle("Welcome to Sefaria Mobile!");
-                builder.setMessage("To use the app, you need to download the Sefaria libary. Do you want to do this now?\nYou can always click 'Update Library' in settings to update.");
+                builder.setMessage("To use the app, you need to download the Sefaria library. Do you want to do this now?\nYou can always click 'Update Library' in settings to update.");
                 dialog = builder.create();
                 dialog.setCancelable(false);
                 dialog.show();
@@ -349,7 +349,7 @@ public class DialogManager {
                 builder.setNegativeButton(activity.getString(R.string.no), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dismissCurrentDialog();
-                        //Log.d("dialog","neg aysc click");
+                        //Log.d("dialog","neg aysc (??) click");
                         showDialog(activity,UPDATE_STARTED);
                     }
                 });
@@ -433,9 +433,9 @@ public class DialogManager {
         switch(messageType){
             case LIBRARY_EMPTY_MESSAGE:
                 if(makeItHebrew)
-                    return "(Hebrew Version:) To use the app, you need to download the BetaMidrash libary. Do you want to do this now?\nYou can always click 'Update Library' in settings.";
+                    return "(Hebrew Version:) To use the app, you need to download the BetaMidrash library. Do you want to do this now?\nYou can always click 'Update Library' in settings.";
                 else
-                    return "To use the app, you need to download the BetaMidrash libary. Do you want to do this now?\nYou can always click 'Update Library' in settings to update.";
+                    return "To use the app, you need to download the BetaMidrash library. Do you want to do this now?\nYou can always click 'Update Library' in settings to update.";
             case LIBRARY_EMPTY_TITLE:
                 if(makeItHebrew)
                     return "\u05E1\u05E4\u05E8\u05D9\u05D9\u05D4\20\u05E8\u05D9\u05E7\u05D4";
@@ -483,9 +483,9 @@ public class DialogManager {
                     return "Cancel";
             case USING_DATA_MESSAGE:
                 if(makeItHebrew)
-                    return "You are using mobile data (not WIFI). The update is about 100MB. Do you want to download it anyways?";
+                    return "You are using mobile data (not Wi-Fi). The update is about 100MB. Do you want to download it anyway?";
                 else
-                    return "You are using mobile data (not WIFI). The update is about 100MB. Do you want to download it anyways?";
+                    return "You are using mobile data (not Wi-Fi). The update is about 100MB. Do you want to download it anyway?";
             case USING_DATA_TITLE:
                 if(makeItHebrew)
                     return "Using mobile data";

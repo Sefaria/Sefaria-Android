@@ -71,7 +71,7 @@ public class DailyLearning {
         return null;
     }
 
-    private static Node getParshaFromSefar(Book sefer, String parshaName) throws API.APIException{
+    private static Node getParshaFromSefer(Book sefer, String parshaName) throws API.APIException{
         Node node = sefer.getTOCroots().get(1);
         for(Node child : node.getChildren()){
             if(child.getTitle(Util.Lang.EN).equals(parshaName)){
@@ -186,7 +186,7 @@ public class DailyLearning {
 
                     String bookName = aliyah.replaceFirst("\\s[0-9]+.*$", "");
                     Book book = new Book(bookName);
-                    Node node = getParshaFromSefar(book, multiParshas[0]);
+                    Node node = getParshaFromSefer(book, multiParshas[0]);
                     Settings.BookSettings bookSettings = Settings.BookSettings.getSavedBook(book);
                     Integer textNum = null;
                     if(bookSettings.node != null) {
@@ -204,7 +204,7 @@ public class DailyLearning {
                     if(multiParshas.length == 1){
                         heTitle = node.getParent().getTitle(Util.Lang.HE);
                     }else{
-                        Node secondParshaNode = getParshaFromSefar(book, multiParshas[1]);
+                        Node secondParshaNode = getParshaFromSefer(book, multiParshas[1]);
                         heTitle = node.getParent().getTitle(Util.Lang.HE)
                                 + "-" + secondParshaNode.getParent().getTitle(Util.Lang.HE);
                     }
@@ -223,7 +223,7 @@ public class DailyLearning {
                     //maybe also use: "shabbat_name": "Shabbat HaGadol"
                     //Log.d("DailyLearning", "this weeks parsha: " + parsha + "");
 
-                    //TODO deal with multi part hafotra (have a binder with multi part haf)
+                    //TODO deal with multi part haftara (have a binder with multi part haf)
                     String fullHaftaraStr = "";
                     String heFullHaftaraStr = "";
                     Book firstHaftaraBook = null;

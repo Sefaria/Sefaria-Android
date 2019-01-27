@@ -172,7 +172,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
         }
 
 
-        //These vars are specifically initialized here and not in init() so that they don't get overidden when coming from TOC
+        //These vars are specifically initialized here and not in init() so that they don't get overridden when coming from TOC
         //defaults
         isCts = Settings.getIsCts(book);
         isSideBySide = Settings.getIsSideBySide();
@@ -504,14 +504,14 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
         //this specifically comes before menugrid, b/c in tabs it menugrid does funny stuff to currnode
         if (customActionbar == null) {
-            MenuNode menuNode = new MenuNode("Error (if you see this)","Error (if you see this)",null); //TODO possibly replace this object with a more general bilinual node
+            MenuNode menuNode = new MenuNode("Error (if you see this)","Error (if you see this)",null); //TODO possibly replace this object with a more general bilingual node
             int catColor = book.getCatColor();
             if(Settings.getUseAPI()|| true) //findOnPae temp removed for all versions
                 searchClick = null;
             backClick = null;
             homeLongClick = null;
 
-            customActionbar = new CustomActionbar(this, menuNode, menuLang,homeClick,homeLongClick, null,searchClick,titleClick,menuClick,backClick,null,catColor,true,false, book.isTalmudBavli()); //TODO.. I'm not actually sure this should be lang.. instead it shuold be MENU_LANG from Util.S
+            customActionbar = new CustomActionbar(this, menuNode, menuLang,homeClick,homeLongClick, null,searchClick,titleClick,menuClick,backClick,null,catColor,true,false, book.isTalmudBavli()); //TODO.. I'm not actually sure this should be lang.. instead it should be MENU_LANG from Util.S
             LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
             abRoot.addView(customActionbar);
             customActionbar.setLang(menuLang);
@@ -680,7 +680,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
             }
             if(searchActionBarRoot == null)
                 searchActionBarRoot = (LinearLayout) findViewById(R.id.searchBarRoot);
-            searchActionBarRoot.removeAllViews();//in case you some how click on the search button while the search thing is already open (see if the old bar is visable through the search bar)
+            searchActionBarRoot.removeAllViews();//in case you some how click on the search button while the search thing is already open (see if the old bar is visible through the search bar)
             searchActionBarRoot.addView(searchActionbar);
             searchActionbar.requestFocus();
 

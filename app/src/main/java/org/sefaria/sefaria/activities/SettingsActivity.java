@@ -320,7 +320,7 @@ public class SettingsActivity extends Activity {
     }
 
     //onclick listener (see xml)
-    public void debubDBUnlockClick(View view) {
+    public void debugDBUnlockClick(View view) {
         if (numDebugDBUnlockClicks >= TOT_NUM_DEBUG_DB_CLICKS) {
             numDebugDBUnlockClicks = 0;
             Settings.setIsDebug(!Settings.getIsDebug()); //toggle
