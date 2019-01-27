@@ -171,7 +171,7 @@ public class CustomActionbar extends MenuElement {
 
         if (lang == Util.Lang.HE) {
             tv.setText("A");
-            tv.setFont(Util.Lang.EN, true,getResources().getDimension(R.dimen.custom_action_bar_lang_font_size), TypedValue.COMPLEX_UNIT_PX);//using pixels b/c when using getDimentions it actually converts to pixels
+            tv.setFont(Util.Lang.EN, true,getResources().getDimension(R.dimen.custom_action_bar_lang_font_size), TypedValue.COMPLEX_UNIT_PX);//using pixels b/c when using getDimensions it actually converts to pixels
         }
         else /* if (lang == Util.Lang.EN) */ {
             tv.setText("א");
