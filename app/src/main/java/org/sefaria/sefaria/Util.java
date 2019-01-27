@@ -60,7 +60,7 @@ public class Util {
 
 
     public static final String VERSE_BULLET = "\u25CF";
-    public static final String LINK_CAT_VERICAL_LINE = "\u007C";
+    public static final String LINK_CAT_VERTICAL_LINE = "\u007C";
     public static final float EN_HE_RATIO = 40f/35f; //universal constant
 
 

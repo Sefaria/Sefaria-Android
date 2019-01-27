@@ -107,7 +107,7 @@ public class LinkMainAdapter extends RecyclerView.Adapter<LinkMainAdapter.LinkHo
 
 
         } else if(linkCount.getDepthType() == LinkFilter.DEPTH_TYPE.CAT || linkCount.getDepthType() == LinkFilter.DEPTH_TYPE.ALL ){ //ALL and CAT
-            String text =  bookTitle.toUpperCase() + " " + Util.LINK_CAT_VERICAL_LINE + " <font color="+fadedTextHexColor+">" + linkCount.getCount() + "</font>";
+            String text =  bookTitle.toUpperCase() + " " + Util.LINK_CAT_VERTICAL_LINE + " <font color="+fadedTextHexColor+">" + linkCount.getCount() + "</font>";
             holder.tv.setText(Html.fromHtml(text));
             holder.tv.setTextColor(Util.getColor(context, R.attr.text_color_main));
             /*if (android.os.Build.VERSION.SDK_INT >= 14) {//for older things it just will by non-capped (even though we can make a function to fix it, it's not worth it).
