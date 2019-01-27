@@ -393,7 +393,7 @@ public class Header implements Parcelable {
             Database dbHandler = Database.getInstance(MyApp.context);
             SQLiteDatabase db = dbHandler.getWritableDatabase();
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_HEADERS); //TODO be able to update only a bit at a time.
-            db.execSQL(CREATE_HEADES_TABLE);
+            db.execSQL(CREATE_HEADES_TABLE /* headers? heads? */);
 
             Log.d("sql_headers_add", "about to add headers");
 
