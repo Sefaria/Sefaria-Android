@@ -339,7 +339,7 @@ public class MenuGrid extends LinearLayout {
 
     public boolean getHasTabs() { return hasTabs; }
 
-    //used when you're rebuilding after memore dump
+    //used when you're rebuilding after memory dump
     //you need to make sure that you add the correct tabs
     public void setHasTabs(boolean hasTabs) {
         this.hasTabs = hasTabs;
