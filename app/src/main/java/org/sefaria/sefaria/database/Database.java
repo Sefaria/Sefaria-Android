@@ -287,7 +287,7 @@ public class Database extends SQLiteOpenHelper{
             checkDB = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
         }catch(Exception e){
             GoogleTracker.sendException(e, "database doesn't exist");
-            //database does't exist yet.
+            //database doesn't exist yet.
 
         }
 
