@@ -223,7 +223,7 @@ public class DailyLearning {
                     //maybe also use: "shabbat_name": "Shabbat HaGadol"
                     //Log.d("DailyLearning", "this weeks parsha: " + parsha + "");
 
-                    //TODO deal with multi part hafotra (have a binder with multi part haf)
+                    //TODO deal with multi part haftara (have a binder with multi part haf)
                     String fullHaftaraStr = "";
                     String heFullHaftaraStr = "";
                     Book firstHaftaraBook = null;
