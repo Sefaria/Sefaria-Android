@@ -228,7 +228,7 @@ public class LinkFilter {
      * @param count
      */
     private void addCommentaryCount(String title, int count, String heTitle, Book parentBook){
-        if(count == 0) return; //it's not worth trying to go through the whole list testing a match, if this is just zero anyways. (It should never happen that this is 0).
+        if(count == 0) return; //it's not worth trying to go through the whole list testing a match, if this is just zero anyway. (It should never happen that this is 0).
         for(LinkFilter child: children){
             if(child.enTitle.equals(title)){
                 child.count = count;

@@ -483,9 +483,9 @@ public class DialogManager {
                     return "Cancel";
             case USING_DATA_MESSAGE:
                 if(makeItHebrew)
-                    return "You are using mobile data (not WIFI). The update is about 100MB. Do you want to download it anyways?";
+                    return "You are using mobile data (not WIFI). The update is about 100MB. Do you want to download it anyway?";
                 else
-                    return "You are using mobile data (not WIFI). The update is about 100MB. Do you want to download it anyways?";
+                    return "You are using mobile data (not WIFI). The update is about 100MB. Do you want to download it anyway?";
             case USING_DATA_TITLE:
                 if(makeItHebrew)
                     return "Using mobile data";
