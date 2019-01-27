@@ -680,7 +680,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
             }
             if(searchActionBarRoot == null)
                 searchActionBarRoot = (LinearLayout) findViewById(R.id.searchBarRoot);
-            searchActionBarRoot.removeAllViews();//in case you some how click on the search button while the search thing is already open (see if the old bar is visable through the search bar)
+            searchActionBarRoot.removeAllViews();//in case you some how click on the search button while the search thing is already open (see if the old bar is visible through the search bar)
             searchActionBarRoot.addView(searchActionbar);
             searchActionbar.requestFocus();
 
