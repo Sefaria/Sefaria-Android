@@ -511,7 +511,7 @@ public class Segment implements Parcelable {
                     }
                     cursor.close();
                     Log.d("sql_textFind", "end.." + "finished!!! " + foundCount + " ..."  + count);
-                    //LOGING:
+                    //LOGGING:
                     //for(int i = 0; i < segmentList.size(); i++)
                     //	segmentList.get(i).log();
                 }catch(Exception e){
