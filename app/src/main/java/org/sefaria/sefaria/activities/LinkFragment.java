@@ -151,7 +151,7 @@ public class LinkFragment extends android.support.v4.app.Fragment {
         currState = state;
         View linkBackButton = view.findViewById(R.id.link_back_btn);
         View colorBar = view.findViewById(R.id.main_color_bar);
-        View topDivider = view.findViewById(R.id.top_divider);
+        View topDivider = view.findViewById(R.id.top_divideer);
         SefariaTextView noLinksTV = (SefariaTextView) view.findViewById(R.id.no_links_tv);
         if (state == State.MAIN) {
             view.setBackgroundColor(Util.getColor(activity, R.attr.link_bg));

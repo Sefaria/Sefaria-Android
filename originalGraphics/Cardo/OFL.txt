@@ -49,7 +49,7 @@ a copy of the Font Software, to use, study, copy, merge, embed, modify,
 redistribute, and sell modified and unmodified copies of the Font
 Software, subject to the following conditions:
 
-1) Neither the Font Software nor any of its individual components,
+1) Neither the Font Software nor any of its individeual components,
 in Original or Modified Versions, may be sold by itself.
 
 2) Original or Modified Versions of the Font Software may be bundled,

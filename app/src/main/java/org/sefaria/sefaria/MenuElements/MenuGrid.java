@@ -174,7 +174,7 @@ public class MenuGrid extends LinearLayout {
                 LayoutInflater inflater = (LayoutInflater)
                         context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
 
-                inflater.inflate(R.layout.tab_divider_menu,tabRoot);
+                inflater.inflate(R.layout.tab_divideer_menu,tabRoot);
             }
 
             MenuButtonTab mbt = new MenuButtonTab(context,menuNode, menuState.getLang());

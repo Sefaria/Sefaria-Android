@@ -704,7 +704,7 @@ public class SearchingDB {
                                 break;
                             }
                         }
-                        if(foundAllWords) { //divided into different parts so the addingHighlighting doesn't need to run each time
+                        if(foundAllWords) { //divideed into different parts so the addingHighlighting doesn't need to run each time
                             for (int j = 0; j < words.length; j++) {
                                 verse = segment.getText(Util.Lang.HE);
                                 Matcher m = patterns[j].matcher(verse);

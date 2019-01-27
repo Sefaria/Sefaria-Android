@@ -24,7 +24,7 @@
 
     <color name="menu_background">#F9F9F7</color>
     <color name="menu_foreground">#dddddd</color>
-    <color name="menu_divid_section_bar">#c1c1c1</color>
+    <color name="menu_divide_section_bar">#c1c1c1</color>
 
     <color name="subtitle">#9B9B9B</color>
     <color name="tab_inactive">#9B9B9B</color>
