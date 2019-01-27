@@ -15,7 +15,7 @@
             android:layout_alignTop="@+id/top_bottom_layout"
             android:paddingRight="0dp"
             android:paddingLeft="0dp"
-            android:paddingTop="@dimen/text_activtiy_numbering_padding"
+            android:paddingTop="@dimen/text_activity_numbering_padding"
             android:gravity="center"
             android:textSize="12sp"
             android:text="26"/>
@@ -26,10 +26,10 @@
             android:orientation="vertical">
 
             <org.sefaria.sefaria.layouts.SefariaTextView
-                android:paddingTop="@dimen/text_activtiy_between_segment_padding"
+                android:paddingTop="@dimen/text_activity_between_segment_padding"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                android:paddingBottom="@dimen/text_activtiy_between_segment_padding"
+                android:paddingBottom="@dimen/text_activity_between_segment_padding"
                 android:id="@+id/he"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -41,10 +41,10 @@
                 android:gravity="right"
                 android:text="וְהָאָ֗רֶץ הָיְתָ֥ה תֹ֙הוּ֙ וָבֹ֔הוּ וְחֹ֖שֶׁךְ עַל־פְּנֵ֣י תְה֑וֹם וְר֣וּחַ אֱלֹהִ֔ים מְרַחֶ֖פֶת עַל־פְּנֵ֥י הַמָּֽיִם׃"/>
             <org.sefaria.sefaria.layouts.SefariaTextView
-                android:paddingBottom="@dimen/text_activtiy_between_segment_padding"
+                android:paddingBottom="@dimen/text_activity_between_segment_padding"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                android:paddingTop="@dimen/text_activtiy_between_segment_padding"
+                android:paddingTop="@dimen/text_activity_between_segment_padding"
                 android:id="@+id/en"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -65,7 +65,7 @@
             android:layout_alignParentRight="true"
             android:layout_alignTop="@+id/top_bottom_layout"
             android:paddingLeft="0dp"
-            android:paddingTop="@dimen/text_activtiy_numbering_padding"
+            android:paddingTop="@dimen/text_activity_numbering_padding"
             android:gravity="center"
             android:textSize="12sp"
             android:text="26"/>

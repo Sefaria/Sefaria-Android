@@ -190,7 +190,7 @@ public class TOCActivity extends AppCompatActivity {
         if (requestCode == COMING_BACK_TO_TOC_REQUEST_CODE) {
             if (resultCode == RESULT_CANCELED) {
                 Log.d("TOCAct","resultCode == RESULT_CANCELED");
-                cameInFromBackPress = true;// so you know it was a back press from SuperTextActivity (so you know to create a new textActivty
+                cameInFromBackPress = true;// so you know it was a back press from SuperTextActivity (so you know to create a new textActivity
             }
         }
     }*/

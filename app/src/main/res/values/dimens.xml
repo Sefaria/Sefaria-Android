@@ -34,8 +34,8 @@
 
     <dimen name="color_bar_height">5dp</dimen>
 
-    <dimen name="text_activtiy_between_segment_padding">6dp</dimen>
-    <dimen name="text_activtiy_numbering_padding">10dp</dimen>
+    <dimen name="text_activity_between_segment_padding">6dp</dimen>
+    <dimen name="text_activity_numbering_padding">10dp</dimen>
     <dimen name="text_activity_main_margin">30dp</dimen>
     <dimen name="main_margin_lr">16dp</dimen>
     <dimen name="main_margin_lr_neg">-20dp</dimen>
