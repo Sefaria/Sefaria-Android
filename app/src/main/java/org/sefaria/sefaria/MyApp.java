@@ -62,7 +62,7 @@ public class MyApp extends Application {
     public static final int[] CAT_COLORS = {R.color.tanach, R.color.mishnah,R.color.talmud,
             R.color.tosefta,R.color.liturgy,R.color.liturgy,
             R.color.philosophy,R.color.chasidut,R.color.musar,
-            R.color.system_color,R.color.halkhah,R.color.midrash,
+            R.color.system_color,R.color.halakhah,R.color.midrash,
             R.color.kabbalah,R.color.responsa,R.color.parshanut,
             R.color.apocrypha,R.color.system_color,R.color.quoting_commentary,
             R.color.modern_works,R.color.commentary, R.color.system_color,

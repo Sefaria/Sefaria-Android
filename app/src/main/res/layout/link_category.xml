@@ -15,7 +15,7 @@
         android:layout_height="@dimen/color_bar_height"
         android:layout_marginLeft="2dp"
         android:layout_marginRight="2dp"
-        android:background="@color/halkhah"/>
+        android:background="@color/halakhah"/>
     <org.sefaria.sefaria.layouts.SefariaTextView
         android:id="@+id/tv"
         android:layout_width="match_parent"
