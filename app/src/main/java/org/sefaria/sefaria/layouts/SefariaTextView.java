@@ -58,7 +58,7 @@ public class SefariaTextView extends TextView {
 
         if(lang == Util.Lang.HE) {
             //don't do italics when it's Hebrew b/c it's weird.
-            // Honestly this b/c of william D Talmud and if there's something else that needs it we can chaneg this
+            // Honestly this b/c of william D Talmud and if there's something else that needs it we can change this
             style = null;
         }
         setFont(lang, isSerif, -1, TypedValue.COMPLEX_UNIT_SP, style);
