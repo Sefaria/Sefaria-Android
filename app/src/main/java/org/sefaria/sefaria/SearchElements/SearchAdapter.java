@@ -35,7 +35,7 @@ public class SearchAdapter extends ArrayAdapter<Segment> {
     @Override
     public View getView(int position, View view, ViewGroup parent) {
         Segment segment = results.get(position);
-        //Language is exclusively either Hebrew or Enlgihs, depending on which exists in the segment
+        //Language is exclusively either Hebrew or English, depending on which exists in the segment
         Util.Lang lang;
         if (segment.getText(langSearchedIn).length() > 0 ){
             lang = langSearchedIn;
