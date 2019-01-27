@@ -47,7 +47,7 @@
     <string name="library_version_is">Library Version:\u0020</string>
     <string name="NO_INTERNET_TITLE">No Internet</string>
     <string name="NO_INTERNET_MESSAGE">You need internet in order to download the update. Try again later.</string>
-    <string name="problem_writting_file">There was a problem writing file. Please check app permissions.</string>
+    <string name="problem_writing_file">There was a problem writing file. Please check app permissions.</string>
     <string name="error_parsing_query_n">Error Parsing Query - trying nikudah dependent search.</string>
     <string name="error_parsing_query">Error Parsing Query</string>
     <string name="upgrade_to_newest">Upgrade to the newest version of</string>

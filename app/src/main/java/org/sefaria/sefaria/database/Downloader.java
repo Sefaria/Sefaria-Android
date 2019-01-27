@@ -276,7 +276,7 @@ public class Downloader {
         if (canWrite()) {
             //Log.d("yo","all good");
         } else {
-            Toast.makeText(context, context.getString(R.string.problem_writting_file), Toast.LENGTH_LONG).show();
+            Toast.makeText(context, context.getString(R.string.problem_writing_file), Toast.LENGTH_LONG).show();
             return;
         }
         Log.d("Downloader", "path:" + FULL_DOWNLOAD_PATH);

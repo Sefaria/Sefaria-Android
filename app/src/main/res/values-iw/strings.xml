@@ -45,7 +45,7 @@
     <string name="library_version_is">גרסת הספריה:\u0020</string>
     <string name="NO_INTERNET_TITLE">אין חיבור לרשת</string>
     <string name="NO_INTERNET_MESSAGE">דרוש חיבור לרשת בכדי להוריד את העדכון. אנא נסה שוב מאוחר יותר</string>
-    <string name="problem_writting_file">ארעה שגיאה בכתיבה לקובץ. אנא בדוק את ההרשאות של האפליקציה</string>
+    <string name="problem_writing_file">ארעה שגיאה בכתיבה לקובץ. אנא בדוק את ההרשאות של האפליקציה</string>
     <string name="error_parsing_query_n">Error Parsing Query - trying nikudah dependent search.</string>
     <string name="error_parsing_query">ארעה שגיאה בביצוע השאילתה</string>
     <string name="upgrade_to_newest">שדרג לגרסה העדכנית ביותר של</string>
