@@ -27,7 +27,7 @@ public class PerekTextView1 extends JustifyTextView {
 
     public static final int EXTRA_LOAD_LINES = 5;
 
-    private boolean isCts; //is text continuous or seperated by passuk
+    private boolean isCts; //is text continuous or separated by passuk
     private Util.Lang lang;
     private int mLineY;
     private int mViewWidth;
