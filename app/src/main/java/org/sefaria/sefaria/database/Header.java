@@ -155,7 +155,7 @@ public class Header implements Parcelable {
             if(levels[i] == 0)
                 return finalHeaders;
         }
-        int numOfrequestedLevels = levels.length - nonZeroLevel;
+        int numOfRequestedLevels = levels.length - nonZeroLevel;
 
         String sql = "SELECT * FROM Headers WHERE bid = " + book.bid;
         for(int  i = 0; i < levels.length; i++){
@@ -194,7 +194,7 @@ public class Header implements Parcelable {
 
             for(int i = levels.length - 1; i>=0; i--){
                 if(headNum + 1 > headers.size()){
-                    if(headNum + 1 > numOfrequestedLevels){
+                    if(headNum + 1 > numOfRequestedLevels){
                         break;
                     }
                     finalHeaders.add(createHeader(book.sectionNamesL2B[i],  book.heSectionNamesL2B[i], levels[i]));
