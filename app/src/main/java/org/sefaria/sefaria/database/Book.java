@@ -235,7 +235,7 @@ public class Book implements Parcelable {
                 heSectionNamesL2B[i] = heSectionNamesTemp[heSectionNamesTemp.length - i -1];
             //try: //path // try is needed in case it's an old DB.
             try{
-                //if it's blank(or null) it will use the reguar title with " on .*" filtered out
+                //if it's blank(or null) it will use the regular title with " on .*" filtered out
                 enCollectiveTitle = cursor.getString(18);
                 heCollectiveTitle = cursor.getString(19);
                 //not doing b/c its not needed for anything and is using a weird
