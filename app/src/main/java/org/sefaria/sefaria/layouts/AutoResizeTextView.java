@@ -33,7 +33,7 @@ public class AutoResizeTextView extends SefariaTextView
     private int _widthLimit;
     private int _maxLines;
     private boolean _enableSizeCache=true;
-    private boolean _initiallized=false;
+    private boolean _initialized=false;
     private TextPaint paint;
 
     private interface SizeTester
@@ -105,7 +105,7 @@ public class AutoResizeTextView extends SefariaTextView
                 return 1;
             }
         };
-        _initiallized=true;
+        _initialized=true;
     }
 
     @Override
@@ -212,7 +212,7 @@ public class AutoResizeTextView extends SefariaTextView
 //    @Override
 //    public void run()
 //      {
-        if(!_initiallized)
+        if(!_initialized)
             return;
         final int startSize=(int)_minTextSize;
         final int heightLimit=getMeasuredHeight()-getCompoundPaddingBottom()-getCompoundPaddingTop();

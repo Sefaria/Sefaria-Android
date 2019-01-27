@@ -298,7 +298,7 @@ public class CtsTextActivity extends SuperTextActivity implements AbsListView.On
 
 
     private SegmentSpannable getSpanNearY(TextView stv, int y) {
-        //pre-initaliaze
+        //pre-initialize
         Rect parentTextViewRect = new Rect();
         Layout textViewLayout = stv.getLayout();
 
