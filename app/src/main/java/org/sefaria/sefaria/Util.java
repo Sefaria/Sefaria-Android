@@ -291,7 +291,7 @@ public class Util {
             place++;
         }
         //now search for 15 & 16 to replace
-        final String ka = "\u05D9\u05D4"; //carefull...don't join these strings
+        final String ka = "\u05D9\u05D4"; //careful...don't join these strings
         final String ku = "\u05D9\u05D5";
         final Pattern kaPatt = Pattern.compile("(" + ka + ")+");
         final Pattern kuPatt = Pattern.compile("(" + ku + ")+");
