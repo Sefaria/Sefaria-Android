@@ -274,7 +274,7 @@ public class MenuGrid extends LinearLayout {
             }
             MenuButtonTab mbt = menuButtonTabList.get(0);
             mbt.setActive(true);
-            setVisablityOfWillaimTalmud(mbt);
+            setVisibilityOfWillaimTalmud(mbt);
 
             williamDTalumd = getWilliamDTalumd(context, 60, 95);
             this.addView(williamDTalumd, 1);
@@ -421,7 +421,7 @@ public class MenuGrid extends LinearLayout {
         return false;
     }
 
-    void setVisablityOfWillaimTalmud(MenuButtonTab currentMenuButtonTab){
+    void setVisibilityOfWillaimTalmud(MenuButtonTab currentMenuButtonTab){
         if(williamDTalumd != null) {
             if ("Bavli".equals(currentMenuButtonTab.getNode().getBookTitle()))
                 williamDTalumd.setVisibility(View.VISIBLE);
@@ -457,7 +457,7 @@ public class MenuGrid extends LinearLayout {
                 tempMBT.setActive(false);
 
             mbt.setActive(true);
-            setVisablityOfWillaimTalmud(mbt);
+            setVisibilityOfWillaimTalmud(mbt);
 
             gridRoot.removeAllViews();
             menuState = menuState.goBack(false, false);

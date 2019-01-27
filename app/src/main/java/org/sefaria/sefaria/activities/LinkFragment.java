@@ -251,7 +251,7 @@ public class LinkFragment extends android.support.v4.app.Fragment {
             if (currState == State.MAIN) { //load new linkCounts
                 AsyncLoadLinkFilter alf = new AsyncLoadLinkFilter();
                 alf.execute();
-            } else if (currState == State.BOOK || currState == State.CAT) { //change visibilty of links
+            } else if (currState == State.BOOK || currState == State.CAT) { //change visibility of links
                 AsyncLoadLinks all = new AsyncLoadLinks(linkTextAdapter.getCurrLinkCount());
                 all.execute();
             } else { //nothing you come here...
