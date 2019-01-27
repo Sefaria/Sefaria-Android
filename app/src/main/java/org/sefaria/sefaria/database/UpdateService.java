@@ -49,7 +49,7 @@ public class UpdateService extends Service {
     public static final String DATABASE_ZIP_DOWNLOAD_LOC = Downloader.FULL_DOWNLOAD_PATH + Database.DB_NAME + ".zip";
     public static final String INDEX_DOWNLOAD_LOC = Downloader.FULL_DOWNLOAD_PATH + Downloader.INDEX_JSON_NAME;
 
-    private static final String LAST_ASK_TO_UPGRADE_TIME = "LAST_ASK_TIME_UPGADE_TIME";
+    private static final String LAST_ASK_TO_UPGRADE_TIME = "LAST_ASK_TIME_UPGRADE_TIME";
 
     //these two vars are stupid, but work. they are persistent vars which I need for checking version num. before and after this, they serve no purpose
     public static int updatedVersionNum;
