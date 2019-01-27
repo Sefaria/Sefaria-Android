@@ -106,7 +106,7 @@ public class Cache{
 
 
     private static void clearTooManyFiles(){
-        for(int i=0;i<10;i++){//10 times just so it doesn't accidently run for too long
+        for(int i=0;i<10;i++){//10 times just so it doesn't accidentally run for too long
             long size = 0;
             int fileCount = 0;
             for (File file : path.listFiles()) {
