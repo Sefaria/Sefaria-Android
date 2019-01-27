@@ -182,7 +182,7 @@ public class Database extends SQLiteOpenHelper{
 
     static public String getInternalFolder(){
         String path = getStorageDir(true);
-        Log.d("databasepath", path + " makdirs:" + mkDirs(path));
+        Log.d("databasepath", path + " makedirs:" + mkDirs(path));
         return path;
     }
 
