@@ -693,7 +693,7 @@ public class SearchingDB {
                     do {
                         Segment segment = new Segment(cursor);
 
-                        //if(verse.length() > 4000) continue;//TODO this is a major hackk!!, but we aren't searching huge things
+                        //if(verse.length() > 4000) continue;//TODO this is a major hack!!, but we aren't searching huge things
 
                         String verse = segment.getText(Util.Lang.HE);
                         boolean foundAllWords = true;
