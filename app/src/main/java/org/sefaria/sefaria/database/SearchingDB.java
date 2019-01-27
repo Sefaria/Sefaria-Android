@@ -298,7 +298,7 @@ public class SearchingDB {
 
     }
     private static Pattern nikkudlessRegEx(String word, boolean wholeWord, Util.Lang lang){
-        String nikkuds = "[\u0591-\u05bd\u05bf-\u05C7\u05f3\u05f4\'\"]*";//all nukkids but - mark
+        String nikkuds = "[\u0591-\u05bd\u05bf-\u05C7\u05f3\u05f4\'\"]*";//all nikkuds but - mark
         if(lang == Util.Lang.EN){
             nikkuds = "";
         }
