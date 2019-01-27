@@ -141,7 +141,7 @@ public class Header implements Parcelable {
      *
      * levels should be as long as the full length of textDepth...
      * @param book
-     * @param levels (could be segment.levels) ex. {0, 2, 3} would return headers.size() == 2, with headers.get(0) reffering to the middle level (2), and headers.get(1) would reffer to the highest level (3)
+     * @param levels (could be segment.levels) ex. {0, 2, 3} would return headers.size() == 2, with headers.get(0) refering to the middle level (2), and headers.get(1) would refer to the highest level (3)
      * @return empty list if there's a problem. And normally a list of headers for each nonZero level of levels (headers.get(0) is the lowest non zero level (ex. verse))
      */
     private static ArrayList<Header> getAllSectionDepthsHeaders(Book book, int [] levels){
