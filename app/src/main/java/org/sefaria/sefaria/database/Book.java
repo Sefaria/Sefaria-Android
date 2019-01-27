@@ -80,7 +80,7 @@ public class Book implements Parcelable {
     public static Book dummyBook = new Book();
 
     /**
-     *  returns a list of roots to trees that respresent the Table of Contents for a book.
+     *  returns a list of roots to trees that represent the Table of Contents for a book.
      * @return roots
      */
     public List<Node> getTOCroots() throws API.APIException {
