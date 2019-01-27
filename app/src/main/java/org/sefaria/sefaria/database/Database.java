@@ -301,7 +301,7 @@ public class Database extends SQLiteOpenHelper{
     /**
      * Copies your database from your local assets-folder to the just created empty database in the
      * system folder, from where it can be accessed and handled.
-     * This is done by transfering bytestream.
+     * This is done by transferring bytestream.
      * */
     private void copyDatabase(String path, String name) throws IOException{
         //the following ensures all directories and files that we want will exist
