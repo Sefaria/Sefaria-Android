@@ -349,7 +349,7 @@ public class DialogManager {
                 builder.setNegativeButton(activity.getString(R.string.no), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dismissCurrentDialog();
-                        //Log.d("dialog","neg aysc click");
+                        //Log.d("dialog","neg aysc (??) click");
                         showDialog(activity,UPDATE_STARTED);
                     }
                 });
