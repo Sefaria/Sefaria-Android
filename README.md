@@ -1,5 +1,5 @@
 # Sefaria-Android
-This is the Sefaria Android app. It is still a work in progress.
+This is the deprecated Sefaria Android app. Code for the current Android app can be found [here](https://github.com/Sefaria/Sefaria-iOS)
 
 ## How to use
 1. git clone https://github.com/Sefaria/Sefaria-Android.git
